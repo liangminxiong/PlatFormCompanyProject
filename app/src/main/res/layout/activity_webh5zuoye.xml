@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/view_1px"
+        android:visibility="gone"/>
+
+    <include
+        layout="@layout/title_bar_mvp"
+        android:visibility="gone"/>
+
+    <!--   <com.common.view.other.NestedScrollWebView
+           android:id="@+id/lly_webview_root"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"/>-->
+
+    <WebView
+        android:id="@+id/lly_webview_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

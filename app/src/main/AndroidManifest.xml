@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.yuefeng.commondemo">
+
+    <permission
+        android:name="com.yuefeng.commondemo.permission.JPUSH_MESSAGE"
+        android:protectionLevel="signature"/>
+    <!-- Required -->
+    <!-- 访问网络，网络定位需要上网-->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 用于读取手机当前的状态-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions"/>
+
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/>
+    <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS"/>
+    <!-- 这个权限用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- 这个权限用于访问GPS定位-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+
+
+    <!-- SD卡读取权限，用户写入离线定位数据-->
+    <uses-permission android:name="android.permission.REQUEST_PERMISSIONS"/>
+    <uses-permission android:name="android.permission.ACCESS_GPS"/>
+    <!-- 允许程序访问额外的定位提供者指令获取模拟定位信息 -->
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <!--相机-->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+
+    <!--录音权限-->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission
+        android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions"/>
+
+    <!--允许程序改变网络连接状态 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <!--读取联系人权限，上传联系人需要用到此权限 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <!--外存储读权限，构建语法需要用到此权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!--配置权限，用来记录应用配置信息 -->
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions"/>
+    <!--震动等-->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+
+    <!--屏幕-->
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="false"
+        android:resizeable="true"
+        android:smallScreens="true"/>
+
+    <application
+        android:name="com.yuefeng.ui.MyApplication"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/icon_app"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/icon_app"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+
+        <!--适配7.0-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
+        <activity
+            android:name="com.yuefeng.login_splash.ui.SplashActivity"
+            android:theme="@style/FlashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.yuefeng.ui.MainActivity"/>
+
+        <activity android:name="com.yuefeng.login_splash.ui.LoginActivity"/>
+
+        <!--问题上报-->
+        <activity android:name="com.yuefeng.features.ui.activity.ProblemUpdateActivity"/>
+        <!--问题巡检-->
+        <activity android:name="com.yuefeng.features.ui.activity.QualityInspectionActivity"/>
+        <!--问题详情-->
+        <activity android:name="com.yuefeng.features.ui.activity.QualityInspectionDetailActivity"/>
+        <!--问题关闭-->
+        <activity android:name="com.yuefeng.features.ui.activity.EvaluationEventActivity"/>
+        <!--完成问题-->
+        <activity android:name="com.yuefeng.features.ui.activity.SuccessProblemActivity"/>
+        <!--作业监控-->
+        <activity android:name="com.yuefeng.features.ui.activity.JobMonitoringActivity"/>
+        <!--转发问题-->
+        <activity android:name="com.yuefeng.features.ui.activity.ForwardProblemActivity"/>
+        <!--作业考勤-->
+        <activity android:name="com.yuefeng.features.ui.activity.WebH5ZuoyeKaoqinActivity"/>
+        <!--轨迹-->
+        <activity android:name="com.yuefeng.features.ui.activity.TrackActivity"/>
+        <!--诱导-->
+        <activity android:name="com.yuefeng.features.ui.activity.nativ.DemoGuideActivity"/>
+        <!--更新-->
+        <receiver
+            android:name="com.common.updateapputils.util.UpdateAppReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="teprinciple.update"/>
+            </intent-filter>
+        </receiver>
+
+        <!--========================百度地图（begin）=============================-->
+        <!--开发版  1at4yMbxQEmyp3ZWVd7pxtCq2FKjkH0I  or发布版 HXUviSZQv4VscOpnStqAYAHXbmRfSXHH  / BIvUidCXbyoqMciDxLVzbRPE6I91hZaN-->
+
+        <!--导航 appid-->
+        <meta-data
+            android:name="BaiduMobAd_STAT_ID"
+            android:value="14268406"/>
+        <!--android:value="11959239"/>-->
+
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
+
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote">
+        </service>
+        <!--========================百度地图（end）=============================-->
+
+    </application>
+
+</manifest>

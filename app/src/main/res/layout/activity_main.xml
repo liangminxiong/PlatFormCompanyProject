@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <include layout="@layout/view_1px"/>
+
+    <include layout="@layout/title_bar_mvp"/>
+
+    <View style="@style/horizontal_line"/>
+
+    <com.yuefeng.ui.base.fragment.NoSlideViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:flipInterval="30"
+        android:persistentDrawingCache="animation"/>
+
+    <View style="@style/horizontal_line"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabBackground="@color/white"
+        app:tabIndicatorHeight="0dp"
+        app:tabTextAppearance="@style/TextAppearance.Design.Tab"/>
+
+</LinearLayout>

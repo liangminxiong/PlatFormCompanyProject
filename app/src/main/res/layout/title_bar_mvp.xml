@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rly_home_title"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:layout_below="@+id/space"
+    android:background="@color/titel_color">
+
+    <RelativeLayout
+        android:id="@+id/iv_back"
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="match_parent"
+        android:background="@color/transition"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@color/transition"
+            android:src="@drawable/selector_btn_back"
+            android:visibility="visible"
+            tools:ignore="ContentDescription"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_17"/>
+
+    <TextView
+        android:id="@+id/tv_title_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:background="@color/transition"
+        android:textColor="@color/white"
+        android:textSize="15sp"/>
+</RelativeLayout>

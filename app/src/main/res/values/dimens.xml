@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--main的底部tab -->
+    <dimen name="main_tab_height">40dp</dimen>
+    <dimen name="main_tab_size">22dp</dimen>
+    <dimen name="main_tab_icon_margin_top">7dp</dimen>
+    <dimen name="main_tab_name_margin_top">2dp</dimen>
+    <dimen name="main_tab_name_text_size">10sp</dimen>
+
+    <dimen name="main_holder_padding_left_right">15dp</dimen>
+
+    <dimen name="main_title_bar_height">44dp</dimen>
+
+    <dimen name="main_action_bar_height">44dp</dimen>
+    <dimen name="main_action_bar_title_text_size">16sp</dimen>
+
+    <dimen name="dp_180">260dp</dimen>
+    <dimen name="dp_190">190dp</dimen>
+    <dimen name="dp_150">150dp</dimen>
+    <dimen name="dp_120">120dp</dimen>
+    <dimen name="dp_100">100dp</dimen>
+    <dimen name="dp_80">80dp</dimen>
+    <dimen name="dp_70">70dp</dimen>
+    <dimen name="dp_60">60dp</dimen>
+    <dimen name="dp_50">50dp</dimen>
+    <dimen name="dp_45">45dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
+    <dimen name="dp_36">36dp</dimen>
+    <dimen name="dp_34">34dp</dimen>
+    <dimen name="dp_32">32dp</dimen>
+    <dimen name="dp_30">30dp</dimen>
+    <dimen name="dp_28">28dp</dimen>
+    <dimen name="dp_26">26dp</dimen>
+    <dimen name="dp_24">24dp</dimen>
+    <dimen name="dp_22">22dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_18">18dp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="dp_15">15dp</dimen>
+    <dimen name="dp_14">14dp</dimen>
+    <dimen name="dp_12">12dp</dimen>
+    <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_5">5dp</dimen>
+    <dimen name="dp_3">3dp</dimen>
+    <dimen name="dp_2">2dp</dimen>
+
+    <dimen name="px_60">60px</dimen>
+    <dimen name="px_36">36px</dimen>
+    <dimen name="px_34">34px</dimen>
+    <dimen name="px_30">30px</dimen>
+    <dimen name="px_28">28px</dimen>
+    <dimen name="px_24">24px</dimen>
+    <dimen name="px_22">22px</dimen>
+    <dimen name="px_20">20px</dimen>
+    <dimen name="px_1">1px</dimen>
+
+    <dimen name="sp_18">18sp</dimen>
+    <dimen name="sp_17">17sp</dimen>
+    <dimen name="sp_16">16sp</dimen>
+    <dimen name="sp_15">15sp</dimen>
+    <dimen name="sp_14">14sp</dimen>
+    <dimen name="sp_13">13sp</dimen>
+    <dimen name="sp_12">12sp</dimen>
+    <dimen name="sp_11">11sp</dimen>
+    <dimen name="sp_10">10sp</dimen>
+    <dimen name="sp_9">9sp</dimen>
+
+    <!-- 顶部按钮栏高度 -->
+    <dimen name="pickerview_topbar_height">44dp</dimen>
+    <!-- 顶部按钮paddingLeft -->
+    <dimen name="pickerview_topbar_paddingleft">10dp</dimen>
+    <!-- 顶部按钮paddingRight -->
+    <dimen name="pickerview_topbar_paddingright">30dp</dimen>
+    <!-- 顶部按钮文字大小 -->
+    <dimen name="pickerview_topbar_btn_textsize">20sp</dimen>
+    <dimen name="pickerview_topbar_title_textsize">21sp</dimen>
+    <!-- 选项文字大小 需要配合 bools.xml 的 pickerview_customTextSize 为 true 才有效果-->
+    <dimen name="pickerview_textsize">20sp</dimen>
+
+</resources>

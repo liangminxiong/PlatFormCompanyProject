@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/llll"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
+
+    <include layout="@layout/view_1px"/>
+
+    <include layout="@layout/title_bar_mvp"/>
+
+    <View style="@style/horizontal_line"/>
+
+    <LinearLayout
+        android:id="@+id/ll_select_daytime"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_today_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/blue"
+            android:gravity="center"
+            android:text="今天"
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/tv_yesterday_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="昨天"
+            android:textColor="@color/blue"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/tv_daybyme_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="自定义"
+            android:textColor="@color/blue"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <View style="@style/horizontal_line"/>
+
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/lll"
+            android:layout_width="fill_parent"
+            android:layout_height="80dip"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rl_start_time"
+                android:layout_width="fill_parent"
+                android:layout_height="40dip"
+                android:background="@drawable/btn_main_left_item_selector"
+                android:gravity="center_horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="6.0dip">
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_centerVertical="true"
+                    android:drawableLeft="@drawable/teacher_searcher_icon"
+                    android:drawablePadding="5dip"
+                    android:gravity="center_vertical"
+                    android:text="开始时间："
+                    android:textColor="@color/gray"
+                    android:textSize="14.0sp"/>
+
+                <TextView
+                    android:id="@+id/tv_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_time"
+                    android:background="@color/transparent"
+                    android:clickable="false"
+                    android:textColor="@color/gray"
+                    android:textSize="16sp"/>
+
+            </RelativeLayout>
+
+            <View style="@style/horizontal_line"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_end_time"
+                android:layout_width="match_parent"
+                android:layout_height="40dip"
+                android:background="@drawable/btn_main_left_item_selector"
+                android:gravity="center_horizontal"
+                android:paddingLeft="10.0dip"
+                android:paddingRight="6.0dip">
+
+                <TextView
+                    android:id="@+id/tv_ti"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_centerVertical="true"
+                    android:drawableLeft="@drawable/teacher_searcher_icon"
+                    android:drawablePadding="5dip"
+                    android:gravity="center_vertical"
+                    android:text="结束时间："
+                    android:textColor="@color/gray"
+                    android:textSize="14.0sp"/>
+
+                <TextView
+                    android:id="@+id/tv_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_ti"
+                    android:background="@color/transparent"
+                    android:clickable="false"
+                    android:textColor="@color/gray"
+                    android:textSize="16sp"/>
+
+            </RelativeLayout>
+
+            <View style="@style/horizontal_line"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_search"
+            android:layout_width="140dip"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tv_search"
+                android:layout_width="60dip"
+                android:layout_height="30dip"
+                android:background="@drawable/btn_teacher_search_selector"
+                android:gravity="center"
+                android:text="查询"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_contain"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_above="@+id/lin_Play_Control"
+        android:layout_below="@+id/id_title"
+        android:layout_weight="1"
+        android:background="#383838"
+        android:orientation="vertical">
+
+        <com.baidu.mapapi.map.TextureMapView
+            android:id="@+id/mMapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"/>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/lin_Play_Control"
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:layout_alignParentBottom="true"
+        android:background="#EAEBEC"
+        android:orientation="vertical">
+
+        <SeekBar
+            android:id="@+id/mSeekBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:focusable="false"
+            android:maxHeight="7dp"
+            android:minHeight="7dp"
+            android:progressDrawable="@drawable/seekbar_drawable"
+            android:thumb="@drawable/seekbar_thumb"/>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:background="#EAEBEC"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_TrackIndex"
+                android:layout_width="40dp"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:text="000"
+                android:textColor="@android:color/black"
+                android:textSize="12dp"/>
+
+            <TextView
+                android:id="@+id/tv_TrackCount"
+                android:layout_width="40dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:text="000"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:background="#EAEBEC">
+
+            <TextView
+                android:id="@+id/tv_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dip"
+                android:gravity="center"
+                android:text="0km/h"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tv_gpstime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dip"
+                android:gravity="center"
+                android:text="2015-00-00 00:00:00"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="80dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="20dp">
+
+            <ImageView
+                android:id="@+id/btn_SlowPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/selector_up_press_bg"/>
+
+            <ImageView
+                android:id="@+id/btn_Play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_stop_a"/>
+
+            <ImageView
+                android:id="@+id/btn_FastPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/selector_next_press_bg"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

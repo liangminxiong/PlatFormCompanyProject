@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/ll_problem"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
+
+    <include layout="@layout/view_1px"/>
+    <include layout="@layout/title_bar_mvp"/>
+
+
+    <View style="@style/horizontal_gray_10"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
+        android:gravity="center_vertical"
+        android:text="发表评价"
+        android:textColor="@color/transparent33"
+        android:textSize="@dimen/sp_15"
+        tools:ignore="HardcodedText"/>
+
+    <EditText
+        android:id="@+id/edt_problem_txt"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
+        android:layout_weight="1"
+        android:background="@null"
+        android:gravity="left"
+        android:hint="请进行评价......"
+        android:maxLength="100"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText,LabelFor,RtlHardcoded,TextFields"/>
+
+    <TextView
+        android:id="@+id/tv_txt_count"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_32"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
+        android:gravity="center_vertical|right"
+        android:text="100/100"
+        android:textColor="@color/transparent33"
+        android:textSize="@dimen/sp_12"
+        tools:ignore="HardcodedText,RtlHardcoded"/>
+
+    <View style="@style/horizontal_gray_10"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="服务评价"
+            android:textColor="@color/transparent33"
+            android:textSize="@dimen/sp_13"
+            tools:ignore="HardcodedText"/>
+
+        <com.common.view.other.StarLinearLayout
+            android:id="@+id/star"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/dp_15"
+            android:layout_marginStart="@dimen/dp_15"
+            android:layout_weight="1"
+            app:isEdit="true"
+            />
+
+        <TextView
+            android:id="@+id/tv_score"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/transparent33"
+            android:textSize="@dimen/sp_13"
+            />
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"/>
+
+    <View style="@style/horizontal_line"/>
+
+    <TextView
+        android:id="@+id/tv_upload"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="上报"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_16"
+        tools:ignore="HardcodedText"/>
+
+</LinearLayout>

@@ -1,0 +1,54 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">侨银环保</string>
+
+    <string name="sure">确认</string>
+    <string name="tab_main_name">消息</string>
+    <string name="tab_classify_name">第二</string>
+    <string name="tab_search_name">应用列表</string>
+    <string name="tab_news_name">通讯录</string>
+    <string name="tab_mine_name">我的</string>
+    <string name="tab_tack_name">任务</string>
+    <string name="project_manage">项目管理</string>
+    <string name="operation_manage">作业管理</string>
+    <string name="operation_monitor">作业监控</string>
+    <string name="quality_manage">质量管理</string>
+
+    <string name="fengrun">广东丰润环境管理服务有限公司</string>
+    <string name="problem_updata">问题上报</string>
+    <string name="all_txt">全部</string>
+    <string name="pending_txt">待处理</string>
+    <string name="processing_txt">处理中</string>
+    <string name="toclosed_txt">待关闭</string>
+    <string name="problem_detail_txt">问题详情</string>
+    <string name="uploading">上传中…</string>
+    <string name="upload_success">上传成功,退出当前界面!</string>
+    <string name="closed_txt">已关闭</string>
+    <string name="claimming">认领中…</string>
+    <string name="claim_success">认领成功</string>
+    <string name="submit_success">提交成功</string>
+    <string name="uploaded_event">完成事件</string>
+    <string name="uploaded">完成</string>
+    <string name="submiting">提交中…</string>
+    <string name="problem_evaluation">发表评价</string>
+    <string name="closed">关闭</string>
+    <string name="closing">关闭中…</string>
+    <string name="login" tools:ignore="TypographyEllipsis">登录中...</string>
+    <string name="usernamePwd_noNull">账号或密码不能为空</string>
+    <string name="cancel">取消</string>
+    <string name="sure_exit_app">你确定要退出App吗？</string>
+    <string name="locationing" tools:ignore="TypographyEllipsis">定位中…</string>
+    <string name="photo_processing">图片处理中…</string>
+    <string name="personal">人员</string>
+    <string name="vehicle">车辆</string>
+    <string name="problem">问题</string>
+
+    <string name="app_name_time">时间</string>
+    <string name="pickerview_cancel">取消</string>
+    <string name="pickerview_submit">确定</string>
+    <string name="pickerview_year">年</string>
+    <string name="pickerview_month">月</string>
+    <string name="pickerview_day">日</string>
+    <string name="pickerview_hours">时</string>
+    <string name="pickerview_minutes">分</string>
+    <string name="pickerview_seconds">秒</string>
+</resources>

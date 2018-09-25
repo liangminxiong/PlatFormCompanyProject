@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/user_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white">
+
+
+    <ImageView
+        android:id="@+id/img_user_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:scaleType="centerCrop"
+        android:src="@color/white"/>
+
+    <TextView
+        android:id="@+id/tv_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/img_user_view"
+        android:layout_centerInParent="true"
+        android:paddingBottom="5dp"
+        android:text="Seven"
+        android:textColor="@color/black"
+        android:textSize="26sp"/>
+
+    <View
+        android:id="@+id/view_space"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_below="@+id/tv_user_name"
+        android:background="#f5f5f5"/>
+
+    <com.yuefeng.usercenter.ui.view.UserInfoItemView
+        android:id="@+id/ui_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_space"
+        app:iconLeft="@drawable/ic_share_app"
+        app:itemText="分享App"/>
+
+    <View
+        android:id="@+id/view_space1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/ui_share"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="#f5f5f5"/>
+
+    <com.yuefeng.usercenter.ui.view.UserInfoItemView
+        android:id="@+id/ui_clean"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_space1"
+        app:iconLeft="@drawable/ic_person_customer_service"
+        app:itemText="清理缓存"/>
+
+    <View
+        android:id="@+id/view_space2"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_below="@+id/ui_clean"
+        android:background="#f5f5f5"/>
+
+    <com.yuefeng.usercenter.ui.view.UserInfoItemView
+        android:id="@+id/ui_collection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_space2"
+        app:iconLeft="@drawable/ic_person_help"
+        app:itemText="我的收藏"/>
+
+    <View
+        android:id="@+id/view_space3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/ui_collection"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="#f5f5f5"/>
+
+    <com.yuefeng.usercenter.ui.view.UserInfoItemView
+        android:id="@+id/ui_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_space3"
+        app:iconLeft="@drawable/ic_person_us"
+        app:itemText="关于软件"/>
+
+    <View
+        android:id="@+id/view_space4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/ui_author"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="#f5f5f5"/>
+
+    <com.yuefeng.usercenter.ui.view.UserInfoItemView
+        android:id="@+id/ui_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_space4"
+        app:iconLeft="@drawable/ic_language_choose"
+        app:itemText="退出登录"/>
+
+    <View
+        android:id="@+id/view_space5"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/ui_setting"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="#f5f5f5"/>
+</RelativeLayout>

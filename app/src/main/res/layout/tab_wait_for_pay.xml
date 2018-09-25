@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tab_name"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textColor="@drawable/tab_item_name_selector"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/tab_count"
+        android:layout_width="15dp"
+        android:layout_height="14dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/tab_name"
+        android:background="@drawable/shape_red_dot"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sp_9"
+        android:visibility="visible"
+        tools:ignore="HardcodedText,RtlHardcoded"/>
+
+    <ImageView
+        android:id="@+id/tab_icon"
+        android:layout_width="60dp"
+        android:layout_height="3dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        tools:ignore="ContentDescription"/>
+
+
+    <!--android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/txt_dp_15"
+        android:layout_marginRight="@dimen/txt_dp_20"
+        -->
+
+</RelativeLayout>
