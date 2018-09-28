@@ -1,6 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">侨银环保</string>
 
+    <string name="is_newest_version">当前版本已经是最新版本</string>
+    <string name="update">更新</string>
+    <string name="updating">更新中…</string>
+    <string name="onclick_again">请勿重复点击</string>
     <string name="sure">确认</string>
     <string name="tab_main_name">消息</string>
     <string name="tab_classify_name">第二</string>

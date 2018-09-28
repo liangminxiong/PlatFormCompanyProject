@@ -83,6 +83,10 @@ public class UserInfoFragment extends BaseMvpFragment {
     }
 
     @Override
+    protected void fetchData() {
+    }
+
+    @Override
     protected void initData() {
         if (PreferencesUtils.getString(getContext(), Constans.USERNAME) != null) {
             userName.setText(PreferencesUtils.getString(getContext(), Constans.USERNAME));

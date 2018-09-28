@@ -14,12 +14,10 @@ import android.widget.TextView;
 
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
+import com.common.updateapputils.UpdateManager;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
-import com.lzy.okhttputils.OkHttpUtils;
-import com.lzy.okhttputils.callback.StringCallback;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.login_splash.contract.LoginContract;
 import com.yuefeng.login_splash.event.LoginEvent;
@@ -30,12 +28,8 @@ import com.yuefeng.ui.MainActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import io.reactivex.functions.Consumer;
-import okhttp3.Call;
-import okhttp3.Response;
 
 
 public class LoginActivity extends BaseActivity implements LoginContract.View {
@@ -123,70 +117,10 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                             showSuccessToast("App未能获取全部需要的相关权限，部分功能可能不能正常使用.");
                         }
                         //不管是否获取全部权限，进入主页面
-//                        updataApp();
+                        checkVersion();
                     }
                 });
 
-    }
-
-    /*更新*/
-    private void updataApp() {
-
-        OkHttpUtils
-                .get(ApiService.sersionPath)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(String s, Call call, Response response) {
-                        String[] strings = null;
-                        String json = s.toString();
-                        String[] split = json.split("\\[");
-                        if (split.length > 1) {
-                            strings = split[1].split("\\]");
-                        }
-                        showUpdataAPPInfos(strings[0]);
-                    }
-
-                    @Override
-                    public void onError(Call call, Response response, Exception e) {
-                        super.onError(call, response, e);
-                    }
-                });
-    }
-
-    /*更新信息*/
-    private void showUpdataAPPInfos(String json) {
-        JSONObject jsonObj = null;
-        try {
-            jsonObj = new JSONObject(json);
-            versionName = jsonObj.getString("VerName");
-            versionCode = jsonObj.getString("VerCode");
-            description = jsonObj.getString("Description");
-            LogUtils.d("=======+++====" + versionCode + "+++ " + versionName + "\n" + description);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        versionCode = versionCode.isEmpty() ? "" : versionCode;
-        versionName = versionName.isEmpty() ? "" : versionName;
-        description = description.isEmpty() ? "" : "有新版本更新啦";
-//        if (description.contains(",")) {
-//            String[] split = description.split(",");
-//            for (int i = 0; i < split.length; i++) {
-//                if (i == (split.length - 1)) {
-//                    description = description + split[i];
-//                } else {
-//                    description = description + split[i] + "\n";
-//                }
-//            }
-//        }
-//
-//        UpdateAppUtils.from(this)
-//                .serverVersionCode(Integer.valueOf(versionCode))
-//                .serverVersionName(versionName)
-//                .apkPath(ApiService.apkPath)
-//                .updateInfo("")
-//                .showNotification(true)
-//                .needFitAndroidN(true)
-//                .update();
     }
 
     private void remenberPwd() {
@@ -247,11 +181,33 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 finish();
                 break;
             case Constans.USERERROR:
-//                showErrorToast((String) loginEvent.getData());
+                showErrorToast("请检查账号密码,网络状态!");
                 break;
         }
     }
 
+
+    //    检查版本更新
+    private boolean HasCheckUpdate = false;
+    private UpdateManager mUpdateManager;
+
+    private void checkVersion() {
+        if (!HasCheckUpdate) {
+            mUpdateManager = new UpdateManager(LoginActivity.this, true);
+            mUpdateManager.checkVersion();
+            HasCheckUpdate = true;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 10086) {
+            if (mUpdateManager != null) {
+                mUpdateManager.isAndoird8();
+            }
+        }
+    }
 
     @Override
     protected int getContentViewResId() {

@@ -44,9 +44,10 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
     private List<PersonalinfoListBean> list = null;
     private String latitude;
     private String longitude;
-    private List<String> addressList = new ArrayList<>();
     private int lenght;
-    private int len;
+    private GetJobMonitotingMsgBean bean = null;
+
+    private int count = 0;
 
     @Override
     protected int getLayoutId() {
@@ -61,7 +62,6 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
         }
         recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
         initRecycler();
-        addressList.clear();
         // 创建定位管理信息对象
         mLocationUtils = new LocationUtils(getActivity());
 //         开启定位
@@ -106,10 +106,10 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
     public void disposeJobMonitoringEvent(JobMonitoringEvent event) {
         switch (event.getWhat()) {
             case Constans.JOB_SSUCESS://展示
-                GetJobMonitotingMsgBean bean = (GetJobMonitotingMsgBean) event.getData();
-                if (bean != null) {
-                    showAdapterDatasList(bean);
-                }
+                bean = (GetJobMonitotingMsgBean) event.getData();
+//                if (bean != null) {
+//                    showAdapterDatasList(bean);
+//                }
                 break;
 
             case Constans.JOB_ERROR:
@@ -121,28 +121,19 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
 
     }
 
+    @Override
+    protected void fetchData() {
+        if (bean != null) {
+            showAdapterDatasList(bean);
+        }
+    }
+
     /*展示列表数据*/
     private void showAdapterDatasList(GetJobMonitotingMsgBean beanMsg) {
-
+        count = 0;
         list = beanMsg.getPersonalinfoList();
         lenght = list.size();
-        for (int i = 0; i < lenght; i++) {
-            latitude = list.get(i).getLatitude();
-            longitude = list.get(i).getLongitude();
-            if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude)) {
-                if (mLocationUtils == null) {
-                    mLocationUtils = new LocationUtils(getActivity());
-//         开启定位
-                    mLocationUtils.startLocation();
-                    mLocationUtils.registerOnResult(this);
-                }
-                if (i == 0) {
-                    mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
-                }
-                mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
-            }
-        }
-
+        benginGetAddress(count, true);
         if (list.size() > 0) {
             listData.clear();
             listData.addAll(list);
@@ -152,27 +143,46 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
         }
     }
 
+    private void benginGetAddress(int count, boolean isFirst) {
+        LogUtils.d("onReverseGeo 11= " + count);
+        if (count > (lenght - 1)) {
+            return;
+        }
+        if (lenght > 0 || list != null) {
+            latitude = list.get(count).getLatitude();
+            longitude = list.get(count).getLongitude();
+            if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude)) {
+                if (mLocationUtils == null) {
+//         开启定位
+                    mLocationUtils = new LocationUtils(getActivity());
+                    mLocationUtils.startLocation();
+                    mLocationUtils.registerOnResult(this);
+                }
+                if (isFirst) {
+                    mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
+                }
+                mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
+            }
+        }
+    }
+
     @Override
     public void onReverseGeoCodeResult(Map<String, Object> map) {
         String address = (String) map.get("address");
-        assert addressList != null;
-        if (!TextUtils.isEmpty(address)) {
-            addressList.add(address);
+        LogUtils.d("onReverseGeo 00= " + address);
+        if (TextUtils.isEmpty(address)) {
+            address = "检索当前地址失败!";
         }
-        len = addressList.size();
 
-        assert list != null;
-        LogUtils.d("getAddress111" + address + "  +++  " + len + " ++ " + lenght);
-
-        if (list.size() != 0 && len > 0) {
-            for (int i = 0; i < len; i++) {
-                list.get(i).setAddress(addressList.get(i));
+        if (lenght > 0 || adapter != null) {
+            if (count <= (lenght - 1)) {
+                list.get(count).setAddress(address);
+                adapter.notifyDataSetChanged();
+                count++;
+                benginGetAddress(count, false);
             }
-            listData.clear();
-            listData.addAll(list);
-            adapter.setNewData(listData);
-        }
 
+        }
     }
 
     @Override

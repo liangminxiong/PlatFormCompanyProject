@@ -162,6 +162,9 @@ public class JobMonitoringActivity extends BaseActivity implements
     private ShowPersonalpop phototpop;
 
     private LocationUtils mLocationUtils;
+    private PersonalFragment personalFragment;
+    private VehicleListFragment vehicleListFragment;
+    private QuestionListFragment questionListFragment;
 
     @Override
     protected int getContentViewResId() {
@@ -208,13 +211,13 @@ public class JobMonitoringActivity extends BaseActivity implements
         //设置TabLayout点击事件
         tabLayout.addOnTabSelectedListener(this);
         tabItemInfos = new ArrayList<>();
-        PersonalFragment personalFragment = new PersonalFragment();
+        personalFragment = new PersonalFragment();
         tabItemInfoA = new TabItemInfo(personalFragment, R.drawable.tab_button_selector, R.string.personal);
         tabItemInfos.add(tabItemInfoA);
-        VehicleListFragment vehicleListFragment = new VehicleListFragment();
+        vehicleListFragment = new VehicleListFragment();
         tabItemInfoB = new TabItemInfo(vehicleListFragment, R.drawable.tab_button_selector, R.string.vehicle);
         tabItemInfos.add(tabItemInfoB);
-        QuestionListFragment questionListFragment = new QuestionListFragment();
+        questionListFragment = new QuestionListFragment();
         tabItemInfoC = new TabItemInfo(questionListFragment, R.drawable.tab_button_selector, R.string.problem);
         tabItemInfos.add(tabItemInfoC);
 
@@ -351,6 +354,7 @@ public class JobMonitoringActivity extends BaseActivity implements
                 break;
 
             case Constans.JOB_ERROR:
+                showErrorToast("加载失败，请重试");
                 initListdatas("0", "0", "0");
                 break;
         }
@@ -397,7 +401,6 @@ public class JobMonitoringActivity extends BaseActivity implements
             isFirstLoc = true;
             showDialogPersonal(personalinfoListBean);
         }
-        showLoadingDialog("请稍等...");
 
         new Thread(new Runnable() {
             @Override
@@ -425,7 +428,6 @@ public class JobMonitoringActivity extends BaseActivity implements
             }
         }).start();
 
-        dismissLoadingDialog();
     }
 
     /*选中车辆*/
@@ -438,7 +440,6 @@ public class JobMonitoringActivity extends BaseActivity implements
             }
             isFirstLoc = true;
         }
-        showLoadingDialog("请稍等...");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -464,7 +465,6 @@ public class JobMonitoringActivity extends BaseActivity implements
                 }
             }
         }).start();
-        dismissLoadingDialog();
     }
 
     /*选中问题*/
@@ -477,11 +477,9 @@ public class JobMonitoringActivity extends BaseActivity implements
             isFirstLoc = true;
             showDialogProblem(questionListBean);
         }
-        showLoadingDialog("请稍等...");
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 String latitude = questionListBean.getLatitude();
                 String longitude = questionListBean.getLongitude();
                 if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
@@ -503,7 +501,7 @@ public class JobMonitoringActivity extends BaseActivity implements
                 }
             }
         }).start();
-        dismissLoadingDialog();
+
 
     }
 
@@ -585,6 +583,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         try {
             baiduMap.clear();
             mks.clear();
+            showLoadingDialog("请稍等...");
             List<PersonalinfoListBean> personalinfoList = data.getPersonalinfoList();
             List<VehicleinfoListBean> vehicleinfoList = data.getVehicleinfoList();
             List<QuestionListBean> questionList = data.getQuestionList();
@@ -604,7 +603,7 @@ public class JobMonitoringActivity extends BaseActivity implements
                     showProblem(questionListBean, false);
                 }
             }
-
+            dismissLoadingDialog();
             if (myMarkerClickListener == null) {
                 myMarkerClickListener = new myMarkerClickListener(mks);
             }
@@ -846,8 +845,21 @@ public class JobMonitoringActivity extends BaseActivity implements
 //        BNRoutePlanNode sNode = new BNRoutePlanNode(mlatLng.longitude, mlatLng.latitude, beginAddress, beginAddress, coType);
 //        BNRoutePlanNode eNode = new BNRoutePlanNode(latLng.longitude, latLng.latitude, endAddress, endAddress, coType);
 
-        if (TextUtils.isEmpty(endAddress)) {
+        if ((mlatLng.longitude > 140.0) || (mlatLng.longitude < 65.0) || (mlatLng.latitude > 56.0) || (mlatLng.latitude < 12.0)) {
+            showSuccessToast("定位出问题，请检查");
+            return;
+        }
+        if ((latLng.longitude > 140.0) || (latLng.longitude < 65.0) || (latLng.latitude > 56.0) || (latLng.latitude < 12.0)) {
+            showSuccessToast("定位出问题，请检查");
+            return;
+        }
 
+        if (TextUtils.isEmpty(endAddress) || endAddress.equals("未知地址")) {
+            showSuccessToast("目的地不明确");
+            return;
+        }
+        if (TextUtils.isEmpty(beginAddress) || beginAddress.equals("未知地址")) {
+            showSuccessToast("定位出问题，请检查");
             return;
         }
 

@@ -59,6 +59,10 @@ public class FeaturesFragment extends BaseMvpFragment {
     }
 
     @Override
+    protected void fetchData() {
+    }
+
+    @Override
     protected void initData() {
 
     }

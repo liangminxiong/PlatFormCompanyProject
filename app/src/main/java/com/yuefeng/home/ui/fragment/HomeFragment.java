@@ -22,6 +22,10 @@ public class HomeFragment extends BaseMvpFragment {
     }
 
     @Override
+    protected void fetchData() {
+    }
+
+    @Override
     protected void initData() {
 
     }

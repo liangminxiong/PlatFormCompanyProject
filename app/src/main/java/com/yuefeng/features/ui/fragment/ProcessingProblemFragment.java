@@ -70,6 +70,12 @@ public class ProcessingProblemFragment extends BaseFragment implements QualityGe
         initRecycler();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    protected void fetchData() {
+        getEventDatasByNet(true);
+    }
+
     private void initRecycler() {
 
         allProblemAdapter = new AllProblemAdapter(R.layout.recycler_item_tab, listData);
@@ -116,7 +122,7 @@ public class ProcessingProblemFragment extends BaseFragment implements QualityGe
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void initData() {
-        getEventDatasByNet(true);
+
     }
 
     @Override

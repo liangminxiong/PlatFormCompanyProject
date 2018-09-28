@@ -35,6 +35,7 @@ public class QuestionListFragment extends BaseFragment {
     RecyclerView recyclerview;
     private List<QuestionListBean> listData = new ArrayList<>();
     private QuetionListAdapter adapter;
+    private GetJobMonitotingMsgBean bean=null;
 
 
     @Override
@@ -89,10 +90,10 @@ public class QuestionListFragment extends BaseFragment {
     public void disposeJobMonitoringEvent(JobMonitoringEvent event) {
         switch (event.getWhat()) {
             case Constans.JOB_SSUCESS://展示
-                GetJobMonitotingMsgBean bean = (GetJobMonitotingMsgBean) event.getData();
-                if (bean != null) {
-                    showAdapterDatasList(bean);
-                }
+                bean = (GetJobMonitotingMsgBean) event.getData();
+//                if (bean != null) {
+//                    showAdapterDatasList(bean);
+//                }
                 break;
 
             case Constans.JOB_ERROR:
@@ -102,6 +103,13 @@ public class QuestionListFragment extends BaseFragment {
 
         }
 
+    }
+
+    @Override
+    protected void fetchData() {
+        if (bean != null) {
+            showAdapterDatasList(bean);
+        }
     }
 
     /*展示列表数据*/

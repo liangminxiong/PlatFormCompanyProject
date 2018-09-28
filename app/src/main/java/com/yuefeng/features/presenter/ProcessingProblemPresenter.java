@@ -60,10 +60,12 @@ public class ProcessingProblemPresenter extends BasePresenterImpl<QualityGetFrag
                 .subscribe(new HttpResultObserver<EventQuestionBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
+                            showLoadingDialog("加载中...");
                     }
 
                     @Override
                     protected void onSuccess(EventQuestionBean o) {
+                        dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
                                 EventBus.getDefault().postSticky(new ProcessingEvent(Constans.CHULIZHONG_SSUCESS, o.getMsg()));
@@ -75,6 +77,7 @@ public class ProcessingProblemPresenter extends BasePresenterImpl<QualityGetFrag
 
                     @Override
                     protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
                         EventBus.getDefault().postSticky(new ProcessingEvent(Constans.CHULIZHONG_ERROR, e.getMsg()));
                     }
                 });

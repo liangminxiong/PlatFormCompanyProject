@@ -38,3 +38,7 @@ file=E:\asSpase\PlatFormProject\app\build\outputs\mapping\release\mapping.txt
 sha1=949590054a1340161675e488f4e7ef0be1886b6e
 appId=a00c816cfa
 
+file=E:\asSpase\PlatFormProject\app\build\outputs\mapping\release\mapping.txt
+sha1=9768ad1863adfecdad30349816ed3334b6e04d58
+appId=a00c816cfa
+

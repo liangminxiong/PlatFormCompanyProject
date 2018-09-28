@@ -67,6 +67,11 @@ public class PendingProblemFragment extends BaseFragment implements QualityGetFr
         initRecycler();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    protected void fetchData() {
+        getEventDatasByNet(true);
+    }
 
     private void initRecycler() {
         allProblemAdapter = new AllProblemAdapter(R.layout.recycler_item_tab, listData);
@@ -145,7 +150,7 @@ public class PendingProblemFragment extends BaseFragment implements QualityGetFr
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void initData() {
-        getEventDatasByNet(true);
+
     }
 
     /*获取网络数据*/

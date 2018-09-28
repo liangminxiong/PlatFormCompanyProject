@@ -34,6 +34,10 @@ public class TackFragment extends BaseMvpFragment {
     }
 
     @Override
+    protected void fetchData() {
+    }
+
+    @Override
     protected void initData() {
 
     }

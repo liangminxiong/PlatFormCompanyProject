@@ -2,6 +2,7 @@ package com.yuefeng.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.baidu.location.BDLocation;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
+import com.common.updateapputils.UpdateManager;
 import com.common.utils.Constans;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
@@ -179,11 +181,13 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
         sureDialog.setTextTime(time);
         sureDialog.setTextAddress(address);
         sureDialog.setDeletaCacheListener(new SigninCacheSureDialog.DeletaCacheListener() {
+
             @Override
             public void sure() {
                 sureDialog.dismiss();
                 personalSignIn(longitude, latitude, address);
                 PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", false);
+                checkVersion();
 
             }
 
@@ -191,6 +195,7 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
             public void cancle() {
                 sureDialog.dismiss();
                 PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", false);
+                checkVersion();
             }
         });
 
@@ -232,6 +237,7 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
                         if (sureDialog != null) {
                             sureDialog.dismiss();
                         }
+                        checkVersion();
                         boolean isSignIn = PreferencesUtils.getBoolean(MainActivity.this, "isSignIn");
                         LogUtils.d("===========isSignIn==" + isSignIn);
                         if (isSignIn) {
@@ -334,6 +340,28 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
     @Override
     protected boolean isNeedTranslateBar() {
         return true;
+    }
+
+    //    检查版本更新
+    private boolean HasCheckUpdate = false;
+    private UpdateManager mUpdateManager;
+
+    private void checkVersion() {
+        if (!HasCheckUpdate) {
+            mUpdateManager = new UpdateManager(MainActivity.this, true);
+            mUpdateManager.checkVersion();
+            HasCheckUpdate = true;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 10086) {
+            if (mUpdateManager != null) {
+                mUpdateManager.isAndoird8();
+            }
+        }
     }
 
     @Override

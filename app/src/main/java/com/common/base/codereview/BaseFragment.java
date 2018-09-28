@@ -26,6 +26,10 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     private LoadingDialog loadingDialog;
     private SucessCacheSureDialog sureDialog;
 
+    protected boolean isViewInitiated;
+    protected boolean isVisibleToUser;
+    protected boolean isDataInitiated;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         }
         unbinder = ButterKnife.bind(this, rootView);
         initView();
+
         initData();
         setLisenter();
         return rootView;
@@ -69,6 +74,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         sureDialog = new SucessCacheSureDialog(getActivity());
     }
 
+    /*提示框*/
     public SucessCacheSureDialog showSuccessDialog(String txt) {
         if (sureDialog == null) {
             sureDialog = new SucessCacheSureDialog(getActivity());
@@ -94,6 +100,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         return null;
     }
 
+    /*加载框*/
     public void showLoadingDialog(String txt) {
         if (loadingDialog != null && !getActivity().isFinishing()) {
             loadingDialog.setMessage(txt);
@@ -116,6 +123,43 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         }
     }
 
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        isViewInitiated = true;
+        prepareFetchData();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        this.isVisibleToUser = isVisibleToUser;
+        prepareFetchData();
+    }
+
+
+    public boolean prepareFetchData() {
+        return prepareFetchData(false);
+    }
+    /**
+     * 当前fragment可见状态发生变化时会回调该方法
+     * 如果当前fragment是第一次加载，等待onCreateView后才会回调该方法，其它情况回调时机跟 {@link #setUserVisibleHint(boolean)}一致
+     * 在该回调方法中你可以做一些加载数据操作，甚至是控件的操作.
+     *
+     * @param forceUpdate true  不可见 -> 可见
+     *                  false 可见  -> 不可见
+     */
+    public boolean prepareFetchData(boolean forceUpdate) {
+        if (isVisibleToUser && isViewInitiated && (!isDataInitiated || forceUpdate)) {
+            fetchData();
+            isDataInitiated = true;
+            return true;
+        }
+        return false;
+    }
+
+    protected abstract void fetchData();
 
     protected abstract void initData();
 

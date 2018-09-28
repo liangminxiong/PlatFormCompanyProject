@@ -115,6 +115,12 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    protected void fetchData() {
+        getEventDatasByNet(true);
+    }
+
     /*转发*/
     private void iv_item_claim(EventQuestionMsgBean eventQuestionMsgBean) {
         String problemId = eventQuestionMsgBean.getId();
@@ -181,7 +187,7 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void initData() {
-        getEventDatasByNet(true);
+
     }
 
     /*获取网络数据*/

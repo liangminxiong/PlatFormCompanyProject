@@ -35,6 +35,10 @@ public class AddressbookFragment extends BaseMvpFragment {
 
     }
 
+    @Override
+    protected void fetchData() {
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void disposeCommonEvent(CommonEvent commonEvent) {
         switch (commonEvent.getWhat()) {

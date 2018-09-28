@@ -68,6 +68,12 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
         initRecycler();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    protected void fetchData() {
+        getEventDatasByNet(true);
+    }
+
     private void initRecycler() {
         allProblemAdapter = new AllProblemAdapter(R.layout.recycler_item_tab, listData);
         recyclerview.setAdapter(allProblemAdapter);
@@ -114,7 +120,7 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void initData() {
-        getEventDatasByNet(true);
+
     }
 
     @Override

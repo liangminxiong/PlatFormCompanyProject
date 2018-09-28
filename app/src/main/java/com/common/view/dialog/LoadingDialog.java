@@ -26,7 +26,6 @@ public class LoadingDialog extends Dialog {
     private TextView tv_txt;
 
     public LoadingDialog(@NonNull Context context) {
-
         super(context, R.style.DialogStyle_white);
         setContentView(R.layout.dialog_loading);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -51,35 +50,5 @@ public class LoadingDialog extends Dialog {
     private void initView() {
         progressbar = findViewById(R.id.progressbar);
         tv_txt = findViewById(R.id.tv_txt);
-       /* cancle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (deletaCacheListener != null) {
-                    deletaCacheListener.cancle();
-                }
-                dismiss();
-            }
-        });
-        sure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (deletaCacheListener != null) {
-                    deletaCacheListener.sure();
-                }
-                dismiss();
-            }
-        });*/
     }
-
-    /*private DeletaCacheListener deletaCacheListener;
-
-    public void setDeletaCacheListener(DeletaCacheListener listener) {
-        this.deletaCacheListener = listener;
-    }
-
-    public interface DeletaCacheListener {
-        void sure();
-
-        void cancle();
-    }*/
 }
