@@ -103,6 +103,8 @@
         </activity>
 
         <activity android:name="com.yuefeng.ui.MainActivity"/>
+        <!--测试-->
+        <activity android:name="com.yuefeng.ui.TestActivity"/>
 
         <activity android:name="com.yuefeng.login_splash.ui.LoginActivity"/>
 
@@ -136,8 +138,8 @@
             </intent-filter>
         </receiver>
 
-        <!--========================百度地图（begin）=============================-->
-        <!--开发版  1at4yMbxQEmyp3ZWVd7pxtCq2FKjkH0I  or发布版 HXUviSZQv4VscOpnStqAYAHXbmRfSXHH  / BIvUidCXbyoqMciDxLVzbRPE6I91hZaN-->
+        <!--========================百度地图（begin）============ HXUviSZQv4VscOpnStqAYAHXbmRfSXHH =================-->
+        <!--开发版  3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c  or发布版 / BIvUidCXbyoqMciDxLVzbRPE6I91hZaN-->
 
         <!--导航 appid-->
         <meta-data
@@ -148,7 +150,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
+            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
 
         <service
             android:name="com.baidu.location.f"

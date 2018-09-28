@@ -29,6 +29,11 @@ public interface ApiService {
 
     String MIA_HW = "zgbd_hw/MobileInterface2/" + INTERFACEACTION;
 
+    //服务器apk path,这里放了云平台的apk 作为测试
+//    String BaseAppPath = "http://121.201.18.209/";
+//    String apkPath = BaseAppPath + "download/android/CP_cjb.apk";
+    String sersionPath = "http://121.201.18.209/download/android/CP_cjb.txt";
+
     String LOGIN = "Login";
     /*问题上传*/
     String UPLOADRUBBISHEVENT = "uploadRubbishEvent";

@@ -23,10 +23,13 @@ public class ShowPersonalpop extends PopupWindow {
     private TextView tv_item_phone, tv_item_phonename;
     private TextView tv_item_class, tv_item_classname;
     private TextView tv_item_address, tv_item_addressname,tv_item_native;
+    private Context context;
+    private int colorInt;
 
     public ShowPersonalpop(Context context) {
         super(context);
         initView(context);
+        this.context = context;
         setPopView();
     }
 
@@ -80,9 +83,17 @@ public class ShowPersonalpop extends PopupWindow {
 
     }
 
-    public void setTextContent(String name,String chiwei,String phone,String classname,String address){
+    public void setTextContent(String name,String position,String phone,String classname,String address){
         tv_item_name.setText(name);
-        tv_item_chiwei.setText(chiwei);
+        tv_item_chiwei.setText(position);
+        if (position.equals("在线")||position.equals("行驶")) {
+            colorInt = context.getResources().getColor(R.color.green);
+        } else if (position.equals("离线")) {
+            colorInt = context.getResources().getColor(R.color.red);
+        }else {
+            colorInt = context.getResources().getColor(R.color.gray);
+        }
+        tv_item_chiwei.setTextColor(colorInt);
         tv_item_phonename.setText(phone);
         tv_item_classname.setText(classname);
         tv_item_addressname.setText(address);

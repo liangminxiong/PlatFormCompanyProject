@@ -15,6 +15,7 @@ import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -66,6 +67,7 @@ import com.yuefeng.features.ui.fragment.QuestionListFragment;
 import com.yuefeng.features.ui.fragment.VehicleListFragment;
 import com.yuefeng.ui.base.fragment.TabItemInfo;
 import com.yuefeng.utils.BdLocationUtil;
+import com.yuefeng.utils.LocationUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -75,6 +77,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -85,7 +88,7 @@ import io.reactivex.functions.Consumer;
 /*作业监控*/
 
 public class JobMonitoringActivity extends BaseActivity implements
-        TabLayout.OnTabSelectedListener, JobMoniroringContract.View {
+        TabLayout.OnTabSelectedListener, JobMoniroringContract.View, LocationUtils.OnResultMapListener {
 
     @BindView(R.id.iv_back)
     RelativeLayout iv_back;
@@ -100,7 +103,7 @@ public class JobMonitoringActivity extends BaseActivity implements
     @BindView(R.id.ll_tab)
     LinearLayout ll_tab;
     @BindView(R.id.ll_root)
-    LinearLayout ll_root;
+    LinearLayoutCompat ll_root;
     @BindView(R.id.mapview)
     TextureMapView mapview;
     @BindView(R.id.iv_isvisibility)
@@ -158,6 +161,8 @@ public class JobMonitoringActivity extends BaseActivity implements
     private SucessCacheSureDialog successDialog;
     private ShowPersonalpop phototpop;
 
+    private LocationUtils mLocationUtils;
+
     @Override
     protected int getContentViewResId() {
         return R.layout.activity_jobmonitoring;
@@ -188,6 +193,14 @@ public class JobMonitoringActivity extends BaseActivity implements
 
         viewPager.getParent().requestDisallowInterceptTouchEvent(true);
         geoCoder = GeoCoder.newInstance();
+
+        // 创建定位管理信息对象
+        mLocationUtils = new LocationUtils(getApplicationContext());
+//         开启定位
+        mLocationUtils.startLocation();
+        mLocationUtils.registerOnResult(this);
+
+
     }
 
     @SuppressLint("InflateParams")
@@ -195,11 +208,14 @@ public class JobMonitoringActivity extends BaseActivity implements
         //设置TabLayout点击事件
         tabLayout.addOnTabSelectedListener(this);
         tabItemInfos = new ArrayList<>();
-        tabItemInfoA = new TabItemInfo(new PersonalFragment(), R.drawable.tab_button_selector, R.string.personal);
+        PersonalFragment personalFragment = new PersonalFragment();
+        tabItemInfoA = new TabItemInfo(personalFragment, R.drawable.tab_button_selector, R.string.personal);
         tabItemInfos.add(tabItemInfoA);
-        tabItemInfoB = new TabItemInfo(new VehicleListFragment(), R.drawable.tab_button_selector, R.string.vehicle);
+        VehicleListFragment vehicleListFragment = new VehicleListFragment();
+        tabItemInfoB = new TabItemInfo(vehicleListFragment, R.drawable.tab_button_selector, R.string.vehicle);
         tabItemInfos.add(tabItemInfoB);
-        tabItemInfoC = new TabItemInfo(new QuestionListFragment(), R.drawable.tab_button_selector, R.string.problem);
+        QuestionListFragment questionListFragment = new QuestionListFragment();
+        tabItemInfoC = new TabItemInfo(questionListFragment, R.drawable.tab_button_selector, R.string.problem);
         tabItemInfos.add(tabItemInfoC);
 
         viewPagerAdapter = new MyJobViewPagerAdapter(getSupportFragmentManager(), tabItemInfos, JobMonitoringActivity.this);
@@ -307,11 +323,11 @@ public class JobMonitoringActivity extends BaseActivity implements
     private void showViewPagerVisibilty() {
         if (isGoneOrVisibility) {
             viewPager.setVisibility(View.VISIBLE);
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.down);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.up);
             iv_isvisibility.setImageBitmap(bitmap);
             isGoneOrVisibility = false;
         } else {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.up);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.down);
             iv_isvisibility.setImageBitmap(bitmap);
             isGoneOrVisibility = true;
             viewPager.setVisibility(View.GONE);
@@ -372,7 +388,7 @@ public class JobMonitoringActivity extends BaseActivity implements
     }
 
     /*选中人员*/
-    private void showPersonal(PersonalinfoListBean personalinfoListBean, boolean single) {
+    private void showPersonal(final PersonalinfoListBean personalinfoListBean, boolean single) {
         if (single) {
             if (baiduMap != null) {
                 baiduMap.clear();
@@ -381,63 +397,78 @@ public class JobMonitoringActivity extends BaseActivity implements
             isFirstLoc = true;
             showDialogPersonal(personalinfoListBean);
         }
+        showLoadingDialog("请稍等...");
 
-        String latitude = personalinfoListBean.getLatitude();
-        String longitude = personalinfoListBean.getLongitude();
-        if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
-            LatLng latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-            // 构建MarkerOption，用于在地图上添加Marker
-            ooA = new MarkerOptions().icon(worker);
-            ooA.position(latLng);
-            mMarker = null;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String latitude = personalinfoListBean.getLatitude();
+                String longitude = personalinfoListBean.getLongitude();
+                if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
+                    LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
+                    // 构建MarkerOption，用于在地图上添加Marker
+                    ooA = new MarkerOptions().icon(worker);
+                    ooA.position(latLng);
+                    mMarker = null;
 //            mMarker = (Marker) (baiduMap.addOverlay(ooA));
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("personalList", (Serializable) (personalinfoListBean));
-            ooA.extraInfo(bundle);
-            mMarker = (Marker) (baiduMap.addOverlay(ooA));
-            mMarker.setTitle("worker");
-            mks.add(mMarker);
-            if (isFirstLoc) {
-                isFirstLoc = false;
-                BdLocationUtil.MoveMapToCenter(baiduMap, new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)), 16);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("personalList", (Serializable) (personalinfoListBean));
+                    ooA.extraInfo(bundle);
+                    mMarker = (Marker) (baiduMap.addOverlay(ooA));
+                    mMarker.setTitle("worker");
+                    mks.add(mMarker);
+                    if (isFirstLoc) {
+                        isFirstLoc = false;
+                        BdLocationUtil.MoveMapToCenter(baiduMap, new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)), 16);
+                    }
+                }
             }
-        }
+        }).start();
+
+        dismissLoadingDialog();
     }
 
     /*选中车辆*/
-    private void showVehicle(VehicleinfoListBean vehicleinfoListBean, boolean single) {
+    private void showVehicle(final VehicleinfoListBean vehicleinfoListBean, boolean single) {
         if (single) {
+            showVehicleDialog(vehicleinfoListBean);
             if (baiduMap != null) {
                 baiduMap.clear();
                 mks.clear();
             }
             isFirstLoc = true;
-            showDialogWhat(vehicleinfoListBean);
         }
-        String latitude = vehicleinfoListBean.getLatitude();
-        String longitude = vehicleinfoListBean.getLongitude();
-        if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
-            LatLng latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+        showLoadingDialog("请稍等...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String latitude = vehicleinfoListBean.getLatitude();
+                String longitude = vehicleinfoListBean.getLongitude();
+                if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
+                    LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
 
-            ooA = new MarkerOptions().icon(vehicle);
-            ooA.position(latLng);
-            mMarker = null;
+                    ooA = new MarkerOptions().icon(vehicle);
+                    ooA.position(latLng);
+                    mMarker = null;
 //            mMarker = (Marker) (baiduMap.addOverlay(ooA));
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("vehicleList", (Serializable) (vehicleinfoListBean));
-            ooA.extraInfo(bundle);
-            mMarker = (Marker) (baiduMap.addOverlay(ooA));
-            mMarker.setTitle("vehicle");
-            mks.add(mMarker);
-            if (isFirstLoc) {
-                isFirstLoc = false;
-                BdLocationUtil.MoveMapToCenter(baiduMap, new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)), 16);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("vehicleList", (Serializable) (vehicleinfoListBean));
+                    ooA.extraInfo(bundle);
+                    mMarker = (Marker) (baiduMap.addOverlay(ooA));
+                    mMarker.setTitle("vehicle");
+                    mks.add(mMarker);
+                    if (isFirstLoc) {
+                        isFirstLoc = false;
+                        BdLocationUtil.MoveMapToCenter(baiduMap, new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)), 16);
+                    }
+                }
             }
-        }
+        }).start();
+        dismissLoadingDialog();
     }
 
     /*选中问题*/
-    private void showProblem(QuestionListBean questionListBean, boolean single) {
+    private void showProblem(final QuestionListBean questionListBean, boolean single) {
         if (single) {
             if (baiduMap != null) {
                 baiduMap.clear();
@@ -446,26 +477,34 @@ public class JobMonitoringActivity extends BaseActivity implements
             isFirstLoc = true;
             showDialogProblem(questionListBean);
         }
-        String latitude = questionListBean.getLatitude();
-        String longitude = questionListBean.getLongitude();
-        LogUtils.d("===========+++ " + latitude + " +++ " + longitude);
-        if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
-            LatLng latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-            ooA = new MarkerOptions().icon(problem);
-            ooA.position(latLng);
-            mMarker = null;
+        showLoadingDialog("请稍等...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                String latitude = questionListBean.getLatitude();
+                String longitude = questionListBean.getLongitude();
+                if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
+                    LatLng latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+                    ooA = new MarkerOptions().icon(problem);
+                    ooA.position(latLng);
+                    mMarker = null;
 //            mMarker = (Marker) (baiduMap.addOverlay(ooA));
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("questionList", (Serializable) (questionListBean));
-            ooA.extraInfo(bundle);
-            mMarker = (Marker) (baiduMap.addOverlay(ooA));
-            mMarker.setTitle("problem");
-            mks.add(mMarker);
-            if (isFirstLoc) {
-                isFirstLoc = false;
-                BdLocationUtil.MoveMapToCenter(baiduMap, new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)), 16);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("questionList", (Serializable) (questionListBean));
+                    ooA.extraInfo(bundle);
+                    mMarker = (Marker) (baiduMap.addOverlay(ooA));
+                    mMarker.setTitle("problem");
+                    mks.add(mMarker);
+                    if (isFirstLoc) {
+                        isFirstLoc = false;
+                        BdLocationUtil.MoveMapToCenter(baiduMap, new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)), 16);
+                    }
+                }
             }
-        }
+        }).start();
+        dismissLoadingDialog();
+
     }
 
     /*获取数量*/
@@ -534,6 +573,9 @@ public class JobMonitoringActivity extends BaseActivity implements
         }
         tabItemInfos = null;
         tabLayout = null;
+        if (mLocationUtils != null) {
+            mLocationUtils.onDestory();
+        }
     }
 
 
@@ -599,7 +641,7 @@ public class JobMonitoringActivity extends BaseActivity implements
             } else if (title.equals("vehicle")) {
                 vehicleList = (VehicleinfoListBean) marker.getExtraInfo().getSerializable("vehicleList");
 
-                showDialogWhat(vehicleList);
+                showVehicleDialog(vehicleList);
             } else if (title.equals("problem")) {
                 questionList = (QuestionListBean) marker.getExtraInfo().getSerializable("questionList");
 
@@ -621,14 +663,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         longitude = questionList.getLongitude();
         time = questionList.getUploadtime();
         type = questionList.getType();
-        String address = "";
-        if (!TextUtils.isEmpty(latitude)) {
-            latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-            address = BdLocationUtil.returnAddress(geoCoder, latLng);
-        } else {
-            address = "暂无地址";
-        }
-
+        String address = questionList.getAddress();
         if (state.contains("1")) {
             state = getString(R.string.pending_txt);//待处理
             colorInt = JobMonitoringActivity.this.getResources().getColor(R.color.red_hand_color);
@@ -637,10 +672,10 @@ public class JobMonitoringActivity extends BaseActivity implements
             colorInt = JobMonitoringActivity.this.getResources().getColor(R.color.red_hand_color);
         } else if (state.contains("3")) {
             state = getString(R.string.toclosed_txt);//待关闭
-            colorInt = JobMonitoringActivity.this.getResources().getColor(R.color.list_divider);
+            colorInt = JobMonitoringActivity.this.getResources().getColor(R.color.gray_hand_txt);
         } else {
             state = getString(R.string.closed_txt);//已关闭
-            colorInt = JobMonitoringActivity.this.getResources().getColor(R.color.list_divider);
+            colorInt = JobMonitoringActivity.this.getResources().getColor(R.color.gray_hand_txt);
         }
 
         ShowProblempop phototpop = new ShowProblempop(JobMonitoringActivity.this);
@@ -649,7 +684,7 @@ public class JobMonitoringActivity extends BaseActivity implements
     }
 
     /*弹底车辆部框*/
-    private void showDialogWhat(VehicleinfoListBean vehicleList) {
+    private void showVehicleDialog(VehicleinfoListBean vehicleList) {
         String address = "";
         name = vehicleList.getRegistrationNO();
         position = vehicleList.getStateType();
@@ -657,7 +692,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         if (position.contains("1")) {
             position = "在线";
         } else if (position.contains("2")) {
-            position = "行驶";
+            position = "行驶中";
         } else {
             position = "离线";
         }
@@ -666,22 +701,31 @@ public class JobMonitoringActivity extends BaseActivity implements
         className = vehicleList.getPid();
         latitude = vehicleList.getLatitude();
         longitude = vehicleList.getLongitude();
+
         if (!TextUtils.isEmpty(latitude)) {
             latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-            LogUtils.d("+++++++++" + latLng);
-            address = BdLocationUtil.returnAddress(geoCoder, latLng);
+//            address = BdLocationUtil.returnAddress(geoCoder, latLng);
+            if (mLocationUtils == null) {
+                // 创建定位管理信息对象
+                mLocationUtils = new LocationUtils(getApplicationContext());
+//         开启定位
+                mLocationUtils.startLocation();
+                mLocationUtils.registerOnResult(this);
+            }
+            mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
+            mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
         } else {
             address = "暂无地址";
         }
-        if (TextUtils.isEmpty(address)) {
-            address = "检索当前地址失败!";
-        }
+//        if (TextUtils.isEmpty(address)) {
+//            address = "检索当前地址失败!";
+//        }
         endAddress = address;
         distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
         terminalNO = vehicleList.getTerminalNO();
         terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
         phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
-        phototpop.setTextContent(name, position, tel, className, address);
+        phototpop.setTextContent(name, position, tel, className, "加载中");
         phototpop.setTakePhotoTouch(new ShowPersonalpop.TakePhotoTouch() {
             @Override
             public void takeTrack() {//轨迹
@@ -709,21 +753,30 @@ public class JobMonitoringActivity extends BaseActivity implements
         longitude = personalList.getLongitude();
         if (!TextUtils.isEmpty(latitude)) {
             latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-            address = BdLocationUtil.returnAddress(geoCoder, latLng);
+//            address = BdLocationUtil.returnAddress(geoCoder, latLng);
+            if (mLocationUtils == null) {
+                // 创建定位管理信息对象
+                mLocationUtils = new LocationUtils(getApplicationContext());
+//         开启定位
+                mLocationUtils.startLocation();
+                mLocationUtils.registerOnResult(this);
+            }
+            mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
+            mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
         } else {
             address = "暂无地址";
         }
-        if (TextUtils.isEmpty(address)) {
-            address = "检索当前地址失败!";
-        }
-        endAddress = address;
+//        if (TextUtils.isEmpty(address)) {
+//            address = "检索当前地址失败!";
+//        }
+//        endAddress = address;
         terminalNO = personalList.getTerminalNO();
         terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
 
         distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
 
         phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
-        phototpop.setTextContent(name, position, tel, className, address);
+        phototpop.setTextContent(name, position, tel, className, "加载中");
         phototpop.setTakePhotoTouch(new ShowPersonalpop.TakePhotoTouch() {
             @Override
             public void takeTrack() {//轨迹
@@ -738,7 +791,34 @@ public class JobMonitoringActivity extends BaseActivity implements
         phototpop.showTakePop(ll_root);
     }
 
-    /*轨迹*/
+
+    /**
+     * 反地理编码执行回传
+     * * @param map
+     */
+    @Override
+    public void onReverseGeoCodeResult(Map<String, Object> map) {
+        String address = (String) map.get("address");
+        LogUtils.d("getAddress111" + address);
+        if (TextUtils.isEmpty(address)) {
+            address = "未知地址";
+        }
+        endAddress = address;
+        if (phototpop != null) {
+            phototpop.setTextContent(name, position, tel, className, address);
+        }
+    }
+
+    /**
+     * 地理编码执行回传
+     * * @param map
+     */
+    @Override
+    public void onGeoCodeResult(Map<String, Object> map) {
+
+    }
+
+    /*跳转轨迹*/
     private void intoTrack(String terminalNO, String type) {
 //        terminalNO
         Intent intent = new Intent();
@@ -751,6 +831,8 @@ public class JobMonitoringActivity extends BaseActivity implements
     }
 
 
+    /*=====================begin 导航 =======================*/
+
     /*导航追车*/
     private void initNavicar(double distance) {
 
@@ -760,6 +842,15 @@ public class JobMonitoringActivity extends BaseActivity implements
             showSuccessToast("距离太短无法导航");
             return;
         }
+
+//        BNRoutePlanNode sNode = new BNRoutePlanNode(mlatLng.longitude, mlatLng.latitude, beginAddress, beginAddress, coType);
+//        BNRoutePlanNode eNode = new BNRoutePlanNode(latLng.longitude, latLng.latitude, endAddress, endAddress, coType);
+
+        if (TextUtils.isEmpty(endAddress)) {
+
+            return;
+        }
+
         if (initDirs()) {
             initNavi();
         }
@@ -792,8 +883,6 @@ public class JobMonitoringActivity extends BaseActivity implements
 
     }
 
-
-    /*=====================begin 导航 =======================*/
 
     private void initTTS() {
         // 使用内置TTS

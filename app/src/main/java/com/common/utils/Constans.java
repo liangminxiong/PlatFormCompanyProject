@@ -19,6 +19,7 @@ public class Constans {
     public static final int HOMEDASUCCESS = 103;//banner,homedata请求数据成功，取消loading
     public static final int BDLOCATION_TIME = 5000;
     public static final String COOKIE_PREF = "cookie_pref";//cookie保存
+    public static final String HAVE_USER_DATAS = "have_user_datas";//数据
     /*
      * 登录注册用户相关10-20
      * */
@@ -27,7 +28,8 @@ public class Constans {
     public static final int LOGIN = 11;//登录成功
     public static final int RELOGIN = 13;//重新登录
     public static final int USERERROR = 12;//用户相关错误
-    public static final int USERERRORS = 14;//注册相关错误
+    public static final int UPDATAAPP_SUCCESS = 14;//获取更新信息成功
+    public static final int UPDATAAPP_ERROR = 15;//获取更新信息失败
     public static final String USERNAME = "user_name";//存储用户名
     public static final String USERPASSWORD = "user_pwd";//存储用户名密码
     public static final String ANDROID = "android";
@@ -108,7 +110,7 @@ public class Constans {
     public static final String APP_FOLDER_NAME = "BNSDKSimpleDemo";
     public static final String ROUTE_PLAN_NODE = "routePlanNode";
     public static final int NOTIFICATION_BASE_NUMBER = 110;
-//    public static final String BAIDU_APPID = "11959239";
+    //    public static final String BAIDU_APPID = "11959239";
     public static final String BAIDU_APPID = "14268406";
 
 

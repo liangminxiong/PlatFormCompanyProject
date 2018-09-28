@@ -17,21 +17,20 @@
             android:id="@+id/tv_item_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:background="@color/white"
-            android:gravity="center_vertical|right"
+            android:gravity="center"
             android:paddingEnd="@dimen/dp_10"
             android:singleLine="true"
-            android:text="测试测试测试"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_16"
+            android:textSize="@dimen/sp_15"
             tools:ignore="RtlHardcoded,RtlSymmetry"/>
 
         <TextView
             android:id="@+id/tv_item_chiwei"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1.5"
             android:background="@color/white"
             android:gravity="center_vertical"
             android:textColor="@color/gray"
@@ -47,7 +46,8 @@
             android:text="查看轨迹"
             android:textColor="@color/gray"
             android:textSize="@dimen/sp_13"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            tools:ignore="HardcodedText"/>
 
     </LinearLayout>
 

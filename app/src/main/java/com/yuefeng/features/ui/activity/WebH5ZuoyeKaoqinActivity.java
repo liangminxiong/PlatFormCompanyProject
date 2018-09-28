@@ -13,6 +13,7 @@ import android.view.Window;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -21,6 +22,7 @@ import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StatusBarUtil;
 import com.common.view.webview.H5Control;
@@ -61,7 +63,7 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
 
         view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-        StatusBarUtil.setStatusBarColorAlpha(mActivity, coloeWhite,coloeWhite);
+        StatusBarUtil.setStatusBarColorAlpha(mActivity, coloeWhite, coloeWhite);
         requestPermissions();
 
     }
@@ -89,37 +91,30 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
     /*
      * 动态添加webview，解决oom
      * */
+    @SuppressLint("JavascriptInterface")
     private void initWebview() {
         final String pid = PreferencesUtils.getString(this, Constans.ORGID, "");
         final String userid = PreferencesUtils.getString(this, Constans.ID, "");
 
         mLocationClient = new LocationClient(getApplicationContext());
-
-        webView.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url) {
-                if (url.contains("goback")) {
-                    EventBus.getDefault().post(new CommonEvent(Constans.GOBACK, url));
-                }
-                super.onPageFinished(view, url);
-            }
-
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-            }
-        });
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setGeolocationEnabled(true);//开启定位
+        webView.addJavascriptInterface(WebH5ZuoyeKaoqinActivity.this, "javascript");
 
         webView.setWebChromeClient(new WebChromeClient() {
             // 处理javascript中的alert
             public boolean onJsAlert(WebView view, String url, String message,
                                      final JsResult result) {
+                result.cancel();
                 return true;
             }
 
-            // 处理javascript中的confirm
+           /* // 处理javascript中的confirm
             public boolean onJsConfirm(WebView view, String url,
                                        String message, final JsResult result) {
                 AlertDialog.Builder b = new AlertDialog.Builder(WebH5ZuoyeKaoqinActivity.this);
-                b.setTitle("当前网页想使用您的的位置");
+                b.setTitle("是否允许当前网页定位?");
                 b.setMessage(message);
                 b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -130,13 +125,26 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
                 b.setCancelable(false);
                 b.create().show();
                 return true;
-            }
+            }*/
 
             // 处理定位权限请求
             @Override
-            public void onGeolocationPermissionsShowPrompt(String origin,
-                                                           GeolocationPermissions.Callback callback) {
-                callback.invoke(origin, true, false);
+            public void onGeolocationPermissionsShowPrompt(final String origin,
+                                                           final GeolocationPermissions.Callback callback) {
+
+                AlertDialog.Builder b = new AlertDialog.Builder(WebH5ZuoyeKaoqinActivity.this);
+                b.setTitle("是否允许当前网页定位?");
+//                b.setMessage(message);
+                b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        result.confirm();
+                        callback.invoke(origin, true, false);
+                    }
+                });
+                b.setCancelable(false);
+                b.create().show();
+
                 super.onGeolocationPermissionsShowPrompt(origin, callback);
             }
 
@@ -152,15 +160,33 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
                 super.onReceivedTitle(view, title);
             }
         });
+
+        webView.setWebViewClient(new WebViewClient() {
+            public void onPageFinished(WebView view, String url) {
+                LogUtils.d("=========webwiew====22====" + url);
+                if (url.contains("goback")) {
+                    EventBus.getDefault().post(new CommonEvent(Constans.GOBACK, url));
+                }
+                super.onPageFinished(view, url);
+            }
+
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                LogUtils.d("=========webwiew========" + url);
+                super.onPageStarted(view, url, favicon);
+            }
+
+        });
+
         webView.post(new Runnable() {
             @Override
             public void run() {
                 webView.loadUrl(ApiService.H5URL_DAKA + "userid=" + userid + "&pid=" + pid);
             }
         });
-
+// webView.loadUrl("javascript:" + "window.alert('Js injection success')" );
         mLocationClient.start();
         mLocationClient.enableAssistantLocation(webView);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

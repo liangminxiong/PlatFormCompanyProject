@@ -4,6 +4,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -16,6 +17,7 @@ import com.yuefeng.features.event.JobMonitoringEvent;
 import com.yuefeng.features.event.JobMonitoringFragmentEvent;
 import com.yuefeng.features.modle.GetJobMonitotingMsgBean;
 import com.yuefeng.features.modle.PersonalinfoListBean;
+import com.yuefeng.utils.LocationUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,21 +25,28 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 /*人员*/
-public class PersonalFragment extends BaseFragment {
+public class PersonalFragment extends BaseFragment implements LocationUtils.OnResultMapListener {
 
     private static final String TAG = "tag";
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     private List<PersonalinfoListBean> listData = new ArrayList<>();
     private PersonalAdapter adapter;
-    private String address = "";
 
+    private LocationUtils mLocationUtils;
+    private List<PersonalinfoListBean> list = null;
+    private String latitude;
+    private String longitude;
+    private List<String> addressList = new ArrayList<>();
+    private int lenght;
+    private int len;
 
     @Override
     protected int getLayoutId() {
@@ -52,6 +61,12 @@ public class PersonalFragment extends BaseFragment {
         }
         recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
         initRecycler();
+        addressList.clear();
+        // 创建定位管理信息对象
+        mLocationUtils = new LocationUtils(getActivity());
+//         开启定位
+        mLocationUtils.startLocation();
+        mLocationUtils.registerOnResult(this);
     }
 
     private void initRecycler() {
@@ -91,7 +106,6 @@ public class PersonalFragment extends BaseFragment {
     public void disposeJobMonitoringEvent(JobMonitoringEvent event) {
         switch (event.getWhat()) {
             case Constans.JOB_SSUCESS://展示
-                LogUtils.d("===========aaaaaaaaaaaaaa");
                 GetJobMonitotingMsgBean bean = (GetJobMonitotingMsgBean) event.getData();
                 if (bean != null) {
                     showAdapterDatasList(bean);
@@ -110,18 +124,68 @@ public class PersonalFragment extends BaseFragment {
     /*展示列表数据*/
     private void showAdapterDatasList(GetJobMonitotingMsgBean beanMsg) {
 
-        List<PersonalinfoListBean> list = beanMsg.getPersonalinfoList();
+        list = beanMsg.getPersonalinfoList();
+        lenght = list.size();
+        for (int i = 0; i < lenght; i++) {
+            latitude = list.get(i).getLatitude();
+            longitude = list.get(i).getLongitude();
+            if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude)) {
+                if (mLocationUtils == null) {
+                    mLocationUtils = new LocationUtils(getActivity());
+//         开启定位
+                    mLocationUtils.startLocation();
+                    mLocationUtils.registerOnResult(this);
+                }
+                if (i == 0) {
+                    mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
+                }
+                mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
+            }
+        }
 
-        if (list.size() != 0) {
+        if (list.size() > 0) {
+            listData.clear();
+            listData.addAll(list);
+            if (adapter != null) {
+                adapter.setNewData(listData);
+            }
+        }
+    }
+
+    @Override
+    public void onReverseGeoCodeResult(Map<String, Object> map) {
+        String address = (String) map.get("address");
+        assert addressList != null;
+        if (!TextUtils.isEmpty(address)) {
+            addressList.add(address);
+        }
+        len = addressList.size();
+
+        assert list != null;
+        LogUtils.d("getAddress111" + address + "  +++  " + len + " ++ " + lenght);
+
+        if (list.size() != 0 && len > 0) {
+            for (int i = 0; i < len; i++) {
+                list.get(i).setAddress(addressList.get(i));
+            }
             listData.clear();
             listData.addAll(list);
             adapter.setNewData(listData);
         }
+
+    }
+
+    @Override
+    public void onGeoCodeResult(Map<String, Object> map) {
+
     }
 
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+        if (mLocationUtils != null) {
+            mLocationUtils.onDestory();
+        }
     }
 }

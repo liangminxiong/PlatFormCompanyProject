@@ -11,7 +11,7 @@ import android.support.v4.content.ContextCompat;
  * Created by Administrator on 2018/7/4.
  */
 
-public class LocationUtils {
+public class LocationPermissionUtils {
 
     public static boolean isLocationPermissionGranted(@NonNull Context context) {
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED

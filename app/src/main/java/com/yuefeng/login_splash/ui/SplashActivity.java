@@ -55,9 +55,14 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void initCountDown() {
-        String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
-        if (!TextUtils.isEmpty(string)) {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
+        if (isHaveDatas) {
+            String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
+            if (!TextUtils.isEmpty(string)) {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            } else {
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            }
         } else {
             startActivity(new Intent(SplashActivity.this, LoginActivity.class));
         }

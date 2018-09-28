@@ -1,5 +1,7 @@
 package com.yuefeng.login_splash.ui;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
@@ -13,7 +15,11 @@ import android.widget.TextView;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
+import com.luck.picture.lib.permissions.RxPermissions;
+import com.lzy.okhttputils.OkHttpUtils;
+import com.lzy.okhttputils.callback.StringCallback;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.login_splash.contract.LoginContract;
 import com.yuefeng.login_splash.event.LoginEvent;
@@ -24,6 +30,12 @@ import com.yuefeng.ui.MainActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import io.reactivex.functions.Consumer;
+import okhttp3.Call;
+import okhttp3.Response;
 
 
 public class LoginActivity extends BaseActivity implements LoginContract.View {
@@ -32,13 +44,16 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     private TextView loginBt;
     private LoginPresenter loginPresenter;
     private LoginDataBean loginInfo;
-//    private AlertDialog alertDilaog;
+    //    private AlertDialog alertDilaog;
     private String userNames;
     private String passwords;
     private Button btn_eye_type;
     private CheckBox cb_pwd;
     private boolean cheche_pwd = false;
     private boolean isRemberPwd;
+    private String versionName;
+    private String versionCode;
+    private String description;
 
     @Subscribe
     @Override
@@ -92,9 +107,86 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         });
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void initData() {
 
+        RxPermissions rxPermission = new RxPermissions(LoginActivity.this);
+        //请求权限全部结果 Manifest.permission.CAMERA,
+        rxPermission.request(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean granted) throws Exception {
+                        if (!granted) {
+                            showSuccessToast("App未能获取全部需要的相关权限，部分功能可能不能正常使用.");
+                        }
+                        //不管是否获取全部权限，进入主页面
+//                        updataApp();
+                    }
+                });
+
+    }
+
+    /*更新*/
+    private void updataApp() {
+
+        OkHttpUtils
+                .get(ApiService.sersionPath)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(String s, Call call, Response response) {
+                        String[] strings = null;
+                        String json = s.toString();
+                        String[] split = json.split("\\[");
+                        if (split.length > 1) {
+                            strings = split[1].split("\\]");
+                        }
+                        showUpdataAPPInfos(strings[0]);
+                    }
+
+                    @Override
+                    public void onError(Call call, Response response, Exception e) {
+                        super.onError(call, response, e);
+                    }
+                });
+    }
+
+    /*更新信息*/
+    private void showUpdataAPPInfos(String json) {
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(json);
+            versionName = jsonObj.getString("VerName");
+            versionCode = jsonObj.getString("VerCode");
+            description = jsonObj.getString("Description");
+            LogUtils.d("=======+++====" + versionCode + "+++ " + versionName + "\n" + description);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        versionCode = versionCode.isEmpty() ? "" : versionCode;
+        versionName = versionName.isEmpty() ? "" : versionName;
+        description = description.isEmpty() ? "" : "有新版本更新啦";
+//        if (description.contains(",")) {
+//            String[] split = description.split(",");
+//            for (int i = 0; i < split.length; i++) {
+//                if (i == (split.length - 1)) {
+//                    description = description + split[i];
+//                } else {
+//                    description = description + split[i] + "\n";
+//                }
+//            }
+//        }
+//
+//        UpdateAppUtils.from(this)
+//                .serverVersionCode(Integer.valueOf(versionCode))
+//                .serverVersionName(versionName)
+//                .apkPath(ApiService.apkPath)
+//                .updateInfo("")
+//                .showNotification(true)
+//                .needFitAndroidN(true)
+//                .update();
     }
 
     private void remenberPwd() {
@@ -147,7 +239,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 if (cheche_pwd) {
                     PreferencesUtils.putString(LoginActivity.this, Constans.USERPASSWORD, loginInfo.getPassword());
                 }
-
+                PreferencesUtils.putBoolean(LoginActivity.this, Constans.HAVE_USER_DATAS, true);
                 PreferencesUtils.putString(LoginActivity.this, Constans.ORGID, loginInfo.getOrgId());
                 PreferencesUtils.putString(LoginActivity.this, Constans.ID, loginInfo.getId());
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.ISREG, loginInfo.isIsreg());
@@ -159,6 +251,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 break;
         }
     }
+
 
     @Override
     protected int getContentViewResId() {

@@ -30,6 +30,7 @@ import com.common.view.dialog.SucessCacheSureDialog;
 import com.common.view.dialog.TakePhototpop;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.login_splash.ui.LoginActivity;
+import com.yuefeng.ui.MyApplication;
 import com.yuefeng.usercenter.ui.view.DeleteCacheDialog;
 import com.yuefeng.usercenter.ui.view.UserInfoItemView;
 
@@ -128,7 +129,7 @@ public class UserInfoFragment extends BaseMvpFragment {
                 break;
             case R.id.ui_collection:
                 showSuccessToast("待开发");
-//                startActivity(new Intent(getContext(), CollectListActivity.class));
+//                startActivity(new Intent(getContext(), TestActivity.class));
 
                 break;
             case R.id.ui_author:
@@ -151,8 +152,9 @@ public class UserInfoFragment extends BaseMvpFragment {
             @Override
             public void sure() {
                 sucessCacheSureDialog.dismiss();
+                PreferencesUtils.putBoolean(MyApplication.getContext(), Constans.HAVE_USER_DATAS, false);
+                PreferencesUtils.putString(MyApplication.getContext(), Constans.COOKIE_PREF, "");
                 startActivity(new Intent(getContext(), LoginActivity.class));
-                PreferencesUtils.putString(getActivity(), Constans.COOKIE_PREF, "");
                 AppManager.getAppManager().removedAlllActivity(getActivity());
             }
 

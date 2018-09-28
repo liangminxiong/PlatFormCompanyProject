@@ -1,5 +1,7 @@
 package com.common.network;
 
+import com.common.utils.LogUtils;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -68,6 +70,7 @@ public class ApiRetrofit {
                 .client(okHttpClient)
                 .baseUrl(baseUrl)
                 .build();
+        LogUtils.d("=======baseUrl======" + baseUrl);
     }
 
     /*
