@@ -144,7 +144,6 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
     }
 
     private void benginGetAddress(int count, boolean isFirst) {
-        LogUtils.d("onReverseGeo 11= " + count);
         if (count > (lenght - 1)) {
             return;
         }
@@ -171,7 +170,7 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
         String address = (String) map.get("address");
         LogUtils.d("onReverseGeo 00= " + address);
         if (TextUtils.isEmpty(address)) {
-            address = "检索当前地址失败!";
+            address = "暂无地址!";
         }
 
         if (lenght > 0 || adapter != null) {

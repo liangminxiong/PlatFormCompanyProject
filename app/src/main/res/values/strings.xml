@@ -55,4 +55,21 @@
     <string name="pickerview_hours">时</string>
     <string name="pickerview_minutes">分</string>
     <string name="pickerview_seconds">秒</string>
+    <string name="position_acquisition">地理信息采集</string>
+    <string name="begin_acqusition">开始采集</string>
+    <string name="select_newadd_type">请选择新增的标注类型</string>
+    <string name="jichusheshi">基础设施</string>
+    <string name="community_park">区域(小区、公园)</string>
+    <string name="carry_on">继续</string>
+    <string name="finish_txt">结束</string>
+    <string name="caiji_time">持续采集时间</string>
+    <string name="stop">暂停</string>
+    <string name="type">类型</string>
+    <string name="name">名称</string>
+    <string name="photo">照片</string>
+    <string name="release">发布</string>
+    <string name="video_list">视频监控列表</string>
+    <string name="video">视频监控</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

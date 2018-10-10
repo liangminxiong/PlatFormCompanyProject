@@ -390,7 +390,6 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureConfig.CHOOSE_REQUEST:
-
                     showPhotos(data);
                     break;
             }
@@ -407,7 +406,6 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
         // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
         // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
         // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
-        LogUtils.d(selectList.size() + "================" + selectList.get(0).getCompressPath());
         if (selectList.size() <= 0) {
             return;
         }
@@ -419,7 +417,6 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
                 showLoadingDialog(getString(R.string.photo_processing));
             }
         });
-        LogUtils.d("===========" + address);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -433,7 +430,6 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
             }
         });
         if (!TextUtils.isEmpty(mImagesArrays)) {
-            LogUtils.d("===========" + mImagesArrays.length());
         }
     }
 

@@ -1,4 +1,4 @@
-package com.yuefeng.features.ui.activity;
+package com.yuefeng.features.ui.activity.track;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;

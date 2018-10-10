@@ -38,10 +38,12 @@ public class AllProblemPresenter extends BasePresenterImpl<QualityGetFragmentCon
                 .subscribe(new HttpResultObserver<SubmitBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
+                        showLoadingDialog("认领中...");
                     }
 
                     @Override
                     protected void onSuccess(SubmitBean o) {
+                        dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
                                 EventBus.getDefault().postSticky(new AllProblemEvent(Constans.CLAIM_SUCESS, o.getMsg()));
@@ -55,6 +57,7 @@ public class AllProblemPresenter extends BasePresenterImpl<QualityGetFragmentCon
 
                     @Override
                     protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
                         EventBus.getDefault().postSticky(new AllProblemEvent(Constans.CLAIM_ERROR, e.getMsg()));
                     }
                 });

@@ -25,7 +25,6 @@ import com.common.utils.StatusBarUtil;
 import com.common.utils.TimeUtils;
 import com.common.view.dialog.SigninCacheSureDialog;
 import com.luck.picture.lib.permissions.RxPermissions;
-import com.yuefeng.book.ui.fragment.AddressbookFragment;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.ui.fragment.FeaturesFragment;
 import com.yuefeng.home.ui.fragment.HomeFragment;
@@ -120,6 +119,9 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
         });
         iv_back.setVisibility(View.INVISIBLE);
         tv_title.setText(features_name);
+        /*内存泄露检测*/
+//        RefWatcher refWatcher = MyApplication.getRefWatcher(this);//1
+//        refWatcher.watch(this);
     }
 
 
@@ -264,7 +266,7 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
         tabItemInfos.add(new TabItemInfo(new TackFragment(), R.drawable.search_button_selector, R.string.tab_tack_name));
         /*应用*/
         tabItemInfos.add(new TabItemInfo(new FeaturesFragment(), R.drawable.application_button_selector, R.string.tab_search_name));
-        tabItemInfos.add(new TabItemInfo(new AddressbookFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
+//        tabItemInfos.add(new TabItemInfo(new AddressbookFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
         tabItemInfos.add(new TabItemInfo(new UserInfoFragment(), R.drawable.my_button_selector, R.string.tab_mine_name));
 
         pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), tabItemInfos, mActivity);
@@ -287,8 +289,8 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
                     titleName = tack_name;
                 } else if (position == 2) {
                     titleName = features_name;
-                } else if (position == 3) {
-                    titleName = book_name;
+//                } else if (position == 3) {
+//                    titleName = book_name;
                 } else {
                     titleName = my_name;
                 }

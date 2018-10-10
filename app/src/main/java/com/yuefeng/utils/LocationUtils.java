@@ -138,8 +138,9 @@ public class LocationUtils implements MyLocationListener.OnLocationResultListene
             // 反地理编码查询结果回调函数
             // 将地理位置信息载入到集合中
             String address = result.getAddress();
+            LogUtils.d("getAddress111" + address);
             if (TextUtils.isEmpty(address)) {
-                address = "检索当前地址失败!";
+                address = "暂无地址!";
             }
             map.put("address", address);
             if (mOnResultMapListener != null) {

@@ -7,6 +7,7 @@ import com.yuefeng.features.modle.GetJobMonitotingBean;
 import com.yuefeng.features.modle.GetQuestionCountBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.features.modle.WheelPathBean;
+import com.yuefeng.features.modle.video.VideoEquipmentBean;
 import com.yuefeng.login_splash.model.LoginBean;
 
 import io.reactivex.Observable;
@@ -26,7 +27,8 @@ public interface ApiService {
 
     String INTERFACEACTION = "Interface.action";
     String MIA = "zgbd_voc/MobileInterface/" + INTERFACEACTION;
-
+    String VIDEO_IP = "120.78.217.251";
+    String VIDEO = "zgbd_fireControl/h5/getvideoequipment.action";
     String MIA_HW = "zgbd_hw/MobileInterface2/" + INTERFACEACTION;
 
     //服务器apk path,这里放了云平台的apk 作为测试
@@ -146,4 +148,10 @@ public interface ApiService {
             @Query("terminal") String terminal,
             @Query("startTime") String startTime,
             @Query("endTime") String endTime);
+
+    /*视频*/
+    @POST(VIDEO)
+    Observable<VideoEquipmentBean> getVideoList(
+            @Query("pid") String terminal,
+            @Query("type") String endTime);
 }

@@ -93,9 +93,11 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
+        <!---->
         <activity
             android:name="com.yuefeng.login_splash.ui.SplashActivity"
             android:theme="@style/FlashTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -125,9 +127,16 @@
         <!--作业考勤-->
         <activity android:name="com.yuefeng.features.ui.activity.WebH5ZuoyeKaoqinActivity"/>
         <!--轨迹-->
-        <activity android:name="com.yuefeng.features.ui.activity.TrackActivity"/>
+        <activity android:name="com.yuefeng.features.ui.activity.track.TrackActivity"/>
+        <!--历史轨迹-->
+        <activity android:name="com.yuefeng.features.ui.activity.track.HistoryTrackActivity"/>
         <!--诱导-->
         <activity android:name="com.yuefeng.features.ui.activity.nativ.DemoGuideActivity"/>
+        <!--定位采集-->
+        <activity android:name="com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity"/>
+        <!--视频监控-->
+        <activity android:name="com.yuefeng.features.ui.activity.video.VideoSytemListActivity"/>
+        <activity android:name="com.yuefeng.features.ui.activity.video.VideoCameraActivity"/>
         <!--更新-->
         <receiver
             android:name="com.common.updateapputils.util.UpdateAppReceiver"
@@ -150,7 +159,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
+            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
 
         <service
             android:name="com.baidu.location.f"

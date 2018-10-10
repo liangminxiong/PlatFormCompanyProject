@@ -1,7 +1,10 @@
 package com.yuefeng.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
 
@@ -13,6 +16,8 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.yuefeng.citySelector.db.DBManager;
 
@@ -25,11 +30,15 @@ import com.yuefeng.citySelector.db.DBManager;
 
 public class MyApplication extends Application {
 
+    @SuppressLint("StaticFieldLeak")
+    public static MyApplication instance;
     private static Context context;
     private static boolean isDebug = true;//true 玩Android flase 百度
     protected static Handler handler;
     protected static int mainThreadId;
     private DBManager dbHelper;
+
+    private RefWatcher refWatcher;
 
     public static boolean getIsDebug() {
         return isDebug;
@@ -46,6 +55,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         context = getApplicationContext();
         RxTool.init(this);
         ApiRetrofit.getApiRetrofit();
@@ -54,7 +64,34 @@ public class MyApplication extends Application {
         handler = new Handler();
         mainThreadId = android.os.Process.myTid();
         initThirdParty();
+
+        /*内存泄露*/
+//        refWatcher= setupLeakCanary();
     }
+
+    public static MyApplication getInstance() {
+        if (instance == null) {
+            synchronized (MyApplication.class) {
+                if (instance == null) {
+                    instance = new MyApplication();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private RefWatcher setupLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return RefWatcher.DISABLED;
+        }
+        return LeakCanary.install(this);
+    }
+
+    public static RefWatcher getRefWatcher(Context context) {
+        MyApplication leakApplication = (MyApplication) context.getApplicationContext();
+        return leakApplication.refWatcher;
+    }
+
 
     private void initThirdParty() {
         /*百度地图*/
@@ -107,5 +144,16 @@ public class MyApplication extends Application {
      */
     public static int getMainThreadId() {
         return mainThreadId;
+    }
+
+    /**
+     * 检测网络是否可用
+     *
+     * @return
+     */
+    public boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        return ni != null && ni.isConnectedOrConnecting();
     }
 }

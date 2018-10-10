@@ -134,7 +134,7 @@
                     android:background="@color/white"/>
 
                 <ImageView
-                    android:id="@+id/iv_operationkaoqin"
+                    android:id="@+id/iv_historytrack"
                     style="@style/iv_pading_10"
                     android:src="@drawable/lishiguiji"
                     tools:ignore="ContentDescription"/>
@@ -254,7 +254,7 @@
                     android:background="@color/white"/>
 
                 <ImageView
-                    android:id="@+id/iv_historytrack"
+                    android:id="@+id/iv_operationkaoqin"
                     style="@style/iv_pading_10"
                     android:src="@drawable/lishiguiji"
                     tools:ignore="ContentDescription"/>

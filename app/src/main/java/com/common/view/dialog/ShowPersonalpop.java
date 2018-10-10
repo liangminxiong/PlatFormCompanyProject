@@ -86,7 +86,7 @@ public class ShowPersonalpop extends PopupWindow {
     public void setTextContent(String name,String position,String phone,String classname,String address){
         tv_item_name.setText(name);
         tv_item_chiwei.setText(position);
-        if (position.equals("在线")||position.equals("行驶")) {
+        if (position.equals("在线")||position.equals("行驶中")) {
             colorInt = context.getResources().getColor(R.color.green);
         } else if (position.equals("离线")) {
             colorInt = context.getResources().getColor(R.color.red);

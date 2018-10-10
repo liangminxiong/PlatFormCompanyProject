@@ -24,7 +24,7 @@ public class VehicleListAdapter extends BaseItemDraggableAdapter<VehicleinfoList
         if (item != null && helper != null) {
             name = item.getRegistrationNO();
             name = TextUtils.isEmpty(name) ? " " : name;
-            address = TextUtils.isEmpty(item.getAddress()) ? "加载中..." : item.getAddress();
+            address = TextUtils.isEmpty(item.getAddress()) ? "暂无地址!" : item.getAddress();
             helper.setText(R.id.tv_item_name, name)
                     .setTextColor(R.id.tv_item_name, mContext.getResources().getColor(R.color.black))
                     .setText(R.id.tv_item_other, address)

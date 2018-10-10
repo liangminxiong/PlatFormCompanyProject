@@ -263,6 +263,7 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

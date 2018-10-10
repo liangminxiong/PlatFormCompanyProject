@@ -18,9 +18,6 @@ import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.AllProblemAdapter;
 import com.yuefeng.features.contract.QualityGetFragmentContract;
 import com.yuefeng.features.event.AllProblemEvent;
-import com.yuefeng.features.event.PendingEvent;
-import com.yuefeng.features.event.ProcessingEvent;
-import com.yuefeng.features.event.ToClosedEvent;
 import com.yuefeng.features.modle.EventQuestionMsgBean;
 import com.yuefeng.features.presenter.AllProblemPresenter;
 import com.yuefeng.features.ui.activity.EvaluationEventActivity;
@@ -217,6 +214,9 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
             case Constans.CLOSED_SSUCESS://关闭
                 getEventDatasByNet(false);
                 break;
+            case Constans.ZHUANFA_SSUCESS://ZHUANF
+                getEventDatasByNet(false);
+                break;
 
             case Constans.CLAIM_ERROR:
                 showErrorToast("认领失败，请重试");
@@ -258,23 +258,23 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
                 if (resultCode == RESULT_OK) {
                     EventBus.getDefault().postSticky(new AllProblemEvent(Constans.CARRY_SUCESS, ""));
                     EventBus.getDefault().postSticky(new CommonEvent(Constans.COUNT_AGAIN_SUCESS, ""));
-                    EventBus.getDefault().postSticky(new ProcessingEvent(Constans.CARRY_SUCESS, ""));
-                    EventBus.getDefault().postSticky(new ToClosedEvent(Constans.CARRY_SUCESS, ""));
+//                    EventBus.getDefault().postSticky(new ProcessingEvent(Constans.CARRY_SUCESS, ""));
+//                    EventBus.getDefault().postSticky(new ToClosedEvent(Constans.CARRY_SUCESS, ""));
                 }
                 break;
             case 2://关闭
                 if (resultCode == RESULT_OK) {
                     EventBus.getDefault().postSticky(new AllProblemEvent(Constans.CLOSED_SSUCESS, ""));
                     EventBus.getDefault().postSticky(new CommonEvent(Constans.COUNT_AGAIN_SUCESS, ""));
-                    EventBus.getDefault().postSticky(new ToClosedEvent(Constans.CLOSED_SSUCESS, ""));
+//                    EventBus.getDefault().postSticky(new ToClosedEvent(Constans.CLOSED_SSUCESS, ""));
                 }
                 break;
 
             case 3://转发
                 EventBus.getDefault().postSticky(new AllProblemEvent(Constans.ZHUANFA_SSUCESS, ""));
                 EventBus.getDefault().postSticky(new CommonEvent(Constans.COUNT_AGAIN_SUCESS, ""));
-                EventBus.getDefault().postSticky(new ProcessingEvent(Constans.ZHUANFA_SSUCESS, ""));
-                EventBus.getDefault().postSticky(new PendingEvent(Constans.ZHUANFA_SSUCESS, ""));
+//                EventBus.getDefault().postSticky(new ProcessingEvent(Constans.ZHUANFA_SSUCESS, ""));
+//                EventBus.getDefault().postSticky(new PendingEvent(Constans.ZHUANFA_SSUCESS, ""));
                 break;
         }
     }

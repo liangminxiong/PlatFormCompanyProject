@@ -24,7 +24,7 @@
         android:paddingEnd="@dimen/dp_15"
         android:visibility="visible"
         android:paddingStart="@dimen/dp_15"
-        android:text="加载中..."
+        android:text="暂无地址!"
         android:textSize="@dimen/sp_13"
         tools:ignore="HardcodedText,RtlSymmetry"/>
 

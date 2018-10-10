@@ -572,6 +572,19 @@ public class TimeUtils {
         return hDate;
     }
 
+    /**
+     * 返回 HH：mm:ss
+     *
+     * @return
+     */
+    public static String FormatMiss(int time){
+        String hh=time/3600>9?time/3600+"":"0"+time/3600;
+        String mm=(time% 3600)/60>9?(time% 3600)/60+"":"0"+(time% 3600)/60;
+        String ss=(time% 3600) % 60>9?(time% 3600) % 60+"":"0"+(time% 3600) % 60;
+        return hh+":"+mm+":"+ss;
+    }
+
+
 
     /**
      * 分析acc的状态

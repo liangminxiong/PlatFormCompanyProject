@@ -33,7 +33,7 @@ public class PersonalAdapter extends BaseItemDraggableAdapter<PersonalinfoListBe
             name = TextUtils.isEmpty(name) ? " " : name;
             position = TextUtils.isEmpty(position) ? " " : position;
             tel = TextUtils.isEmpty(tel) ? " " : tel;
-            address = TextUtils.isEmpty(item.getAddress()) ? "加载中..." : item.getAddress();
+            address = TextUtils.isEmpty(item.getAddress()) ? "暂无地址!" : item.getAddress();
 //            latitude = item.getLatitude();
 //            longitude = item.getLongitude();
 //            if (!TextUtils.isEmpty(latitude)) {

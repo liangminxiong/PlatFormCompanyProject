@@ -9,6 +9,9 @@ import com.yuefeng.features.ui.activity.JobMonitoringActivity;
 import com.yuefeng.features.ui.activity.ProblemUpdateActivity;
 import com.yuefeng.features.ui.activity.QualityInspectionActivity;
 import com.yuefeng.features.ui.activity.WebH5ZuoyeKaoqinActivity;
+import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
+import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
+import com.yuefeng.features.ui.activity.video.VideoSytemListActivity;
 
 import butterknife.OnClick;
 
@@ -101,13 +104,13 @@ public class FeaturesFragment extends BaseMvpFragment {
                 showSuccessToast("正在开发...");
                 break;
             case R.id.iv_videojian:
-                showSuccessToast("正在开发...");
+                toVideoSytemList();//视频监控
                 break;
             case R.id.iv_kaoqin://作业考勤aa
                 jobwebH5();
                 break;
             case R.id.iv_msgcollection:
-                showSuccessToast("正在开发...");
+                msgcollection();//信息采集
                 break;
             case R.id.iv_operationbianji:
                 showSuccessToast("正在开发...");
@@ -116,7 +119,7 @@ public class FeaturesFragment extends BaseMvpFragment {
                 showSuccessToast("正在开发...");
                 break;
             case R.id.iv_historytrack:
-                showSuccessToast("正在开发...");
+                toHistoryTrack();//历史轨迹
                 break;
             case R.id.iv_videomonitor:
                 showSuccessToast("正在开发...");
@@ -134,6 +137,21 @@ public class FeaturesFragment extends BaseMvpFragment {
                 jobMonitoring();
                 break;
         }
+    }
+
+    /*；历史轨迹*/
+    private void toHistoryTrack() {
+        startActivity(new Intent(getActivity(), HistoryTrackActivity.class));
+    }
+
+    /*；视频监控*/
+    private void toVideoSytemList() {
+        startActivity(new Intent(getActivity(), VideoSytemListActivity.class));
+    }
+
+    /*信息采集*/
+    private void msgcollection() {
+        startActivity(new Intent(getActivity(), PositionAcquisitionActivity.class));
     }
 
     /*问题上报*/

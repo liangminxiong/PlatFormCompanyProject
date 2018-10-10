@@ -24,6 +24,7 @@ import com.yuefeng.login_splash.event.LoginEvent;
 import com.yuefeng.login_splash.model.LoginDataBean;
 import com.yuefeng.login_splash.presenter.LoginPresenter;
 import com.yuefeng.ui.MainActivity;
+import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,9 +46,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     private CheckBox cb_pwd;
     private boolean cheche_pwd = false;
     private boolean isRemberPwd;
-    private String versionName;
-    private String versionCode;
-    private String description;
 
     @Subscribe
     @Override
@@ -148,6 +146,12 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
             case R.id.btn_login:
                 userNames = accountEt.getText().toString().trim();
                 passwords = passwordEt.getText().toString().trim();
+
+                boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                if (!networkConnected) {
+                    showErrorToast("无网络，请检查网络设置");
+                    return;
+                }
                 if (!userNames.isEmpty() && !passwords.isEmpty()) {
                     showLoadingDialog(getString(R.string.login));
                     loginPresenter.login(ApiService.LOGIN, userNames, passwords, Constans.ANDROID);

@@ -8,6 +8,8 @@ public class Constans {
     public static final int NET_WORK_AVAILABLE = 0;//有网络
     public static final int NET_WORK_DISABLED = 1;//没网络
 
+    public static final String COUNT_ZERO = "0";
+    public static final int THREE = 3;
     public static final int FOUR = 4;
     public static final int COMMON = 5;//公共
     /*
@@ -17,7 +19,7 @@ public class Constans {
     public static final int HOMEBANNER = 102;//获取首页banner
     public static final int HOMEERROR = 100;//首页请求数据失败
     public static final int HOMEDASUCCESS = 103;//banner,homedata请求数据成功，取消loading
-    public static final int BDLOCATION_TIME = 5000;
+    public static final int BDLOCATION_TIME = 5000;//定位时间间隔
     public static final String COOKIE_PREF = "cookie_pref";//cookie保存
     public static final String HAVE_USER_DATAS = "have_user_datas";//数据
     /*
@@ -105,6 +107,13 @@ public class Constans {
     public static final int TRACK_SSUCESS = 77;//
     public static final int TRACK_ERROR = 78;//
     public static final int ADDRESS_SSUCESS = 79;//地址
+
+    /*
+     * 视频监控 80-90
+     * */
+    public static final int VIDEO_SSUCESS = 80;//成功
+    public static final int VIDEO_ERROR = 81;//失败
+
 
     /*导航*/
     public static final String APP_FOLDER_NAME = "BNSDKSimpleDemo";

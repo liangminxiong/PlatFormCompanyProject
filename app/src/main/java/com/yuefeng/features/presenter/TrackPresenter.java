@@ -8,7 +8,7 @@ import com.common.utils.Constans;
 import com.yuefeng.features.contract.TrackContract;
 import com.yuefeng.features.event.TrackEvent;
 import com.yuefeng.features.modle.WheelPathBean;
-import com.yuefeng.features.ui.activity.TrackActivity;
+import com.yuefeng.features.ui.activity.track.TrackActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
