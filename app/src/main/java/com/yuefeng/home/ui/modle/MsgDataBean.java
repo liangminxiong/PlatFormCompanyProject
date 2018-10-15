@@ -8,6 +8,7 @@ public class MsgDataBean implements Serializable {
     private String title;
     private String detail;
     private String time;
+    private String name;
 
     @Override
     public String toString() {
@@ -17,6 +18,7 @@ public class MsgDataBean implements Serializable {
                 ", detail='" + detail + '\'' +
                 ", time='" + time + '\'' +
                 ", count='" + count + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 
@@ -60,5 +62,13 @@ public class MsgDataBean implements Serializable {
 
     public void setCount(String count) {
         this.count = count;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

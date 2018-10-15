@@ -77,6 +77,7 @@ public class CarLllegalWorkListFragment extends BaseFragment {
                 intent.putExtra("DetailInfos", msgDataBean);
                 intent.putExtra("type", "car");
                 intent.putExtra("isVisible", "1");
+                intent.putExtra("position", position);
                 startActivity(intent);
             }
         });
@@ -145,10 +146,14 @@ public class CarLllegalWorkListFragment extends BaseFragment {
         for (int i = 0; i < 4; i++) {
             MsgDataBean msgDataBean = new MsgDataBean();
             msgDataBean.setImageUrl(R.mipmap.icon_app);
-            msgDataBean.setTitle(i + "粤A45654");
+            msgDataBean.setTitle("粤A4565" + (i + 1));
             msgDataBean.setTime(TimeUtils.getHourMinute());
-            msgDataBean.setDetail(i + "垃圾桶坏了");
-            msgDataBean.setCount(i + "广州市天河区新塘大街28号");
+            if (i == 0) {
+                msgDataBean.setDetail("路线偏移");
+            } else {
+                msgDataBean.setDetail("作业超速");
+            }
+            msgDataBean.setCount("广州市天河区新塘大街28号祺和商贸园");
             bean.add(msgDataBean);
         }
         listData.clear();

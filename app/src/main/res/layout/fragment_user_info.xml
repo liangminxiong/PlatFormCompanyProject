@@ -24,7 +24,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="@dimen/dp_30"
         android:background="@color/list_divider"/>
 
     <RelativeLayout
@@ -49,7 +49,7 @@
             android:layout_marginTop="@dimen/dp_15"
             android:layout_toEndOf="@id/img_user_view"
             android:textColor="@color/gray_20"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/sp_18"/>
 
         <TextView
             android:id="@+id/tv_user_phone"
@@ -58,9 +58,11 @@
             android:layout_below="@id/tv_user_name"
             android:layout_marginStart="@dimen/dp_20"
             android:layout_toEndOf="@id/img_user_view"
-            android:text="15514565"
+            android:text="15514565555"
+            android:layout_marginTop="@dimen/dp_10"
             android:textColor="@color/gray_3f"
-            android:textSize="16sp"/>
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
 
         <ImageView
             android:layout_width="wrap_content"
@@ -78,7 +80,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="@dimen/dp_30"
         android:background="@color/list_divider"/>
 
     <com.yuefeng.usercenter.ui.view.UserInfoItemView
@@ -100,7 +102,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginStart="@dimen/dp_16"
-        android:background="@color/status_color"/>
+        android:background="@color/list_divider"/>
 
     <com.yuefeng.usercenter.ui.view.UserInfoItemView
         android:id="@+id/ui_author"
@@ -113,7 +115,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginStart="@dimen/dp_16"
-        android:background="@color/status_color"/>
+        android:background="@color/list_divider"/>
 
 
     <com.yuefeng.usercenter.ui.view.UserInfoItemView

@@ -54,10 +54,10 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/upgrade"
+            android:text="选择"
             android:textColor="@color/white"
             android:textSize="16sp"
-            tools:ignore="RelativeOverlap"/>
+            tools:ignore="HardcodedText,RelativeOverlap"/>
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager

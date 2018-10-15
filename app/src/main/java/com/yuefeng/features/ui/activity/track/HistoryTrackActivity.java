@@ -172,6 +172,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
         tv_title_setting = findViewById(R.id.tv_title_setting);
         tv_car_number = findViewById(R.id.tv_car_number);
+        tv_car_number.setVisibility(View.VISIBLE);
         mapview = findViewById(R.id.mMapView);
         btn_Play = findViewById(R.id.btn_Play);
         btn_FastPlay = findViewById(R.id.btn_FastPlay);
@@ -356,6 +357,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
     /*定位*/
     private void getLocation() {
+        try {
         mBaiduMap = mapview.getMap();
         // 地图初始化
         mapview.showZoomControls(false);// 缩放控件是否显示
@@ -396,6 +398,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             }
         }, Constans.BDLOCATION_TIME);
         initLocation();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*定时刷新*/
@@ -949,10 +954,10 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
         // 关闭定位图层
         if (mBaiduMap != null) {
             mBaiduMap.clear();
+            mBaiduMap.setMyLocationEnabled(false);
+            mapview.onDestroy();
+            mapview = null;
         }
-        mBaiduMap.setMyLocationEnabled(false);
-        mapview.onDestroy();
-        mapview = null;
         PlayIndex = 0;
     }
 }

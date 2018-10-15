@@ -103,6 +103,9 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setGeolocationEnabled(true);//开启定位
+        webSettings.setBuiltInZoomControls(false);
+        webSettings.setSupportZoom(false);
+        webSettings.setDisplayZoomControls(false);
         webView.addJavascriptInterface(WebH5ZuoyeKaoqinActivity.this, "javascript");
 
         webView.setWebChromeClient(new WebChromeClient() {

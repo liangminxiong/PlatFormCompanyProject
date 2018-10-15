@@ -73,6 +73,6 @@
 
     <string name="action_settings">Settings</string>
     <string name="msg_tixing">消息提醒</string>
-    <string name="detail">详情</string>
+    <string name="detail">消息详情</string>
     <string name="history_lllegal">历史违规</string>
 </resources>

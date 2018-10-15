@@ -78,6 +78,7 @@ public class PersonalLllegalWorkListFragment extends BaseFragment {
                 intent.putExtra("DetailInfos", msgDataBean);
                 intent.putExtra("type", "personal");
                 intent.putExtra("isVisible", "1");
+                intent.putExtra("position", position);
                 startActivity(intent);
             }
         });
@@ -134,8 +135,12 @@ public class PersonalLllegalWorkListFragment extends BaseFragment {
             msgDataBean.setImageUrl(R.mipmap.icon_app);
             msgDataBean.setTitle(i + "张三");
             msgDataBean.setTime(TimeUtils.getHourMinute());
-            msgDataBean.setDetail(i + "作业超速");
-            msgDataBean.setCount(i + "广州市天河区新塘大街28号");
+            if (i == 0) {
+                msgDataBean.setDetail("路线偏移");
+            } else {
+                msgDataBean.setDetail("偏移");
+            }
+            msgDataBean.setCount("广州市天河区新塘大街28号祺禾商贸园");
             bean.add(msgDataBean);
         }
         listData.clear();

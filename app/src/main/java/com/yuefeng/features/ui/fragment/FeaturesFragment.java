@@ -1,6 +1,8 @@
 package com.yuefeng.features.ui.fragment;
 
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,23 +19,25 @@ import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.FeaturesMsgAdapter;
 import com.yuefeng.features.event.CarListEvent;
-import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity;
 import com.yuefeng.features.ui.activity.JobMonitoringActivity;
+import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity;
 import com.yuefeng.features.ui.activity.ProblemUpdateActivity;
 import com.yuefeng.features.ui.activity.QualityInspectionActivity;
 import com.yuefeng.features.ui.activity.WebH5ZuoyeKaoqinActivity;
 import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
 import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
-import com.yuefeng.features.ui.activity.video.VideoSytemListActivity;
-import com.yuefeng.home.ui.activity.WebDetailInfosActivtiy;
+import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
+import com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy;
 import com.yuefeng.home.ui.modle.MsgDataBean;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +62,7 @@ public class FeaturesFragment extends BaseMvpFragment {
 
     private FeaturesMsgAdapter adapter;
     private List<MsgDataBean> listData = new ArrayList<>();
+    private int tempPosition = 0;
 
     @Override
     protected int getLayoutId() {
@@ -97,11 +102,21 @@ public class FeaturesFragment extends BaseMvpFragment {
         adapter = new FeaturesMsgAdapter(R.layout.recyclerview_item_msginfos, listData);
         recyclerview.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                showSuccessToast(listData.get(position).getCount());
-                startActivity(new Intent(getActivity(), WebDetailInfosActivtiy.class));
-
+                if (position == 0) {
+                    tempPosition = 1;
+                } else if (position == 1) {
+                    tempPosition = 2;
+                } else {
+                    tempPosition = 3;
+                }
+                Intent intent = new Intent();
+                intent.setClass(Objects.requireNonNull(getActivity()), MsgDetailInfosActivtiy.class);
+                intent.putExtra("msgList", (Serializable) listData);
+                intent.putExtra("tempPosition", tempPosition);
+                startActivity(intent);
             }
         });
         showAdapterDatasList();
@@ -110,21 +125,28 @@ public class FeaturesFragment extends BaseMvpFragment {
     /*展示数据*/
     private void showAdapterDatasList() {
         List<MsgDataBean> bean = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        String name = "";
+        String detail = "";
+        for (int i = 0; i < 3; i++) {
             MsgDataBean msgDataBean = new MsgDataBean();
             if (i == 0) {
+                name = "侨银环保科技股份有限公司";
+                detail = "[审批]今天还有一个审批单待你处理，请尽快处理";
                 msgDataBean.setImageUrl(R.drawable.work);
             } else if (i == 1) {
+                name = "升级提醒";
+                detail = "1.0.2版本新功能介绍";
                 msgDataBean.setImageUrl(R.drawable.upgrade);
-            } else if (i == 2) {
-                msgDataBean.setImageUrl(R.drawable.item);
             } else {
-                msgDataBean.setImageUrl(R.drawable.email);
+                name = "项目通知:池州一体化项目进展情况";
+                detail = "[执行]今天还有2个任务待你处理，请尽快完成";
+                msgDataBean.setImageUrl(R.drawable.item);
             }
-            msgDataBean.setTitle(i + "工作更新内容");
+            msgDataBean.setName(name);
+            msgDataBean.setTitle(name);
             msgDataBean.setTime(TimeUtils.getHourMinute());
-            msgDataBean.setDetail(i + "更新详情：点击肌肉");
-            msgDataBean.setCount(i + "");
+            msgDataBean.setDetail(detail);
+            msgDataBean.setCount((i + 1) + "");
             bean.add(msgDataBean);
         }
         listData.clear();
@@ -199,7 +221,8 @@ public class FeaturesFragment extends BaseMvpFragment {
 
     /*；视频监控*/
     private void toVideoSytemList() {
-        startActivity(new Intent(getActivity(), VideoSytemListActivity.class));
+//        startActivity(new Intent(getActivity(), VideoSytemListActivity.class));
+        startActivity(new Intent(getActivity(), VideoCameraActivity.class));
     }
 
     /*信息采集*/

@@ -3,6 +3,7 @@ package com.yuefeng.features.ui.activity.Lllegalwork;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,15 +19,23 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.DistanceUtil;
 import com.common.base.codereview.BaseActivity;
 import com.common.utils.Constans;
 import com.common.utils.StatusBarUtil;
+import com.common.utils.StringUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.home.ui.modle.MsgDataBean;
 import com.yuefeng.utils.BdLocationUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,6 +79,9 @@ public class LllegalWorkDetailActivity extends BaseActivity {
     private Marker mMarker;
     private LatLng latLng;
     private BaiduMap baiduMap;
+    private Polyline mPolyline;
+
+    private int position;
 
 
     @Override
@@ -84,12 +96,12 @@ public class LllegalWorkDetailActivity extends BaseActivity {
         view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
         StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         getCarListInfos();
-        tvAddress.setTextSize(13);
-        tvNative.setTextSize(12);
-        tvDistance.setTextSize(12);
-        tvType.setTextSize(12);
-        tvClass.setTextSize(12);
-        searchHistoryLllegal.setTextSize(12);
+        tvAddress.setTextSize(14);
+        tvNative.setTextSize(13);
+        tvDistance.setTextSize(13);
+        tvType.setTextSize(13);
+        tvClass.setTextSize(13);
+        searchHistoryLllegal.setTextSize(13);
     }
 
     /*车辆列表*/
@@ -100,6 +112,7 @@ public class LllegalWorkDetailActivity extends BaseActivity {
         MsgDataBean msgDataBean = (MsgDataBean) bundle.getSerializable("DetailInfos");
         String type = (String) bundle.get("type");
         String isVisible = (String) bundle.get("isVisible");
+        position = (int) bundle.get("position");
         assert isVisible != null;
         if (isVisible.equals("0")) {
             searchHistoryLllegal.setVisibility(View.INVISIBLE);
@@ -115,9 +128,13 @@ public class LllegalWorkDetailActivity extends BaseActivity {
         title = TextUtils.isEmpty(title) ? "" : title;
         tv_title.setText(title);
         tvAddress.setText(msgDataBean.getCount());
-        tvDistance.setText(msgDataBean.getDetail());
-        tvType.setText("违规类型:" + msgDataBean.getTime());
-        tvClass.setText("所属班组:" + msgDataBean.getCount());
+        if (position == 0) {
+            tvDistance.setText("已偏移" + "米");
+        } else {
+            tvDistance.setText("已偏移" + "0米");
+        }
+        tvType.setText("违规类型:" + msgDataBean.getDetail());
+        tvClass.setText("所属班组:八路一班");
         requestPermissions();
     }
 
@@ -177,6 +194,10 @@ public class LllegalWorkDetailActivity extends BaseActivity {
                         mMarker = null;
                         mMarker = (Marker) (baiduMap.addOverlay(oA));
                         baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
+                        BdLocationUtil.MoveMapToCenter(baiduMap, latLng, 14);
+                        if (position == 0) {
+                            showCarDetailInfos(latitude, longitude);
+                        }
                     }
                 } else {
                     requestPermissions();
@@ -184,6 +205,43 @@ public class LllegalWorkDetailActivity extends BaseActivity {
 
             }
         }, Constans.BDLOCATION_TIME);
+    }
+
+    /*show轨迹  划线*/
+    @SuppressLint("SetTextI18n")
+    private void showCarDetailInfos(double latitude, double longitude) {
+
+        try {
+            if (mPolyline != null) {
+                mPolyline.remove();
+            }
+            List<LatLng> lls = new ArrayList<LatLng>();
+            lls.clear();
+
+            for (int i = 0; i < 15; i++) {
+                latitude = latitude + 0.002;
+                longitude = longitude + 0.002;
+                LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));// 转经纬度;
+                lls.add(p1);
+            }
+            if (lls.size() > 1) {
+                OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.BLUE).points(lls);
+                mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
+//                BdLocationUtil.MoveMapToCenter(baiduMap, lls.get(lls.size() - 1), 14);
+                double distance = DistanceUtil.getDistance(latLng, lls.get(lls.size() - 1));
+                String mile = "米";
+                if (distance > 1000) {
+                    distance = distance / 1000;
+                    mile = "km";
+                }
+                String stringDouble = StringUtils.getStringDouble(distance);
+                if (position == 0) {
+                    tvDistance.setText("已偏移" + stringDouble + mile);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

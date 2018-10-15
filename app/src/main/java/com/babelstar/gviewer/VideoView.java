@@ -89,7 +89,7 @@ public class VideoView extends android.support.v7.widget.AppCompatImageView {
         this.mPaint = new Paint();
         this.mPaint.setAntiAlias(true);
         //noinspection ResourceAsColor
-        this.mPaint.setColor(-65536);
+        this.mPaint.setColor(Color.TRANSPARENT);
         this.mPaint.setStyle(Paint.Style.STROKE);
         this.mPaint.setStrokeWidth(1.0F);
     }
@@ -172,7 +172,7 @@ public class VideoView extends android.support.v7.widget.AppCompatImageView {
             if (!drawVideo) {
                 this.mPaint.setColor(Color.rgb(113, 227, 28));
                 this.mPaint.setTextAlign(Paint.Align.CENTER);
-                this.mPaint.setTextSize(24);
+                this.mPaint.setTextSize(28);
                 canvas.drawText(mStrLoading, getWidth() / 2, getHeight() / 2, this.mPaint);
             }
 
@@ -351,7 +351,7 @@ public class VideoView extends android.support.v7.widget.AppCompatImageView {
 
     /*
      * 云台控制
-	 */
+     */
     public void ptzControl(int command, int param) {
         synchronized (lockHandle) {
             NetClient.RPlayPtzCtrl(mRealHandle, command, NetClient.GPS_PTZ_SPEED_DEFAULT, param);
@@ -359,8 +359,8 @@ public class VideoView extends android.support.v7.widget.AppCompatImageView {
     }
 
     /*
-    * 判断是否正在预览
-    */
+     * 判断是否正在预览
+     */
     public boolean isRecording() {
         boolean ret = false;
         synchronized (lockHandle) {

@@ -1,6 +1,8 @@
 package com.yuefeng.home.ui.fragment;
 
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +15,7 @@ import com.common.utils.Constans;
 import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.event.CarListEvent;
-import com.yuefeng.home.ui.activity.WebDetailInfosActivtiy;
+import com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy;
 import com.yuefeng.home.ui.adapter.HomeMsgInfosAdapter;
 import com.yuefeng.home.ui.modle.MsgDataBean;
 
@@ -21,8 +23,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -48,6 +52,7 @@ public class HomeFragment extends BaseMvpFragment {
     Unbinder unbinder;
     private HomeMsgInfosAdapter adapter;
     private List<MsgDataBean> listData = new ArrayList<>();
+    private int tempPosition = 0;
 
     @Override
     protected int getLayoutId() {
@@ -59,21 +64,32 @@ public class HomeFragment extends BaseMvpFragment {
         EventBus.getDefault().register(this);
         unbinder = ButterKnife.bind(this, rootView);
         tv_tab_name.setText(msg_name);
-        recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         tvSearchTxt.clearFocus();
         tvSearchTxt.setCursorVisible(false);
+        recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         initRecycleView();
     }
 
     private void initRecycleView() {
+
         adapter = new HomeMsgInfosAdapter(R.layout.recyclerview_item_msginfos, listData);
         recyclerview.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                showSuccessToast(listData.get(position).getCount());
-
-                startActivity(new Intent(getActivity(), WebDetailInfosActivtiy.class));
+                if (position == 0) {
+                    tempPosition = 1;
+                } else if (position == 1) {
+                    tempPosition = 2;
+                } else {
+                    tempPosition = 3;
+                }
+                Intent intent = new Intent();
+                intent.setClass(Objects.requireNonNull(getActivity()), MsgDetailInfosActivtiy.class);
+                intent.putExtra("msgList", (Serializable) listData);
+                intent.putExtra("tempPosition", tempPosition);
+                startActivity(intent);
             }
         });
         showAdapterDatasList();
@@ -81,22 +97,29 @@ public class HomeFragment extends BaseMvpFragment {
 
     /*展示数据*/
     private void showAdapterDatasList() {
+        String name = "";
+        String detail = "";
         List<MsgDataBean> bean = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             MsgDataBean msgDataBean = new MsgDataBean();
             if (i == 0) {
+                name = "侨银环保科技股份有限公司";
+                detail = "[审批]今天还有一个审批单待你处理，请尽快处理";
                 msgDataBean.setImageUrl(R.drawable.work);
             } else if (i == 1) {
+                name = "升级提醒";
+                detail = "1.0.2版本新功能介绍";
                 msgDataBean.setImageUrl(R.drawable.upgrade);
-            } else if (i == 2) {
-                msgDataBean.setImageUrl(R.drawable.item);
             } else {
-                msgDataBean.setImageUrl(R.drawable.email);
+                name = "项目通知:池州一体化项目进展情况";
+                detail = "[执行]今天还有2个任务待你处理，请尽快完成";
+                msgDataBean.setImageUrl(R.drawable.item);
             }
-            msgDataBean.setTitle(i + "工作更新内容");
+            msgDataBean.setName(name);
+            msgDataBean.setTitle(name);
             msgDataBean.setTime(TimeUtils.getHourMinute());
-            msgDataBean.setDetail(i + "更新详情：点击肌肉");
-            msgDataBean.setCount(i + "");
+            msgDataBean.setDetail(detail);
+            msgDataBean.setCount(1 + "");
             bean.add(msgDataBean);
         }
         listData.clear();

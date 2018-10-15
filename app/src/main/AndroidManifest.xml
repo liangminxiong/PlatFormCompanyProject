@@ -16,10 +16,10 @@
 
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/>
     <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS"/>
-    <!-- 这个权限用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- 这个权限用于访问GPS定位-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- 这个权限用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
@@ -147,6 +147,8 @@
         <activity android:name="com.yuefeng.features.ui.activity.video.VideoCameraActivity"/>
         <!--web详情-->
         <activity android:name="com.yuefeng.home.ui.activity.WebDetailInfosActivtiy"/>
+        <!--消息详情-->
+        <activity android:name="com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy"/>
         <!--违规作业-->
         <activity android:name="com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity"
                   tools:ignore="InnerclassSeparator"/>

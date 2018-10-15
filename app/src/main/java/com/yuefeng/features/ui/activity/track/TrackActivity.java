@@ -263,7 +263,9 @@ public class TrackActivity extends BaseActivity implements TrackContract.View {
                     if (mBaiduMap != null) {
                         mBaiduMap.clear();
                     }
-                    mSeekBar.setMax(mTrackDatas.size());
+                    if (mSeekBar != null) {
+                        mSeekBar.setMax(mTrackDatas.size());
+                    }
                     showCarDetailInfos(mTrackDatas);
                     ReplayTrack(0);
                 }
