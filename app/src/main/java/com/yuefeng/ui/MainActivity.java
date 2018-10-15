@@ -10,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,7 +22,6 @@ import com.common.utils.Constans;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.RxHelper;
-import com.common.utils.StatusBarUtil;
 import com.common.utils.TimeUtils;
 import com.common.view.dialog.SigninCacheSureDialog;
 import com.luck.picture.lib.permissions.RxPermissions;
@@ -31,7 +31,6 @@ import com.yuefeng.home.ui.fragment.HomeFragment;
 import com.yuefeng.login_splash.contract.SignInContract;
 import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.login_splash.presenter.SignInPresenter;
-import com.yuefeng.tack.ui.fragment.TackFragment;
 import com.yuefeng.ui.base.fragment.NoSlideViewPager;
 import com.yuefeng.ui.base.fragment.TabItemInfo;
 import com.yuefeng.usercenter.ui.fragment.UserInfoFragment;
@@ -102,13 +101,14 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
     @Override
     protected void initView(Bundle savedInstanceState) {
         ButterKnife.bind(this);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        View view = findViewById(R.id.space);
+//        View view = findViewById(R.id.space);
 
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         presenter = new SignInPresenter(this, this);
         initViewPager();
         viewPager.setOnTouchListener(new View.OnTouchListener() {
@@ -118,10 +118,11 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
             }
         });
         iv_back.setVisibility(View.INVISIBLE);
-        tv_title.setText(features_name);
+        tv_title.setText(msg_name);
         /*内存泄露检测*/
 //        RefWatcher refWatcher = MyApplication.getRefWatcher(this);//1
 //        refWatcher.watch(this);
+
     }
 
 
@@ -258,12 +259,13 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
     protected void widgetClick(View v) {
 
     }
+
     private void initViewPager() {
         tabItemInfos = new ArrayList<>();
         HomeFragment homeFragment = new HomeFragment();
         tabItemInfos.add(new TabItemInfo(homeFragment, R.drawable.home_button_selector, R.string.tab_main_name));
 
-        tabItemInfos.add(new TabItemInfo(new TackFragment(), R.drawable.search_button_selector, R.string.tab_tack_name));
+//        tabItemInfos.add(new TabItemInfo(new TackFragment(), R.drawable.search_button_selector, R.string.tab_tack_name));
         /*应用*/
         tabItemInfos.add(new TabItemInfo(new FeaturesFragment(), R.drawable.application_button_selector, R.string.tab_search_name));
 //        tabItemInfos.add(new TabItemInfo(new AddressbookFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
@@ -275,7 +277,7 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
         viewPager.setAdapter(pagerAdapter);
         viewPager.setOffscreenPageLimit(tabItemInfos.size());
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(2).select(); //默认选中某项放在加载viewpager之后
+        tabLayout.getTabAt(0).select(); //默认选中某项放在加载viewpager之后
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
             String titleName = "";

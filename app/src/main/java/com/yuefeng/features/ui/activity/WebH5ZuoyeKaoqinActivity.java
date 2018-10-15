@@ -16,6 +16,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.baidu.location.LocationClient;
 import com.common.base.codereview.BaseActivity;
@@ -44,6 +45,8 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
     @BindView(R.id.lly_webview_root)
 //            NestedScrollWebView
             WebView webView;
+    @BindView(R.id.web_progressbar)
+    ProgressBar progressBar;
     @BindColor(R.color.titel_color)
     int coloeWhite;
     private LocationClient mLocationClient;
@@ -153,6 +156,12 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
             public void onProgressChanged(WebView view, int newProgress) {
                 getWindow().setFeatureInt(Window.FEATURE_PROGRESS, newProgress * 100);
                 super.onProgressChanged(view, newProgress);
+                if (newProgress == 100) {
+                    progressBar.setVisibility(View.GONE);
+                    return;
+                }
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(newProgress);
             }
 
             // 设置应用程序的标题title
@@ -168,6 +177,11 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
                     EventBus.getDefault().post(new CommonEvent(Constans.GOBACK, url));
                 }
                 super.onPageFinished(view, url);
+            }
+
+            @Override
+            public void onReceivedError(WebView var1, int var2, String var3, String var4) {
+                progressBar.setVisibility(View.GONE);
             }
 
             public void onPageStarted(WebView view, String url, Bitmap favicon) {

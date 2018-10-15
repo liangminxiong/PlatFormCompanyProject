@@ -7,6 +7,7 @@ import com.yuefeng.features.modle.GetJobMonitotingBean;
 import com.yuefeng.features.modle.GetQuestionCountBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.features.modle.WheelPathBean;
+import com.yuefeng.features.modle.carlist.CarListInfosBean;
 import com.yuefeng.features.modle.video.VideoEquipmentBean;
 import com.yuefeng.login_splash.model.LoginBean;
 
@@ -53,6 +54,8 @@ public interface ApiService {
     String GETALLPERSON = "getallperson";
     /*签到*/
     String QIANDAO = "qiandao";
+    /*车辆列表*/
+    String LOADVEHICLELIST = "LoadVehicleList3";
 
     /*车辆轨迹*/
     String getGpsDatasByTer = "getGpsDatasByTer";
@@ -154,4 +157,12 @@ public interface ApiService {
     Observable<VideoEquipmentBean> getVideoList(
             @Query("pid") String terminal,
             @Query("type") String endTime);
+
+    /*车辆列表*/
+    @POST(MIA)
+    Observable<CarListInfosBean> getCarListInfos(
+            @Query("function") String function,
+            @Query("organid") String organid,
+            @Query("userid") String userid,
+            @Query("isreg") String isreg);
 }

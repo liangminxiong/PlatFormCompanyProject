@@ -1,4 +1,4 @@
-package com.yuefeng.treesList;
+package com.yuefeng.cartreeList.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class TreeHelper {
      * @throws IllegalAccessException
      */
     public static List<Node> getSortedNodes(List<Node> datas,
-                                            int defaultExpandLevel) {
+                                                int defaultExpandLevel) {
         List<Node> result = new ArrayList<Node>();
         // 设置Node间父子关系
         List<Node> nodes = convetData2Node(datas);
@@ -53,13 +53,13 @@ public class TreeHelper {
     /**
      * 设置Node间，父子关系;让每两个节点都比较一次，即可设置其中的关系
      */
-    private static List<Node> convetData2Node(List<Node> nodes) {
+     private static List<Node> convetData2Node(List<Node> nodes) {
 
         for (int i = 0; i < nodes.size(); i++) {
             Node n = nodes.get(i);
             for (int j = i + 1; j < nodes.size(); j++) {
                 Node m = nodes.get(j);
-                if (m.getpId() instanceof String) {
+                if(m.getpId() instanceof String){
                     if (m.getpId().equals(n.getId())) {
                         n.getChildren().add(m);
                         m.setParent(n);
@@ -67,7 +67,7 @@ public class TreeHelper {
                         m.getChildren().add(n);
                         n.setParent(m);
                     }
-                } else {
+                }else{
                     if (m.getpId() == n.getId()) {
                         n.getChildren().add(m);
                         m.setParent(n);
@@ -93,8 +93,8 @@ public class TreeHelper {
     /**
      * 把一个节点上的所有的内容都挂上去
      */
-    private static <T, B> void addNode(List<Node> nodes, Node<T, B> node,
-                                       int defaultExpandLeval, int currentLevel) {
+    private static <T,B> void addNode(List<Node> nodes, Node<T,B> node,
+                                int defaultExpandLeval, int currentLevel) {
         nodes.add(node);
 
         if (node.isNewAdd && defaultExpandLeval >= currentLevel) {

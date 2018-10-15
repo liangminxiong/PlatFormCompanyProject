@@ -185,7 +185,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 
         view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
         StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-        tv_title.setText("作业监控");
+        tv_title.setText("定位信息");
         initViewPager();
         viewPager.setOnTouchListener(new View.OnTouchListener() {
             @Override

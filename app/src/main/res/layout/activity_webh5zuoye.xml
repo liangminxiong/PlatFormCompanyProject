@@ -14,10 +14,15 @@
         layout="@layout/title_bar_mvp"
         android:visibility="gone"/>
 
-    <!--   <com.common.view.other.NestedScrollWebView
-           android:id="@+id/lly_webview_root"
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"/>-->
+    <ProgressBar
+        android:id="@+id/web_progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1.5dp"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/progressbar_bg_style"
+        android:visibility="visible"/>
 
     <WebView
         android:id="@+id/lly_webview_root"

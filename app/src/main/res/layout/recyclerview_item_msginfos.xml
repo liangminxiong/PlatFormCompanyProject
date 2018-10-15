@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_layout_item"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/iv_item_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/dp_10"
+        android:scaleType="fitXY"
+        tools:ignore="ContentDescription,RtlSymmetry"/>
+    <!--android:src="@drawable/work"-->
+
+    <ImageView
+        android:id="@+id/iv_item_unread"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginStart="@dimen/dp_55"
+        android:layout_marginTop="@dimen/dp_11"
+        android:src="@drawable/shape_red_dot8"
+        android:visibility="invisible"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/tv_item_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_toEndOf="@id/iv_item_image"
+        android:gravity="center_vertical"
+        android:paddingEnd="@dimen/dp_80"
+        android:paddingTop="@dimen/dp_10"
+        android:singleLine="true"
+        android:textColor="@color/gray_3f"
+        tools:ignore="HardcodedText,RtlSymmetry"/>
+    <!--android:textSize="@dimen/sp_16"-->
+
+    <TextView
+        android:id="@+id/tv_item_time"
+        android:layout_width="@dimen/dp_80"
+        android:layout_height="@dimen/dp_40"
+        android:layout_alignParentEnd="true"
+        android:gravity="center_vertical|right"
+        android:paddingEnd="@dimen/sp_15"
+        android:paddingTop="@dimen/dp_10"
+        android:singleLine="true"
+        android:textColor="@color/gray_99"
+        tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry"/>
+    <!--android:textSize="@dimen/sp_14"-->
+
+    <TextView
+        android:id="@+id/tv_item_detail"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_30"
+        android:layout_toEndOf="@id/iv_item_image"
+        android:gravity="center_vertical"
+        android:paddingEnd="@dimen/dp_80"
+        android:singleLine="true"
+        android:textColor="@color/gray_87"
+        tools:ignore="HardcodedText,RtlSymmetry"/>
+    <!--android:textSize="@dimen/sp_13"-->
+
+    <TextView
+        android:id="@+id/tv_item_count"
+        android:layout_width="@dimen/dp_18"
+        android:layout_height="@dimen/dp_18"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_40"
+        android:background="@drawable/shape_red_dot"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_10"
+        android:visibility="invisible"
+        tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/px_1"
+        android:layout_alignParentBottom="true"
+        android:background="@color/list_divider"/>
+    <!--android:layout_marginStart="@dimen/dp_80"-->
+
+</RelativeLayout>

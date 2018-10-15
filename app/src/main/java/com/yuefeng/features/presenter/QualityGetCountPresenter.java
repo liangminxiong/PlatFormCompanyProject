@@ -54,4 +54,6 @@ public class QualityGetCountPresenter extends BasePresenterImpl<QualityGetCountC
                     }
                 });
     }
+
+
 }

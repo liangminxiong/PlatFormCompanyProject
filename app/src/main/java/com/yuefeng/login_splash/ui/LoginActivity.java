@@ -12,10 +12,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.JPush.JPushManager;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.updateapputils.UpdateManager;
 import com.common.utils.Constans;
+import com.common.utils.MD5Utils;
 import com.common.utils.PreferencesUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
@@ -65,7 +67,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         passwords = PreferencesUtils.getString(LoginActivity.this, Constans.USERPASSWORD, "");
         accountEt.setText(userNames);
         passwordEt.setText(passwords);
-
+        accountEt.setSelection(accountEt.getText().length());
+        passwordEt.setSelection(passwordEt.getText().length());
         isRemberPwd = PreferencesUtils.getBoolean(this, "cheche_pwd", false);
         if (isRemberPwd) {
             cheche_pwd = true;
@@ -181,6 +184,10 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 PreferencesUtils.putString(LoginActivity.this, Constans.ORGID, loginInfo.getOrgId());
                 PreferencesUtils.putString(LoginActivity.this, Constans.ID, loginInfo.getId());
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.ISREG, loginInfo.isIsreg());
+                String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
+                String alias = MD5Utils.toString(string);
+                JPushManager.getInstance().setAliasAndTags(alias, "");
+
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
                 break;

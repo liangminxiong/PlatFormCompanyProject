@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
 
+import com.JPush.JPushManager;
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.common.network.ApiRetrofit;
@@ -116,6 +117,9 @@ public class MyApplication extends Application {
                 .tasksProcessingOrder(QueueProcessingType.LIFO)// 设置图片下载和显示的工作队列排序
                 .build();
         ImageLoader.getInstance().init(config);
+
+        /*极光推送*/
+        JPushManager.getInstance().initJPush(this);
     }
 
     public static Context getContext() {

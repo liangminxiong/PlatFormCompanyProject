@@ -6,7 +6,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/tv_bg_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg"
+        android:gravity="center"
+        android:paddingTop="@dimen/dp_24"
+        android:text="每到一城，美一城"
+        android:textColor="@color/white_ed"
+        android:textSize="@dimen/sp_16"
+        tools:ignore="HardcodedText"/>
+
+
     <ScrollView
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="UselessParent">
@@ -15,6 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:orientation="vertical"
             tools:ignore="ScrollViewSize">
 
@@ -26,8 +42,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginBottom="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_15"
                 android:background="@color/white"
                 android:orientation="horizontal"
                 tools:ignore="UselessLeaf">
@@ -38,11 +54,30 @@
                     android:layout_weight="1"
                     android:background="@color/white"/>
 
-                <ImageView
-                    android:id="@+id/iv_problemupload"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/zuoyejiancha"
-                    tools:ignore="ContentDescription"/>
+                <RelativeLayout
+                    android:id="@+id/rl_problemupload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_problemupload"
+                        style="@style/iv_pading_10"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/zuoyejiancha"
+                        tools:ignore="ContentDescription"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_problemupload"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="作业监察"
+                        android:textColor="@color/gray_1f"
+                        android:textSize="@dimen/sp_12"
+                        tools:ignore="HardcodedText"/>
+
+                </RelativeLayout>
+
 
                 <View
                     android:layout_width="0dp"
@@ -50,11 +85,29 @@
                     android:layout_weight="1"
                     android:background="@color/white"/>
 
-                <ImageView
-                    android:id="@+id/iv_qualityxuncha"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/wentichuli"
-                    tools:ignore="ContentDescription"/>
+                <RelativeLayout
+                    android:id="@+id/rl_qualityxuncha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_qualityxuncha"
+                        style="@style/iv_pading_10"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/wentichuli"
+                        tools:ignore="ContentDescription"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_qualityxuncha"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="问题处理"
+                        android:textColor="@color/gray_1f"
+                        android:textSize="@dimen/sp_12"
+                        tools:ignore="HardcodedText"/>
+
+                </RelativeLayout>
 
                 <View
                     android:layout_width="0dp"
@@ -62,11 +115,29 @@
                     android:layout_weight="1"
                     android:background="@color/white"/>
 
-                <ImageView
-                    android:id="@+id/iv_operationweigui"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/zuoyejiankong"
-                    tools:ignore="ContentDescription"/>
+                <RelativeLayout
+                    android:id="@+id/rl_operationweigui"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_operationweigui"
+                        style="@style/iv_pading_10"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/dingweixinxi"
+                        tools:ignore="ContentDescription"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_operationweigui"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="定位信息"
+                        android:textColor="@color/gray_1f"
+                        android:textSize="@dimen/sp_12"
+                        tools:ignore="HardcodedText"/>
+
+                </RelativeLayout>
 
                 <View
                     android:layout_width="0dp"
@@ -74,11 +145,29 @@
                     android:layout_weight="1"
                     android:background="@color/white"/>
 
-                <ImageView
-                    android:id="@+id/iv_kaoqin"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/zuoyekaoqin"
-                    tools:ignore="ContentDescription"/>
+                <RelativeLayout
+                    android:id="@+id/rl_kaoqin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_kaoqin"
+                        style="@style/iv_pading_10"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/zuoyekaoqin"
+                        tools:ignore="ContentDescription"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_kaoqin"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="作业考勤"
+                        android:textColor="@color/gray_1f"
+                        android:textSize="@dimen/sp_12"
+                        tools:ignore="HardcodedText"/>
+
+                </RelativeLayout>
 
                 <View
                     android:layout_width="0dp"
@@ -96,11 +185,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginBottom="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_15"
                 android:background="@color/white"
+                android:orientation="horizontal"
                 android:visibility="visible"
-                android:orientation="horizontal"
                 tools:ignore="UselessLeaf">
 
                 <View
@@ -109,11 +198,29 @@
                     android:layout_weight="1"
                     android:background="@color/white"/>
 
-                <ImageView
-                    android:id="@+id/iv_msgcollection"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/xinxicaiji"
-                    tools:ignore="ContentDescription"/>
+                <RelativeLayout
+                    android:id="@+id/rl_msgcollection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_msgcollection"
+                        style="@style/iv_pading_10"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/xinxicaiji"
+                        tools:ignore="ContentDescription"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_msgcollection"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="信息采集"
+                        android:textColor="@color/gray_1f"
+                        android:textSize="@dimen/sp_12"
+                        tools:ignore="HardcodedText"/>
+
+                </RelativeLayout>
 
                 <View
                     android:layout_width="0dp"
@@ -121,11 +228,29 @@
                     android:layout_weight="1"
                     android:background="@color/white"/>
 
-                <ImageView
-                    android:id="@+id/iv_operationbianji"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/zuoyebianpai"
-                    tools:ignore="ContentDescription"/>
+                <RelativeLayout
+                    android:id="@+id/rl_historytrack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_historytrack"
+                        style="@style/iv_pading_10"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/lishiguiji"
+                        tools:ignore="ContentDescription"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_historytrack"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="历史轨迹"
+                        android:textColor="@color/gray_1f"
+                        android:textSize="@dimen/sp_12"
+                        tools:ignore="HardcodedText"/>
+
+                </RelativeLayout>
 
                 <View
                     android:layout_width="0dp"
@@ -133,11 +258,29 @@
                     android:layout_weight="1"
                     android:background="@color/white"/>
 
-                <ImageView
-                    android:id="@+id/iv_historytrack"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/lishiguiji"
-                    tools:ignore="ContentDescription"/>
+                <RelativeLayout
+                    android:id="@+id/rl_operationbianji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_operationbianji"
+                        style="@style/iv_pading_10"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/weiguizuoye"
+                        tools:ignore="ContentDescription"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_operationbianji"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="违规作业"
+                        android:textColor="@color/gray_1f"
+                        android:textSize="@dimen/sp_12"
+                        tools:ignore="HardcodedText"/>
+
+                </RelativeLayout>
 
                 <View
                     android:layout_width="0dp"
@@ -145,11 +288,29 @@
                     android:layout_weight="1"
                     android:background="@color/white"/>
 
-                <ImageView
-                    android:id="@+id/iv_videojian"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/shipinjiankong"
-                    tools:ignore="ContentDescription"/>
+                <RelativeLayout
+                    android:id="@+id/rl_videojian"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/iv_videojian"
+                        style="@style/iv_pading_10"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/shipinjiankong"
+                        tools:ignore="ContentDescription"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_videojian"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="视频监控"
+                        android:textColor="@color/gray_1f"
+                        android:textSize="@dimen/sp_12"
+                        tools:ignore="HardcodedText"/>
+
+                </RelativeLayout>
 
                 <View
                     android:layout_width="0dp"
@@ -161,147 +322,13 @@
 
             <TextView
                 style="@style/Height_40_bg_gray_hand_txtcolor_hand_gray"
-                android:text="@string/project_manage"
-                android:visibility="invisible"
+                android:text="@string/msg_tixing"
                 tools:ignore="RtlSymmetry"/>
 
-            <LinearLayout
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_10"
-                android:background="@color/white"
-                android:orientation="horizontal"
-                android:visibility="invisible"
-                tools:ignore="UselessLeaf">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-                <ImageView
-                    android:id="@+id/iv_myproject"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/wodexiangmu"
-                    tools:ignore="ContentDescription"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-                <ImageView
-                    android:id="@+id/iv_myteam"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/chuangjiantuandui"
-                    tools:ignore="ContentDescription"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-                <ImageView
-                    android:id="@+id/iv_mymanage"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/pianquguanli"
-                    tools:ignore="ContentDescription"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-                <ImageView
-                    android:id="@+id/iv_mytack"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/woderenwu"
-                    tools:ignore="ContentDescription"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-            </LinearLayout>
-
-            <TextView
-                style="@style/Height_40_bg_gray_hand_txtcolor_hand_gray"
-                android:text="@string/operation_monitor"
-                android:visibility="invisible"
-                tools:ignore="RtlSymmetry"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dp_10"
-                android:layout_marginTop="@dimen/dp_10"
-                android:background="@color/white"
-                android:orientation="horizontal"
-                android:visibility="invisible"
-                tools:ignore="UselessLeaf">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-                <ImageView
-                    android:id="@+id/iv_operationkaoqin"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/lishiguiji"
-                    tools:ignore="ContentDescription"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-                <ImageView
-                    android:id="@+id/iv_videomonitor"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/shipinjiankong"
-                    tools:ignore="ContentDescription"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-                <ImageView
-                    android:id="@+id/iv_locationinfos"
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/dingweixinxi"
-                    tools:ignore="ContentDescription"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-                <ImageView
-                    style="@style/iv_pading_10"
-                    android:src="@drawable/chuangjiantuandui"
-                    android:visibility="invisible"
-                    tools:ignore="ContentDescription"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/white"/>
-
-            </LinearLayout>
+                android:layout_height="match_parent"/>
 
 
         </LinearLayout>

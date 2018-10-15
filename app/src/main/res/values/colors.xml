@@ -9,15 +9,20 @@
     <color name="text_black">#333333</color>
     <color name="gray">#69696B</color>
     <color name="gray_99">#999999</color>
+    <color name="gray_87">#878B8E</color>
     <color name="gray_3f">#3F3F3F</color>
+    <color name="gray_20">#202020</color>
+    <color name="gray_1f">#1F1F1F</color>
     <color name="red">#FF0000</color>
     <color name="green">#21a56e</color>
     <color name="green_signin">#4ACF98</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_ed">#EDEDED</color>
     <color name="yellow">#DFAD18</color>
     <color name="huang_se">#fffe7418</color>
     <color name="maingreen">#026b36</color>
+    <color name="bg_gray">#f5f5f5</color>
 
     <color name="text_font">#333333</color>
     <color name="text_font_gray">#999999</color>
@@ -36,7 +41,7 @@
     <color name="color_f6">#f6f6f6</color>
     <color name="list_divider">#eeeeee</color>
     <color name="gray_hand_bg">#F5F5F5</color>
-    <color name="gray_hand_txt">#8B8B8B</color>
+    <color name="gray_hand_txt">#747474</color>
     <color name="defaultTextColor">#DD961F</color>
     <color name="transparent33">#88000000</color>
     <color name="red_color">#F44848</color>

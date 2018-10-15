@@ -14,7 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.common.base.BaseMvpFragment;
@@ -40,6 +40,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+
 import static android.app.Activity.RESULT_CANCELED;
 
 /**
@@ -50,16 +56,31 @@ import static android.app.Activity.RESULT_CANCELED;
 
 public class UserInfoFragment extends BaseMvpFragment {
 
-    private ImageView userView;
-    private UserInfoItemView shareApp, clean, author, collection, setting;
-    private TextView userName;
+    @BindView(R.id.user_root)
+    LinearLayout userRootView;
+    @BindView(R.id.img_user_view)
+    ImageView userView;
+    @BindView(R.id.tv_user_name)
+    TextView userName;
+    @BindView(R.id.tv_tab_name)
+    TextView tv_tab_name;
+    @BindView(R.id.ui_share)
+    UserInfoItemView shareApp;
+    @BindView(R.id.ui_clean)
+    UserInfoItemView clean;
+    @BindView(R.id.ui_author)
+    UserInfoItemView author;
+    @BindView(R.id.ui_setting)
+    UserInfoItemView setting;
+    @BindString(R.string.tab_mine_name)
+    String my_name;
     //    private UserInfoPresenter userInfoPresenter;
-    private RelativeLayout userRootView;
     private static final int CAMERA_CODE = 1;//掉相机
     private static final int GALLERY_CODE = 2;//调相册
     private static final int CROP_CODE = 3;//拍照裁剪
     private String filePath;
     private Uri mImageUri;
+    Unbinder unbinder;
 
     @Override
     protected int getLayoutId() {
@@ -70,16 +91,10 @@ public class UserInfoFragment extends BaseMvpFragment {
     protected void initView() {
         EventBus.getDefault().register(this);
 //        userInfoPresenter = new UserInfoPresenter(this, (MainActivity) getActivity());
-        userView = rootView.findViewById(R.id.img_user_view);
-        userRootView = rootView.findViewById(R.id.user_root);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.btn_add_normal);
+        unbinder = ButterKnife.bind(this, rootView);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_app);
         userView.setImageBitmap(bitmap);
-        shareApp = rootView.findViewById(R.id.ui_share);
-        clean = rootView.findViewById(R.id.ui_clean);
-        collection = rootView.findViewById(R.id.ui_collection);
-        author = rootView.findViewById(R.id.ui_author);
-        setting = rootView.findViewById(R.id.ui_setting);
-        userName = rootView.findViewById(R.id.tv_user_name);
+        tv_tab_name.setText(my_name);
     }
 
     @Override
@@ -100,18 +115,47 @@ public class UserInfoFragment extends BaseMvpFragment {
 
     @Override
     protected void setLisenter() {
-        shareApp.setOnClickListener(this);
-        clean.setOnClickListener(this);
-        author.setOnClickListener(this);
-        collection.setOnClickListener(this);
-        setting.setOnClickListener(this);
-        userView.setOnClickListener(this);
     }
 
     @Override
     protected void widgetClick(View v) {
-        switch (v.getId()) {
-            case R.id.ui_share:
+//        switch (v.getId()) {
+//            case R.id.ui_share:
+//                showSuccessToast("待开发");
+//                break;
+//            case R.id.ui_clean:
+//                DeleteCacheDialog deleteCacheDialog = new DeleteCacheDialog(getContext());
+//                deleteCacheDialog.setDeletaCacheListener(new DeleteCacheDialog.DeletaCacheListener() {
+//                    @Override
+//                    public void sure() {
+//                        DataCleanManager.clearAllCache(getContext());
+//                        clean.setNumText("0.0B");
+//                        showSuccessToast("清除成功");
+//                    }
+//
+//                    @Override
+//                    public void cancle() {
+//                        showSuccessToast("清理失败");
+//                    }
+//                });
+//                deleteCacheDialog.show();
+//                break;
+//            case R.id.ui_author:
+//                showSuccessToast("待开发");
+//                break;
+//            case R.id.ui_setting://退出登录
+//                outOfLogin();
+//                break;
+//            case R.id.img_user_view:
+//                takeOrSelectPhoto();
+//                break;
+//        }
+    }
+
+    @OnClick({R.id.ui_share, R.id.ui_clean, R.id.ui_author, R.id.ui_setting, R.id.img_user_view})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.ui_share://修改密码
                 showSuccessToast("待开发");
                 break;
             case R.id.ui_clean:
@@ -131,12 +175,7 @@ public class UserInfoFragment extends BaseMvpFragment {
                 });
                 deleteCacheDialog.show();
                 break;
-            case R.id.ui_collection:
-                showSuccessToast("待开发");
-//                startActivity(new Intent(getContext(), TestActivity.class));
-
-                break;
-            case R.id.ui_author:
+            case R.id.ui_author://关于软件
                 showSuccessToast("待开发");
                 break;
             case R.id.ui_setting://退出登录
@@ -403,24 +442,6 @@ public class UserInfoFragment extends BaseMvpFragment {
 //        userInfoPresenter.getCollectSize(0);
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void disposeCollectSizeEvents(UserInfoEvent userInfoEvent) {
-//        switch (userInfoEvent.getWhat()) {
-//            case Constans.COLLECTSIZE:
-//                CollectListInfos collectListInfosList = (CollectListInfos) userInfoEvent.getData();
-//                if (collectListInfosList.getDatas().size() != 0) {
-//                    collection.setNumText(String.valueOf(collectListInfosList.getDatas().size()));
-//                }
-//
-//                break;
-//            case Constans.COLLECTSIZEERROR:
-//                showErrorToast(userInfoEvent.getData().toString());
-//            case Constans.RELOGIN:
-//
-//                break;
-//        }
-//    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposeReLoginEvents(ReloginEvent reloginEvent) {
         switch (reloginEvent.getWhat()) {
@@ -434,6 +455,7 @@ public class UserInfoFragment extends BaseMvpFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        unbinder.unbind();
         EventBus.getDefault().unregister(this);
     }
 

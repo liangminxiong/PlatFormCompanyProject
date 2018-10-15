@@ -1,119 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/user_root"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white">
-
-
-    <ImageView
-        android:id="@+id/img_user_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:scaleType="centerCrop"
-        android:src="@color/white"/>
-
-    <TextView
-        android:id="@+id/tv_user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/img_user_view"
-        android:layout_centerInParent="true"
-        android:paddingBottom="5dp"
-        android:text="Seven"
-        android:textColor="@color/black"
-        android:textSize="26sp"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/user_root"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
 
     <View
-        android:id="@+id/view_space"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_below="@+id/tv_user_name"
-        android:background="#f5f5f5"/>
+        android:layout_height="@dimen/dp_24"
+        android:background="@color/titel_color"/>
+
+    <TextView
+        android:id="@+id/tv_tab_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:background="@color/titel_color"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_17"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:background="@color/list_divider"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_80">
+
+        <ImageView
+            android:id="@+id/img_user_view"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="@dimen/dp_60"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/sp_15"
+            android:scaleType="centerCrop"
+            android:src="@drawable/upgrade"
+            tools:ignore="ContentDescription"/>
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_15"
+            android:layout_toEndOf="@id/img_user_view"
+            android:textColor="@color/gray_20"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/tv_user_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_user_name"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_toEndOf="@id/img_user_view"
+            android:text="15514565"
+            android:textColor="@color/gray_3f"
+            android:textSize="16sp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/sp_15"
+            android:layout_marginStart="@dimen/sp_15"
+            android:scaleType="centerCrop"
+            android:src="@drawable/user_back"
+            tools:ignore="ContentDescription"/>
+
+    </RelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:background="@color/list_divider"/>
 
     <com.yuefeng.usercenter.ui.view.UserInfoItemView
         android:id="@+id/ui_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/view_space"
         app:iconLeft="@drawable/ic_share_app"
-        app:itemText="分享App"/>
-
-    <View
-        android:id="@+id/view_space1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/ui_share"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="#f5f5f5"/>
+        app:itemText="修改密码"/>
 
     <com.yuefeng.usercenter.ui.view.UserInfoItemView
         android:id="@+id/ui_clean"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/view_space1"
+        android:visibility="gone"
         app:iconLeft="@drawable/ic_person_customer_service"
         app:itemText="清理缓存"/>
 
     <View
-        android:id="@+id/view_space2"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_below="@+id/ui_clean"
-        android:background="#f5f5f5"/>
-
-    <com.yuefeng.usercenter.ui.view.UserInfoItemView
-        android:id="@+id/ui_collection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/view_space2"
-        app:iconLeft="@drawable/ic_person_help"
-        app:itemText="我的收藏"/>
-
-    <View
-        android:id="@+id/view_space3"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/ui_collection"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="#f5f5f5"/>
+        android:layout_height="0.5dp"
+        android:layout_marginStart="@dimen/dp_16"
+        android:background="@color/status_color"/>
 
     <com.yuefeng.usercenter.ui.view.UserInfoItemView
         android:id="@+id/ui_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/view_space3"
         app:iconLeft="@drawable/ic_person_us"
         app:itemText="关于软件"/>
 
     <View
-        android:id="@+id/view_space4"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/ui_author"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="#f5f5f5"/>
+        android:layout_height="0.5dp"
+        android:layout_marginStart="@dimen/dp_16"
+        android:background="@color/status_color"/>
+
 
     <com.yuefeng.usercenter.ui.view.UserInfoItemView
         android:id="@+id/ui_setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/view_space4"
         app:iconLeft="@drawable/ic_language_choose"
         app:itemText="退出登录"/>
 
     <View
-        android:id="@+id/view_space5"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/ui_setting"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="#f5f5f5"/>
-</RelativeLayout>
+        android:layout_height="match_parent"
+        android:background="@color/list_divider"/>
+
+</LinearLayout>

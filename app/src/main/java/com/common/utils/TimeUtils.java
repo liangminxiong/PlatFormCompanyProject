@@ -28,10 +28,112 @@ import java.util.Date;
  */
 
 public class TimeUtils {
+
+    public static String getCurrentTime2() {
+        String time = "";
+        Calendar calendar = Calendar.getInstance();
+//获取系统的日期
+//年
+        int year = calendar.get(Calendar.YEAR);
+//月
+        int month = calendar.get(Calendar.MONTH) + 1;
+//日
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+//获取系统时间
+//小时
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+//分钟
+        int minute = calendar.get(Calendar.MINUTE);
+//秒
+        int second = calendar.get(Calendar.SECOND);
+
+//        time2.setText("Calendar获取当前日期"+year+"年"+month+"月"+day+"日"+hour+":"+minute+":"+second);
+        time = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+        return time;
+    }
+
+    public static String getYearMonthDay() {
+        String time = "";
+        Calendar calendar = Calendar.getInstance();
+//获取系统的日期
+//年
+        int year = calendar.get(Calendar.YEAR);
+//月
+        int month = calendar.get(Calendar.MONTH) + 1;
+//日
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+//获取系统时间
+//小时
+//        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+//分钟
+//        int minute = calendar.get(Calendar.MINUTE);
+//秒
+//        int second = calendar.get(Calendar.SECOND);
+
+//        time2.setText("Calendar获取当前日期"+year+"年"+month+"月"+day+"日"+hour+":"+minute+":"+second);
+        time = year + "-" + month + "-" + day;
+        return time;
+    }
+
+    public static String getHourMinute() {
+        String time = "";
+        String tH = "";
+        String tM = "";
+        Calendar calendar = Calendar.getInstance();
+//获取系统的日期
+//年月日
+//        int year = calendar.get(Calendar.YEAR);
+//        int month = calendar.get(Calendar.MONTH) + 1;
+//        int day = calendar.get(Calendar.DAY_OF_MONTH);
+//获取系统时间
+//小时
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+//分钟
+        int minute = calendar.get(Calendar.MINUTE);
+//秒
+//        int second = calendar.get(Calendar.SECOND);
+
+//        time2.setText("Calendar获取当前日期"+year+"年"+month+"月"+day+"日"+hour+":"+minute+":"+second);
+        if (hour < 10) {
+            tH = "0" + hour;
+        } else {
+            tH = String.valueOf(hour);
+        }
+        if (minute < 10) {
+            tM = "0" + minute;
+        } else {
+            tM = String.valueOf(minute);
+        }
+        time = tH + ":" + tM;
+        return time;
+    }
+
+    public static String getHourMinuteSecond() {
+        String time = "";
+        Calendar calendar = Calendar.getInstance();
+//获取系统的日期
+//年月日
+//        int year = calendar.get(Calendar.YEAR);
+//        int month = calendar.get(Calendar.MONTH) + 1;
+//        int day = calendar.get(Calendar.DAY_OF_MONTH);
+//获取系统时间
+//小时
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+//分钟
+        int minute = calendar.get(Calendar.MINUTE);
+//秒
+        int second = calendar.get(Calendar.SECOND);
+
+//        time2.setText("Calendar获取当前日期"+year+"年"+month+"月"+day+"日"+hour+":"+minute+":"+second);
+        time = hour + ":" + minute + ":" + second;
+        return time;
+    }
+
+
     /*
-    * time:时间毫秒值
-    * inFormat:时间格式
-    * */
+     * time:时间毫秒值
+     * inFormat:时间格式
+     * */
     public static String longToString(long time, String inFormat) {
         Date date = new Date(time);
         DateFormat format = new SimpleDateFormat(inFormat);
@@ -278,7 +380,7 @@ public class TimeUtils {
      * @return
      */
     public static String getTimeHourMin(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return format.format(date);
     }
 
@@ -577,13 +679,12 @@ public class TimeUtils {
      *
      * @return
      */
-    public static String FormatMiss(int time){
-        String hh=time/3600>9?time/3600+"":"0"+time/3600;
-        String mm=(time% 3600)/60>9?(time% 3600)/60+"":"0"+(time% 3600)/60;
-        String ss=(time% 3600) % 60>9?(time% 3600) % 60+"":"0"+(time% 3600) % 60;
-        return hh+":"+mm+":"+ss;
+    public static String FormatMiss(int time) {
+        String hh = time / 3600 > 9 ? time / 3600 + "" : "0" + time / 3600;
+        String mm = (time % 3600) / 60 > 9 ? (time % 3600) / 60 + "" : "0" + (time % 3600) / 60;
+        String ss = (time % 3600) % 60 > 9 ? (time % 3600) % 60 + "" : "0" + (time % 3600) % 60;
+        return hh + ":" + mm + ":" + ss;
     }
-
 
 
     /**

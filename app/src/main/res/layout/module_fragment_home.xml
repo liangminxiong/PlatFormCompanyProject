@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_24"
+        android:background="@color/titel_color"/>
 
     <TextView
+        android:id="@+id/tv_tab_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:background="@color/titel_color"
         android:gravity="center"
-        android:text="正在开发......"/>
-</RelativeLayout>
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_17"/>
+
+    <include layout="@layout/layout_search"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</android.support.v7.widget.LinearLayoutCompat>

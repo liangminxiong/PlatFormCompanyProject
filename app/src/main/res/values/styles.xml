@@ -179,7 +179,7 @@
 
     <style name="Height_40_bg_gray_hand_txtcolor_hand_gray">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/dp_32</item>
+        <item name="android:layout_height">@dimen/dp_26</item>
         <item name="android:background">@color/gray_hand_bg</item>
         <item name="android:textSize">@dimen/sp_12</item>
         <item name="android:gravity">center_vertical</item>
@@ -191,7 +191,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:scaleType">fitXY</item>
-        <item name="android:padding">@dimen/dp_10</item>
+        <!--<item name="android:padding">@dimen/dp_10</item>-->
     </style>
 
     <!--线-->
@@ -242,6 +242,11 @@
         <attr name="textColorOut" format="color"/>
         <attr name="textColorCenter" format="color"/>
         <attr name="dividerColor1" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="CircleImageView">
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
     </declare-styleable>
 
 </resources>

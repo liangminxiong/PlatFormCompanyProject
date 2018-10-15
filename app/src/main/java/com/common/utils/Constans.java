@@ -9,6 +9,7 @@ public class Constans {
     public static final int NET_WORK_DISABLED = 1;//没网络
 
     public static final String COUNT_ZERO = "0";
+    public static final int TWO = 2;
     public static final int THREE = 3;
     public static final int FOUR = 4;
     public static final int COMMON = 5;//公共
@@ -109,10 +110,19 @@ public class Constans {
     public static final int ADDRESS_SSUCESS = 79;//地址
 
     /*
-     * 视频监控 80-90
+     * 视频监控  车辆列表 人员列表 车辆违规 人员违规 80-90
      * */
-    public static final int VIDEO_SSUCESS = 80;//成功
-    public static final int VIDEO_ERROR = 81;//失败
+    public static final int VIDEO_SSUCESS = 80;//轨迹成功
+    public static final int VIDEO_ERROR = 81;//轨迹失败
+    public static final int CARLIST_SSUCESS = 82;//车辆列表成功
+    public static final int CARLIST_ERROR = 83;//车辆列表失败
+
+    public static final int CARLLEGAL_SSUCESS = 84;//车辆违规成功
+    public static final int CARLLEGAL_ERROR = 85;//车辆违规失败
+    public static final int PERSONALLLEGAL_SSUCESS = 86;//人员违规成功
+    public static final int PERSONALLLEGAL_ERROR = 87;//人员违规失败
+    public static final int PERSONALLIST_SSUCESS = 88;//人员列表成功
+    public static final int PERSONALLIST_ERROR = 89;//人员列表失败
 
 
     /*导航*/

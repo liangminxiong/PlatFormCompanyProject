@@ -1,4 +1,4 @@
-package com.yuefeng.treesList;
+package com.yuefeng.cartreeList.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,6 @@ public class Node<T, B> {
      * 设置开启 关闭的图片
      */
     public int iconExpand = -1, iconNoExpand = -1;
-    public int icon_state_online = 1, icon_state_outline =0, icon_state_ondrive = 2;
 
     private T id;
     /**
@@ -24,12 +23,13 @@ public class Node<T, B> {
      */
     private T pId;
 
-
-    private String isOnline;
     private String count;
-    private String name;
+
     private String stateType;
+
     private String terminalNO;
+
+    private String name;
 
     private String gt;
     private String speed;
@@ -77,13 +77,20 @@ public class Node<T, B> {
     public Node() {
     }
 
-    public Node(T id, T pId, String name, String isOnline, String count) {
+    /*gt, speed, obd, address*/
+    public Node(T id, T pId, String name, String count, String stateType, String terminalNO, String gt, String speed, String obd, String address) {
         super();
         this.id = id;
         this.pId = pId;
         this.name = name;
-        this.isOnline = isOnline;
         this.count = count;
+        this.stateType = stateType;
+        this.terminalNO = terminalNO;
+
+        this.gt = gt;
+        this.speed = speed;
+        this.obd = obd;
+        this.address = address;
     }
 
     public Node(T id, T pId, String name, B bean) {
@@ -209,14 +216,6 @@ public class Node<T, B> {
 
     public void setCount(String count) {
         this.count = count;
-    }
-
-    public String getIsOnline() {
-        return isOnline;
-    }
-
-    public void setIsOnline(String isOnline) {
-        this.isOnline = isOnline;
     }
 
     public String getStateType() {

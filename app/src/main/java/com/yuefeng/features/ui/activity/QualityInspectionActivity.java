@@ -84,7 +84,7 @@ public class QualityInspectionActivity extends BaseActivity implements
 
         view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
         StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-        tv_title.setText("质量巡查");
+        tv_title.setText("问题处理");
         initViewPager();
         viewPager.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -119,6 +119,9 @@ public class QualityInspectionActivity extends BaseActivity implements
     }
 
     private void initTabViewCount(List<String> stringList) {
+        if (stringList.size() < 4) {
+            return;
+        }
         tabItemInfoA.setTabCount(stringList.get(0));
         tabItemInfoB.setTabCount(stringList.get(1));
         tabItemInfoC.setTabCount(stringList.get(2));

@@ -19,9 +19,9 @@ import com.yuefeng.features.contract.VideoListContract;
 import com.yuefeng.features.event.VideoListEvent;
 import com.yuefeng.features.modle.video.ChangeVideoEquipmentDataBean;
 import com.yuefeng.features.presenter.VideoListPresenter;
-import com.yuefeng.treesList.Node;
-import com.yuefeng.treesList.OnTreeNodeClickListener;
-import com.yuefeng.treesList.adapter.SimpleTreeRecyclerAdapter;
+import com.yuefeng.videotreesList.Node;
+import com.yuefeng.videotreesList.OnTreeNodeClickListener;
+import com.yuefeng.videotreesList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.utils.ChangeDatasUtils;
 
 import org.greenrobot.eventbus.EventBus;

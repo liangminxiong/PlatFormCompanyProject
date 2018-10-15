@@ -118,6 +118,7 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         problemid = (String) bundle.get("PROBLEMID");
         name = (String) bundle.get("NAME");
         tv_problem_reporter.setText(name);
+
         scrollview.post(new Runnable() {
             @Override
             public void run() {

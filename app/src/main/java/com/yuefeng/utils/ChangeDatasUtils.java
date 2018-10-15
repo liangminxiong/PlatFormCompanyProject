@@ -6,7 +6,7 @@ import com.yuefeng.features.modle.video.Organ;
 import com.yuefeng.features.modle.video.OrgansBean;
 import com.yuefeng.features.modle.video.VideoesBean;
 import com.yuefeng.features.modle.video.VideoesXBean;
-import com.yuefeng.treesList.Node;
+import com.yuefeng.videotreesList.Node;
 
 import java.util.ArrayList;
 import java.util.List;

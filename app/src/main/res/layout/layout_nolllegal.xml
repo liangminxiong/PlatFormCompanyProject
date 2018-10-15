@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_nodata"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="invisible"
+    tools:ignore="UselessParent">
+
+    <TextView
+        android:id="@+id/tv_title_center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="暂无违规作业信息"
+        android:textSize="@dimen/dp_24"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText,SpUsage"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tv_title_center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/sp_15"
+        android:src="@drawable/upgrade"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title_center"
+        android:layout_marginTop="@dimen/sp_10"
+        android:gravity="center"
+        android:text="恭喜您!"
+        android:textSize="@dimen/sp_22"
+        tools:ignore="HardcodedText,SpUsage"/>
+
+</RelativeLayout>

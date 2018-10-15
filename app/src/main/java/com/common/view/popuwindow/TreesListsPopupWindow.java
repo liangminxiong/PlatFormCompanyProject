@@ -5,9 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +33,7 @@ public class TreesListsPopupWindow extends PopupWindow {
     private View rootView;
     private TextView tv_title;
     private TextView tv_setting;
+    public RecyclerView recyclerview;
 
     public TreesListsPopupWindow(Context context) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
@@ -46,7 +47,7 @@ public class TreesListsPopupWindow extends PopupWindow {
         int w = wm.getDefaultDisplay().getWidth();
         int h = wm.getDefaultDisplay().getHeight();
         Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        bitmap.eraseColor(Color.WHITE);//填充颜色
+        bitmap.eraseColor(context.getResources().getColor(R.color.transition));//填充颜色
         setBackgroundDrawable(new BitmapDrawable(context.getResources(), bitmap));
 
         initView();
@@ -57,6 +58,7 @@ public class TreesListsPopupWindow extends PopupWindow {
         setContentView(rootView);
 
         llPopupRoot = (LinearLayoutCompat) rootView.findViewById(R.id.ll_popup_root);
+        recyclerview = (RecyclerView) rootView.findViewById(R.id.recyclerview);
         RelativeLayout iv_back = (RelativeLayout) rootView.findViewById(R.id.iv_back);
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         tv_setting = (TextView) rootView.findViewById(R.id.tv_title_setting);
@@ -151,9 +153,13 @@ public class TreesListsPopupWindow extends PopupWindow {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float value = (float) animation.getAnimatedValue();
-                view.setPivotX(0);
-                view.setPivotY(view.getMeasuredHeight());
-                view.setTranslationY((1 - value) * view.getHeight());
+//                view.setPivotX(0);
+//                view.setPivotY(view.getMeasuredHeight());
+//                view.setTranslationY((1 - value) * view.getHeight());
+
+                view.setPivotY(0);
+                view.setPivotX(view.getMeasuredWidth());
+                view.setTranslationX((1 - value) * view.getWidth());
             }
         });
         va.addListener(new AnimatorListenerAdapter() {
