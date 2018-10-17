@@ -13,6 +13,7 @@ public class Constans {
     public static final int THREE = 3;
     public static final int FOUR = 4;
     public static final int COMMON = 5;//公共
+    public static final int TEN = 10;//公共
     /*
      * home模块 100~200
      * */

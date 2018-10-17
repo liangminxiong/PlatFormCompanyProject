@@ -92,7 +92,6 @@ public class QualityInspectionActivity extends BaseActivity implements
                 return false;
             }
         });
-        PreferencesUtils.putString(this, "mAddress", "");
     }
 
     @SuppressLint("InflateParams")

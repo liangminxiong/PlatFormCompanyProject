@@ -10,8 +10,10 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
+import com.yuefeng.features.modle.carlist.CarListSelectBean;
 import com.yuefeng.features.modle.carlist.Organ;
 import com.yuefeng.features.modle.carlist.OrgansBean;
 import com.yuefeng.features.modle.carlist.VehiclesBean;
@@ -85,7 +87,7 @@ public class DatasUtils {
 
     private static String stateType2 = "";
     private static String sStateType3 = "";
-    private static String address ="";
+    private static String address = "";
     private static LatLng sLatLng;
 
     public static List<Node> ReturnTreesDatas(List<CarListInfosMsgBean> msg) {
@@ -130,7 +132,7 @@ public class DatasUtils {
         }
 
 
-         /*第二层*/
+        /*第二层*/
         if (firstOsize > 0) {
             for (OrgansBean firstOrgan : firstOrgans) {
                 String strSecond = initDatasTreeStrSecond(firstOrgan);
@@ -896,6 +898,30 @@ public class DatasUtils {
         double latlng = 0;
         latlng = Double.valueOf(txt);
         return latlng;
+    }
+
+    public static List<CarListSelectBean> carListSelect(List<Node> carDatas, String keyWord) {
+        List<CarListSelectBean> carListSelect = new ArrayList<>();
+
+        for (Node carData : carDatas) {
+            String count = carData.getCount();
+            String name = carData.getName();
+            String stateType = carData.getStateType();
+            String terminalNO = carData.getTerminalNO();
+            LogUtils.d("search ===" + count + " + + " + name + " ++ " + stateType + " ++ " + terminalNO);
+            if (count.equals("0")) {
+                if (name.contains(keyWord)) {
+                    CarListSelectBean selectBean = new CarListSelectBean();
+                    selectBean.setName(name);
+                    selectBean.setType(stateType);
+                    selectBean.setTerminal(terminalNO);
+                    carListSelect.add(selectBean);
+                }
+            }
+        }
+
+
+        return carListSelect;
     }
 
 }

@@ -173,6 +173,8 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
+                    int length = address.length();
+                    address = address.substring(2, length);
                     if (isFirstLocation) {
                         isFirstLocation = false;
                         PreferencesUtils.putString(ProblemUpdateActivity.this, "Fengrun", "");

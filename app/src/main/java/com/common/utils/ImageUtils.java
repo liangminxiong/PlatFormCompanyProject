@@ -3,15 +3,12 @@ package com.common.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -21,19 +18,12 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.content.FileProvider;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.bumptech.glide.request.RequestOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.MessageDigest;
 
 /**
  * Created by Liuc on 2017-12-19.
@@ -639,6 +629,40 @@ public class ImageUtils {
             // 创建缩放后的图片
             return Bitmap.createBitmap(src, 0, 0, width, height, matrix, true);
         }
+    }
+
+    //保存图片文件到指定路径
+    public static boolean saveImageToGallery(Context context, Bitmap bmp) {
+        // 首先保存图片
+        String storePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "platform";
+        File appDir = new File(storePath);
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        String fileName = System.currentTimeMillis() + ".jpg";
+        File file = new File(appDir, fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            //通过io流的方式来压缩保存图片
+            boolean isSuccess = bmp.compress(Bitmap.CompressFormat.JPEG, 60, fos);
+            fos.flush();
+            fos.close();
+
+            //把文件插入到系统图库
+            //MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), fileName, null);
+
+            //保存图片后发送广播通知更新数据库
+            Uri uri = Uri.fromFile(file);
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+            if (isSuccess) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**

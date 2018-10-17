@@ -1,11 +1,14 @@
 package com.yuefeng.features.ui.activity.video;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
@@ -15,20 +18,26 @@ import android.widget.TextView;
 
 import com.babelstar.gviewer.NetClient;
 import com.babelstar.gviewer.VideoView;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
+import com.common.utils.AppUtils;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ResourcesUtils;
 import com.common.utils.StatusBarUtil;
+import com.common.utils.ViewUtils;
 import com.common.view.popuwindow.TreesListsPopupWindow;
 import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.features.adapter.CarListSelectAdapter;
 import com.yuefeng.features.contract.VideolistVContract;
 import com.yuefeng.features.event.LllegalWorkEvent;
 import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
+import com.yuefeng.features.modle.carlist.CarListSelectBean;
 import com.yuefeng.features.presenter.VideolistVPresenter;
 import com.yuefeng.features.ui.view.VideoPopupWindow;
 import com.yuefeng.utils.DatasUtils;
@@ -78,11 +87,16 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
 
     private List<CarListInfosMsgBean> carListData = new ArrayList<>();
     private List<Node> carDatas = new ArrayList<>();
+    private List<Node> carDatasSelect = new ArrayList<>();
     private VideolistVPresenter presenter;
     private TreesListsPopupWindow carListPopupWindow;
     private SimpleTreeRecyclerAdapter carlistAdapter;
     private String carNumber;
     private String terminal;
+    private CarListSelectAdapter adapter;
+    private boolean isFirstOnclik = true;
+
+    private List<CarListSelectBean> listData = new ArrayList<>();
 
 
     @Override
@@ -105,6 +119,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
         getCarList();
         ll_nodata.setVisibility(View.VISIBLE);
         ll_video.setVisibility(View.GONE);
+        carDatasSelect.clear();
     }
 
     /*车辆列表*/
@@ -145,25 +160,9 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
         carListPopupWindow = new TreesListsPopupWindow(this);
         carListPopupWindow.setTitleText("车辆列表");
         carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
-
-        if (carDatas.size() > 0) {
-            carListPopupWindow.recyclerview.setLayoutManager(new LinearLayoutManager(this));
-            if (carlistAdapter == null) {
-                carlistAdapter = new SimpleTreeRecyclerAdapter(carListPopupWindow.recyclerview, this,
-                        carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, true);
-            } else {
-                carlistAdapter.notifyDataSetChanged();
-            }
-            carListPopupWindow.recyclerview.setAdapter(carlistAdapter);
-        }
-        carlistAdapter.notifyDataSetChanged();
-        carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
-            @Override
-            public void onClick(Node node, int position) {
-                showSelectItemDatas();
-            }
-
-        });
+        carListPopupWindow.recyclerview_after.setLayoutManager(new LinearLayoutManager(this));
+        initRecycleView();
+        showTreesCarListData(carDatas);
 
         carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
             @Override
@@ -177,8 +176,87 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
                 carListPopupWindow.dismiss();
             }
         });
+        if (carListPopupWindow != null) {
+            carListPopupWindow.tv_search_txt.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (count > 0) {
+                        carListPopupWindow.recyclerview.setVisibility(View.GONE);
+                        carListPopupWindow.recyclerview_after.setVisibility(View.VISIBLE);
+                    } else {
+                        carListPopupWindow.recyclerview.setVisibility(View.VISIBLE);
+                        carListPopupWindow.recyclerview_after.setVisibility(View.GONE);
+                    }
+                    searchList(s.toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+        }
 
         carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+    }
+
+    private void initRecycleView() {
+        assert carListPopupWindow != null;
+        adapter = new CarListSelectAdapter(R.layout.list_item, listData);
+        carListPopupWindow.recyclerview_after.setAdapter(adapter);
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                terminal = listData.get(position).getTerminal();
+                if (!TextUtils.isEmpty(terminal)) {
+                    if (carListPopupWindow != null) {
+                        carListPopupWindow.dismiss();
+                    }
+                    showVideoList(terminal);
+                }
+            }
+        });
+    }
+
+    private void searchList(String key) {
+        if (carDatas.size() > 0) {
+            List<CarListSelectBean> nodes = DatasUtils.carListSelect(carDatas, key);
+            LogUtils.d("search == " + key + " ++ " + nodes.size());
+            if (nodes.size() > 0) {
+                listData.clear();
+                listData.addAll(nodes);
+                if (adapter != null) {
+                    adapter.setNewData(listData);
+                }
+            }
+        }
+    }
+
+    private void showTreesCarListData(List<Node> carDatas) {
+        if (carDatas.size() > 0) {
+            carListPopupWindow.recyclerview.setLayoutManager(new LinearLayoutManager(this));
+//            if (carlistAdapter == null) {
+            carlistAdapter = new SimpleTreeRecyclerAdapter(carListPopupWindow.recyclerview, this,
+                    carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, true);
+//            } else {
+//                carlistAdapter.notifyDataSetChanged();
+//            }
+            carListPopupWindow.recyclerview.setAdapter(carlistAdapter);
+        }
+        carlistAdapter.notifyDataSetChanged();
+        carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
+            @Override
+            public void onClick(Node node, int position) {
+                showSelectItemDatas();
+            }
+
+        });
     }
 
     /*点击车*/
@@ -204,9 +282,13 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
 
     /*获取*/
     private void showVideoList(String terminal) {
+        /*测试*/
         if (TextUtils.isEmpty(terminal)) {
             showSuccessToast("终端号获取失败");
         } else {
+
+            initViewHightWith();
+
             ll_nodata.setVisibility(View.GONE);
             ll_video.setVisibility(View.VISIBLE);
             NetClient.Initialize();
@@ -222,6 +304,14 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
             mUpdateViewThread = new UpdateViewThread();
             mUpdateViewThread.start();
         }
+    }
+
+    private void initViewHightWith() {
+        int hight = (int) AppUtils.mScreenHeight / 4;
+        ViewUtils.setIVHightOrWidth(mImageView1, hight, ActionBar.LayoutParams.MATCH_PARENT);
+        ViewUtils.setIVHightOrWidth(mImageView2, hight, ActionBar.LayoutParams.MATCH_PARENT);
+        ViewUtils.setIVHightOrWidth(mImageView3, hight, ActionBar.LayoutParams.MATCH_PARENT);
+        ViewUtils.setIVHightOrWidth(mImageView4, hight, ActionBar.LayoutParams.MATCH_PARENT);
     }
 
 

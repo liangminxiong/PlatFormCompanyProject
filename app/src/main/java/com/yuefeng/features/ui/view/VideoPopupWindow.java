@@ -43,7 +43,7 @@ public class VideoPopupWindow extends PopupWindow {
         int w = wm.getDefaultDisplay().getWidth();
         int h = wm.getDefaultDisplay().getHeight();
         Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        bitmap.eraseColor(Color.WHITE);//填充颜色
+        bitmap.eraseColor(Color.TRANSPARENT);//填充颜色
         setBackgroundDrawable(new BitmapDrawable(context.getResources(), bitmap));
 
         initView();
@@ -117,9 +117,9 @@ public class VideoPopupWindow extends PopupWindow {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float value = (float) animation.getAnimatedValue();
-                view.setPivotX(0);
-                view.setPivotY(view.getMeasuredHeight());
-                view.setTranslationY((1 - value) * view.getHeight());
+                view.setPivotY(0);
+                view.setPivotX(view.getMeasuredWidth());
+                view.setTranslationX((1 - value) * view.getWidth());
             }
         });
         va.addListener(new AnimatorListenerAdapter() {

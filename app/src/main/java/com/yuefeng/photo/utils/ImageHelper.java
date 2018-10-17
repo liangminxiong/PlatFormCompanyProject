@@ -97,19 +97,19 @@ public class ImageHelper {
         bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
         String string = PreferencesUtils.getString(MyApplication.getContext(), "Fengrun");
         if (string.equals(context.getResources().getString(R.string.fengrun))) {
-            bitmap = ImageUtils.drawTextToLeftBottom(MyApplication.getContext(), bitmap, string, 22, Color.LTGRAY,0,40);
+            bitmap = ImageUtils.drawTextToLeftBottom(MyApplication.getContext(), bitmap, string, 20, Color.LTGRAY,0,40);
         } else {
             if (!TextUtils.isEmpty(txt)) {
-                bitmap = ImageUtils.drawTextToLeftBottom(MyApplication.getContext(), bitmap, txt, 22, Color.LTGRAY, 0, 40);
-                bitmap = ImageUtils.drawTextToLeftBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 22, Color.LTGRAY, 0, 10);
+                bitmap = ImageUtils.drawTextToLeftBottom(MyApplication.getContext(), bitmap, txt, 20, Color.LTGRAY, 0, 40);
+                bitmap = ImageUtils.drawTextToLeftBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 20, Color.LTGRAY, 0, 10);
             } else {
                 txt = PreferencesUtils.getString(MyApplication.getContext(), "mAddress");
                 if (!TextUtils.isEmpty(txt)) {
-                    bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 22, Color.LTGRAY, 0, 40);
-                    bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 22, Color.LTGRAY, 0, 10);
+                    bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 20, Color.LTGRAY, 0, 40);
+                    bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 20, Color.LTGRAY, 0, 10);
                 } else {
                     txt = TimeUtils.getCurrentTime();
-                    bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 22, Color.LTGRAY, 0, 40);
+                    bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 20, Color.LTGRAY, 0, 40);
                 }
             }
         }
@@ -174,15 +174,15 @@ public class ImageHelper {
         bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
         String string = PreferencesUtils.getString(MyApplication.getContext(), "Fengrun");
         if (string.equals(context.getResources().getString(R.string.fengrun))) {
-            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, string, 22, Color.LTGRAY, 0, 0);
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, string, 20, Color.LTGRAY, 0, 0);
         } else {
             String txt = PreferencesUtils.getString(MyApplication.getContext(), "mAddress");
             if (!TextUtils.isEmpty(txt)) {
-                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 22, Color.LTGRAY, 0, 40);
-                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 22, Color.LTGRAY, 0, 10);
+                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 20, Color.LTGRAY, 0, 40);
+                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 20, Color.LTGRAY, 0, 10);
             } else {
                 txt = TimeUtils.getCurrentTime();
-                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 22, Color.LTGRAY, 0, 0);
+                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 20, Color.LTGRAY, 0, 0);
             }
         }
         return bitmap;

@@ -13,6 +13,7 @@ import com.common.base.codereview.BaseFragment;
 import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.AllProblemAdapter;
@@ -139,6 +140,7 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
         orgId = PreferencesUtils.getString(getActivity(), "orgId", "");
         userId = PreferencesUtils.getString(getActivity(), "id", "");
         presenter.getEventquestion(ApiService.GETEVENTQUESTION, orgId, userId, "3", b);
+        LogUtils.d("getEventDatas = " + b);
     }
 
 
@@ -154,9 +156,6 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
                 }
                 break;
             case Constans.CARRY_SUCESS://完成
-                getEventDatasByNet(false);
-                break;
-            case Constans.CLOSED_SSUCESS:
                 getEventDatasByNet(false);
                 break;
             case Constans.TOCLOSED_ERROR:
@@ -177,6 +176,7 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
@@ -184,9 +184,9 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
         switch (requestCode) {
             case 2:
                 if (resultCode == RESULT_OK) {
+                    getEventDatasByNet(true);
                     EventBus.getDefault().postSticky(new AllProblemEvent(Constans.CLOSED_SSUCESS, ""));
                     EventBus.getDefault().postSticky(new CommonEvent(Constans.COUNT_AGAIN_SUCESS, ""));
-                    EventBus.getDefault().postSticky(new ToClosedEvent(Constans.CLOSED_SSUCESS, ""));
                 }
                 break;
         }

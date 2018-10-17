@@ -160,6 +160,8 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
                 }
                 if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                     address = location.getAddrStr();
+                    int length = address.length();
+                    address = address.substring(2, length);
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
 //                    LatLng latLng=BdLocationUtil.ConverCommonToBaidu()

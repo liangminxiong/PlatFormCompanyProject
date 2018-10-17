@@ -379,6 +379,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
+                    int length = address.length();
+                    address = address.substring(2, length);
                     latLngTemp = new LatLng(latitude, longitude);
                     LogUtils.d("getLocation == " + latLngTemp + " ++ " + address);
                     if (isFirstLoc) {

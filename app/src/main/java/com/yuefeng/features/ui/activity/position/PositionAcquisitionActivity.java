@@ -41,6 +41,7 @@ import com.common.utils.ImageUtils;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StatusBarUtil;
+import com.common.utils.StringUtils;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
 import com.common.view.timeview.OptionsPickerView;
 import com.luck.picture.lib.PictureSelector;
@@ -265,6 +266,8 @@ public class PositionAcquisitionActivity extends BaseActivity {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
+                    int length = address.length();
+                    address = address.substring(2, length);
                     latLngTemp = new LatLng(latitude, longitude);
                     if (isFirstLoc) {
                         isFirstLoc = false;
@@ -289,7 +292,7 @@ public class PositionAcquisitionActivity extends BaseActivity {
 
     /*定时刷新*/
     private void initLocation() {
-        mLocationHelper = new LocationHelper(this, 5);
+        mLocationHelper = new LocationHelper(this, Constans.TEN);
         mLocationHelper.initLocation(new MyLocationListener() {
 
             @Override
@@ -303,14 +306,17 @@ public class PositionAcquisitionActivity extends BaseActivity {
             public void updateLocation(Location location) {
                 latitude = location.getLongitude();
                 longitude = location.getLatitude();
-                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
-                if (latLng != null && latLngTemp != null) {
+//                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+                latLng = new LatLng(latitude, longitude);
+                if (latLngTemp != null) {
                     distance = DistanceUtil.getDistance(latLngTemp, latLng);
-                    if (distance < 500) {
+                    String stringDouble = StringUtils.getStringDistance(distance);
+
+                    LogUtils.d("getLocation== " + latLng + " ++ ++ " + stringDouble);
+                    if (distance > 100) {
                         latLngTemp = latLng;
                     }
                 }
-                LogUtils.d("getLocation== " + latLng + " ++ " + address + " ++ " + distance);
             }
 
             @Override

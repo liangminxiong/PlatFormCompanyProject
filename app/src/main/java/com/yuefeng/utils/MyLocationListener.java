@@ -34,7 +34,10 @@ public class MyLocationListener implements BDLocationListener {
         } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
             // 如果是网络定位
             // 获取地址信息
-            map.put("address", location.getAddrStr());
+            String address = location.getAddrStr();
+            int length = address.length();
+            address = address.substring(2, length);
+            map.put("address", address);
         }
         if (mOnLocationResultListener != null) {
             mOnLocationResultListener.onResultData(map);

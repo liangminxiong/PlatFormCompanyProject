@@ -159,9 +159,6 @@ public class ProcessingProblemFragment extends BaseFragment implements QualityGe
                 getEventDatasByNet(false);
                 break;
 
-            case Constans.CARRY_SUCESS://完成成功
-                getEventDatasByNet(false);
-                break;
             case Constans.ZHUANFA_SSUCESS://转发成功
                 getEventDatasByNet(false);
                 break;
@@ -188,6 +185,7 @@ public class ProcessingProblemFragment extends BaseFragment implements QualityGe
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
@@ -195,8 +193,8 @@ public class ProcessingProblemFragment extends BaseFragment implements QualityGe
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {//完成
+                    getEventDatasByNet(true);
                     EventBus.getDefault().postSticky(new CommonEvent(Constans.COUNT_AGAIN_SUCESS, ""));
-                    EventBus.getDefault().postSticky(new ProcessingEvent(Constans.CARRY_SUCESS, ""));
                     EventBus.getDefault().postSticky(new AllProblemEvent(Constans.CARRY_SUCESS, ""));
                     EventBus.getDefault().postSticky(new ToClosedEvent(Constans.CARRY_SUCESS, ""));
                 }

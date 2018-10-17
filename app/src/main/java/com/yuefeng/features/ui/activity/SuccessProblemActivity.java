@@ -104,7 +104,6 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
             problemid = (String) bundle.get("PROBLEMID");
         }
         selectPhoto();
-        PreferencesUtils.putString(this, "mAddress", "");
         PreferencesUtils.putString(this, "Fengrun", "");
     }
 

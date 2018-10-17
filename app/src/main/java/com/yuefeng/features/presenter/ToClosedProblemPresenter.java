@@ -87,6 +87,12 @@ public class ToClosedProblemPresenter extends BasePresenterImpl<QualityGetFragme
                         dismissLoadingDialog();
                         EventBus.getDefault().postSticky(new ToClosedEvent(Constans.TOCLOSED_ERROR, e.getMsg()));
                     }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        super._onError(error);
+                    }
                 });
     }
 

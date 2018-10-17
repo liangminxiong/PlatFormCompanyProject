@@ -307,6 +307,8 @@ public class JobMonitoringActivity extends BaseActivity implements
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
                     beginAddress = location.getAddrStr();
+                    int length = beginAddress.length();
+                    beginAddress = beginAddress.substring(2, length);
                     mlatLng = new LatLng(latitude, longitude);
                     if (isFirstLoc) {
                         isFirstLoc = false;

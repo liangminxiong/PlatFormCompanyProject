@@ -159,7 +159,8 @@ public class CarLllegalWorkListFragment extends BaseFragment {
         listData.clear();
         listData.addAll(bean);
         adapter.setNewData(listData);
-        tvLllegalCount.setText("截止到" + TimeUtils.getHourMinute() +
+        tvLllegalCount.setText("截止到" + TimeUtils.
+                getHourMinute() +
                 " 已有" + listData.size() + "辆车违规作业");
     }
 

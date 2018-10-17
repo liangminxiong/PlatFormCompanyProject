@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,7 +34,9 @@ public class TreesListsPopupWindow extends PopupWindow {
     private View rootView;
     private TextView tv_title;
     private TextView tv_setting;
+    public TextInputEditText tv_search_txt;
     public RecyclerView recyclerview;
+    public RecyclerView recyclerview_after;
 
     public TreesListsPopupWindow(Context context) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
@@ -59,8 +62,10 @@ public class TreesListsPopupWindow extends PopupWindow {
 
         llPopupRoot = (LinearLayoutCompat) rootView.findViewById(R.id.ll_popup_root);
         recyclerview = (RecyclerView) rootView.findViewById(R.id.recyclerview);
+        recyclerview_after = (RecyclerView) rootView.findViewById(R.id.recyclerview_after);
         RelativeLayout iv_back = (RelativeLayout) rootView.findViewById(R.id.iv_back);
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
+        tv_search_txt = (TextInputEditText) rootView.findViewById(R.id.tv_search_txt);
         tv_setting = (TextView) rootView.findViewById(R.id.tv_title_setting);
 
 //        rootView.setOnClickListener(new View.OnClickListener() {
@@ -79,13 +84,12 @@ public class TreesListsPopupWindow extends PopupWindow {
             }
         });
 
-//        btnPhoto.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (mOnItemClickListener != null)
-//                    mOnItemClickListener.onPhotoClicked();
-//            }
-//        });
+        tv_search_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         tv_setting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,7 +136,7 @@ public class TreesListsPopupWindow extends PopupWindow {
     public interface OnItemClickListener {
         void onGoBack();
 
-//        void onPhotoClicked();
+//        void onSearch(String key);
 
         void onSure();
     }
