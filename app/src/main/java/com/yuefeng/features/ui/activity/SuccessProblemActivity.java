@@ -7,9 +7,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -69,6 +72,10 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
     RecyclerView recyclerview;
     @BindView(R.id.tv_upload)
     TextView tv_upload;
+    @BindView(R.id.tv_txt_count)
+    TextView tvTxtCount;
+    @BindView(R.id.edt_problem_txt)
+    EditText edtProblem;
 
 
     private CameraPhotoPopupWindow popupWindow;
@@ -110,6 +117,28 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
 
     @Override
     public void initData() {
+        initEditText();
+    }
+
+    private void initEditText() {
+        edtProblem.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int length = s.length();
+                tvTxtCount.setText(String.valueOf(length) + "/100");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Override
@@ -234,9 +263,15 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
             showSuccessToast("请上传图片");
             return;
         }
+        String problemDes = edtProblem.getText().toString().trim();
+        if (TextUtils.isEmpty(problemDes)) {
+            showSuccessToast("请填写评价");
+            return;
+        }
+
         String userId = PreferencesUtils.getString(this, "id", "");
         presenter.updatequestions(ApiService.UPDATEQUESTIONS, userId, problemid,
-                "3", mImages, "", "", "");
+                "3", mImages, "", problemDes, "");
     }
 
     @SuppressLint("SetTextI18n")

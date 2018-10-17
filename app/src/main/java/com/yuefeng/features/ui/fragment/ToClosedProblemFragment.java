@@ -69,10 +69,19 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
         initRecycler();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
     @Override
     protected void fetchData() {
-        getEventDatasByNet(true);
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            getEventDatasByNet(true);
+        }
     }
 
     private void initRecycler() {
@@ -84,10 +93,12 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 String problemid = listData.get(position).getId();
                 String name = listData.get(position).getUploadpeoplename();
+                String state = listData.get(position).getState();
                 Intent intent = new Intent();
                 intent.setClass(Objects.requireNonNull(getActivity()), QualityInspectionDetailActivity.class);
                 intent.putExtra("PROBLEMID", problemid);
                 intent.putExtra("NAME", name);
+                intent.putExtra("STATE", state);
                 startActivity(intent);
             }
         });
@@ -137,16 +148,17 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
     /*获取网络数据*/
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getEventDatasByNet(boolean b) {
-        orgId = PreferencesUtils.getString(getActivity(), "orgId", "");
+        orgId = PreferencesUtils.getString(Objects.requireNonNull(getActivity()), "orgId", "");
         userId = PreferencesUtils.getString(getActivity(), "id", "");
         presenter.getEventquestion(ApiService.GETEVENTQUESTION, orgId, userId, "3", b);
-        LogUtils.d("getEventDatas = " + b);
+        LogUtils.d("getEventDatas 111= " + b);
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void disposeToClosedEvent(ToClosedEvent event) {
+        LogUtils.d("getEventDatas 555=" + event.getWhat());
         switch (event.getWhat()) {
             case Constans.TOCLOSED_SSUCESS:
                 recyclerview.setVisibility(View.VISIBLE);
@@ -181,6 +193,7 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
+        LogUtils.d("onActivityResult = " + requestCode + " ++ " + resultCode);
         switch (requestCode) {
             case 2:
                 if (resultCode == RESULT_OK) {

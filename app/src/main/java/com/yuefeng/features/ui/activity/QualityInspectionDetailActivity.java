@@ -1,24 +1,31 @@
 package com.yuefeng.features.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.common.base.codereview.BaseActivity;
+import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
+import com.common.utils.PreferencesUtils;
 import com.common.utils.StatusBarUtil;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.QualityInspectionDetailAdapter;
 import com.yuefeng.features.contract.QualityDetailContract;
+import com.yuefeng.features.event.AllProblemEvent;
+import com.yuefeng.features.event.PendingEvent;
+import com.yuefeng.features.event.ProcessingEvent;
 import com.yuefeng.features.event.QualityDetailEvent;
 import com.yuefeng.features.modle.EventdetailMsgBean;
 import com.yuefeng.features.modle.GetEventdetailMsgBean;
@@ -39,6 +46,7 @@ import java.util.List;
 import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /*问题详情*/
 
@@ -82,6 +90,16 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
     TextView tv_problem_usetime;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
+    @BindView(R.id.iv_item_claim)
+    ImageView ivItemClaim;
+    @BindView(R.id.iv_item_forward)
+    ImageView ivItemForward;
+    @BindView(R.id.ll_item_two)
+    LinearLayout llItemTwo;
+    @BindView(R.id.iv_common)
+    ImageView ivCommon;
+    @BindView(R.id.ll_item_one)
+    LinearLayout llItemOne;
 
     private List<EventdetailMsgBean> listData = new ArrayList<>();
     private QualityInspectionDetailAdapter detailAdapter;
@@ -92,6 +110,9 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
     private GvAdapter adapter;
     private int colorInt;
     private QualityDetailPresenter presenter;
+    private String type;
+    private String orgId;
+    private String userId;
 
     @Override
     protected int getContentViewResId() {
@@ -114,10 +135,7 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
         StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
 //        PROBLEMID
-        Bundle bundle = getIntent().getExtras();
-        problemid = (String) bundle.get("PROBLEMID");
-        name = (String) bundle.get("NAME");
-        tv_problem_reporter.setText(name);
+        getIntentDatas();
 
         scrollview.post(new Runnable() {
             @Override
@@ -127,8 +145,28 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         });
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         initRecycler();
-        LogUtils.d("=============" + problemid);
         getEventDetailInfos(problemid);
+    }
+
+    private void getIntentDatas() {
+        Bundle bundle = getIntent().getExtras();
+        problemid = (String) bundle.get("PROBLEMID");
+        name = (String) bundle.get("NAME");
+        type = (String) bundle.get("STATE");
+        tv_problem_reporter.setText(name);
+        if (type.equals("1")) {
+            llItemOne.setVisibility(View.GONE);
+            llItemTwo.setVisibility(View.VISIBLE);
+            ivItemClaim.setImageResource(R.drawable.zhuanfa);
+            ivItemForward.setImageResource(R.drawable.renling);
+        } else if (type.equals("2")) {
+            ivCommon.setImageResource(R.drawable.finish_023x);
+        } else if (type.equals("3")) {
+            ivCommon.setImageResource(R.drawable.close_023x);
+        } else {
+            llItemOne.setVisibility(View.GONE);
+            llItemTwo.setVisibility(View.GONE);
+        }
     }
 
     /*获取详情*/
@@ -145,6 +183,9 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
                 if (bean != null) {
                     showEventDetailInfos(bean);
                 }
+                break;
+            case Constans.CLAIM_SUCESS:
+                fowardOther();
                 break;
             default:
                 showErrorToast("获取问题详情失败!");
@@ -178,6 +219,27 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
     private void showText(GetEventdetailMsgBean msgBean) {
         state = msgBean.getState();
 
+        showProblemState(state);
+
+        tv_single_num.setText("问题单号:" + StringUtils.returnStrTxt(msgBean.getId()));
+        String time = StringUtils.returnStrTime(msgBean.getUploadtime());
+        tv_problem_time.setText(time);
+
+        tv_problem_what.setText(StringUtils.returnStrTxt(msgBean.getProblem()));
+        tv_problem_address.setText(StringUtils.returnStrTxt(msgBean.getAddress()));
+        tv_problem_class.setText(StringUtils.returnStrTxt(msgBean.getPid()));
+
+        String timeUse = StringUtils.returnStrTxt(msgBean.getTime());
+        if (!TextUtils.isEmpty(timeUse)) {
+            timeUse = "用时" + timeUse;
+        }
+        tv_problem_usetime.setText(timeUse);
+
+        String imgUrl = StringUtils.returnStrTxt(msgBean.getImgurl());
+        showImgUrl(imgUrl);
+    }
+
+    private void showProblemState(String state) {
         if (state.contains("1")) {
             state = getString(R.string.pending_txt);//待处理
             colorInt = QualityInspectionDetailActivity.this.getResources().getColor(R.color.red_hand_color);
@@ -193,27 +255,8 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
             state = getString(R.string.closed_txt);//已关闭
             colorInt = QualityInspectionDetailActivity.this.getResources().getColor(R.color.list_divider);
         }
-        rl_type.setBackgroundColor(colorInt);
         tv_problem_type.setText(state);
-        tv_single_num.setText("问题单号:" + StringUtils.returnStrTxt(msgBean.getId()));
-        String time = StringUtils.returnStrTime(msgBean.getUploadtime());
-        tv_problem_time.setText(time);
-
-//        tv_problem_reporter.setText(StringUtils.returnStrTxt(msgBean.getPid()));
-//        tv_reporter_phone.setText("138282554555");
-
-        tv_problem_what.setText(StringUtils.returnStrTxt(msgBean.getProblem()));
-        tv_problem_address.setText(StringUtils.returnStrTxt(msgBean.getAddress()));
-        tv_problem_class.setText(StringUtils.returnStrTxt(msgBean.getPid()));
-
-        String timeUse = StringUtils.returnStrTxt(msgBean.getTime());
-        if (!TextUtils.isEmpty(timeUse)) {
-            timeUse = "用时" + timeUse;
-        }
-        tv_problem_usetime.setText(timeUse);
-
-        String imgUrl = StringUtils.returnStrTxt(msgBean.getImgurl());
-        showImgUrl(imgUrl);
+        rl_type.setBackgroundColor(colorInt);
     }
 
     private void showImgUrl(String imgUrl) {
@@ -266,6 +309,126 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
 
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    @OnClick({R.id.iv_item_claim, R.id.iv_item_forward, R.id.iv_common})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_item_claim://转发:
+                forward();
+                break;
+            case R.id.iv_item_forward://认领:
+                claim();
+                break;
+            case R.id.iv_common://通用
+                onCommon();
+                break;
+        }
+    }
+
+    /*认领*/
+    private void claim() {
+        assert presenter != null;
+        orgId = PreferencesUtils.getString(QualityInspectionDetailActivity.this, "orgId", "");
+        userId = PreferencesUtils.getString(QualityInspectionDetailActivity.this, "id", "");
+        presenter.updatequestions(ApiService.UPDATEQUESTIONS, userId, problemid,
+                "2", "", "", "", "");
+    }
+
+    /*转发*/
+    private void forward() {
+        toForWardProblemActivity(problemid);
+    }
+
+    /*转发*/
+    private void toForWardProblemActivity(String problemid) {
+        Intent intent = new Intent();
+        intent.setClass(this, ForwardProblemActivity.class);
+        intent.putExtra("PROBLEMID", problemid);
+        startActivityForResult(intent, 3);
+    }
+
+    private void onCommon() {
+        if (type.equals("2")) {
+            toBeFinish();
+        } else {
+            toBeClose();
+        }
+    }
+
+    private void fowardOther() {
+        getEventDetailInfos(problemid);
+        showProblemState("3");
+        type = "3";
+        ivCommon.setImageResource(R.drawable.finish_023x);
+        llItemTwo.setVisibility(View.GONE);
+        llItemOne.setVisibility(View.VISIBLE);
+    }
+
+    /*代完成*/
+    private void toBeFinish() {
+        toSuccessEventActivity(problemid);
+    }
+
+    /*完成问题*/
+    private void toSuccessEventActivity(String problemid) {
+        Intent intent = new Intent();
+        intent.setClass(this, SuccessProblemActivity.class);
+        intent.putExtra("PROBLEMID", problemid);
+        startActivityForResult(intent, 1);
+    }
+
+    /*关闭*/
+    private void toBeClose() {
+        toFinishEventActivity(problemid);
+    }
+
+    /*关闭*/
+    private void toFinishEventActivity(String problemid) {
+        Intent intent = new Intent();
+        intent.setClass(this, EvaluationEventActivity.class);
+        intent.putExtra("PROBLEMID", problemid);
+        startActivityForResult(intent, 2);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 1://完成
+                if (resultCode == RESULT_OK) {
+                    EventBus.getDefault().postSticky(new AllProblemEvent(Constans.CARRY_SUCESS, ""));
+                    EventBus.getDefault().postSticky(new CommonEvent(Constans.COUNT_AGAIN_SUCESS, ""));
+                    llItemOne.setVisibility(View.VISIBLE);
+                    ivCommon.setImageResource(R.drawable.close_023x);
+                    showProblemState("3");
+                    type = "3";
+                    getEventDetailInfos(problemid);
+                    llItemTwo.setVisibility(View.GONE);
+
+                }
+                break;
+            case 2://关闭
+                if (resultCode == RESULT_OK) {
+                    EventBus.getDefault().postSticky(new AllProblemEvent(Constans.CLOSED_SSUCESS, ""));
+                    EventBus.getDefault().postSticky(new CommonEvent(Constans.COUNT_AGAIN_SUCESS, ""));
+                    llItemOne.setVisibility(View.GONE);
+                    showProblemState("4");
+                    type = "4";
+                    getEventDetailInfos(problemid);
+                    llItemTwo.setVisibility(View.GONE);
+                }
+                break;
+            case 3://转发
+                fowardOther();
+                EventBus.getDefault().postSticky(new AllProblemEvent(Constans.ZHUANFA_SSUCESS, ""));
+                EventBus.getDefault().postSticky(new CommonEvent(Constans.COUNT_AGAIN_SUCESS, ""));
+                EventBus.getDefault().postSticky(new ProcessingEvent(Constans.ZHUANFA_SSUCESS, ""));
+                EventBus.getDefault().postSticky(new PendingEvent(Constans.ZHUANFA_SSUCESS, ""));
+                break;
+        }
     }
 }

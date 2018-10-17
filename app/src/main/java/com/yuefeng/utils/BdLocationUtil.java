@@ -1,5 +1,13 @@
 package com.yuefeng.utils;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
+
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
@@ -17,6 +25,8 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.utils.CoordinateConverter;
 import com.common.utils.LogUtils;
 import com.yuefeng.ui.MyApplication;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * 百度地图定位工具类
@@ -58,6 +68,7 @@ public class BdLocationUtil {
         // 设置定位条件
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true);                // 是否打开GPS
+        option.setPriority(LocationClientOption.GpsFirst);
         option.setCoorType("bd09ll");           // 设置返回值的坐标类型
         option.setScanSpan(time);              // 设置定时定位的时间间隔。单位毫秒
         option.setIsNeedAddress(true);          //可选，设置是否需要地址信息，默认不需要
@@ -162,6 +173,36 @@ public class BdLocationUtil {
         } catch (Exception e) {
             return "000";
         }
+    }
+
+    public Location startLocationServise(Context context) {
+        Location location = null;
+        Context applicationContext = context.getApplicationContext();
+        LocationManager mLocationManager = (LocationManager) applicationContext.getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);//高精度
+        criteria.setAltitudeRequired(false);//无海拔要求   criteria.setBearingRequired(false);//无方位要求
+        criteria.setCostAllowed(true);//允许产生资费   criteria.setPowerRequirement(Criteria.POWER_LOW);//低功耗
+
+// 获取最佳服务对象
+        assert mLocationManager != null;
+        String provider = mLocationManager.getBestProvider(criteria, true);
+        if (ActivityCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return location;
+        }
+        location = mLocationManager.getLastKnownLocation(provider);
+
+        return location;
     }
 
 }

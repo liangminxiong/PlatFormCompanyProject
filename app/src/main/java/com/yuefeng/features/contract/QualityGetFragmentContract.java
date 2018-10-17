@@ -10,7 +10,7 @@ public interface QualityGetFragmentContract {
 
     interface Presenter {
 
-        /*问题处理类型*/
+        /*认领问题*/
         void updatequestions(String function, String userid, String problemid, String type,
                              String imageArrays, String detail, String pinjia, String paifaid);
 

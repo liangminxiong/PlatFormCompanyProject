@@ -52,6 +52,52 @@ public class QualityGetCountPresenter extends BasePresenterImpl<QualityGetCountC
                         dismissLoadingDialog();
                         EventBus.getDefault().postSticky(new CommonEvent(Constans.GETCOUNT_ERROR, e.getMsg()));
                     }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new CommonEvent(Constans.GETCOUNT_ERROR, ""));
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        super._onError(error);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new CommonEvent(Constans.GETCOUNT_ERROR, ""));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        super.onComplete();
+                        dismissLoadingDialog();
+                    }
+
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        super.onSubscribe(d);
+                        dismissLoadingDialog();
+                    }
+
+                    @Override
+                    protected void onStart(Disposable d) {
+                        super.onStart(d);
+                        EventBus.getDefault().postSticky(new CommonEvent(Constans.GETCOUNT_ERROR, ""));
+                        dismissLoadingDialog();
+                    }
+
+                    @Override
+                    public void onNext(GetQuestionCountBean getQuestionCountBean) {
+                        super.onNext(getQuestionCountBean);
+                        dismissLoadingDialog();
+                    }
+
+                    @Override
+                    protected void _onNext(GetQuestionCountBean responseCustom) {
+                        super._onNext(responseCustom);
+                        dismissLoadingDialog();
+                    }
                 });
     }
 

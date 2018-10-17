@@ -28,17 +28,19 @@ public class PendingProblemPresenter extends BasePresenterImpl<QualityGetFragmen
     /*问题认领*/
     @Override
     public void updatequestions(String function, String userid, String problemid,
-                                String type, String imageArrays, String detail, String pinjia,String paifaid) {
+                                String type, String imageArrays, String detail, String pinjia, String paifaid) {
         HttpObservable.getObservable(apiRetrofit.updatequestions(function, userid, problemid, type,
-                imageArrays, detail, pinjia,paifaid))
+                imageArrays, detail, pinjia, paifaid))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<SubmitBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
+                        showLoadingDialog("认领中...");
                     }
 
                     @Override
                     protected void onSuccess(SubmitBean o) {
+                        dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
                                 EventBus.getDefault().postSticky(new PendingEvent(Constans.CLAIM_SUCESS, o.getMsg()));
@@ -52,7 +54,20 @@ public class PendingProblemPresenter extends BasePresenterImpl<QualityGetFragmen
 
                     @Override
                     protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
                         EventBus.getDefault().postSticky(new PendingEvent(Constans.CLAIM_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        super._onError(error);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        dismissLoadingDialog();
                     }
                 });
     }
@@ -86,6 +101,18 @@ public class PendingProblemPresenter extends BasePresenterImpl<QualityGetFragmen
                     protected void onFail(ApiException e) {
                         dismissLoadingDialog();
                         EventBus.getDefault().postSticky(new PendingEvent(Constans.DAI_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        super._onError(error);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        dismissLoadingDialog();
                     }
                 });
     }

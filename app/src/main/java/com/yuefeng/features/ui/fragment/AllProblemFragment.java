@@ -80,10 +80,12 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 String problemid = listData.get(position).getId();
                 String name = listData.get(position).getUploadpeoplename();
+                String state = listData.get(position).getState();
                 Intent intent = new Intent();
                 intent.setClass(Objects.requireNonNull(getActivity()), QualityInspectionDetailActivity.class);
                 intent.putExtra("PROBLEMID", problemid);
                 intent.putExtra("NAME", name);
+                intent.putExtra("STATE", state);
                 startActivity(intent);
 
             }
@@ -116,6 +118,15 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
     @Override
     protected void fetchData() {
         getEventDatasByNet(true);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            getEventDatasByNet(true);
+        }
     }
 
     /*转发*/
@@ -190,9 +201,14 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
     /*获取网络数据*/
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getEventDatasByNet(boolean b) {
-        orgId = PreferencesUtils.getString(getActivity(), "orgId", "");
-        userId = PreferencesUtils.getString(getActivity(), "id", "");
-        presenter.getEventquestion(ApiService.GETEVENTQUESTION, orgId, userId, "5", b);
+        try {
+            orgId = PreferencesUtils.getString(Objects.requireNonNull(getActivity()), "orgId", "");
+            userId = PreferencesUtils.getString(getActivity(), "id", "");
+            presenter.getEventquestion(ApiService.GETEVENTQUESTION, orgId, userId, "5", b);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

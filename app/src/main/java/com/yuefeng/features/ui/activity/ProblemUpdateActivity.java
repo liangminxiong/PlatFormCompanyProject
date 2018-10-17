@@ -3,12 +3,14 @@ package com.yuefeng.features.ui.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -18,10 +20,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
+import com.baidu.mapapi.model.LatLng;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
+import com.common.utils.LocationGpsUtils;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StatusBarUtil;
@@ -41,6 +45,7 @@ import com.yuefeng.photo.adapter.GridImageAdapter;
 import com.yuefeng.photo.other.FullyGridLayoutManager;
 import com.yuefeng.photo.utils.PictureSelectorUtils;
 import com.yuefeng.utils.BdLocationUtil;
+import com.yuefeng.utils.LocationUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,6 +53,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -59,7 +65,8 @@ import io.reactivex.functions.Consumer;
 
 
 /*问题上报*/
-public class ProblemUpdateActivity extends BaseActivity implements ProblemUploadContract.View {
+public class ProblemUpdateActivity extends BaseActivity implements
+        ProblemUploadContract.View, LocationUtils.OnResultMapListener {
 
     private static final String TAG = "tag";
     @BindView(R.id.iv_back)
@@ -100,6 +107,8 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
     private ProblemUploadPresenter presenter;
     private String mImagesArrays;
     private SucessCacheSureDialog sureDialog;
+
+    private com.yuefeng.utils.LocationUtils mLocationUtils;
 
     @Override
     protected int getContentViewResId() {
@@ -163,6 +172,17 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
     }
 
     private void getLocation() {
+
+        boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
+        if (gpsOPen) {
+            useGpsLocation();
+        } else {
+
+            useBdGpsLocation();
+        }
+    }
+
+    private void useBdGpsLocation() {
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
@@ -173,20 +193,46 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
+
                     int length = address.length();
                     address = address.substring(2, length);
+                    LogUtils.d("getLocation =00= " + latitude + " ++ " + longitude + " ++ " + address);
                     if (isFirstLocation) {
                         isFirstLocation = false;
                         PreferencesUtils.putString(ProblemUpdateActivity.this, "Fengrun", "");
                         PreferencesUtils.putString(ProblemUpdateActivity.this, "mAddress", address);
+                        if (!TextUtils.isEmpty(address)) {
+                            tv_problem_address.setText(address);
+                        } else {
+                            isFirstLocation = true;
+                        }
                     }
-                    LogUtils.d("==========" + address);
-                    tv_problem_address.setText(address);
-                } else {
-                    tv_problem_address.setText("定位失败，请重新定位!");
                 }
             }
         }, BDLOCATION_TIME);
+    }
+
+    private void useGpsLocation() {
+
+        // 创建定位管理信息对象
+        mLocationUtils = new com.yuefeng.utils.LocationUtils(this);
+//         开启定位
+        mLocationUtils.startLocation();
+        mLocationUtils.registerOnResult(this);
+
+        Location location = BdLocationUtil.getInstance().startLocationServise(ProblemUpdateActivity.this);
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        latitude = latLng.latitude;
+        longitude = latLng.longitude;
+        LogUtils.d("getLocation =11= " + latitude + " ++ " + longitude + " ++ " + address);
+        if (mLocationUtils == null) {
+//         开启定位
+            mLocationUtils = new LocationUtils(this);
+            mLocationUtils.startLocation();
+            mLocationUtils.registerOnResult(this);
+        }
+        mLocationUtils.getAddress(latitude, longitude);
+        mLocationUtils.getAddress(latitude, longitude);
     }
 
     private void initEditText() {
@@ -200,7 +246,7 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int length = s.length();
                 if (length >= 0) {
-                    EventBus.getDefault().post(new ProblemEvent(Constans.EQUIPMENTCOUNTSUCESS, String.valueOf(100 - length)));
+                    EventBus.getDefault().post(new ProblemEvent(Constans.EQUIPMENTCOUNTSUCESS, String.valueOf(length)));
                 }
             }
 
@@ -378,6 +424,11 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
             showSuccessToast("请确定位置");
             return;
         }
+
+        LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+        latitude = latLng.latitude;
+        longitude = latLng.longitude;
+
         String pid = PreferencesUtils.getString(this, "orgId", "");
         String userid = PreferencesUtils.getString(this, "id", "");
         presenter.uploadRubbishEvent(ApiService.UPLOADRUBBISHEVENT, userid, pid, problem, address,
@@ -441,5 +492,24 @@ public class ProblemUpdateActivity extends BaseActivity implements ProblemUpload
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         BdLocationUtil.getInstance().stopLocation();//停止定位
+    }
+
+    @Override
+    public void onReverseGeoCodeResult(Map<String, Object> map) {
+        address = (String) map.get("address");
+        Log.d(TAG, "getLocation =2= : " + address);
+        if (!TextUtils.isEmpty(address)) {
+            PreferencesUtils.putString(ProblemUpdateActivity.this, "Fengrun", "");
+            PreferencesUtils.putString(ProblemUpdateActivity.this, "mAddress", address);
+            tv_problem_address.setText(address);
+        } else {
+            useBdGpsLocation();
+        }
+
+    }
+
+    @Override
+    public void onGeoCodeResult(Map<String, Object> map) {
+
     }
 }

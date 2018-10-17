@@ -61,7 +61,6 @@ public class ToClosedProblemPresenter extends BasePresenterImpl<QualityGetFragme
     @Override
     public void getEventquestion(String function, String pid, String userid, String type, final boolean isFirst) {
         HttpObservable.getObservable(apiRetrofit.getEventquestion(function, pid, userid, type))
-//                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<EventQuestionBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
@@ -75,7 +74,12 @@ public class ToClosedProblemPresenter extends BasePresenterImpl<QualityGetFragme
                         dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
-                                EventBus.getDefault().postSticky(new ToClosedEvent(Constans.TOCLOSED_SSUCESS, o.getMsg()));
+                                int size = o.getMsg().size();
+                                if (size == 0) {
+                                    EventBus.getDefault().postSticky(new ToClosedEvent(Constans.TOCLOSED_ERROR, o.getMsg()));
+                                }else {
+                                    EventBus.getDefault().postSticky(new ToClosedEvent(Constans.TOCLOSED_SSUCESS, o.getMsg()));
+                                }
                             } else {
                                 EventBus.getDefault().postSticky(new ToClosedEvent(Constans.TOCLOSED_ERROR, o.getMsg()));
                             }
@@ -88,10 +92,48 @@ public class ToClosedProblemPresenter extends BasePresenterImpl<QualityGetFragme
                         EventBus.getDefault().postSticky(new ToClosedEvent(Constans.TOCLOSED_ERROR, e.getMsg()));
                     }
 
+
                     @Override
                     protected void _onError(ApiException error) {
                         dismissLoadingDialog();
                         super._onError(error);
+                        EventBus.getDefault().postSticky(new ToClosedEvent(Constans.TOCLOSED_ERROR, ""));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new ToClosedEvent(Constans.TOCLOSED_ERROR, ""));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        super.onComplete();
+                    }
+
+                    @Override
+                    protected void _onNext(EventQuestionBean responseCustom) {
+                        super._onNext(responseCustom);
+                        dismissLoadingDialog();
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        super.onSubscribe(d);
+                        dismissLoadingDialog();
+                    }
+
+                    @Override
+                    protected void onStart(Disposable d) {
+                        super.onStart(d);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new ToClosedEvent(Constans.TOCLOSED_ERROR, ""));
+                    }
+
+                    @Override
+                    public void onNext(EventQuestionBean eventQuestionBean) {
+                        super.onNext(eventQuestionBean);
                     }
                 });
     }

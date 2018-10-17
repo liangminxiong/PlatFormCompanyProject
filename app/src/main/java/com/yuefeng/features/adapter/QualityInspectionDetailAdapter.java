@@ -2,7 +2,6 @@ package com.yuefeng.features.adapter;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -69,13 +68,19 @@ public class QualityInspectionDetailAdapter extends BaseItemDraggableAdapter<Eve
             String hourTime = yearHour[1];
             String month = yearTime.substring(5, 10);
             String hour = hourTime.substring(0, 5);
-            Log.d(TAG, "convert:aaaa " + things);
+//            Log.d(TAG, "convert:aaaa " + things);
             if (things.equals("关闭问题")) {
                 if (TextUtils.isEmpty(detail)) {
                     detail = "描述:无";
                 } else {
                     detail = "描述:" + detail;
                 }
+                if (TextUtils.isEmpty(pinjia)) {
+                    pinjia = "评价:无";
+                } else {
+                    pinjia = "评价:" + pinjia;
+                }
+            }else if (things.equals("完成处理")){
                 if (TextUtils.isEmpty(pinjia)) {
                     pinjia = "评价:无";
                 } else {

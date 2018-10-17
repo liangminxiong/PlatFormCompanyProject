@@ -18,13 +18,13 @@
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/>
     <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS"/>
     <!-- 这个权限用于访问GPS定位-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <!-- 这个权限用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
     <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 
@@ -188,7 +188,7 @@
         <!-- 极光推送自定义的广播接收器 ym end-->
 
 
-        <!--========================百度地图（begin）============ HXUviSZQv4VscOpnStqAYAHXbmRfSXHH =================-->
+        <!--========================百度地图（begin）============  =================-->
         <!--开发版  3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c  or发布版 / BIvUidCXbyoqMciDxLVzbRPE6I91hZaN-->
 
         <!--导航 appid-->

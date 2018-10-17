@@ -67,10 +67,19 @@ public class PendingProblemFragment extends BaseFragment implements QualityGetFr
         initRecycler();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
     @Override
     protected void fetchData() {
-        getEventDatasByNet(true);
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            getEventDatasByNet(true);
+        }
     }
 
     private void initRecycler() {
@@ -82,10 +91,12 @@ public class PendingProblemFragment extends BaseFragment implements QualityGetFr
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 String problemid = listData.get(position).getId();
                 String name = listData.get(position).getUploadpeoplename();
+                String state = listData.get(position).getState();
                 Intent intent = new Intent();
                 intent.setClass(Objects.requireNonNull(getActivity()), QualityInspectionDetailActivity.class);
                 intent.putExtra("PROBLEMID", problemid);
                 intent.putExtra("NAME", name);
+                intent.putExtra("STATE", state);
                 startActivity(intent);
             }
         });
@@ -140,8 +151,6 @@ public class PendingProblemFragment extends BaseFragment implements QualityGetFr
     private void claimEvent(EventQuestionMsgBean eventQuestionMsgBean) {
         orgId = PreferencesUtils.getString(getActivity(), "orgId", "");
         userId = PreferencesUtils.getString(getActivity(), "id", "");
-
-        showLoadingDialog(getString(R.string.claimming));
         presenter.updatequestions(ApiService.UPDATEQUESTIONS, userId, eventQuestionMsgBean.getId(),
                 "2", "", "", "", "");
     }

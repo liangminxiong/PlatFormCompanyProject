@@ -10,7 +10,6 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.PersonalAdapter;
 import com.yuefeng.features.event.JobMonitoringEvent;
@@ -168,7 +167,6 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
     @Override
     public void onReverseGeoCodeResult(Map<String, Object> map) {
         String address = (String) map.get("address");
-        LogUtils.d("onReverseGeo 00= " + address);
         if (TextUtils.isEmpty(address)) {
             address = "暂无地址!";
         }

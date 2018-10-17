@@ -102,7 +102,7 @@
         android:layout_marginStart="@dimen/dp_15"
         android:background="@color/white"
         android:gravity="center_vertical|right"
-        android:text="100/100"
+        android:text="0/100"
         android:textColor="@color/md_grey_500"
         android:textSize="@dimen/sp_12"
         tools:ignore="HardcodedText,RtlHardcoded"/>
@@ -165,10 +165,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_45"
         android:layout_gravity="bottom"
-        android:background="@color/white"
+        android:background="@color/titel_color"
         android:gravity="center"
         android:text="上报"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="@dimen/sp_16"
         tools:ignore="HardcodedText"/>
 
