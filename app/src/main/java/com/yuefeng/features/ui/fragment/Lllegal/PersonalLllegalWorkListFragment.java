@@ -132,7 +132,7 @@ public class PersonalLllegalWorkListFragment extends BaseFragment {
         List<MsgDataBean> bean = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             MsgDataBean msgDataBean = new MsgDataBean();
-            msgDataBean.setImageUrl(R.mipmap.icon_app);
+            msgDataBean.setImageUrl(R.drawable.staff);
             msgDataBean.setTitle(i + "张三");
             msgDataBean.setTime(TimeUtils.getHourMinute());
             if (i == 0) {

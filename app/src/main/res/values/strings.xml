@@ -55,7 +55,7 @@
     <string name="pickerview_hours">时</string>
     <string name="pickerview_minutes">分</string>
     <string name="pickerview_seconds">秒</string>
-    <string name="position_acquisition">地理信息采集</string>
+    <string name="position_acquisition">信息采集</string>
     <string name="begin_acqusition">开始采集</string>
     <string name="select_newadd_type">请选择新增的标注类型</string>
     <string name="jichusheshi">基础设施</string>
@@ -75,4 +75,5 @@
     <string name="msg_tixing">消息提醒</string>
     <string name="detail">消息详情</string>
     <string name="history_lllegal">历史违规</string>
+    <string name="back">返回</string>
 </resources>

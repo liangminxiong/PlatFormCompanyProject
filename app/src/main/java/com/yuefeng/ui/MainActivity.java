@@ -3,6 +3,7 @@ package com.yuefeng.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -15,10 +16,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
+import com.baidu.mapapi.model.LatLng;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.updateapputils.UpdateManager;
 import com.common.utils.Constans;
+import com.common.utils.LocationGpsUtils;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.RxHelper;
@@ -35,6 +38,7 @@ import com.yuefeng.ui.base.fragment.NoSlideViewPager;
 import com.yuefeng.ui.base.fragment.TabItemInfo;
 import com.yuefeng.usercenter.ui.fragment.UserInfoFragment;
 import com.yuefeng.utils.BdLocationUtil;
+import com.yuefeng.utils.LocationUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -42,6 +46,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindColor;
@@ -54,7 +59,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
-public class MainActivity extends BaseActivity implements SignInContract.View {
+public class MainActivity extends BaseActivity implements
+        SignInContract.View, LocationUtils.OnResultMapListener {
     @BindView(R.id.iv_back)
     RelativeLayout iv_back;
     @BindView(R.id.tv_title)
@@ -91,6 +97,7 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
     private String address;
     private double latitude;
     private double longitude;
+    private com.yuefeng.utils.LocationUtils mLocationUtils;
 
     @Override
     protected int getContentViewResId() {
@@ -152,6 +159,38 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
     }
 
     private void getLocation() {
+
+        boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
+        if (gpsOPen) {
+            useGpsLocation();
+        } else {
+            useBdGpsLocation();
+        }
+    }
+
+    private void useGpsLocation() {
+
+        // 创建定位管理信息对象
+        mLocationUtils = new com.yuefeng.utils.LocationUtils(this);
+//         开启定位
+        mLocationUtils.startLocation();
+        mLocationUtils.registerOnResult(this);
+
+        Location location = BdLocationUtil.getInstance().startLocationServise(MainActivity.this);
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        latitude = latLng.latitude;
+        longitude = latLng.longitude;
+        if (mLocationUtils == null) {
+//         开启定位
+            mLocationUtils = new LocationUtils(this);
+            mLocationUtils.startLocation();
+            mLocationUtils.registerOnResult(this);
+        }
+        mLocationUtils.getAddress(latitude, longitude);
+        mLocationUtils.getAddress(latitude, longitude);
+    }
+
+    private void useBdGpsLocation() {
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
@@ -380,6 +419,25 @@ public class MainActivity extends BaseActivity implements SignInContract.View {
         tabItemInfos = null;
         tabLayout = null;
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onReverseGeoCodeResult(Map<String, Object> map) {
+        address = (String) map.get("address");
+        if (!TextUtils.isEmpty(address)) {
+            LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+            latitude = latLng.latitude;
+            longitude = latLng.longitude;
+            showSignInTime(longitude,latitude,address);
+        } else {
+            useBdGpsLocation();
+        }
+
+    }
+
+    @Override
+    public void onGeoCodeResult(Map<String, Object> map) {
+
     }
 
 }

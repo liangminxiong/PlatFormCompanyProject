@@ -25,7 +25,7 @@ public class StringUtils {
 //    BigDecimal b = new BigDecimal(f);
 //    //保留2位小数
 //    double f1 = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
-        java.text.DecimalFormat df = new java.text.DecimalFormat("#.00");
+        java.text.DecimalFormat df = new java.text.DecimalFormat("0.00");
         return df.format(distance);
 
     }

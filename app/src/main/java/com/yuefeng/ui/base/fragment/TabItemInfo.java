@@ -22,9 +22,9 @@ public class TabItemInfo implements Serializable {
         this.nameResId = nameResId;
     }
 
-    public TabItemInfo(Fragment fragment, int nameResId) {
+    public TabItemInfo(Fragment fragment, int iconResId) {
         this.fragment = fragment;
-        this.nameResId = nameResId;
+        this.iconResId = iconResId;
     }
 
     public String getTabCount() {

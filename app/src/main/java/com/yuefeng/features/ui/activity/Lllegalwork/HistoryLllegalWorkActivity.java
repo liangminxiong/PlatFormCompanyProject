@@ -16,7 +16,6 @@ import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
-import com.common.utils.StatusBarUtil;
 import com.common.utils.TimeUtils;
 import com.common.view.timeview.TimePickerView;
 import com.yuefeng.commondemo.R;
@@ -47,8 +46,6 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
     TextView tvTitle;
     @BindView(R.id.ll_problem)
     LinearLayout ll_problem;
-    @BindView(R.id.space)
-    View view;
     @BindView(R.id.tv_start_time)
     TextView tvStartTime;
     @BindView(R.id.tv_end_time)
@@ -79,8 +76,8 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
         ButterKnife.bind(this);
         tvTitle.setText(R.string.history_lllegal);
         presenter = new HistoryLllegalWorkPresenter(this, this);
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         initRecycler();
         getCarList();
@@ -162,7 +159,7 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
         EventBus.getDefault().unregister(this);
     }
 
-    @OnClick({R.id.tv_search, R.id.tv_start_time, R.id.tv_end_time})
+    @OnClick({R.id.tv_search, R.id.tv_start_time, R.id.tv_end_time, R.id.tv_back})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_start_time:
@@ -173,6 +170,9 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
                 break;
             case R.id.tv_search:
                 showAdapterDatasList();
+                break;
+            case R.id.tv_back:
+                finish();
                 break;
         }
 

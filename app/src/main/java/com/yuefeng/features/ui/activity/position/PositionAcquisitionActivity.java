@@ -3,6 +3,7 @@ package com.yuefeng.features.ui.activity.position;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -29,6 +30,9 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
@@ -38,6 +42,7 @@ import com.common.location.MyLocationListener;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
+import com.common.utils.LocationGpsUtils;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StatusBarUtil;
@@ -162,6 +167,8 @@ public class PositionAcquisitionActivity extends BaseActivity {
     private OptionsPickerView pvOptions;
     private ArrayList<String> options1Items = new ArrayList<>();
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
+    List<LatLng> points = new ArrayList<>();
+    private Polyline mPolyline;
 
     @Override
     protected int getContentViewResId() {
@@ -255,7 +262,16 @@ public class PositionAcquisitionActivity extends BaseActivity {
         // 定位初始化
 
         baiduMap.showMapPoi(true);
+        boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
+        if (!gpsOPen) {
+            showSuccessToast("GPS未开启，定位有偏差");
+        }
+        useBdGpsLocation();
+        initLocation();
+    }
 
+
+    private void useBdGpsLocation() {
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
@@ -266,28 +282,33 @@ public class PositionAcquisitionActivity extends BaseActivity {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
-                    int length = address.length();
-                    address = address.substring(2, length);
-                    latLngTemp = new LatLng(latitude, longitude);
-                    if (isFirstLoc) {
-                        isFirstLoc = false;
-                        MapStatus ms = new MapStatus.Builder().target(latLngTemp)
-                                .overlook(-20).zoom(14).build();
-                        ooA = new MarkerOptions().icon(beginImage).zIndex(10);
-                        ooA.position(latLngTemp);
-                        mMarker = null;
-                        mMarker = (Marker) (baiduMap.addOverlay(ooA));
-                        baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
-                        PreferencesUtils.putString(PositionAcquisitionActivity.this, "Fengrun", "");
-                        PreferencesUtils.putString(PositionAcquisitionActivity.this, "mAddress", address);
-                    }
+                    firstLocation(latitude, longitude, address);
                 } else {
                     requestPermissions();
                 }
 
             }
         }, Constans.BDLOCATION_TIME);
-        initLocation();
+    }
+
+    private void firstLocation(double latitude, double longitude, String address) {
+
+        int length = address.length();
+        address = address.substring(2, length);
+        latLngTemp = new LatLng(latitude, longitude);
+        if (isFirstLoc) {
+            isFirstLoc = false;
+            MapStatus ms = new MapStatus.Builder().target(latLngTemp)
+                    .overlook(-20).zoom(14).build();
+            ooA = new MarkerOptions().icon(beginImage).zIndex(10);
+            ooA.position(latLngTemp);
+            mMarker = null;
+            mMarker = (Marker) (baiduMap.addOverlay(ooA));
+            baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
+//            BdLocationUtil.MoveMapToCenter(baiduMap, latLngTemp, 14);
+            PreferencesUtils.putString(PositionAcquisitionActivity.this, "Fengrun", "");
+            PreferencesUtils.putString(PositionAcquisitionActivity.this, "mAddress", address);
+        }
     }
 
     /*定时刷新*/
@@ -304,18 +325,14 @@ public class PositionAcquisitionActivity extends BaseActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void updateLocation(Location location) {
-                latitude = location.getLongitude();
-                longitude = location.getLatitude();
+                latitude = (location.getLongitude() + 0.05);
+                longitude = (location.getLatitude() + 0.05);
 //                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
                 latLng = new LatLng(latitude, longitude);
-                if (latLngTemp != null) {
-                    distance = DistanceUtil.getDistance(latLngTemp, latLng);
-                    String stringDouble = StringUtils.getStringDistance(distance);
 
-                    LogUtils.d("getLocation== " + latLng + " ++ ++ " + stringDouble);
-                    if (distance > 100) {
-                        latLngTemp = latLng;
-                    }
+                if (latLngTemp != null) {
+                    starDrawTrackLine();
+//                    drawTrackLine(latLngTemp);
                 }
             }
 
@@ -330,6 +347,57 @@ public class PositionAcquisitionActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void starDrawTrackLine() {
+        assert latLng != null;
+        distance = DistanceUtil.getDistance(latLngTemp, latLng);
+
+        String stringDouble = StringUtils.getStringDistance(distance);
+        LogUtils.d("getLocation== +++" + points.size() + " ++ ++ " + stringDouble);
+        if (distance > 1) {
+            latLngTemp = latLng;
+            if (distance < 500) {
+                drawTrackLine(latLngTemp);
+            }
+
+        }
+    }
+
+    private void drawTrackLine(LatLng latLngTemp) {
+        points.add(latLngTemp);//如果要运动完成后画整个轨迹，位置点都在这个集合中
+
+//        LatLng p1 = new LatLng(39.97923, 116.357428);
+//        LatLng p2 = new LatLng(39.94923, 116.397428);
+//        LatLng p3 = new LatLng(39.97923, 116.437428);
+//        LatLng p4 = new LatLng(39.96923, 116.367428);
+//        LatLng p5 = new LatLng(39.95923, 116.368428);
+//        LatLng p6 = new LatLng(39.95323, 116.362428);
+//        LatLng p7 = new LatLng(39.95423, 116.363428);
+//        LatLng p8 = new LatLng(39.95123, 116.364428);
+//        points.add(p1);
+//        points.add(p2);
+//        points.add(p3);
+//        points.add(p4);
+//        points.add(p5);
+//        points.add(p6);
+//        points.add(p7);
+//        points.add(p8);
+
+        if (points.size() > 1) {
+            //清除上一次轨迹，避免重叠绘画
+            assert baiduMap != null;
+            baiduMap.clear();
+            //起始点图层也会被清除，重新绘画
+            MarkerOptions oStart = new MarkerOptions();
+            oStart.position(points.get(0));
+            oStart.icon(beginImage);
+            baiduMap.addOverlay(oStart);
+            //将points集合中的点绘制轨迹线条图层，显示在地图上
+            OverlayOptions ooPolyline = new PolylineOptions().width(13).color(Color.RED).points(points);
+            baiduMap.addOverlay(ooPolyline);
+            LogUtils.d("getLocation== +++" + points.size() + " ++ ++ " + points.get(points.size() - 1));
+        }
     }
 
     protected double getLongitude() {
@@ -367,6 +435,13 @@ public class PositionAcquisitionActivity extends BaseActivity {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         BdLocationUtil.getInstance().stopLocation();//停止定位
+        if (mLocationHelper != null) {
+            mLocationHelper.removeLocationUpdatesListener();
+        }
+        assert mapview != null;
+        mapview.getMap().clear();
+        mapview.onDestroy();
+        mapview = null;
     }
 
     @OnClick({R.id.tv_carryon, R.id.tv_finish, R.id.btn_beginorstop, R.id.tv_release, R.id.recyclerview_left, R.id.recyclerview_right})
@@ -424,6 +499,7 @@ public class PositionAcquisitionActivity extends BaseActivity {
         pvOptions.show();
     }
 
+    /*添加假数据*/
     private void getOptionData() {
 
         /**
@@ -493,6 +569,7 @@ public class PositionAcquisitionActivity extends BaseActivity {
         ll_timer.setVisibility(View.VISIBLE);
         if (isBeginOrStop) {
             isBeginOrStop = false;
+            points.clear();
             initCtStart();
         } else {
             isBeginOrStop = true;

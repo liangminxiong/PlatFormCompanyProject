@@ -2,6 +2,7 @@ package com.yuefeng.features.ui.activity.Lllegalwork;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -27,8 +28,9 @@ import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.common.base.codereview.BaseActivity;
 import com.common.utils.Constans;
-import com.common.utils.StatusBarUtil;
+import com.common.utils.DensityUtil;
 import com.common.utils.StringUtils;
+import com.common.utils.ViewUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.home.ui.modle.MsgDataBean;
@@ -51,8 +53,8 @@ public class LllegalWorkDetailActivity extends BaseActivity {
     TextView tv_title;
     @BindView(R.id.ll_problem)
     LinearLayout ll_problem;
-    @BindView(R.id.space)
-    View view;
+    @BindView(R.id.ll_infos)
+    LinearLayout ll_infos;
     @BindView(R.id.mapview)
     TextureMapView mapview;
     @BindView(R.id.view_line_gray)
@@ -93,8 +95,8 @@ public class LllegalWorkDetailActivity extends BaseActivity {
     @Override
     protected void initView(Bundle savedInstanceState) {
         ButterKnife.bind(this);
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         getCarListInfos();
         tvAddress.setTextSize(14);
         tvNative.setTextSize(13);
@@ -261,14 +263,18 @@ public class LllegalWorkDetailActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.view_line_gray, R.id.tv_native, R.id.search_history_lllegal})
+    @OnClick({R.id.view_line_gray, R.id.tv_native, R.id.search_history_lllegal,R.id.tv_back})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.view_line_gray:
                 if (isVisibleOrGone) {
+                    ViewUtils.setLLHightOrWidth(ll_infos, (int) DensityUtil.dip2px(LllegalWorkDetailActivity.this, 98),
+                            ActionBar.LayoutParams.MATCH_PARENT);
                     llContentVisible.setVisibility(View.GONE);
                     isVisibleOrGone = false;
                 } else {
+                    ViewUtils.setLLHightOrWidth(ll_infos, (int) DensityUtil.dip2px(LllegalWorkDetailActivity.this, 220),
+                            ActionBar.LayoutParams.MATCH_PARENT);
                     llContentVisible.setVisibility(View.VISIBLE);
                     isVisibleOrGone = true;
                 }
@@ -280,6 +286,10 @@ public class LllegalWorkDetailActivity extends BaseActivity {
                 break;
             case R.id.search_history_lllegal:
                 startActivity(new Intent(LllegalWorkDetailActivity.this, HistoryLllegalWorkActivity.class));
+                break;
+
+            case R.id.tv_back:
+                finish();
                 break;
         }
     }

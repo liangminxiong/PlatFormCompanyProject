@@ -8,27 +8,32 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ResourcesUtils;
-import com.common.utils.StatusBarUtil;
 import com.common.view.popuwindow.TreesListsPopupWindow;
 import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.features.adapter.CarListSelectAdapter;
 import com.yuefeng.features.adapter.MyLllegalPageAdapter;
 import com.yuefeng.features.contract.LllegalWorkContract;
 import com.yuefeng.features.event.LllegalWorkEvent;
 import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
+import com.yuefeng.features.modle.carlist.CarListSelectBean;
 import com.yuefeng.features.presenter.LllegalWorkPresenter;
 import com.yuefeng.features.ui.fragment.Lllegal.CarLllegalWorkListFragment;
 import com.yuefeng.features.ui.fragment.Lllegal.PersonalLllegalWorkListFragment;
@@ -50,6 +55,8 @@ import butterknife.OnClick;
 public class LllegalWorkActivity extends BaseActivity implements LllegalWorkContract.View, TabLayout.OnTabSelectedListener {
 
     private static final String TAG = "tag";
+    @BindView(R.id.tv_back)
+    TextView tv_back;
     @BindView(R.id.tv_title)
     TextView tv_title_setting;
     @BindView(R.id.ll_problem)
@@ -58,8 +65,8 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
     TabLayout tabLayout;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
-    @BindView(R.id.space)
-    View view;
+//    @BindView(R.id.space)
+//    View view;
 
     private List<CarListInfosMsgBean> carListData = new ArrayList<>();
     private List<Node> carDatas = new ArrayList<>();
@@ -75,6 +82,8 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
     private MyLllegalPageAdapter viewPagerAdapter;
 
     private boolean isCarOrPersonalList = true;
+    private CarListSelectAdapter adapter;
+    private List<CarListSelectBean> listData = new ArrayList<>();
 
     @Override
     protected int getContentViewResId() {
@@ -89,8 +98,8 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
         }
         ButterKnife.bind(this);
         presenter = new LllegalWorkPresenter(this, this);
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         initTabLayout();
         getCarList();
         isCarOrPersonalList = true;
@@ -167,24 +176,10 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
         carListPopupWindow.setTitleText("车辆列表");
         carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
 
-        if (carDatas.size() > 0) {
-            carListPopupWindow.recyclerview.setLayoutManager(new LinearLayoutManager(this));
-            if (carlistAdapter == null) {
-                carlistAdapter = new SimpleTreeRecyclerAdapter(carListPopupWindow.recyclerview, this,
-                        carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, true);
-            } else {
-                carlistAdapter.notifyDataSetChanged();
-            }
-            carListPopupWindow.recyclerview.setAdapter(carlistAdapter);
-        }
-        carlistAdapter.notifyDataSetChanged();
-        carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
-            @Override
-            public void onClick(Node node, int position) {
-                showSelectItemDatas();
-            }
-
-        });
+        showTreesCarListData(carDatas);
+        carListPopupWindow.recyclerview_after.setLayoutManager(new LinearLayoutManager(this));
+        initRecycleView();
+        showSelectCarList();
 
         carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
             @Override
@@ -201,6 +196,89 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
         });
 
         carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+    }
+
+    private void initRecycleView() {
+        assert carListPopupWindow != null;
+        adapter = new CarListSelectAdapter(R.layout.list_item, listData);
+        carListPopupWindow.recyclerview_after.setAdapter(adapter);
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                carNumber = listData.get(position).getName();
+                terminal = listData.get(position).getTerminal();
+                if (!TextUtils.isEmpty(terminal)) {
+                    if (carListPopupWindow != null) {
+                        carListPopupWindow.dismiss();
+                    }
+                    showSuccessToast(terminal + " ++ " + carNumber);
+                }
+            }
+        });
+    }
+
+    private void showSelectCarList() {
+        if (carListPopupWindow != null) {
+            carListPopupWindow.tv_search_txt.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (count > 0) {
+                        carListPopupWindow.recyclerview.setVisibility(View.GONE);
+                        carListPopupWindow.recyclerview_after.setVisibility(View.VISIBLE);
+                    } else {
+                        carListPopupWindow.recyclerview.setVisibility(View.VISIBLE);
+                        carListPopupWindow.recyclerview_after.setVisibility(View.GONE);
+                    }
+                    searchList(s.toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+        }
+    }
+
+    private void showTreesCarListData(List<Node> carDatas) {
+        if (carDatas.size() > 0) {
+            carListPopupWindow.recyclerview.setLayoutManager(new LinearLayoutManager(this));
+//            if (carlistAdapter == null) {
+            carlistAdapter = new SimpleTreeRecyclerAdapter(carListPopupWindow.recyclerview, this,
+                    carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, true);
+//            } else {
+//                carlistAdapter.notifyDataSetChanged();
+//            }
+            carListPopupWindow.recyclerview.setAdapter(carlistAdapter);
+        }
+        carlistAdapter.notifyDataSetChanged();
+        carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
+            @Override
+            public void onClick(Node node, int position) {
+                showSelectItemDatas();
+            }
+
+        });
+    }
+
+    private void searchList(String key) {
+        if (carDatas.size() > 0) {
+            List<CarListSelectBean> nodes = DatasUtils.carListSelect(carDatas, key);
+            LogUtils.d("search == " + key + " ++ " + nodes.size());
+            if (nodes.size() > 0) {
+                listData.clear();
+                listData.addAll(nodes);
+                if (adapter != null) {
+                    adapter.setNewData(listData);
+                }
+            }
+        }
     }
 
     /*点击车*/
@@ -220,8 +298,8 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
             if (carListPopupWindow != null) {
                 carListPopupWindow.dismiss();
             }
+        showSuccessToast(carNumber);
         }
-//        showSuccessToast(carNumber);
     }
 
 
@@ -248,12 +326,19 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 
     }
 
-    @OnClick(R.id.tv_title)
-    public void onViewClicked() {
-        if (isCarOrPersonalList) {
-            initCarlistPopupView();
-        } else {
-            showSuccessToast("正在开发...");
+    @OnClick({R.id.tv_title, R.id.tv_back})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_back:
+                finish();
+                break;
+            case R.id.tv_title:
+                if (isCarOrPersonalList) {
+                    initCarlistPopupView();
+                } else {
+                    showSuccessToast("正在开发...");
+                }
+                break;
         }
     }
 }

@@ -145,7 +145,7 @@ public class CarLllegalWorkListFragment extends BaseFragment {
         List<MsgDataBean> bean = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             MsgDataBean msgDataBean = new MsgDataBean();
-            msgDataBean.setImageUrl(R.mipmap.icon_app);
+            msgDataBean.setImageUrl(R.drawable.vehicle_list);
             msgDataBean.setTitle("粤A4565" + (i + 1));
             msgDataBean.setTime(TimeUtils.getHourMinute());
             if (i == 0) {
