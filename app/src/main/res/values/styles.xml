@@ -245,8 +245,24 @@
     </declare-styleable>
 
     <declare-styleable name="CircleImageView">
-        <attr name="border_width" format="dimension" />
-        <attr name="border_color" format="color" />
+        <attr name="border_width" format="dimension"/>
+        <attr name="border_color" format="color"/>
     </declare-styleable>
+
+    <style name="mProgress_circle">
+        <item name="android:indeterminateDrawable">@drawable/progressbar_circle_1</item>
+        <item name="android:minWidth">25dp</item>
+        <item name="android:minHeight">25dp</item>
+        <item name="android:maxWidth">60dp</item>
+        <item name="android:maxHeight">60dp</item>
+    </style>
+
+    <style name="AnimationFade">
+
+        <!-- PopupWindow左右弹出的效果 -->
+        <item name="android:windowEnterAnimation">@anim/inputodown</item>
+        <item name="android:windowExitAnimation">@anim/outdowntoup</item>
+    </style>
+
 
 </resources>

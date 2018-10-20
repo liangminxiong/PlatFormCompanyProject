@@ -22,7 +22,6 @@ import com.common.network.ApiService;
 import com.common.updateapputils.UpdateManager;
 import com.common.utils.Constans;
 import com.common.utils.LocationGpsUtils;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.RxHelper;
 import com.common.utils.TimeUtils;
@@ -162,32 +161,35 @@ public class MainActivity extends BaseActivity implements
 
         boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
         if (gpsOPen) {
-            useGpsLocation();
-        } else {
+//            useGpsLocation();
+//        } else {
             useBdGpsLocation();
         }
     }
 
     private void useGpsLocation() {
-
-        // 创建定位管理信息对象
-        mLocationUtils = new com.yuefeng.utils.LocationUtils(this);
+        try {
+            // 创建定位管理信息对象
+            mLocationUtils = new com.yuefeng.utils.LocationUtils(this);
 //         开启定位
-        mLocationUtils.startLocation();
-        mLocationUtils.registerOnResult(this);
-
-        Location location = BdLocationUtil.getInstance().startLocationServise(MainActivity.this);
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        latitude = latLng.latitude;
-        longitude = latLng.longitude;
-        if (mLocationUtils == null) {
-//         开启定位
-            mLocationUtils = new LocationUtils(this);
             mLocationUtils.startLocation();
             mLocationUtils.registerOnResult(this);
+
+            Location location = BdLocationUtil.getInstance().startLocationServise(MainActivity.this);
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            latitude = latLng.latitude;
+            longitude = latLng.longitude;
+            if (mLocationUtils == null) {
+//         开启定位
+                mLocationUtils = new LocationUtils(this);
+                mLocationUtils.startLocation();
+                mLocationUtils.registerOnResult(this);
+            }
+            mLocationUtils.getAddress(latitude, longitude);
+            mLocationUtils.getAddress(latitude, longitude);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mLocationUtils.getAddress(latitude, longitude);
-        mLocationUtils.getAddress(latitude, longitude);
     }
 
     private void useBdGpsLocation() {
@@ -283,7 +285,6 @@ public class MainActivity extends BaseActivity implements
                         }
                         checkVersion();
                         boolean isSignIn = PreferencesUtils.getBoolean(MainActivity.this, "isSignIn");
-                        LogUtils.d("===========isSignIn==" + isSignIn);
                         if (isSignIn) {
                             personalSignIn(longitude, latitude, address);
                         }
@@ -428,7 +429,7 @@ public class MainActivity extends BaseActivity implements
             LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
             latitude = latLng.latitude;
             longitude = latLng.longitude;
-            showSignInTime(longitude,latitude,address);
+            showSignInTime(longitude, latitude, address);
         } else {
             useBdGpsLocation();
         }

@@ -16,7 +16,6 @@ import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
-import com.common.utils.StatusBarUtil;
 import com.common.view.dialog.SucessCacheSureDialog;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.AllPersonalAdapter;
@@ -74,10 +73,10 @@ public class ForwardProblemActivity extends BaseActivity implements ForWardContr
         ButterKnife.bind(this);
         presenter = new ForWardPresenter(this, this);
 
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        View view = findViewById(R.id.space);
+//
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         tv_title.setText("人员列表");
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {

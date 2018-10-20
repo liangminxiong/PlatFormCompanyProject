@@ -32,6 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     public RelativeLayout iv_back;
     public TextView tv_title;
     private LoadingDialog loadingDialog;
+    private boolean isOnclick =true;
 
     static {
         //5.0以下兼容vector
@@ -56,6 +57,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         iv_back = findViewById(R.id.iv_back);
         tv_title = findViewById(R.id.tv_title);
         iv_back.setOnClickListener(this);
+        isOnclick =true;
     }
 
     protected boolean isNeedTranslateBar() {
@@ -136,7 +138,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
-                finish();
+                if (isOnclick) {
+                    isOnclick =false;
+                    finish();
+                }
                 break;
             default:
                 widgetClick(v);

@@ -1,5 +1,7 @@
 package com.common.utils;
 
+import android.text.TextUtils;
+
 /*数据处理*/
 public class StringUtils {
 
@@ -28,5 +30,21 @@ public class StringUtils {
         java.text.DecimalFormat df = new java.text.DecimalFormat("0.00");
         return df.format(distance);
 
+    }
+
+    public static String getTimeNoZero(String string) {
+        String time = "";
+        if (!TextUtils.isEmpty(string)) {
+            int length = string.length();
+            if (length > 1) {
+                String substring = string.substring(0, 1);
+                if (substring.contains("0")) {
+                    time = string.substring(1, 2);
+                } else {
+                    time = string;
+                }
+            }
+        }
+        return time;
     }
 }

@@ -14,7 +14,6 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.utils.CoordinateConverter;
-import com.common.utils.LogUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +46,7 @@ public class LocationUtils implements MyLocationListener.OnLocationResultListene
         // 设置定位模式为高精度
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
         // 返回的定位结果是百度经纬度,默认值gcj02
-        option.setCoorType("bd09ll");
+//        option.setCoorType("bd09ll");
         // 设置发起定位请求的间隔时间为5000ms
         option.setScanSpan(5000);
         // 返回的定位结果包含地址信息
@@ -101,7 +100,6 @@ public class LocationUtils implements MyLocationListener.OnLocationResultListene
     public void getAddress(double latitude, double lontitude) {
         LatLng mLatLng = new LatLng(latitude, lontitude);
         // 反地理编码请求参数对象
-        LogUtils.d("getAddress444" + mLatLng);
         ReverseGeoCodeOption mReverseGeoCodeOption = new ReverseGeoCodeOption();
         // 设置请求参数
         mReverseGeoCodeOption.location(ConverGpsToBaidu(mLatLng));
@@ -138,9 +136,9 @@ public class LocationUtils implements MyLocationListener.OnLocationResultListene
             // 反地理编码查询结果回调函数
             // 将地理位置信息载入到集合中
             String address = result.getAddress();
-            LogUtils.d("getAddress111" + address);
             if (TextUtils.isEmpty(address)) {
-                address = "暂无地址!";
+//                address = "暂无地址!";
+                address = "";
             }
             map.put("address", address);
             if (mOnResultMapListener != null) {

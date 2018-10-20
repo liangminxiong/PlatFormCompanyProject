@@ -16,7 +16,6 @@ import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
-import com.common.utils.StatusBarUtil;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.MyViewPagerAdapter;
 import com.yuefeng.features.contract.QualityGetCountContract;
@@ -80,10 +79,10 @@ public class QualityInspectionActivity extends BaseActivity implements
         ButterKnife.bind(this);
         presenter = new QualityGetCountPresenter(this, this);
 
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        View view = findViewById(R.id.space);
+//
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         tv_title.setText("问题处理");
         initViewPager();
         viewPager.setOnTouchListener(new View.OnTouchListener() {

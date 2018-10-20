@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -28,7 +27,6 @@ import com.common.utils.ImageUtils;
 import com.common.utils.LocationGpsUtils;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
-import com.common.utils.StatusBarUtil;
 import com.common.view.dialog.SucessCacheSureDialog;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
 import com.luck.picture.lib.PictureSelector;
@@ -123,10 +121,9 @@ public class ProblemUpdateActivity extends BaseActivity implements
         ButterKnife.bind(this);
         presenter = new ProblemUploadPresenter(this, this);
 
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        View view = findViewById(R.id.space);
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         tv_title.setText(getString(R.string.problem_updata));
         tv_type_jinji.setBackgroundResource(R.drawable.yiban3);
         selectPhoto();
@@ -175,10 +172,9 @@ public class ProblemUpdateActivity extends BaseActivity implements
 
         boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
         if (gpsOPen) {
-            useGpsLocation();
-        } else {
-
             useBdGpsLocation();
+        } else {
+//            useGpsLocation();
         }
     }
 
@@ -497,7 +493,6 @@ public class ProblemUpdateActivity extends BaseActivity implements
     @Override
     public void onReverseGeoCodeResult(Map<String, Object> map) {
         address = (String) map.get("address");
-        Log.d(TAG, "getLocation =2= : " + address);
         if (!TextUtils.isEmpty(address)) {
             PreferencesUtils.putString(ProblemUpdateActivity.this, "Fengrun", "");
             PreferencesUtils.putString(ProblemUpdateActivity.this, "mAddress", address);

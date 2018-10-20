@@ -3,6 +3,7 @@ package com.yuefeng.features.ui.activity.track;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.os.Build;
@@ -14,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,10 +41,8 @@ import com.common.location.LocationHelper;
 import com.common.location.MyLocationListener;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ResourcesUtils;
-import com.common.utils.StatusBarUtil;
 import com.common.utils.TimeUtils;
 import com.common.view.popuwindow.TreesListsPopupWindow;
 import com.common.view.timeview.TimePickerView;
@@ -69,8 +67,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
 /**
@@ -80,31 +80,39 @@ import io.reactivex.functions.Consumer;
 
 public class HistoryTrackActivity extends BaseActivity implements CarListContract.View {
 
-    private String terminalNO;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.llll)
+    LinearLayout llll;
+    @BindView(R.id.tv_title_setting)
+    TextView tvTitleSetting;
 
-    private TextureMapView mapview;
-    private ImageView btn_Play;
-    private ImageView btn_SlowPlay;
-    private ImageView btn_FastPlay;
-    private TextView tv_speed;
-    private TextView tv_gpstime;
-    private TextView tv_TrackIndex;
-    private TextView tv_TrackCount;
-    private LinearLayout llll;
-    private RelativeLayout rl_contain;
-    private LinearLayout lll;
-    private LinearLayout lin_Play_Control;
-    private SeekBar mSeekBar;
-    private RelativeLayout rl_right;
-    private RelativeLayout rl_search;
-    private TextView tv_start;
-    private TextView tv_end;
-    private LinearLayout ll_content;
-    private TextView tvTodayTime, tv_car_number;
-    private TextView tvYesterdayTime;
-    private TextView tvDaybymeTime, tv_title_setting;
+    @BindView(R.id.mapview)
+    TextureMapView mapview;
+    @BindView(R.id.rl_time)
+    RelativeLayout rlTime;
+    @BindView(R.id.tv_start_time)
+    TextView tvStartTime;
+    @BindView(R.id.tv_end_time)
+    TextView tvEndTime;
+    @BindView(R.id.tv_search)
+    TextView tvSearch;
+    @BindView(R.id.mSeekBar)
+    SeekBar mSeekBar;
+    @BindView(R.id.tv_speed)
+    TextView tvSpeed;
+    @BindView(R.id.btn_SlowPlay)
+    ImageView btnSlowPlay;
+    @BindView(R.id.btn_Play)
+    ImageView btnPlay;
+    @BindView(R.id.btn_FastPlay)
+    ImageView btnFastPlay;
+    @BindView(R.id.iv_showtime)
+    ImageView ivShowtime;
 
-    private String registNO;
+    @BindDrawable(R.drawable.list)
+    Drawable list_tree;
+
     private String terminal;
 
     private boolean IsPlaying = false;
@@ -116,7 +124,6 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
     private List<WheelPathDatasBean> mTrackDatas = new ArrayList<>();
     private Polyline mPolyline;
-    private Marker mMarkerA;
     private TimePickerView timePickerView;
 
     private String starttime;
@@ -127,16 +134,11 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private boolean isHide = false;
     public boolean isFirstLoc = true;
     private BitmapDescriptor location_icon = BitmapDescriptorFactory.fromResource(R.drawable.worker);
-    private MarkerOptions oA;
     private Marker mMarker;
     private String startTime;
     private boolean startEndTime;
     private boolean endstartTime;
 
-    @BindView(R.id.iv_back)
-    RelativeLayout iv_back;
-    @BindView(R.id.tv_title)
-    TextView tv_title;
     private CarListPresenter presenter;
     private String type = "";
     private int imageInt;
@@ -152,11 +154,13 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private SimpleTreeRecyclerAdapter adapter;
     private List<Node> datas = new ArrayList<>();
     private String carNumber;
+    private MarkerOptions ooA;
+    private String trackDataTn;
 
 
     @Override
     protected int getContentViewResId() {
-        return R.layout.activity_track;
+        return R.layout.activity_historytrack;
     }
 
     @Override
@@ -165,46 +169,15 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-
-        tv_title_setting = findViewById(R.id.tv_title_setting);
-        tv_car_number = findViewById(R.id.tv_car_number);
-        tv_car_number.setVisibility(View.VISIBLE);
-        mapview = findViewById(R.id.mMapView);
-        btn_Play = findViewById(R.id.btn_Play);
-        btn_FastPlay = findViewById(R.id.btn_FastPlay);
-        btn_SlowPlay = findViewById(R.id.btn_SlowPlay);
-        tv_speed = findViewById(R.id.tv_speed);
-        tv_gpstime = findViewById(R.id.tv_gpstime);
-        tv_TrackIndex = findViewById(R.id.tv_TrackIndex);
-        tv_TrackCount = findViewById(R.id.tv_TrackCount);
-        llll = findViewById(R.id.llll);
-        rl_contain = findViewById(R.id.rl_contain);
-        lll = findViewById(R.id.lll);
-        lin_Play_Control = findViewById(R.id.lin_Play_Control);
-        mSeekBar = findViewById(R.id.mSeekBar);
-        rl_search = findViewById(R.id.rl_search);
-
-        tv_start = findViewById(R.id.tv_start);
-        tv_end = findViewById(R.id.tv_end);
-        ll_content = findViewById(R.id.ll_content);
-
-        tvTodayTime = findViewById(R.id.tv_today_time);
-        tvYesterdayTime = findViewById(R.id.tv_yesterday_time);
-        tvDaybymeTime = findViewById(R.id.tv_daybyme_time);
-
         presenter = new CarListPresenter(this, this);
-        tv_title.setText("历史轨迹");
+        tvTitle.setText("历史轨迹");
         getTeNum();
         mTrackDatas.clear();
         latLngTemp = null;
-        tv_title_setting.setText("选车");
+        tvTitleSetting.setBackground(list_tree);
         getCarList();
-        tv_car_number.setText("车牌号码:");
         terminal = "";
+        imageInt = R.drawable.vehicle;
     }
 
     /*车辆列表*/
@@ -217,8 +190,6 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     }
 
     private void getTeNum() {
-        ll_content.setVisibility(View.VISIBLE);
-
         initTitle();
         mSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener());
         mHandler = new MyHandler();
@@ -227,13 +198,10 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private void initTitle() {
         starttime = TimeUtils.getStartTimeofDay();
         endtime = TimeUtils.getCurrentTime();
-        tvTodayTime.setBackgroundResource(R.color.titel_color);
-        tvTodayTime.setTextColor(getResources().getColor(R.color.white));
-        tv_start.setText(starttime);
-        tv_end.setText(endtime);
-        tv_start.setSelected(false);
-        tv_end.setSelected(false);
-//        getTrackData(terminal, starttime, endtime);
+        tvStartTime.setText(starttime);
+        tvEndTime.setText(endtime);
+        tvStartTime.setSelected(false);
+        tvEndTime.setSelected(false);
     }
 
 
@@ -249,6 +217,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             showSuccessToast("时间间隔超过一周");
             return;
         }
+        rlTime.setVisibility(View.INVISIBLE);
+        ivShowtime.setVisibility(View.VISIBLE);
         if (mBaiduMap != null) {
             mBaiduMap.clear();
         }
@@ -267,9 +237,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                     if (mBaiduMap != null) {
                         mBaiduMap.clear();
                     }
-                    mSeekBar.setMax(mTrackDatas.size());
-                    showCarDetailInfos(mTrackDatas);
-                    ReplayTrack(0);
+                    filterTrackDatas(mTrackDatas);
                 }
                 break;
 
@@ -287,6 +255,26 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
         }
 
+    }
+
+    private void filterTrackDatas(List<WheelPathDatasBean> trackDatas) {
+        double lat = 0.0;
+        double lng = 0.0;
+        if (mSeekBar != null) {
+            mSeekBar.setMax(trackDatas.size());
+        }
+        List<WheelPathDatasBean> list = new ArrayList<>();
+        for (WheelPathDatasBean mTrackData : trackDatas) {
+            if ((lng != mTrackData.getLo()) && (lat != mTrackData.getLa())) {
+                list.add(mTrackData);
+            }
+            lat = mTrackData.getLa();
+            lng = mTrackData.getLo();
+        }
+        mTrackDatas.clear();
+        mTrackDatas.addAll(list);
+        showCarDetailInfos(mTrackDatas);
+        ReplayTrack(0);
     }
 
 
@@ -358,48 +346,47 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     /*定位*/
     private void getLocation() {
         try {
-        mBaiduMap = mapview.getMap();
-        // 地图初始化
-        mapview.showZoomControls(false);// 缩放控件是否显示
+            mBaiduMap = mapview.getMap();
+            // 地图初始化
+            mapview.showZoomControls(false);// 缩放控件是否显示
 
-        // 开启定位图层
-        mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
-        mBaiduMap.setMyLocationEnabled(true);
-        // 定位初始化
+            // 开启定位图层
+            mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
+            mBaiduMap.setMyLocationEnabled(true);
+            // 定位初始化
 
-        mBaiduMap.showMapPoi(true);
+            mBaiduMap.showMapPoi(true);
 
-        BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
-            @Override
-            public void myLocation(BDLocation location) {
-                if (location == null) {
-                    return;
-                }
-                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                    address = location.getAddrStr();
-                    int length = address.length();
-                    address = address.substring(2, length);
-                    latLngTemp = new LatLng(latitude, longitude);
-                    LogUtils.d("getLocation == " + latLngTemp + " ++ " + address);
-                    if (isFirstLoc) {
-                        isFirstLoc = false;
-                        MapStatus ms = new MapStatus.Builder().target(latLngTemp)
-                                .overlook(-20).zoom(14).build();
-                        oA = new MarkerOptions().icon(location_icon).zIndex(10);
-                        oA.position(latLngTemp);
-                        mMarker = null;
-                        mMarker = (Marker) (mBaiduMap.addOverlay(oA));
-                        mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
+            BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
+                @Override
+                public void myLocation(BDLocation location) {
+                    if (location == null) {
+                        return;
                     }
-                } else {
-                    requestPermissions();
-                }
+                    if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                        address = location.getAddrStr();
+                        int length = address.length();
+                        address = address.substring(2, length);
+                        latLngTemp = new LatLng(latitude, longitude);
+                        if (isFirstLoc) {
+                            isFirstLoc = false;
+                            MapStatus ms = new MapStatus.Builder().target(latLngTemp)
+                                    .overlook(-20).zoom(14).build();
+                            ooA = new MarkerOptions().icon(location_icon).zIndex(10);
+                            ooA.position(latLngTemp);
+                            mMarker = null;
+                            mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
+                            mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
+                        }
+                    } else {
+                        requestPermissions();
+                    }
 
-            }
-        }, Constans.BDLOCATION_TIME);
-        initLocation();
+                }
+            }, Constans.BDLOCATION_TIME);
+            initLocation();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -453,53 +440,10 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
     @Override
     protected void setLisenter() {
-        tv_title_setting.setOnClickListener(this);
-        btn_FastPlay.setOnClickListener(this);
-
-        btn_Play.setOnClickListener(this);
-        btn_SlowPlay.setOnClickListener(this);
-        tvTodayTime.setOnClickListener(this);
-        tvYesterdayTime.setOnClickListener(this);
-        tvDaybymeTime.setOnClickListener(this);
-        rl_search.setOnClickListener(this);
-        tv_start.setOnClickListener(this);
-        tv_end.setOnClickListener(this);
     }
 
     @Override
     protected void widgetClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_FastPlay:
-                fastPlay();
-                break;
-            case R.id.btn_Play:
-                btn_Play();
-                break;
-            case R.id.btn_SlowPlay:
-                slowPlay();
-                break;
-            case R.id.tv_today_time:
-                tv_today_time();
-                break;
-            case R.id.tv_yesterday_time:
-                tvYesterdayTime();
-                break;
-            case R.id.tv_daybyme_time:
-                tvDaybymeTime();
-                break;
-            case R.id.rl_search:
-                rl_search();
-                break;
-            case R.id.tv_start:
-                tv_start();
-                break;
-            case R.id.tv_end:
-                tv_end();
-                break;
-            case R.id.tv_title_setting:
-                chooseCar();
-                break;
-        }
     }
 
     /*弹框选车*/
@@ -509,10 +453,37 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
     /*车辆列表*/
     private void initPopupView() {
-        popupWindow = new TreesListsPopupWindow(this);
-        popupWindow.setTitleText("车辆列表");
-        popupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
+        try {
+            popupWindow = new TreesListsPopupWindow(this, datas);
+            popupWindow.setTitleText("车辆列表");
+            popupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
+            initTreeListDatas();
 
+            popupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
+                @Override
+                public void onGoBack() {
+                    popupWindow.dismiss();
+                }
+
+                @Override
+                public void onSure() {
+                    showSelectItemDatas();
+                    popupWindow.dismiss();
+                }
+
+                @Override
+                public void onSelectCar(String carNumber, String terminal) {//选中车
+                    getSelectCarInfos(carNumber, terminal);
+                }
+            });
+
+            popupWindow.showAtLocation(llll, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initTreeListDatas() {
         if (datas.size() > 0) {
             popupWindow.recyclerview.setLayoutManager(new LinearLayoutManager(this));
             if (adapter == null) {
@@ -523,6 +494,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             }
             popupWindow.recyclerview.setAdapter(adapter);
         }
+        assert adapter != null;
         adapter.notifyDataSetChanged();
         adapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
             @Override
@@ -531,22 +503,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             }
 
         });
-
-        popupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
-            @Override
-            public void onGoBack() {
-                popupWindow.dismiss();
-            }
-
-            @Override
-            public void onSure() {
-                showSelectItemDatas();
-                popupWindow.dismiss();
-            }
-        });
-
-        popupWindow.showAtLocation(llll, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
     }
+
 
     @SuppressLint("SetTextI18n")
     private void showSelectItemDatas() {
@@ -560,165 +518,37 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 terminal = allNodes.get(i).getTerminalNO();
             }
         }
+        getSelectCarInfos(carNumber, terminal);
+    }
+
+
+    /*获取轨迹*/
+    private void getSelectCarInfos(String carNumber, String terminal) {
         if (!TextUtils.isEmpty(terminal)) {
             if (popupWindow != null) {
                 popupWindow.dismiss();
             }
-            tv_car_number.setText("车牌号码:" + carNumber);
-            String startTime = tv_start.getText().toString().trim();
-            String endTime = tv_end.getText().toString().trim();
+            tvTitle.setText(carNumber);
+            String startTime = tvStartTime.getText().toString().trim();
+            String endTime = tvEndTime.getText().toString().trim();
             getTrackData(terminal, startTime, endTime);
-        }
-    }
-
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        switch (ev.getAction()) {
-//            case MotionEvent.ACTION_UP:
-//                if (isTouchMap()) {
-//
-//                }
-//                break;
-//        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-
-    private void tv_today_time() {
-        ll_content.setVisibility(View.VISIBLE);
-        String toTodayTime = TimeUtils.getStartTimeofDay();
-        String currentTime = TimeUtils.getCurrentTime();
-        tv_start.setText(toTodayTime);
-        tv_end.setText(currentTime);
-        tvTodayTime.setBackgroundResource(R.color.titel_color);
-        tvTodayTime.setTextColor(getResources().getColor(R.color.white));
-        tvYesterdayTime.setBackgroundResource(R.color.white);
-        tvYesterdayTime.setTextColor(getResources().getColor(R.color.titel_color));
-        tvDaybymeTime.setBackgroundResource(R.color.white);
-        tvDaybymeTime.setTextColor(getResources().getColor(R.color.titel_color));
-//        if (mHandler != null) {
-//            mHandler.sendEmptyMessage(ENDPOINT);
-//        }
-        mSeekBar.setProgress(0);
-        latLngTemp = null;
-        if (!TextUtils.isEmpty(terminal)) {
-            getTrackData(terminal, toTodayTime, currentTime);
         } else {
-            showSuccessToast("请先选车");
-        }
-        tv_start.setSelected(false);
-        tv_end.setSelected(false);
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void tvYesterdayTime() {
-        ll_content.setVisibility(View.VISIBLE);
-        String toTodayTime = TimeUtils.getStartTimeofDay();
-        String yesterDayTime = TimeUtils.yesterDay(toTodayTime);
-        tvYesterdayTime.setBackgroundResource(R.color.titel_color);
-        tvYesterdayTime.setTextColor(getResources().getColor(R.color.white));
-        tvTodayTime.setBackgroundResource(R.color.white);
-        tvTodayTime.setTextColor(getResources().getColor(R.color.titel_color));
-        tvDaybymeTime.setBackgroundResource(R.color.white);
-        tvDaybymeTime.setTextColor(getResources().getColor(R.color.titel_color));
-        tv_start.setText(yesterDayTime + " 00:00:00" + "");
-        tv_end.setText(yesterDayTime + " 23:59:59" + "");
-        tv_start.setSelected(false);
-        tv_end.setSelected(false);
-//        if (mHandler != null) {
-//            mHandler.sendEmptyMessage(ENDPOINT);
-//        }
-        mSeekBar.setProgress(0);
-        latLngTemp = null;
-        if (!TextUtils.isEmpty(terminal)) {
-            getTrackData(terminal, yesterDayTime + " 00:00:00" + "", toTodayTime);
-        } else {
-            showSuccessToast("请先选车");
+            tvTitle.setText("历史轨迹");
         }
     }
 
-    private void tvDaybymeTime() {
-        String toTodayTime = TimeUtils.getStartTimeofDay();
-        String currentTime = TimeUtils.getCurrentTime();
-        tv_start.setText(toTodayTime);
-        tv_end.setText(currentTime);
-        ll_content.setVisibility(View.VISIBLE);
-        tvDaybymeTime.setBackgroundResource(R.color.titel_color);
-        tvDaybymeTime.setTextColor(getResources().getColor(R.color.white));
-        tvYesterdayTime.setBackgroundResource(R.color.white);
-        tvYesterdayTime.setTextColor(getResources().getColor(R.color.titel_color));
-        tvTodayTime.setBackgroundResource(R.color.white);
-        tvTodayTime.setTextColor(getResources().getColor(R.color.titel_color));
-        tv_start.setSelected(true);
-        tv_end.setSelected(true);
-//        if (mHandler != null) {
-//            mHandler.sendEmptyMessage(ENDPOINT);
-//        }
-        mSeekBar.setProgress(0);
-        latLngTemp = null;
-    }
 
     /*查询*/
     private void rl_search() {
         if (!TextUtils.isEmpty(terminal)) {
-            getTrackData(terminal, tv_start.getText().toString().trim(), tv_end.getText().toString().trim());
+            rlTime.setVisibility(View.INVISIBLE);
+            ivShowtime.setVisibility(View.VISIBLE);
+            getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
         } else {
             showSuccessToast("请先选车");
         }
     }
 
-
-    /**
-     * 划线
-     *
-     * @param mTrackDatas
-     */
-
-    @SuppressLint("SetTextI18n")
-    private void initTrackLine(List<WheelPathDatasBean> mTrackDatas) {
-        try {
-            if (mPolyline != null) {
-                mPolyline.remove();
-            }
-            List<LatLng> lls = new ArrayList<LatLng>();
-            lls.clear();
-            int count = 0;
-
-            for (int i = 0; i < mTrackDatas.size(); i++) {
-                double cLat = mTrackDatas.get(i).getLa();
-                double cLon = mTrackDatas.get(i).getLo();
-                String sp = mTrackDatas.get(i).getSp();
-//                if (sp.equals("0")) {
-//                    continue;
-//                }
-                if ((cLon > 140.0) || (cLon < 65.0) || (cLat > 56.0) || (cLat < 12.0)) {
-                    continue;
-                }
-                count++;
-                LatLng p1 = BdLocationUtil.ConverGpsToBaidu((new LatLng(cLat, cLon)));// 转经纬度;
-                if (latLngTemp == null) {
-                    latLngTemp = p1;
-                } else {
-                    if (latLngTemp == p1) {
-                        continue;
-                    } else {
-                        latLngTemp = p1;
-                    }
-                }
-
-                lls.add(p1);
-            }
-            tv_TrackCount.setText(count + "" + "");
-            if (lls.size() > 1) {
-                OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.BLUE).points(lls);
-                mPolyline = (Polyline) mBaiduMap.addOverlay(ooPolyline);
-                BdLocationUtil.MoveMapToCenter(mBaiduMap, lls.get(0), 14);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * 画车
@@ -728,41 +558,35 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     @SuppressLint("SetTextI18n")
     private void ReplayTrack(int index) {
         try {
+            if (index >= mTrackDatas.size()) {
+                return;
+            }
             WheelPathDatasBean trackData = mTrackDatas.get(index);
             double Latitude = trackData.getLa();
             double Longitude = trackData.getLo();
             LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(Latitude, Longitude));// 转经纬度;
             double ang = mTrackDatas.get(index).getAng();
-
-            if (mMarkerA != null) {
-                mMarkerA.remove();
+//        p1 = new LatLng(23.2313123, 113.43214);
+            if (mMarker != null) {
+                mMarker.remove();
             }
-
-            if (mMarkerA != null) {
-                mMarkerA.remove();
-            }
-
             BitmapDescriptor map_location = BitmapDescriptorFactory.fromResource(imageInt);
-
-
-            MarkerOptions ooA;
 
             if (index == 0) {
                 ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
                 BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
             } else {
                 ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
-                BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 19);
+                BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
             }
-            mMarkerA = (Marker) (mBaiduMap.addOverlay(ooA));
-            mMarkerA.setTitle(trackData.getTn());
+            trackDataTn = trackData.getTn();
+            trackDataTn = TextUtils.isEmpty(trackDataTn) ? String.valueOf(index) : trackDataTn;
+            mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
+            mMarker.setTitle(trackDataTn);
             mSeekBar.setProgress(index);
-            tv_TrackIndex.setText(BdLocationUtil.GetPlayIndexString(index));
-            tv_speed.setText("速度：" + trackData.getSp() + "km/h");
-            tv_gpstime.setText("定位时间：" + trackData.getSt() + "");
-
+            tvSpeed.setText(trackData.getSp() + "km/h");
         } catch (Exception e) {
-            Log.v("JJ", "ReplayTrack:" + e.toString());
+            Log.v("JJ", "PlayThread =33=:" + e.toString());
         }
     }
 
@@ -779,14 +603,14 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             @Override
             public void onTimeSelect(Date date) {
                 startTime = TimeUtils.getTimeHourMin(date);
-                if (!TextUtils.isEmpty(tv_end.getText().toString().trim())) {
+                if (!TextUtils.isEmpty(tvEndTime.getText().toString().trim())) {
                     endstartTime = TimeUtils.getBoolenStartEndTime(startTime, endtime);
                     if (endstartTime) {
                         showSuccessToast("请重新选择时间");
                         return;
                     }
                 }
-                tv_start.setText(startTime);
+                tvStartTime.setText(startTime);
             }
         });
         timePickerView.show();
@@ -805,20 +629,24 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             public void onTimeSelect(Date date) {
                 endtime = TimeUtils.getTimeHourMin(date);
                 Log.d("tag", "onTimeSelect  aa: " + endtime);
-                if (!TextUtils.isEmpty(tv_start.getText().toString().trim())) {
+                if (!TextUtils.isEmpty(tvStartTime.getText().toString().trim())) {
                     startEndTime = TimeUtils.getBoolenStartEndTime(startTime, endtime);
                     if (startEndTime) {
                         showSuccessToast("请重新选择时间");
                         return;
                     }
                 }
-                tv_end.setText(endtime);
+                tvEndTime.setText(endtime);
             }
         });
         timePickerView.show();
     }
 
     private void btn_Play() {
+        if (TextUtils.isEmpty(terminal)) {
+            showSuccessToast("请先选车");
+            return;
+        }
         if (!IsPlaying) {
             if (mTrackDatas.size() < 1) {
                 showSuccessToast("轨迹数据为空，请先加载！");
@@ -827,7 +655,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             if (playThread == null)
                 playThread = new PlayThread();
             playThread.start();
-            btn_Play.setImageResource(R.drawable.btn_stop_a);
+            btnPlay.setImageResource(R.drawable.pause);
         } else {
             IsPlaying = false;
             try {
@@ -837,19 +665,54 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            btn_Play.setImageResource(R.drawable.btn_stop_b);
+            btnPlay.setImageResource(R.drawable.broadcast_hitory);
         }
     }
 
 
     private void fastPlay() {
-        if (PlayIndex + 1 < mTrackDatas.size())
-            PlayIndex += 1;
+        if (PlayIndex + 3 < mTrackDatas.size())
+            PlayIndex += 3;
     }
 
     private void slowPlay() {
-        if (PlayIndex - 1 > 0)
-            PlayIndex -= 1;
+        if (PlayIndex - 3 > 0)
+            PlayIndex -= 3;
+    }
+
+
+    @OnClick({R.id.tv_start_time, R.id.tv_end_time, R.id.tv_search, R.id.mSeekBar, R.id.iv_showtime,
+            R.id.tv_speed, R.id.btn_SlowPlay, R.id.btn_Play, R.id.btn_FastPlay, R.id.tv_title_setting})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_start_time:
+                tv_start();
+                break;
+            case R.id.tv_end_time:
+                tv_end();
+                break;
+            case R.id.tv_search:
+                rl_search();
+                break;
+            case R.id.mSeekBar:
+                break;
+            case R.id.btn_SlowPlay:
+                slowPlay();
+                break;
+            case R.id.btn_Play:
+                btn_Play();
+                break;
+            case R.id.btn_FastPlay:
+                fastPlay();
+                break;
+            case R.id.tv_title_setting:
+                chooseCar();
+                break;
+            case R.id.iv_showtime:
+                ivShowtime.setVisibility(View.INVISIBLE);
+                rlTime.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     class MyHandler extends Handler {
@@ -862,11 +725,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                     break;
                 case ENDPOINT:
                     freeThread();
-                    btn_Play.setBackgroundDrawable(mActivity.getResources().getDrawable(R.drawable.btn_play_selector));
                     IsPlaying = false;
                     PlayIndex = 0;
-                    tv_TrackIndex.setText(PlayIndex + "");
-//                    showSuccessToast("轨迹播放完毕！");
                     break;
                 default:
                     break;
@@ -883,6 +743,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 if (!IsPlaying) {
                     break;
                 }
+                mSeekBar.setProgress(PlayIndex);
                 Message msg = new Message();
                 msg.what = UPDATEUI;
                 msg.obj = PlayIndex;
@@ -903,9 +764,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 playThread.interrupt();
             playThread = null;
             IsPlaying = false;
-            btn_Play.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_play_selector));
+            btnPlay.setImageResource(R.drawable.broadcast_hitory);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

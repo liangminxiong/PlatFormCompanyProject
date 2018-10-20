@@ -38,7 +38,6 @@ import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.LogUtils;
-import com.common.utils.StatusBarUtil;
 import com.common.utils.TimeUtils;
 import com.common.view.timeview.TimePickerView;
 import com.yuefeng.commondemo.R;
@@ -154,10 +153,10 @@ public class TrackActivity extends BaseActivity implements TrackContract.View {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        View view = findViewById(R.id.space);
+//
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
 
         mMapView = findViewById(R.id.mMapView);
         btn_Play = findViewById(R.id.btn_Play);
@@ -374,7 +373,6 @@ public class TrackActivity extends BaseActivity implements TrackContract.View {
         mLocClient.registerLocationListener(myListener);
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true); // 打开gps
-        option.setCoorType("bd09ll"); // 设置坐标类型
         option.setIsNeedAddress(true);
         option.setScanSpan(0);
         mLocClient.setLocOption(option);

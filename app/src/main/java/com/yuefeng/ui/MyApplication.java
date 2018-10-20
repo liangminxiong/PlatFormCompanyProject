@@ -97,7 +97,8 @@ public class MyApplication extends Application {
     private void initThirdParty() {
         /*百度地图*/
         SDKInitializer.initialize(this);
-        SDKInitializer.setCoordType(CoordType.BD09LL);
+        SDKInitializer.setCoordType(CoordType.BD09LL);//返回坐标类型
+//        SDKInitializer.setCoordType(CoordType.GCJ02);
         /*短信*/
 //        MobSDK.init(this);
         /*语音*/

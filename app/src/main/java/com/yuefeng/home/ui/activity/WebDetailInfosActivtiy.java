@@ -9,7 +9,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.common.base.codereview.BaseActivity;
-import com.common.utils.StatusBarUtil;
 import com.common.utils.WebViewUtils;
 import com.common.view.webview.H5Control;
 import com.yuefeng.commondemo.R;
@@ -23,8 +22,8 @@ public class WebDetailInfosActivtiy extends BaseActivity implements H5Control {
 
     @BindView(R.id.tv_title)
     TextView tv_title;
-    @BindView(R.id.space)
-    View view;
+//    @BindView(R.id.space)
+//    View view;
     @BindView(R.id.progressbar)
     ProgressBar progressBar;
     @BindView(R.id.webview)
@@ -42,8 +41,8 @@ public class WebDetailInfosActivtiy extends BaseActivity implements H5Control {
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         tv_title.setText(R.string.detail);
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         initWebview();
     }
 

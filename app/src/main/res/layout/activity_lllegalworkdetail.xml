@@ -4,7 +4,7 @@
               android:id="@+id/ll_problem"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/list_divider"
+              android:background="@drawable/bg03"
               android:orientation="vertical">
 
     <RelativeLayout
@@ -37,10 +37,10 @@
                 android:layout_marginStart="@dimen/dp_20"
                 android:background="@color/transition"
                 android:drawablePadding="@dimen/dp_5"
-                android:drawableStart="@drawable/title_back_black"
+                android:drawableStart="@drawable/back"
                 android:gravity="center"
                 android:text="@string/back"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="@dimen/dp_14"
                 android:visibility="visible"
                 tools:ignore="SpUsage"/>
@@ -51,7 +51,7 @@
                 android:layout_height="@dimen/dp_40"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="@dimen/sp_17"
                 android:layout_marginBottom="@dimen/dp_5"
                 android:layout_marginTop="@dimen/dp_5"/>

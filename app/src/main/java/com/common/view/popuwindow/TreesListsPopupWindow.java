@@ -6,9 +6,15 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +23,15 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.features.adapter.CarListSelectAdapter;
+import com.yuefeng.features.modle.carlist.CarListSelectBean;
+import com.yuefeng.utils.DatasUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -37,10 +51,17 @@ public class TreesListsPopupWindow extends PopupWindow {
     public TextInputEditText tv_search_txt;
     public RecyclerView recyclerview;
     public RecyclerView recyclerview_after;
+    private String key;
+    private CarListSelectAdapter adapterSelect;
+    private List<CarListSelectBean> listData = new ArrayList<>();
+    private String terminal;
+    private List<Node> carDatas;
+    private String name;
 
-    public TreesListsPopupWindow(Context context) {
+    public TreesListsPopupWindow(Context context, List<Node> carDatas) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mContext = context;
+        this.carDatas = carDatas;
         //设置点击空白处消失
         setTouchable(true);
         setOutsideTouchable(true);
@@ -67,14 +88,8 @@ public class TreesListsPopupWindow extends PopupWindow {
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         tv_search_txt = (TextInputEditText) rootView.findViewById(R.id.tv_search_txt);
         tv_setting = (TextView) rootView.findViewById(R.id.tv_title_setting);
-
-//        rootView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (isShowing())
-//                    dismiss();
-//            }
-//        });
+        recyclerview_after.setLayoutManager(new LinearLayoutManager(mContext));
+        initRecycleView();
 
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +113,70 @@ public class TreesListsPopupWindow extends PopupWindow {
                     mOnItemClickListener.onSure();
             }
         });
+
+        initSeacherWatcher();
+    }
+
+    private void initSeacherWatcher() {
+        tv_search_txt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (count > 0) {
+                    recyclerview.setVisibility(View.GONE);
+                    recyclerview_after.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerview.setVisibility(View.VISIBLE);
+                    recyclerview_after.setVisibility(View.GONE);
+                }
+                key = s.toString();
+                searchList(key);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void initRecycleView() {
+        adapterSelect = new CarListSelectAdapter(R.layout.list_item, listData);
+        recyclerview_after.setAdapter(adapterSelect);
+        adapterSelect.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                name = listData.get(position).getName();
+                terminal = listData.get(position).getTerminal();
+                if (!TextUtils.isEmpty(terminal)) {
+                    if (isShowing())
+                        dismiss();
+                    if (mOnItemClickListener != null)
+                        mOnItemClickListener.onSelectCar(name,terminal);
+                }
+            }
+        });
+    }
+
+
+    private void searchList(String key) {
+        if (carDatas.size() > 0) {
+            List<CarListSelectBean> nodes = DatasUtils.carListSelect(carDatas, key);
+            if (nodes.size() > 0) {
+                listData.clear();
+                listData.addAll(nodes);
+                if (adapterSelect != null) {
+                    adapterSelect.setNewData(listData);
+                    recyclerview_after.setVisibility(View.VISIBLE);
+                    adapterSelect.notifyDataSetChanged();
+                }
+            }
+        }
     }
 
     public void setTitleText(String titleText) {
@@ -139,6 +218,8 @@ public class TreesListsPopupWindow extends PopupWindow {
 //        void onSearch(String key);
 
         void onSure();
+
+        void onSelectCar(String carNumber,String terminal);
     }
 
     /**

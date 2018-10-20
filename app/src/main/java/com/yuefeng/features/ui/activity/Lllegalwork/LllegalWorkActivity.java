@@ -172,7 +172,7 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 
     /*车辆列表*/
     private void initCarlistPopupView() {
-        carListPopupWindow = new TreesListsPopupWindow(this);
+        carListPopupWindow = new TreesListsPopupWindow(this,carDatas);
         carListPopupWindow.setTitleText("车辆列表");
         carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
 
@@ -192,6 +192,11 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
             public void onSure() {
                 showSelectItemDatas();
                 carListPopupWindow.dismiss();
+            }
+
+            @Override
+            public void onSelectCar(String carNumber, String terminal) {
+
             }
         });
 
@@ -257,7 +262,7 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 //            }
             carListPopupWindow.recyclerview.setAdapter(carlistAdapter);
         }
-        carlistAdapter.notifyDataSetChanged();
+//        carlistAdapter.notifyDataSetChanged();
         carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
             @Override
             public void onClick(Node node, int position) {

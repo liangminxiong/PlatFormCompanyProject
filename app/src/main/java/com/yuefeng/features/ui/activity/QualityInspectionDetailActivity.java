@@ -19,7 +19,6 @@ import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
-import com.common.utils.StatusBarUtil;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.QualityInspectionDetailAdapter;
 import com.yuefeng.features.contract.QualityDetailContract;
@@ -129,11 +128,11 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         presenter = new QualityDetailPresenter(this, this);
 
         tv_title.setText(R.string.problem_detail_txt);
-        View view = findViewById(R.id.space);
         gridview = findViewById(R.id.gridview);
 
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        View view = findViewById(R.id.space);
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
 //        PROBLEMID
         getIntentDatas();
 

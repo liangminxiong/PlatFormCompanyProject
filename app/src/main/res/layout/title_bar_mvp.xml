@@ -4,14 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rly_home_title"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="64dp"
     android:layout_below="@+id/space"
-    android:background="@color/titel_color">
+    android:background="@drawable/title_stuta">
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_24"
+        android:background="@color/transition"/>
 
     <RelativeLayout
         android:id="@+id/iv_back"
         android:layout_width="@dimen/dp_50"
         android:layout_height="match_parent"
+        android:layout_below="@id/view"
         android:background="@color/transition"
         android:visibility="visible">
 
@@ -29,8 +36,10 @@
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_height="@dimen/dp_40"
+        android:layout_below="@id/view"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_17"/>
 
@@ -39,9 +48,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
+        android:layout_below="@id/view"
         android:layout_marginEnd="16dp"
-        android:background="@color/transition"
+        android:layout_marginTop="@dimen/dp_10"
+        android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        tools:ignore="RelativeOverlap"/>
 </RelativeLayout>

@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 
-import com.common.utils.LogUtils;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -110,7 +109,6 @@ public class PictureSelectorUtils {
 
     /*图片压缩100k内*/
     public static String compressionPhotos(final Context context, final List<LocalMedia> dataList, final String string) {
-        LogUtils.d("=========" + dataList.size());
         if (mStringBuffer == null) {
             mStringBuffer = new StringBuffer();
         }

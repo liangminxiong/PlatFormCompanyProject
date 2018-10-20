@@ -46,7 +46,6 @@ import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
-import com.common.utils.StatusBarUtil;
 import com.common.view.dialog.ShowPersonalpop;
 import com.common.view.dialog.ShowProblempop;
 import com.common.view.dialog.SucessCacheSureDialog;
@@ -181,10 +180,10 @@ public class JobMonitoringActivity extends BaseActivity implements
         ButterKnife.bind(this);
         presenter = new JobMonitoringPresenter(this, this);
 
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        View view = findViewById(R.id.space);
+//
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         tv_title.setText("定位信息");
         initViewPager();
         viewPager.setOnTouchListener(new View.OnTouchListener() {

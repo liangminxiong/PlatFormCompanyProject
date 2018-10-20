@@ -13,16 +13,15 @@ import android.widget.TextView;
 
 import com.common.base.codereview.BaseActivity;
 import com.common.utils.Constans;
-import com.common.utils.StatusBarUtil;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.VideoListContract;
 import com.yuefeng.features.event.VideoListEvent;
 import com.yuefeng.features.modle.video.ChangeVideoEquipmentDataBean;
 import com.yuefeng.features.presenter.VideoListPresenter;
+import com.yuefeng.utils.ChangeDatasUtils;
 import com.yuefeng.videotreesList.Node;
 import com.yuefeng.videotreesList.OnTreeNodeClickListener;
 import com.yuefeng.videotreesList.adapter.SimpleTreeRecyclerAdapter;
-import com.yuefeng.utils.ChangeDatasUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -66,10 +65,10 @@ public class VideoSytemListActivity extends BaseActivity implements VideoListCon
         ButterKnife.bind(this);
         presenter = new VideoListPresenter(this, this);
 
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        View view = findViewById(R.id.space);
+//
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         tv_title.setText(R.string.video_list);
         initRecycler();
 

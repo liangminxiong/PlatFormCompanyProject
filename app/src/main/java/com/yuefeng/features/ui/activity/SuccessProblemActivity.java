@@ -23,7 +23,6 @@ import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
-import com.common.utils.StatusBarUtil;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
@@ -100,10 +99,10 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
         ButterKnife.bind(this);
         presenter = new SuccessProblemPresenter(this, this);
 
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        View view = findViewById(R.id.space);
+//
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         tv_title.setText(R.string.uploaded_event);
         tv_upload.setText(R.string.uploaded);
         Bundle bundle = getIntent().getExtras();

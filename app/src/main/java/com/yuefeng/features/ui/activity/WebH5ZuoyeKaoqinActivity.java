@@ -62,9 +62,9 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        View view = findViewById(R.id.space);
+//
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         StatusBarUtil.setStatusBarColorAlpha(mActivity, coloeWhite, coloeWhite);
         requestPermissions();

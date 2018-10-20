@@ -6,9 +6,9 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/view_1px"
-        android:visibility="gone"/>
+    <!--<include-->
+        <!--layout="@layout/view_1px"-->
+        <!--android:visibility="gone"/>-->
 
     <include
         layout="@layout/title_bar_mvp"

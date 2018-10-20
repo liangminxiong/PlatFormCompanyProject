@@ -52,9 +52,12 @@
     <color name="carryon_color">#ffa63b</color>
     <color name="red_alittle">#fff5f4</color>
     <color name="red_des">#ee865e</color>
+    <color name="red_des_msg">#F9654D</color>
     <color name="txt_orange_des">#f99171</color>
 
     <color name="gray_f0f0f0">#f0f0f0</color>
+    <color name="gray_c8">#C8F8F4</color>
+    <color name="gray_1e">#1EF1F1</color>
     <color name="member_blue">#74a7ff</color>
     <!--覆盖颜色-->
     <color name="bgColor_overlay">#60000000</color>

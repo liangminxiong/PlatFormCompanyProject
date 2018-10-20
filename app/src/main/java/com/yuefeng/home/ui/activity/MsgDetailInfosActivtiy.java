@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseActivity;
-import com.common.utils.StatusBarUtil;
 import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.home.ui.adapter.MsgDetailInfosAdapter;
@@ -30,8 +29,8 @@ public class MsgDetailInfosActivtiy extends BaseActivity {
 
     @BindView(R.id.tv_title)
     TextView tv_title;
-    @BindView(R.id.space)
-    View view;
+//    @BindView(R.id.space)
+//    View view;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
 
@@ -48,8 +47,8 @@ public class MsgDetailInfosActivtiy extends BaseActivity {
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         tv_title.setText(R.string.detail);
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         initRecycleView();
 

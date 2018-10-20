@@ -2,6 +2,7 @@ package com.yuefeng.features.ui.activity.position;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -10,11 +11,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
@@ -36,6 +37,7 @@ import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseActivity;
 import com.common.location.LocationHelper;
 import com.common.location.MyLocationListener;
@@ -45,8 +47,8 @@ import com.common.utils.ImageUtils;
 import com.common.utils.LocationGpsUtils;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
-import com.common.utils.StatusBarUtil;
 import com.common.utils.StringUtils;
+import com.common.utils.ViewUtils;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
 import com.common.view.timeview.OptionsPickerView;
 import com.luck.picture.lib.PictureSelector;
@@ -56,7 +58,9 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.features.adapter.StringSingleAdapter;
 import com.yuefeng.features.event.SuccessProblemEvent;
+import com.yuefeng.features.ui.view.MsgCollectionPopupWindow;
 import com.yuefeng.photo.adapter.GridImageAdapter;
 import com.yuefeng.photo.other.FullyGridLayoutManager;
 import com.yuefeng.photo.utils.PictureSelectorUtils;
@@ -99,8 +103,14 @@ public class PositionAcquisitionActivity extends BaseActivity {
     TextView recyclerviewRight;
     @BindView(R.id.rl_select_type)
     RelativeLayout rlSelectType;
-    @BindView(R.id.ct_timer)
-    Chronometer cvTimer;
+    @BindView(R.id.rl_select_start)
+    RelativeLayout rl_select_start;
+    @BindView(R.id.rl_time)
+    RelativeLayout rl_time;
+    @BindView(R.id.tv_timer)
+    TextView tvTimer;
+    @BindView(R.id.ct_timer_circle)
+    Chronometer ctTimerCircle;
     @BindView(R.id.tv_carryon)
     TextView tvCarryon;
     @BindView(R.id.tv_temp)
@@ -125,10 +135,6 @@ public class PositionAcquisitionActivity extends BaseActivity {
     @BindView(R.id.recycler_photo)
     RecyclerView recyclerPhoto;
 
-    @BindDrawable(R.drawable.shape_bg_green)
-    Drawable shape_bg_green;
-    @BindDrawable(R.drawable.shape_bg_yellow)
-    Drawable shape_bg_yellow;
     @BindDrawable(R.drawable.shape_bg_transtions)
     Drawable transt;
     @BindColor(R.color.white)
@@ -154,7 +160,6 @@ public class PositionAcquisitionActivity extends BaseActivity {
     private List<LocalMedia> selectList = new ArrayList<>();
     private GridImageAdapter adapter;
 
-    private boolean isBeginOrStop = true;
     private String mImagesArrays;
     private int current = 0;
     private long mRecordTime;
@@ -169,6 +174,17 @@ public class PositionAcquisitionActivity extends BaseActivity {
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
     List<LatLng> points = new ArrayList<>();
     private Polyline mPolyline;
+    private String timeLong;
+    private String infrastructureStr;//基础设施
+    private String workAreaStr;//作业区段
+    private String type;
+    private MsgCollectionPopupWindow msgPopupWindow;
+    private StringSingleAdapter singleAdapter;
+    private List<String> listData = new ArrayList<>();
+    private String typeWhat;
+    private String hourStr;
+    private String minuteStr;
+    private String secondStr;
 
     @Override
     protected int getContentViewResId() {
@@ -182,48 +198,30 @@ public class PositionAcquisitionActivity extends BaseActivity {
         }
         ButterKnife.bind(this);
         tv_title.setText(R.string.position_acquisition);
-        View view = findViewById(R.id.space);
-
-        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-        isBeginOrStop = true;
-        btnBeginorstop.setBackground(shape_bg_green);
-        initUI();
-
+//        View view = findViewById(R.id.space);
+//
+//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
+//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+        infrastructureStr = "";
+        workAreaStr = "";
+        initRlType();
         initChronometer();
     }
 
     private void initChronometer() {
-        cvTimer.setBase(SystemClock.elapsedRealtime());
-        cvTimer.setFormat("%s");
+        ctTimerCircle.setBase(SystemClock.elapsedRealtime());
+        ctTimerCircle.setFormat("%s");
     }
 
-
-    private void initUI() {
-        initRlType();
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnBeginorstop.getLayoutParams();
-        params.bottomMargin = ((int) AppUtils.mScreenHeight * 2 / 5) - 30;
-        btnBeginorstop.setLayoutParams(params);
-    }
 
     private void initRlType() {
-        ViewGroup.LayoutParams layoutParams = rlSelectType.getLayoutParams();
-        layoutParams.height = (int) AppUtils.mScreenHeight * 2 / 5;
-        rlSelectType.setLayoutParams(layoutParams);
+        ViewUtils.setRLHightOrWidth(rlSelectType, (int) AppUtils.mScreenHeight / 4, ActionBar.LayoutParams.MATCH_PARENT);
     }
 
     private void initLLTimer() {
-        ViewGroup.LayoutParams llTimerLayoutParams = ll_timer.getLayoutParams();
-        llTimerLayoutParams.height = (int) AppUtils.mScreenHeight * 2 / 5;
-        ll_timer.setLayoutParams(llTimerLayoutParams);
+        ViewUtils.setRLHightOrWidth(rl_time, (int) AppUtils.mScreenHeight / 5, ActionBar.LayoutParams.MATCH_PARENT);
     }
 
-//    private void initLLFinish() {
-//        ViewGroup.LayoutParams llTimerLayoutParams = ll_finish.getLayoutParams();
-//        llTimerLayoutParams.height = (int) AppUtils.mScreenHeight / 4;
-//        ll_finish.setLayoutParams(llTimerLayoutParams);
-//    }
 
     @Override
     protected void initData() {
@@ -444,7 +442,8 @@ public class PositionAcquisitionActivity extends BaseActivity {
         mapview = null;
     }
 
-    @OnClick({R.id.tv_carryon, R.id.tv_finish, R.id.btn_beginorstop, R.id.tv_release, R.id.recyclerview_left, R.id.recyclerview_right})
+    @OnClick({R.id.tv_carryon, R.id.tv_finish, R.id.btn_beginorstop, R.id.tv_release,
+            R.id.recyclerview_left, R.id.recyclerview_right, R.id.rl_select_start})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_carryon://继续
@@ -459,86 +458,85 @@ public class PositionAcquisitionActivity extends BaseActivity {
             case R.id.tv_release:
                 tv_release();
                 break;
-            case R.id.recyclerview_left:
-                showPopuwindow();
+            case R.id.recyclerview_left://基础设施
+                initMsgPopuwindow(recyclerviewLeft, true);
+                initInFrastDatas();
+                workAreaStr = "";
+                recyclerviewRight.setText(workAreaStr);
                 break;
-            case R.id.recyclerview_right:
-                showPopuwindow();
+            case R.id.recyclerview_right://作业区段:
+                infrastructureStr = "";
+                recyclerviewLeft.setText(infrastructureStr);
+                initMsgPopuwindow(recyclerviewRight, false);
+                initWorkAreaDatas();
+                break;
+            case R.id.rl_select_start://点击暂停
+                cvTimerStop();
                 break;
         }
     }
 
-
-    /*选择类型*/
-    private void showPopuwindow() {
-
-        getOptionData();
-        initOptionPicker();//条件选择框
+    /*作业区段数据*/
+    private void initWorkAreaDatas() {
+        listData.clear();
+        listData.add("网格");
+        listData.add("路段");
+        if (singleAdapter != null) {
+            singleAdapter.setNewData(listData);
+        }
     }
 
-    private void initOptionPicker() {//条件选择器初始化
+    /*基础设施数据*/
+    private void initInFrastDatas() {
+        listData.clear();
+        listData.add("生活垃圾收集点");
+        listData.add("垃圾站");
+        listData.add("公厕");
+        listData.add("中转站");
+        if (singleAdapter != null) {
+            singleAdapter.setNewData(listData);
+        }
+    }
 
-        /**
-         * 注意 ：如果是三级联动的数据(省市区等)，请参照 JsonDataActivity 类里面的写法。
-         */
-        pvOptions = new OptionsPickerView(PositionAcquisitionActivity.this);
-        pvOptions.setOnoptionsSelectListener(new OptionsPickerView.OnOptionsSelectListener() {
+    /*选择基础设施*/
+    private void initMsgPopuwindow(View parent, final boolean isWhatType) {
+        msgPopupWindow = new MsgCollectionPopupWindow(this);
+        msgPopupWindow.recyclerview.setLayoutManager(new LinearLayoutManager(this));
+        singleAdapter = new StringSingleAdapter(R.layout.list_item_string, listData);
+        msgPopupWindow.recyclerview.setAdapter(singleAdapter);
+        singleAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onOptionsSelect(int options1, int option2, int options3) {
-                String txtLeft = options1Items.get(options1);
-                String txtRight = options2Items.get(options1).get(option2)
-                        /* + options3Items.get(options1).get(options2).get(options3).getPickerViewText()*/;
-                recyclerviewLeft.setText(txtLeft);
-                recyclerviewRight.setText(txtRight);
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                typeWhat = listData.get(position);
+                if (msgPopupWindow != null) {
+                    msgPopupWindow.dismiss();
+                }
+                if (TextUtils.isEmpty(typeWhat)) {
+                    showSuccessToast("类型未知");
+                    return;
+                }
+                if (isWhatType) {
+                    recyclerviewLeft.setText(typeWhat);
+                } else {
+                    recyclerviewRight.setText(typeWhat);
+                }
+
             }
         });
-        pvOptions.setOPVhight(2, 5);
-        pvOptions.setTitle("类型选择");
-        pvOptions.setPicker(options1Items, options2Items, true);
-        pvOptions.setCyclic(false, false, false);
-        pvOptions.show();
+        msgPopupWindow.showPopuWindow(parent);
     }
 
-    /*添加假数据*/
-    private void getOptionData() {
-
-        /**
-         * 注意：如果是添加JavaBean实体数据，则实体类需要实现 IPickerViewData 接口，
-         * PickerView会通过getPickerViewText方法获取字符串显示出来。
-         */
-        //选项1
-        options1Items.clear();
-        options1Items.add("广东");
-        options1Items.add("湖南");
-        options1Items.add("广西");
-        options1Items.add("浙江");
-
-        //选项2
-        ArrayList<String> options2Items_01 = new ArrayList<>();
-        options2Items_01.add("广州");
-        options2Items_01.add("佛山");
-        options2Items_01.add("东莞");
-        options2Items_01.add("珠海");
-        ArrayList<String> options2Items_02 = new ArrayList<>();
-        options2Items_02.add("长沙");
-        options2Items_02.add("岳阳");
-        options2Items_02.add("株洲");
-        options2Items_02.add("衡阳");
-        ArrayList<String> options2Items_03 = new ArrayList<>();
-        options2Items_03.add("桂林");
-        options2Items_03.add("玉林");
-        ArrayList<String> options2Items_04 = new ArrayList<>();
-        options2Items_04.add("杭州");
-        options2Items_04.add("温州");
-        options2Items_04.add("宁波");
-        options2Items_04.add("嘉兴");
-        options2Items.add(options2Items_01);
-        options2Items.add(options2Items_02);
-        options2Items.add(options2Items_03);
-        options2Items.add(options2Items_04);
-
-        /*--------数据源添加完毕---------*/
+    /*暂停*/
+    private void cvTimerStop() {
+        timeLong = ctTimerCircle.getText().toString().trim();
+        rl_select_start.setVisibility(View.INVISIBLE);
+        ll_timer.setVisibility(View.VISIBLE);
+        if (!TextUtils.isEmpty(timeLong)) {
+            tvTimer.setText(timeLong);
+        }
+        initCtStop();
     }
+
 
     /*发布*/
     private void tv_release() {
@@ -547,67 +545,88 @@ public class PositionAcquisitionActivity extends BaseActivity {
 
     /*结束*/
     private void tv_finish() {
-//        initLLFinish();
         ll_timer.setVisibility(View.INVISIBLE);
+        if (!TextUtils.isEmpty(infrastructureStr)) {
+            type = infrastructureStr;
+        }
+        if (!TextUtils.isEmpty(workAreaStr)) {
+            type = workAreaStr;
+        }
         ll_finish.setVisibility(View.VISIBLE);
-
+        tvQuduanType.setText(type);
         selectPhoto();
+
+        showHowLongTime();
+    }
+
+    /*结束展示时间*/
+    @SuppressLint("SetTextI18n")
+    private void showHowLongTime() {
+        String time = "";
+        String hour = "";
+        String miniteSecond = "";
+        LogUtils.d("showHowLongtiME = " + timeLong + " ++ " + timeLong.length());
+        if (!TextUtils.isEmpty(timeLong)) {
+            int length = timeLong.length();
+            if (length > 5) {//小时
+                hourStr = timeLong.substring(0, 2);
+                minuteStr = timeLong.substring(3, 5);
+                secondStr = timeLong.substring(6, 8);
+                hourStr = StringUtils.getTimeNoZero(hourStr);
+                /* android:text="本次采集持续1分钟，距离0.1公里"*/
+                hour = hourStr + "小时";
+            } else {
+                minuteStr = timeLong.substring(0, 2);
+                secondStr = timeLong.substring(3, 5);
+            }
+            minuteStr = StringUtils.getTimeNoZero(minuteStr);
+            secondStr = StringUtils.getTimeNoZero(secondStr);
+            miniteSecond = minuteStr + "分" + secondStr + "秒,";
+            time = "本次采集持续" + hour + miniteSecond + "距离0.1公里";
+            tvTimeDistance.setText(time);
+        }
     }
 
     /*继续采集*/
     private void tv_carryon() {
-        isBeginOrStop = false;
-        isVisibleOrGone(isBeginOrStop);
+        ll_timer.setVisibility(View.INVISIBLE);
+        rl_select_start.setVisibility(View.VISIBLE);
         initCtStart();
     }
 
-    /*开始采集/暂停*/
+    /*开始采集*/
     private void beginOrStop() {
-        btnBeginorstop.setBackground(shape_bg_yellow);
-        btnBeginorstop.setText(R.string.stop);
-        rlSelectType.setVisibility(View.INVISIBLE);
-        ll_timer.setVisibility(View.VISIBLE);
-        if (isBeginOrStop) {
-            isBeginOrStop = false;
-            points.clear();
-            initCtStart();
-        } else {
-            isBeginOrStop = true;
-            initCtStop();
+        infrastructureStr = recyclerviewLeft.getText().toString().trim();
+        workAreaStr = recyclerviewRight.getText().toString().trim();
+        if (TextUtils.isEmpty(infrastructureStr) && TextUtils.isEmpty(workAreaStr)) {
+            showSuccessToast("请选择一种标注类型");
+            return;
         }
-        initLLTimer();
-        isVisibleOrGone(isBeginOrStop);
+        initCtStart();
+        rlSelectType.setVisibility(View.INVISIBLE);
+        btnBeginorstop.setVisibility(View.INVISIBLE);
+        rl_select_start.setVisibility(View.VISIBLE);
     }
 
     /*计时器start*/
     private void initCtStart() {
-        if (cvTimer != null)
+
+        if (ctTimerCircle != null)
             if (mRecordTime != 0) {
-                cvTimer.setBase(cvTimer.getBase() + (SystemClock.elapsedRealtime() - mRecordTime));
+                ctTimerCircle.setBase(ctTimerCircle.getBase() + (SystemClock.elapsedRealtime() - mRecordTime));
             } else {
-                cvTimer.setBase(SystemClock.elapsedRealtime());
+                ctTimerCircle.setBase(SystemClock.elapsedRealtime());
             }
-        cvTimer.start();
+        assert ctTimerCircle != null;
+        ctTimerCircle.start();
     }
 
     /*计时器stop*/
     private void initCtStop() {
-        if (cvTimer != null)
-            cvTimer.stop();
-        mRecordTime = SystemClock.elapsedRealtime();
-    }
-
-    private void isVisibleOrGone(boolean isCarryOnOrStop) {
-        if (isCarryOnOrStop) {
-            tvCarryon.setVisibility(View.VISIBLE);
-            tvFinish.setVisibility(View.VISIBLE);
-            btnBeginorstop.setVisibility(View.INVISIBLE);
-        } else {
-            tvCarryon.setVisibility(View.INVISIBLE);
-            tvFinish.setVisibility(View.INVISIBLE);
-            btnBeginorstop.setVisibility(View.VISIBLE);
+        if (ctTimerCircle != null) {
+            ctTimerCircle.stop();
         }
-
+        mRecordTime = SystemClock.elapsedRealtime();
     }
 
     /*图片选择*/
@@ -734,6 +753,7 @@ public class PositionAcquisitionActivity extends BaseActivity {
         if (selectList.size() <= 0) {
             return;
         }
+        assert adapter != null;
         adapter.setList(selectList);
         adapter.notifyDataSetChanged();
         runOnUiThread(new Runnable() {
