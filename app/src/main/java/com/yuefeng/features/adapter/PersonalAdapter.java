@@ -15,10 +15,7 @@ public class PersonalAdapter extends BaseItemDraggableAdapter<PersonalinfoListBe
     private String name;
     private String position;
     private String tel;
-    private String latitude;
-    //    private String longitude;
     private String address;
-//    private LatLng latLng;
 
     public PersonalAdapter(int layoutResId, @Nullable List<PersonalinfoListBean> data) {
         super(layoutResId, data);
@@ -31,34 +28,15 @@ public class PersonalAdapter extends BaseItemDraggableAdapter<PersonalinfoListBe
             position = item.getPosition();
             tel = item.getTel();
             name = TextUtils.isEmpty(name) ? " " : name;
-            position = TextUtils.isEmpty(position) ? " " : position;
+            position = TextUtils.isEmpty(position) ? "——" : position;
             tel = TextUtils.isEmpty(tel) ? " " : tel;
             address = TextUtils.isEmpty(item.getAddress()) ? "暂无地址!" : item.getAddress();
-//            latitude = item.getLatitude();
-//            longitude = item.getLongitude();
-//            if (!TextUtils.isEmpty(latitude)) {
-
-//                latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                        try {
-//                            Thread.sleep(500);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }).start();
-//            } else {
-//                address = "暂无地址";
-//            }
-//            if (TextUtils.isEmpty(address)) {
-//                address = "检索当前地址失败!";
-//            }
-            helper.setText(R.id.tv_item_name, name + "(" + position + ")")
+            helper.setText(R.id.tv_item_name, name)//+ "(" + position + ")"
                     .setTextColor(R.id.tv_item_name, mContext.getResources().getColor(R.color.black))
+                    .setGone(R.id.tv_item_type,true)
+                    .setText(R.id.tv_item_type, position)
                     .setText(R.id.tv_item_other, address)
+                    .setTextColor(R.id.tv_item_type, mContext.getResources().getColor(R.color.gray_99))
                     .setTextColor(R.id.tv_item_other, mContext.getResources().getColor(R.color.gray_99));
         }
     }

@@ -61,7 +61,8 @@ import com.yuefeng.features.modle.QuestionListBean;
 import com.yuefeng.features.modle.VehicleinfoListBean;
 import com.yuefeng.features.presenter.JobMonitoringPresenter;
 import com.yuefeng.features.ui.activity.nativ.DemoGuideActivity;
-import com.yuefeng.features.ui.activity.track.TrackActivity;
+import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
+import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
 import com.yuefeng.features.ui.fragment.PersonalFragment;
 import com.yuefeng.features.ui.fragment.QuestionListFragment;
 import com.yuefeng.features.ui.fragment.VehicleListFragment;
@@ -165,6 +166,7 @@ public class JobMonitoringActivity extends BaseActivity implements
     private PersonalFragment personalFragment;
     private VehicleListFragment vehicleListFragment;
     private QuestionListFragment questionListFragment;
+    private boolean isVisible;
 
     @Override
     protected int getContentViewResId() {
@@ -235,14 +237,14 @@ public class JobMonitoringActivity extends BaseActivity implements
 
     private void initTabViewCount(List<String> stringList) {
         try {
-            tabItemInfoA.setTabCount(stringList.get(0));
-            tabItemInfoB.setTabCount(stringList.get(1));
-            tabItemInfoC.setTabCount(stringList.get(2));
+            tabItemInfoA.setTabCount("人员(" + stringList.get(0) + ")");
+            tabItemInfoB.setTabCount("车辆(" + stringList.get(1) + ")");
+            tabItemInfoC.setTabCount("问题(" + stringList.get(2) + ")");
             for (int i = 0; i < tabLayout.getTabCount(); i++) {
                 TabLayout.Tab tab = tabLayout.getTabAt(i);
                 if (tab != null) {
                     if (tab.getCustomView() != null) {
-                        TextView countView = (TextView) tab.getCustomView().findViewById(R.id.tab_count);
+                        TextView countView = (TextView) tab.getCustomView().findViewById(R.id.tab_name);
                         countView.setText(stringList.get(i));
                     } else {
                         tab.setCustomView(viewPagerAdapter.getTabView(i));
@@ -788,8 +790,14 @@ public class JobMonitoringActivity extends BaseActivity implements
         terminalNO = vehicleList.getTerminalNO();
         terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
         phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
-        phototpop.setTextContent(name, position, tel, className, "暂无地址!");
+        isVisible = true;
+        phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible);
         phototpop.setTakePhotoTouch(new ShowPersonalpop.TakePhotoTouch() {
+            @Override
+            public void onVideo() {//视频
+                toVideoActivity(terminalNO);
+            }
+
             @Override
             public void takeTrack() {//轨迹
                 intoTrack(terminalNO, "vehicle");
@@ -801,6 +809,15 @@ public class JobMonitoringActivity extends BaseActivity implements
             }
         });
         phototpop.showTakePop(ll_root);
+    }
+
+    /*视频监控*/
+    private void toVideoActivity(String terminalNO) {
+        Intent intent = new Intent();
+        intent.setClass(JobMonitoringActivity.this, VideoCameraActivity.class);
+        intent.putExtra("terminalNO", terminalNO);
+        intent.putExtra("TYPE", "1");
+        startActivity(intent);
     }
 
     /*弹底人员部框*/
@@ -837,10 +854,15 @@ public class JobMonitoringActivity extends BaseActivity implements
         terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
 
         distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
-
+        isVisible = false;
         phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
-        phototpop.setTextContent(name, position, tel, className, "暂无地址!");
+        phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible);
         phototpop.setTakePhotoTouch(new ShowPersonalpop.TakePhotoTouch() {
+            @Override
+            public void onVideo() {
+
+            }
+
             @Override
             public void takeTrack() {//轨迹
                 intoTrack(terminalNO, "worker");
@@ -868,7 +890,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         }
         endAddress = address;
         if (phototpop != null) {
-            phototpop.setTextContent(name, position, tel, className, address);
+            phototpop.setTextContent(name, position, tel, className, address, isVisible);
         }
     }
 
@@ -885,11 +907,11 @@ public class JobMonitoringActivity extends BaseActivity implements
     private void intoTrack(String terminalNO, String type) {
         if (latLng != null) {
             Intent intent = new Intent();
-            intent.setClass(JobMonitoringActivity.this, TrackActivity.class);
+            intent.setClass(JobMonitoringActivity.this, HistoryTrackActivity.class);
             intent.putExtra("terminalNO", terminalNO);
-            intent.putExtra("lat", String.valueOf(latLng.latitude));
-            intent.putExtra("lng", String.valueOf(latLng.longitude));
-            intent.putExtra("tyPe", type);
+//            intent.putExtra("lat", String.valueOf(latLng.latitude));
+//            intent.putExtra("lng", String.valueOf(latLng.longitude));
+            intent.putExtra("TYPE", type);
             startActivity(intent);
         } else {
             showSuccessToast("暂无轨迹");

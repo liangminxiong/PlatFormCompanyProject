@@ -42,9 +42,9 @@
     <string name="sure_exit_app">你确定要退出App吗？</string>
     <string name="locationing" tools:ignore="TypographyEllipsis">定位中…</string>
     <string name="photo_processing">图片处理中…</string>
-    <string name="personal">人员</string>
-    <string name="vehicle">车辆</string>
-    <string name="problem">问题</string>
+    <string name="personal">人员(0)</string>
+    <string name="vehicle">车辆(0)</string>
+    <string name="problem">问题(0)</string>
 
     <string name="app_name_time">时间</string>
     <string name="pickerview_cancel">取消</string>

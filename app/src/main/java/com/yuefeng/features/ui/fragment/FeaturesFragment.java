@@ -178,6 +178,7 @@ public class FeaturesFragment extends BaseMvpFragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @OnClick({R.id.rl_kaoqin, R.id.rl_operationbianji, R.id.rl_historytrack, R.id.rl_videojian,
             R.id.rl_problemupload, R.id.rl_qualityxuncha, R.id.rl_operationweigui, R.id.rl_msgcollection})
     public void onViewClicked(View view) {
@@ -215,14 +216,23 @@ public class FeaturesFragment extends BaseMvpFragment {
     }
 
     /*；历史轨迹*/
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void toHistoryTrack() {
-        startActivity(new Intent(getActivity(), HistoryTrackActivity.class));
+        Intent intent = new Intent();
+        intent.setClass(Objects.requireNonNull(getActivity()), HistoryTrackActivity.class);
+        intent.putExtra("terminalNO", "");
+        intent.putExtra("TYPE", "2");
+        startActivity(intent);
     }
 
     /*；视频监控*/
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void toVideoSytemList() {
-//        startActivity(new Intent(getActivity(), VideoSytemListActivity.class));
-        startActivity(new Intent(getActivity(), VideoCameraActivity.class));
+        Intent intent = new Intent();
+        intent.setClass(Objects.requireNonNull(getActivity()), VideoCameraActivity.class);
+        intent.putExtra("terminalNO", "");
+        intent.putExtra("TYPE", "2");
+        startActivity(intent);
     }
 
     /*信息采集*/

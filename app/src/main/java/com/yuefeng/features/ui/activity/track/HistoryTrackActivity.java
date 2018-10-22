@@ -41,6 +41,7 @@ import com.common.location.LocationHelper;
 import com.common.location.MyLocationListener;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ResourcesUtils;
 import com.common.utils.TimeUtils;
@@ -170,14 +171,37 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             EventBus.getDefault().register(this);
         }
         presenter = new CarListPresenter(this, this);
-        tvTitle.setText("历史轨迹");
+
+        initUI();
+
         getTeNum();
         mTrackDatas.clear();
         latLngTemp = null;
-        tvTitleSetting.setBackground(list_tree);
-        getCarList();
         terminal = "";
-        imageInt = R.drawable.vehicle;
+
+    }
+
+    private void initUI() {
+        Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
+        terminal = (String) bundle.get("terminalNO");
+        type = (String) bundle.get("TYPE");
+        assert type != null;
+        LogUtils.d(terminal + "terminal111");
+        assert terminal != null;
+        if (type.equals("worker")) {
+            tvTitle.setText("人员轨迹");
+            imageInt = R.drawable.worker;
+            getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
+        } else if (type.equals("vehicle")) {
+            tvTitle.setText("车辆轨迹");
+            imageInt = R.drawable.vehicle;
+            getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
+        } else {
+            getCarList();
+            tvTitle.setText("历史轨迹");
+            tvTitleSetting.setBackground(list_tree);
+        }
     }
 
     /*车辆列表*/
@@ -207,11 +231,11 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
     private void getTrackData(String terminal, String startTime, String endTime) {
 
-        boolean twoDayOffset2 = TimeUtils.getTwoDayOffset2(startTime, endTime);
-        if (!twoDayOffset2) {
-            showSuccessToast("结束时间不能小于开始时间");
-            return;
-        }
+//        boolean twoDayOffset2 = TimeUtils.getTwoDayOffset2(startTime, endTime);
+//        if (!twoDayOffset2) {
+//            showSuccessToast("结束时间不能小于开始时间");
+//            return;
+//        }
         boolean mouthDaySpan = TimeUtils.getMouthDaySpan(startTime, endTime);
         if (mouthDaySpan) {
             showSuccessToast("时间间隔超过一周");
@@ -545,7 +569,11 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             ivShowtime.setVisibility(View.VISIBLE);
             getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
         } else {
-            showSuccessToast("请先选车");
+
+            if (type.equals("2")) {
+                showSuccessToast("请先选车");
+            }
+
         }
     }
 
@@ -644,7 +672,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
     private void btn_Play() {
         if (TextUtils.isEmpty(terminal)) {
-            showSuccessToast("请先选车");
+            if (type.equals("2")) {
+                showSuccessToast("请先选车");
+            }
             return;
         }
         if (!IsPlaying) {

@@ -62,7 +62,7 @@ public class ShowProblempop extends PopupWindow {
                 if (takePhotoTouch != null) {
                     takePhotoTouch.takeTrack();
                 }
-                dismiss();
+//                dismiss();
             }
         });
 //        tv_item_track.setOnClickListener(new View.OnClickListener() {

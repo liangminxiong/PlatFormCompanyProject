@@ -25,8 +25,9 @@ public class QuetionListAdapter extends BaseItemDraggableAdapter<QuestionListBea
             name = item.getProblem();
             address = item.getAddress();
             name = TextUtils.isEmpty(name) ? " " : "内容：" + name;
-            address = TextUtils.isEmpty(address) ? " " : address;
+            address = TextUtils.isEmpty(address) ? "" : address;
             helper.setText(R.id.tv_item_name, name)
+                    .setGone(R.id.tv_item_type,false)
                     .setTextColor(R.id.tv_item_name, mContext.getResources().getColor(R.color.black))
                     .setVisible(R.id.tv_item_other, true)
                     .setText(R.id.tv_item_other, address)

@@ -13,16 +13,16 @@ import com.yuefeng.commondemo.R;
 
 
 /**
-展示人员
+ * 展示人员
  */
 
 public class ShowPersonalpop extends PopupWindow {
 
-    private View view;
-    private TextView tv_item_name,tv_item_chiwei,tv_item_track;
+    private View view, item_view;
+    private TextView tv_item_name, tv_item_chiwei, tv_item_track;
     private TextView tv_item_phone, tv_item_phonename;
-    private TextView tv_item_class, tv_item_classname;
-    private TextView tv_item_address, tv_item_addressname,tv_item_native;
+    private TextView tv_item_class, tv_item_classname, tv_item_video;
+    private TextView tv_item_address, tv_item_addressname, tv_item_native;
     private Context context;
     private int colorInt;
 
@@ -48,7 +48,6 @@ public class ShowPersonalpop extends PopupWindow {
         tv_item_name = view.findViewById(R.id.tv_item_name);
         tv_item_chiwei = view.findViewById(R.id.tv_item_chiwei);
 
-
         tv_item_phone = view.findViewById(R.id.tv_item_phone);
         tv_item_phonename = view.findViewById(R.id.tv_item_phonename);
 
@@ -58,13 +57,15 @@ public class ShowPersonalpop extends PopupWindow {
         tv_item_address = view.findViewById(R.id.tv_item_address);
         tv_item_addressname = view.findViewById(R.id.tv_item_addressname);
 
-
+        item_view = view.findViewById(R.id.item_view);
+        tv_item_video = view.findViewById(R.id.tv_item_video);
         tv_item_native = view.findViewById(R.id.tv_item_native);
         tv_item_track = view.findViewById(R.id.tv_item_track);
+
         tv_item_track.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+//                dismiss();
                 if (takePhotoTouch != null) {
                     takePhotoTouch.takeTrack();
 
@@ -74,24 +75,42 @@ public class ShowPersonalpop extends PopupWindow {
         tv_item_native.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+//                dismiss();
                 if (takePhotoTouch != null) {
                     takePhotoTouch.takeNativ();
+                }
+            }
+        });
+        tv_item_video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                dismiss();
+                if (takePhotoTouch != null) {
+                    takePhotoTouch.onVideo();
                 }
             }
         });
 
     }
 
-    public void setTextContent(String name,String position,String phone,String classname,String address){
+    public void setTextContent(String name, String position, String phone, String classname, String address, boolean isVisible) {
+        if (isVisible) {
+            item_view.setVisibility(View.VISIBLE);
+            tv_item_video.setVisibility(View.VISIBLE);
+        }
         tv_item_name.setText(name);
         tv_item_chiwei.setText(position);
-        if (position.equals("在线")||position.equals("行驶中")) {
-            colorInt = context.getResources().getColor(R.color.green);
-        } else if (position.equals("离线")) {
-            colorInt = context.getResources().getColor(R.color.red);
-        }else {
-            colorInt = context.getResources().getColor(R.color.gray);
+        switch (position) {
+            case "在线":
+            case "行驶中":
+                colorInt = context.getResources().getColor(R.color.green);
+                break;
+            case "离线":
+                colorInt = context.getResources().getColor(R.color.red);
+                break;
+            default:
+                colorInt = context.getResources().getColor(R.color.gray);
+                break;
         }
         tv_item_chiwei.setTextColor(colorInt);
         tv_item_phonename.setText(phone);
@@ -99,9 +118,10 @@ public class ShowPersonalpop extends PopupWindow {
         tv_item_addressname.setText(address);
     }
 
-    public void showTakePop(View parent){
-        showAtLocation(parent, Gravity.BOTTOM,0,0);
+    public void showTakePop(View parent) {
+        showAtLocation(parent, Gravity.BOTTOM, 0, 0);
     }
+
     private TakePhotoTouch takePhotoTouch;
 
     public void setTakePhotoTouch(TakePhotoTouch touch) {
@@ -109,6 +129,8 @@ public class ShowPersonalpop extends PopupWindow {
     }
 
     public interface TakePhotoTouch {
+        void onVideo();//视频
+
         void takeTrack();//轨迹
 
         void takeNativ();//导航

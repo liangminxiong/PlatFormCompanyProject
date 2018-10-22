@@ -43,7 +43,7 @@ public class VideoPopupWindow extends PopupWindow {
         int w = wm.getDefaultDisplay().getWidth();
         int h = wm.getDefaultDisplay().getHeight();
         Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        bitmap.eraseColor(Color.TRANSPARENT);//填充颜色
+        bitmap.eraseColor(Color.WHITE);//填充颜色
         setBackgroundDrawable(new BitmapDrawable(context.getResources(), bitmap));
 
         initView();

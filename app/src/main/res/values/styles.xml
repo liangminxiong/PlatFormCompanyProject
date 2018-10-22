@@ -216,7 +216,7 @@
     <style name="horizontal_gray_10">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">10dp</item>
-        <item name="android:background">@color/list_divider</item>
+        <item name="android:background">@color/color_f6</item>
     </style>
 
     <style name="horizontal_gray_15">

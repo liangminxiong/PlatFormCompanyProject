@@ -20,6 +20,7 @@ import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ResourcesUtils;
 import com.common.utils.ViewUtils;
@@ -109,12 +110,31 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
 //        View view = findViewById(R.id.space);
 //        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-        tv_title.setText(R.string.video);
+
         presenter = new VideolistVPresenter(this, this);
-        getCarList();
-        ll_nodata.setVisibility(View.VISIBLE);
-        ll_video.setVisibility(View.GONE);
+        initUI();
         carDatasSelect.clear();
+    }
+
+    private void initUI() {
+        Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
+        terminal = (String) bundle.get("terminalNO");
+        String type = (String) bundle.get("TYPE");
+        assert type != null;
+        assert terminal != null;
+        if (type.equals("1")) {
+            tvSearchTxt.setVisibility(View.GONE);
+            tv_title.setText("车辆监控");
+            ll_nodata.setVisibility(View.GONE);
+            ll_video.setVisibility(View.VISIBLE);
+            showVideoList(terminal);
+        } else {
+            tv_title.setText(R.string.video);
+            getCarList();
+            ll_nodata.setVisibility(View.VISIBLE);
+            ll_video.setVisibility(View.GONE);
+        }
     }
 
     /*车辆列表*/
@@ -152,7 +172,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
 
     /*车辆列表*/
     private void initCarlistPopupView() {
-        carListPopupWindow = new TreesListsPopupWindow(this,carDatas);
+        carListPopupWindow = new TreesListsPopupWindow(this, carDatas);
         carListPopupWindow.setTitleText("车辆列表");
         carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
         showTreesCarListData(carDatas);
@@ -223,6 +243,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
 
     /*获取*/
     private void showVideoList(String terminal) {
+        LogUtils.d(terminal + "terminal");
         /*测试*/
         if (TextUtils.isEmpty(terminal)) {
             showSuccessToast("终端号获取失败");

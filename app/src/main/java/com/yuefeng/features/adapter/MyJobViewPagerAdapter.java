@@ -50,10 +50,11 @@ public class MyJobViewPagerAdapter extends FragmentPagerAdapter {
         View view = LayoutInflater.from(mContext).inflate(R.layout.tab_wait_for_job, null);
         ImageView tabIcon = view.findViewById(R.id.tab_icon);
         TextView tabName = view.findViewById(R.id.tab_name);
-        tabCount = view.findViewById(R.id.tab_count);
-        tabCount.setText("(" + tabItemInfo.getTabCount() + ")");
+//        tabCount = view.findViewById(R.id.tab_count);
+//        tabCount.setText("(" + tabItemInfo.getTabCount() + ")");
         tabIcon.setImageResource(tabItemInfo.iconResId);
-        tabName.setText(tabItemInfo.nameResId);
+//        tabName.setText(tabItemInfo.nameResId);
+        tabName.setText(tabItemInfo.getTabCount());
         return view;
     }
 
