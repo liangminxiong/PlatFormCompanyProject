@@ -2,6 +2,7 @@ package com.yuefeng.features.ui.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -22,11 +23,13 @@ import com.baidu.location.BDLocation;
 import com.baidu.mapapi.model.LatLng;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
+import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
 import com.common.utils.LocationGpsUtils;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
+import com.common.utils.ViewUtils;
 import com.common.view.dialog.SucessCacheSureDialog;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
 import com.luck.picture.lib.PictureSelector;
@@ -87,6 +90,8 @@ public class ProblemUpdateActivity extends BaseActivity implements
     TextView tv_txt_count;
     @BindView(R.id.tv_upload)
     TextView tv_upload;
+    @BindView(R.id.tv_photo_big)
+    TextView tv_photo_big;
     @BindView(R.id.tv_type_jinji)
     ImageView tv_type_jinji;
 
@@ -118,9 +123,10 @@ public class ProblemUpdateActivity extends BaseActivity implements
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         ButterKnife.bind(this);
         presenter = new ProblemUploadPresenter(this, this);
-
+        ViewUtils.setEditHightOrWidth(edt_problem_txt, (int) AppUtils.mScreenHeight / 4, ActionBar.LayoutParams.MATCH_PARENT);
 //        View view = findViewById(R.id.space);
 //        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
@@ -220,7 +226,6 @@ public class ProblemUpdateActivity extends BaseActivity implements
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         latitude = latLng.latitude;
         longitude = latLng.longitude;
-        LogUtils.d("getLocation =11= " + latitude + " ++ " + longitude + " ++ " + address);
         if (mLocationUtils == null) {
 //         开启定位
             mLocationUtils = new LocationUtils(this);
@@ -242,7 +247,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int length = s.length();
                 if (length >= 0) {
-                    EventBus.getDefault().post(new ProblemEvent(Constans.EQUIPMENTCOUNTSUCESS, String.valueOf(length)));
+                    EventBus.getDefault().post(new ProblemEvent(Constans.EQUIPMENTCOUNTSUCESS, String.valueOf(100 - length)));
                 }
             }
 
@@ -260,7 +265,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
         switch (event.getWhat()) {
             case Constans.EQUIPMENTCOUNTSUCESS:
                 String count = (String) event.getData();
-                tv_txt_count.setText(count + "/100");
+                tv_txt_count.setText("还可以输入" + count + "字");
                 break;
 
             case Constans.UPLOADSUCESS:
@@ -269,8 +274,19 @@ public class ProblemUpdateActivity extends BaseActivity implements
             case Constans.USERERROR:
                 showErrorToast("上传失败，请重试!");
                 break;
+            case Constans.PICSTURESUCESS:
+                selectList = (List<LocalMedia>) event.getData();
+                if (selectList.size() > 0) {
+                    showFilesSize(selectList);
+                }
+                break;
 
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void showFilesSize(List<LocalMedia> selectList) {
+        tv_photo_big.setText("（已添加" + selectList.size() + "张照片,共" + PictureSelectorUtils.getFileSize(selectList) + "k,限传4张）");
     }
 
 
@@ -299,6 +315,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
             }
         });
         delectSelectPhotos();
+
     }
 
     private GridImageAdapter.onAddPicClickListener onAddPicClickListener = new GridImageAdapter.onAddPicClickListener() {
@@ -447,6 +464,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
     }
 
     /*展示图片*/
+    @SuppressLint("SetTextI18n")
     private void showPhotos(Intent data) {
         // 图片选择结果回调
         selectList = PictureSelector.obtainMultipleResult(data);
@@ -458,6 +476,8 @@ public class ProblemUpdateActivity extends BaseActivity implements
         if (selectList.size() <= 0) {
             return;
         }
+        tv_photo_big.setText("（已添加" + selectList.size() + "张照片,共"
+                + PictureSelectorUtils.getFileSize(selectList) + "k,限传4张）");
         adapter.setList(selectList);
         adapter.notifyDataSetChanged();
         runOnUiThread(new Runnable() {
@@ -478,8 +498,8 @@ public class ProblemUpdateActivity extends BaseActivity implements
                 dismissLoadingDialog();
             }
         });
-        if (!TextUtils.isEmpty(mImagesArrays)) {
-        }
+//        if (!TextUtils.isEmpty(mImagesArrays)) {
+//        }
     }
 
 

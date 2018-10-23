@@ -14,13 +14,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.common.utils.Constans;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.tools.DateUtils;
 import com.luck.picture.lib.tools.StringUtils;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.features.event.ProblemEvent;
 import com.yuefeng.photo.utils.ImageHelper;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -140,6 +144,7 @@ public class GridImageAdapter extends
                         notifyItemRemoved(index);
                         notifyItemRangeChanged(index, list.size());
                     }
+                    EventBus.getDefault().post(new ProblemEvent(Constans.PICSTURESUCESS, list));
                 }
             });
             LocalMedia media = list.get(position);
@@ -187,7 +192,7 @@ public class GridImageAdapter extends
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
 //
 //                String string = SharePrefUtil.getString(Global.mContext, "Fengrun", "");
-                viewHolder.mImg.setImageBitmap(ImageHelper.getImageByPath(context,path));
+                viewHolder.mImg.setImageBitmap(ImageHelper.getImageByPath(context, path));
 //                if (string.equals(context.getResources().getString(R.string.fengrun))) {
 //                } else {
 //                    Glide.with(viewHolder.itemView.getContext())

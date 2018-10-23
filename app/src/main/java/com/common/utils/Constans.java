@@ -54,9 +54,10 @@ public class Constans {
     public static final int UPLOADSUCESS = 40;//问题上报成功
     public static final int EQUIPMENTCOUNTSUCESS = 41;//获取报警数量成功
     public static final int MARQUEESUCESS = 42;//获取报警数量失败
-    public static final int MARQUEEERROR = 45;//获取报警数量失败
     public static final int COMPANYINFOSSUCESS = 43;//获取公司信息成功
     public static final int WEBH5SUCESS = 44;//h5成功/*
+    public static final int MARQUEEERROR = 45;//获取报警数量失败
+    public static final int PICSTURESUCESS = 46;//图片成功
 
 
     /*
@@ -124,6 +125,12 @@ public class Constans {
     public static final int PERSONALLLEGAL_ERROR = 87;//人员违规失败
     public static final int PERSONALLIST_SSUCESS = 88;//人员列表成功
     public static final int PERSONALLIST_ERROR = 89;//人员列表失败
+
+    /*
+     * 作业考勤 90-100
+     * */
+    public static final int SNGNIN_SSUCESS = 90;//考勤成功
+    public static final int SNGNIN_ERROR = 91;//考勤失败
 
 
     /*导航*/

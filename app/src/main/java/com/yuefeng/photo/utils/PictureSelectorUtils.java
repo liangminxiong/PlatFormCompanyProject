@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 
+import com.common.utils.FileUtils;
+import com.common.utils.StringUtils;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -127,6 +129,16 @@ public class PictureSelectorUtils {
         strImages = "";
         strImages = mStringBuffer.toString();
         return strImages;
+    }
+
+    public static String getFileSize(List<LocalMedia> dataList) {
+        double filesSize = 0;
+        for (LocalMedia localMedia : dataList) {
+            String path = localMedia.getCompressPath();
+            filesSize = filesSize + FileUtils.getFileOrFilesSize(path, FileUtils.SIZETYPE_KB);
+        }
+
+        return StringUtils.getStringDistance(filesSize);
     }
 
 }

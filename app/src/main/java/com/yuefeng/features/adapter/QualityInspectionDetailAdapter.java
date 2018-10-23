@@ -49,7 +49,7 @@ public class QualityInspectionDetailAdapter extends BaseItemDraggableAdapter<Eve
         if (item != null) {
             if (isFirst) {
                 isFirst = false;
-                intColor = mContext.getResources().getColor(R.color.blue_ten);
+                intColor = mContext.getResources().getColor(R.color.green_signin);
             } else {
                 intColor = mContext.getResources().getColor(R.color.gray);
             }

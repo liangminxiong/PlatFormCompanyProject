@@ -56,7 +56,6 @@
                     android:layout_height="match_parent"
                     android:background="@color/white"
                     android:gravity="center"
-                    android:text="2018-09-18 09:01:23"
                     android:textColor="@color/gray_3f"
                     android:textSize="16sp"/>
 
@@ -85,7 +84,6 @@
                     android:layout_height="match_parent"
                     android:background="@color/white"
                     android:gravity="center"
-                    android:text="中国广东省广州市天河区新塘大街28号"
                     android:textColor="@color/gray_3f"
                     android:textSize="16sp"/>
 
@@ -118,7 +116,7 @@
                     android:text="(10 s)"
                     android:textColor="@color/gray_99"
                     android:textSize="14sp"
-                    tools:ignore="RtlSymmetry"/>
+                    tools:ignore="HardcodedText,RtlSymmetry"/>
 
             </LinearLayout>
 
@@ -131,7 +129,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@color/transition"
                 android:orientation="horizontal">
 
                 <TextView
@@ -139,7 +137,7 @@
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
-                    android:background="@color/transition"
+                    android:background="@drawable/shape_rectangle_right0"
                     android:gravity="center"
                     android:text="取消"
                     android:textColor="@color/black"
@@ -157,7 +155,7 @@
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
-                    android:background="@color/transition"
+                    android:background="@drawable/shape_rectangle_legt0"
                     android:gravity="center"
                     android:text="确认"
                     android:textColor="@color/black"

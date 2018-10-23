@@ -156,8 +156,8 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         if (type.equals("1")) {
             llItemOne.setVisibility(View.GONE);
             llItemTwo.setVisibility(View.VISIBLE);
-            ivItemClaim.setImageResource(R.drawable.zhuanfa);
-            ivItemForward.setImageResource(R.drawable.renling);
+            ivItemClaim.setImageResource(R.drawable.xq_zhuanfa);
+            ivItemForward.setImageResource(R.drawable.xq_renling);
         } else if (type.equals("2")) {
             ivCommon.setImageResource(R.drawable.finish_023x);
         } else if (type.equals("3")) {
@@ -239,20 +239,17 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
     }
 
     private void showProblemState(String state) {
+        colorInt = QualityInspectionDetailActivity.this.getResources().getColor(R.color.white);
         if (state.contains("1")) {
             state = getString(R.string.pending_txt);//待处理
-            colorInt = QualityInspectionDetailActivity.this.getResources().getColor(R.color.red_hand_color);
             tv_problem_type.setTextColor(getResources().getColor(R.color.red));
         } else if (state.contains("2")) {
             tv_problem_type.setTextColor(getResources().getColor(R.color.red));
             state = getString(R.string.processing_txt);//处理中
-            colorInt = QualityInspectionDetailActivity.this.getResources().getColor(R.color.red_hand_color);
         } else if (state.contains("3")) {
             state = getString(R.string.toclosed_txt);//待关闭
-            colorInt = QualityInspectionDetailActivity.this.getResources().getColor(R.color.list_divider);
         } else {
             state = getString(R.string.closed_txt);//已关闭
-            colorInt = QualityInspectionDetailActivity.this.getResources().getColor(R.color.list_divider);
         }
         tv_problem_type.setText(state);
         rl_type.setBackgroundColor(colorInt);

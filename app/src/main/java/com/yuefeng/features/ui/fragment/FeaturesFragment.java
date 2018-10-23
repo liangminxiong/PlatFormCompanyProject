@@ -19,11 +19,11 @@ import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.FeaturesMsgAdapter;
 import com.yuefeng.features.event.CarListEvent;
+import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 import com.yuefeng.features.ui.activity.JobMonitoringActivity;
 import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity;
 import com.yuefeng.features.ui.activity.ProblemUpdateActivity;
 import com.yuefeng.features.ui.activity.QualityInspectionActivity;
-import com.yuefeng.features.ui.activity.WebH5ZuoyeKaoqinActivity;
 import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
 import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
@@ -245,7 +245,7 @@ public class FeaturesFragment extends BaseMvpFragment {
         startActivity(new Intent(getActivity(), ProblemUpdateActivity.class));
     }
 
-    /*问题处理*/
+    /*质量巡查*/
     private void qualityXuncha() {
         startActivity(new Intent(getActivity(), QualityInspectionActivity.class));
     }
@@ -258,7 +258,8 @@ public class FeaturesFragment extends BaseMvpFragment {
 
     /*作业考勤*/
     private void jobwebH5() {
-        startActivity(new Intent(getActivity(), WebH5ZuoyeKaoqinActivity.class));
+//        startActivity(new Intent(getActivity(), WebH5ZuoyeKaoqinActivity.class));
+        startActivity(new Intent(getActivity(), JobAttendanceActivity.class));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.common.utils;
 
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -40,5 +41,13 @@ public class ViewUtils {
         params.height = height;
         params.width = width;
         imageView.setLayoutParams(params);
+    }
+
+    /*EditView height width*/
+    public static void setEditHightOrWidth(EditText editText, int height, int width) {
+        ViewGroup.LayoutParams params = editText.getLayoutParams();
+        params.height = height;
+        params.width = width;
+        editText.setLayoutParams(params);
     }
 }

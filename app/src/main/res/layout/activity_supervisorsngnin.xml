@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/color_f6"
+              android:orientation="vertical">
+
+    <include layout="@layout/title_bar_mvp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_15"
+            android:drawablePadding="@dimen/dp_10"
+            android:drawableStart="@drawable/shijian"
+            android:gravity="center"
+            android:text="打卡时间："
+            android:textColor="@color/gray_70"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_2"
+            android:gravity="center"
+            android:textColor="@color/black_32"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+    </LinearLayout>
+
+    <View
+        style="@style/horizontal_line"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_15"
+            android:drawablePadding="@dimen/dp_10"
+            android:drawableStart="@drawable/didian"
+            android:gravity="center"
+            android:text="打卡地点："
+            android:textColor="@color/gray_70"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_2"
+            android:gravity="center"
+            android:textColor="@color/black_32"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+    </LinearLayout>
+
+    <View style="@style/horizontal_gray_10"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_8"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_45"
+            android:layout_marginStart="@dimen/dp_15"
+            android:drawablePadding="@dimen/dp_8"
+            android:drawableStart="@drawable/renyuan"
+            android:gravity="center"
+            android:text="关联人员："
+            android:textColor="@color/gray_70"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_personal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_15"
+            android:layout_marginStart="@dimen/dp_2"
+            android:drawableEnd="@drawable/fold_right"
+            android:drawablePadding="@dimen/dp_8"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/dp_50"
+            android:textColor="@color/black_32"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+    </LinearLayout>
+
+    <View style="@style/horizontal_line"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/dp_15"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/dp_15"
+            android:text="现场照片"
+            android:textColor="@color/gray_70"
+            android:textSize="@dimen/sp_15"
+            tools:ignore="HardcodedText,RtlSymmetry"/>
+
+        <TextView
+            android:id="@+id/tv_photo_big"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/dp_15"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:text="（已添加0张照片,共0K,限传4张照片）"
+            android:textColor="@color/md_grey_500"
+            android:textSize="@dimen/sp_13"
+            tools:ignore="HardcodedText"/>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingBottom="@dimen/dp_10"
+        android:paddingEnd="@dimen/dp_15"
+        android:paddingStart="@dimen/dp_15"/>
+
+    <View style="@style/horizontal_gray_10"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_8"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_45"
+            android:layout_marginStart="@dimen/dp_15"
+            android:gravity="center"
+            android:text="备注："
+            android:textColor="@color/gray_70"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_memo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_15"
+            android:layout_marginStart="@dimen/dp_2"
+            android:drawablePadding="@dimen/dp_8"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/dp_50"
+            android:textColor="@color/black_32"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

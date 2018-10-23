@@ -29,7 +29,7 @@
                 android:id="@+id/rl_type"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_60"
-                android:background="@color/list_divider"
+                android:background="@color/white"
                 tools:ignore="UselessParent">
 
                 <TextView
@@ -68,6 +68,8 @@
 
             </RelativeLayout>
 
+            <View style="@style/horizontal_gray_10"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_36"
@@ -75,7 +77,7 @@
                 android:layout_marginLeft="@dimen/dp_15"
                 android:layout_marginStart="@dimen/dp_15"
                 android:orientation="horizontal"
-                tools:ignore="UselessLeaf">
+                tools:ignore="RtlHardcoded,UselessLeaf">
 
                 <ImageView
                     android:id="@+id/iv_item_type"
@@ -104,11 +106,13 @@
                     android:layout_marginLeft="@dimen/dp_8"
                     android:layout_marginStart="@dimen/dp_8"
                     android:gravity="center|right"
-                    android:textColor="@color/blue_ten"
+                    android:textColor="@color/green_signin"
                     android:textSize="@dimen/sp_13"
                     tools:ignore="RtlHardcoded"/>
 
             </LinearLayout>
+
+            <View style="@style/horizontal_line"/>
 
             <TextView
                 android:id="@+id/tv_problem_what"
@@ -117,8 +121,8 @@
                 android:layout_marginLeft="@dimen/dp_15"
                 android:layout_marginStart="@dimen/dp_15"
                 android:gravity="center_vertical"
-                android:textColor="@color/gray"
-                android:textSize="@dimen/sp_14"
+                android:textColor="@color/black_32"
+                android:textSize="@dimen/sp_15"
                 tools:ignore="RtlHardcoded"/>
 
             <com.yuefeng.photo.view.MyGridView2
@@ -217,7 +221,8 @@
     <LinearLayout
         android:id="@+id/ll_item_two"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_45"
+        android:layout_height="@dimen/dp_60"
+        android:background="@color/color_f6"
         android:orientation="horizontal"
         android:visibility="gone"
         tools:ignore="RtlHardcoded,UselessLeaf">
@@ -260,7 +265,8 @@
     <LinearLayout
         android:id="@+id/ll_item_one"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_45"
+        android:layout_height="@dimen/dp_60"
+        android:background="@color/color_f6"
         android:orientation="horizontal"
         android:visibility="visible"
         tools:ignore="RtlHardcoded,UselessLeaf">

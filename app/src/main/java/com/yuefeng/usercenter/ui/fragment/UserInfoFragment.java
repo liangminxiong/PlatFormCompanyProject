@@ -31,6 +31,7 @@ import com.common.view.dialog.TakePhototpop;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.login_splash.ui.LoginActivity;
 import com.yuefeng.ui.MyApplication;
+import com.yuefeng.usercenter.ui.activity.AboutAppInfosActivity;
 import com.yuefeng.usercenter.ui.view.DeleteCacheDialog;
 import com.yuefeng.usercenter.ui.view.UserInfoItemView;
 
@@ -176,7 +177,7 @@ public class UserInfoFragment extends BaseMvpFragment {
                 deleteCacheDialog.show();
                 break;
             case R.id.ui_author://关于软件
-                showSuccessToast("待开发");
+                startActivity(new Intent(getActivity(), AboutAppInfosActivity.class));
                 break;
             case R.id.ui_setting://退出登录
                 outOfLogin();

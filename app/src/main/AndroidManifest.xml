@@ -120,7 +120,9 @@
         <activity android:name="com.yuefeng.login_splash.ui.LoginActivity"/>
 
         <!--问题上报-->
-        <activity android:name="com.yuefeng.features.ui.activity.ProblemUpdateActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.ProblemUpdateActivity"/>
+            <!--android:windowSoftInputMode="stateVisible|adjustResize"/>-->
         <!--问题巡检-->
         <activity android:name="com.yuefeng.features.ui.activity.QualityInspectionActivity"/>
         <!--问题详情-->
@@ -151,14 +153,23 @@
         <!--消息详情-->
         <activity android:name="com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy"/>
         <!--违规作业-->
-        <activity android:name="com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity"
-                  tools:ignore="InnerclassSeparator"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity"
+            tools:ignore="InnerclassSeparator"/>
         <!--详情-->
-        <activity android:name="com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkDetailActivity"
-                  tools:ignore="InnerclassSeparator"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkDetailActivity"
+            tools:ignore="InnerclassSeparator"/>
         <!--查看历史违规-->
-        <activity android:name="com.yuefeng.features.ui.activity.Lllegalwork.HistoryLllegalWorkActivity"
-                  tools:ignore="InnerclassSeparator"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.Lllegalwork.HistoryLllegalWorkActivity"
+            tools:ignore="InnerclassSeparator"/>
+        <!--作业考勤-->
+        <activity android:name="com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity"/>
+        <!--主管打卡-->
+        <activity android:name="com.yuefeng.features.ui.activity.sngnin.SupervisorSngnInActivity"/>
+        <!--关于软件-->
+        <activity android:name="com.yuefeng.usercenter.ui.activity.AboutAppInfosActivity"/>
 
         <!--更新-->
         <receiver

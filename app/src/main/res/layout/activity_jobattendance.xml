@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_sngnin"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_24"
+            android:background="@color/transition"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/tv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_40"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="@dimen/dp_20"
+                android:background="@color/transition"
+                android:drawablePadding="@dimen/dp_5"
+                android:drawableStart="@drawable/back"
+                android:gravity="center"
+                android:text="@string/back"
+                android:textColor="@color/white"
+                android:textSize="@dimen/dp_14"
+                android:visibility="visible"
+                tools:ignore="SpUsage"/>
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_40"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:layout_marginTop="@dimen/dp_5"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_17"/>
+
+
+            <TextView
+                android:id="@+id/tv_title_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/list"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:visibility="invisible"
+                tools:ignore="HardcodedText,RelativeOverlap"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_attendance_record"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginStart="@dimen/dp_15"
+            android:layout_marginTop="@dimen/dp_30"
+            android:gravity="center"
+            android:text="本月出勤记录"
+            android:textColor="@color/white_52"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_chidao"
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="@dimen/dp_60"
+                android:background="@drawable/shape_cricle_gray"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="@color/white_ed"
+                android:textSize="@dimen/sp_18"
+                tools:ignore="HardcodedText"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_zaotui"
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="@dimen/dp_60"
+                android:background="@drawable/shape_cricle_gray"
+                android:gravity="center"
+                android:text="2"
+                android:textColor="@color/white_ed"
+                android:textSize="@dimen/sp_18"
+                tools:ignore="HardcodedText"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_nosignin"
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="@dimen/dp_60"
+                android:background="@drawable/shape_cricle_gray"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/white_ed"
+                android:textSize="@dimen/sp_18"
+                tools:ignore="HardcodedText"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_nosignoff"
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="@dimen/dp_60"
+                android:background="@drawable/shape_cricle_gray"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="@color/white_ed"
+                android:textSize="@dimen/sp_18"
+                tools:ignore="HardcodedText"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_5"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="迟到"
+                android:textColor="@color/white_52"
+                android:textSize="@dimen/sp_12"
+                tools:ignore="HardcodedText"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="早退"
+                android:textColor="@color/white_52"
+                android:textSize="@dimen/sp_12"
+                tools:ignore="HardcodedText"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="未签到"
+                android:textColor="@color/white_52"
+                android:textSize="@dimen/sp_12"
+                tools:ignore="HardcodedText"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="未签退"
+                android:textColor="@color/white_52"
+                android:textSize="@dimen/sp_12"
+                tools:ignore="HardcodedText"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_20"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_70"
+        android:background="@color/white">
+
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_15"
+            android:layout_marginTop="@dimen/dp_10"
+            android:gravity="center_vertical"
+            android:textColor="@color/gray_3f"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_temp1"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/tv_time"
+            android:layout_marginStart="@dimen/dp_15"
+            android:gravity="center_vertical"
+            android:text="出勤"
+            android:textColor="@color/gray_3f"
+            android:textSize="@dimen/sp_15"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_sngnin_count"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/tv_time"
+            android:layout_toEndOf="@id/tv_temp1"
+            android:gravity="center_vertical"
+            android:textColor="@color/red_color_4a"
+            android:textSize="@dimen/sp_17"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_temp2"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/tv_time"
+            android:layout_toEndOf="@id/tv_sngnin_count"
+            android:gravity="center_vertical"
+            android:text="次：个人考勤"
+            android:textColor="@color/gray_3f"
+            android:textSize="@dimen/sp_15"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_personl_count"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/tv_time"
+            android:layout_toEndOf="@id/tv_temp2"
+            android:gravity="center_vertical"
+            android:textColor="@color/red_color_4a"
+            android:textSize="@dimen/sp_17"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_temp3"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/tv_time"
+            android:layout_toEndOf="@id/tv_personl_count"
+            android:gravity="center_vertical"
+            android:text="次：主管打卡"
+            android:textColor="@color/gray_3f"
+            android:textSize="@dimen/sp_15"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_sp_count"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/tv_time"
+            android:layout_toEndOf="@id/tv_temp3"
+            android:gravity="center_vertical"
+            android:textColor="@color/red_color_4a"
+            android:textSize="@dimen/sp_17"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/tv_time"
+            android:layout_toEndOf="@id/tv_sp_count"
+            android:gravity="center_vertical"
+            android:text="次"
+            android:textColor="@color/gray_3f"
+            android:textSize="@dimen/sp_15"
+            tools:ignore="HardcodedText"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/dp_15"
+            android:src="@drawable/fold_right"
+            tools:ignore="ContentDescription"/>
+
+    </RelativeLayout>
+
+    <View style="@style/horizontal_gray_10"/>
+
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:background="@color/white"
+        android:drawableEnd="@drawable/fold_right"
+        android:drawableStart="@drawable/location"
+        android:gravity="center_vertical"
+        android:paddingEnd="@dimen/dp_15"
+        android:paddingStart="@dimen/dp_15"
+        android:textColor="@color/gray_3f"
+        android:textSize="@dimen/sp_15"
+        tools:ignore="HardcodedText,RtlSymmetry"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_f6"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_20"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/iv_personl_sngnin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_60"
+            android:background="@drawable/selector_geren_press_bg"
+            tools:ignore="ContentDescription"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_20"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/iv_sp_sngnin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_60"
+            android:background="@drawable/selector_geren_zhuguan_bg"
+            tools:ignore="ContentDescription"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_20"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

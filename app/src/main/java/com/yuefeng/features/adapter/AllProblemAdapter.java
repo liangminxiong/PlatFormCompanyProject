@@ -50,14 +50,14 @@ public class AllProblemAdapter extends BaseItemDraggableAdapter<EventQuestionMsg
             if (state.equals("1")) {
                 float hourSpan = TimeUtils.getHourSpan(time, TimeUtils.getCurrentTime());
                 if (hourSpan >= 6) {
-                    colorIntTime = mContext.getResources().getColor(R.color.red);
+                    colorIntTime = mContext.getResources().getColor(R.color.red_fc);
                 } else if (hourSpan >= 2) {
                     colorIntTime = mContext.getResources().getColor(R.color.huang_se);
                 } else {
                     colorIntTime = mContext.getResources().getColor(R.color.maingreen);
                 }
                 state = mContext.getString(R.string.pending_txt);//待处理
-                colorInt = mContext.getResources().getColor(R.color.red);
+                colorInt = mContext.getResources().getColor(R.color.red_fc);
                 helper.setVisible(R.id.ll_item, true);
                 helper.setVisible(R.id.iv_item_claim, true);
                 helper.setImageResource(R.id.iv_item_forward, R.drawable.renling);
