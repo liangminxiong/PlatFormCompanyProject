@@ -192,7 +192,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 finish();
                 break;
             case Constans.USERERROR:
-                showErrorToast("请检查账号密码,网络状态!");
+                showSuccessToast("请检查账号密码,网络状态!");
                 break;
         }
     }

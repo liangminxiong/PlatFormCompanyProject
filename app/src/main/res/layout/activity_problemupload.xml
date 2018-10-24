@@ -74,7 +74,7 @@
             android:background="@color/white"
             android:gravity="center_vertical"
             android:text="（已添加0张照片,共0K,限传4张照片）"
-            android:textColor="@color/md_grey_500"
+            android:textColor="@color/text_font_gray"
             android:textSize="@dimen/sp_13"
             tools:ignore="HardcodedText"/>
 
@@ -84,6 +84,7 @@
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_10"
         android:layout_marginEnd="@dimen/dp_15"
         android:layout_marginStart="@dimen/dp_15"
         android:background="@color/white"/>
@@ -113,7 +114,8 @@
         android:hint="请输入问题描述......"
         android:maxLength="100"
         android:textColor="@color/black"
-        android:textSize="@dimen/sp_14"
+        android:textColorHint="@color/text_font_gray"
+        android:textSize="@dimen/sp_13"
         tools:ignore="HardcodedText,LabelFor,RtlHardcoded,TextFields"/>
 
     <TextView

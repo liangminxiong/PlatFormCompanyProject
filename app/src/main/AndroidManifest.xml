@@ -171,6 +171,16 @@
         <!--关于软件-->
         <activity android:name="com.yuefeng.usercenter.ui.activity.AboutAppInfosActivity"/>
 
+        <!-- 监听网络变化的广播 -->
+        <receiver
+            android:name="com.common.base.HttpErrorReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
         <!--更新-->
         <receiver
             android:name="com.common.updateapputils.util.UpdateAppReceiver"
@@ -211,7 +221,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
+            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
 
         <service
             android:name="com.baidu.location.f"

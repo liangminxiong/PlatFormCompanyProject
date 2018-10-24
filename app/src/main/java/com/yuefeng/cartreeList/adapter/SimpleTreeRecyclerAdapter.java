@@ -58,13 +58,14 @@ public class SimpleTreeRecyclerAdapter extends TreeRecyclerAdapter {
                     for (Node data : mAllNodes) {
                         data.setChecked(false);
                     }
+                } else {
+                    node.setChecked(true);
                 }
-//                node.setChecked(true);
 
                 /*多选*/
                 boolean checked = viewHolder.cb.isChecked();
                 setChecked(node, checked);
-//                notifyDataSetChanged();
+                notifyDataSetChanged();
             }
         });
 

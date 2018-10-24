@@ -30,7 +30,6 @@
                 android:paddingEnd="12dp"
                 android:paddingStart="12dp"
                 android:paddingTop="23dp"
-                android:text="你确定要清除缓存吗？你确定要清除缓存吗？"
                 android:textColor="#FF303030"
                 android:textSize="15sp"/>
 
@@ -49,27 +48,23 @@
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
-                    android:background="@drawable/btn_dialog_left_selector"
+                    android:background="@drawable/cancel01"
                     android:gravity="center"
-                    android:text="取消"
-                    android:textColor="@color/black"
                     android:textSize="@dimen/sp_14"
                     android:visibility="visible"/>
 
                 <View
                     android:layout_width="1px"
                     android:layout_height="match_parent"
-                    android:background="#FFD8D8D8"/>
+                    android:background="@color/white"/>
 
                 <TextView
                     android:id="@+id/tv_sure"
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
-                    android:background="@drawable/shape_rectangle_legt0"
+                    android:background="@drawable/ensure"
                     android:gravity="center"
-                    android:text="确认"
-                    android:textColor="@color/black"
                     android:textSize="@dimen/sp_14"/>
             </LinearLayout>
         </LinearLayout>

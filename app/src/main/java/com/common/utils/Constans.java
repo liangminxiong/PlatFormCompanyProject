@@ -21,7 +21,7 @@ public class Constans {
     public static final int HOMEBANNER = 102;//获取首页banner
     public static final int HOMEERROR = 100;//首页请求数据失败
     public static final int HOMEDASUCCESS = 103;//banner,homedata请求数据成功，取消loading
-    public static final int BDLOCATION_TIME = 5000;//定位时间间隔
+    public static final int BDLOCATION_TIME = 10000;//定位时间间隔
     public static final String COOKIE_PREF = "cookie_pref";//cookie保存
     public static final String HAVE_USER_DATAS = "have_user_datas";//数据
     /*

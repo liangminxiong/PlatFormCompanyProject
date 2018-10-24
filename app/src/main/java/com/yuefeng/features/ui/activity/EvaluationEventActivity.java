@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,6 +39,8 @@ public class EvaluationEventActivity extends BaseActivity implements EvaluationC
 
     @BindView(R.id.iv_back)
     RelativeLayout iv_back;
+    @BindView(R.id.tv_back)
+    TextView tv_back;
     @BindView(R.id.tv_title)
     TextView tv_title;
     @BindColor(R.color.titel_color)
@@ -56,7 +59,7 @@ public class EvaluationEventActivity extends BaseActivity implements EvaluationC
     @BindView(R.id.tv_score)
     TextView tv_score;
     @BindView(R.id.tv_upload)
-    TextView tv_upload;
+    ImageView tv_upload;
 
     private String problemid;
     private AlertDialog alertDilaog;
@@ -83,7 +86,7 @@ public class EvaluationEventActivity extends BaseActivity implements EvaluationC
 //        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         tv_title.setText(R.string.problem_evaluation);
-        tv_upload.setText(R.string.closed);
+        tv_back.setText("返回");
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             problemid = (String) bundle.get("PROBLEMID");
@@ -158,7 +161,7 @@ public class EvaluationEventActivity extends BaseActivity implements EvaluationC
         switch (event.getWhat()) {
             case Constans.ETIDEXT_SUCESS:
                 String count = (String) event.getData();
-                tv_txt_count.setText(count + "/100");
+                tv_txt_count.setText("还可以输入" + count + "字");
                 break;
 
             case Constans.CARRY_SUCESS:

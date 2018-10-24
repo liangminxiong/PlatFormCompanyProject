@@ -33,7 +33,7 @@
     <string name="uploaded_event">完成事件</string>
     <string name="uploaded">完成</string>
     <string name="submiting">提交中…</string>
-    <string name="problem_evaluation">发表评价</string>
+    <string name="problem_evaluation">关闭事件</string>
     <string name="closed">关闭</string>
     <string name="closing">关闭中…</string>
     <string name="login" tools:ignore="TypographyEllipsis">登录中...</string>

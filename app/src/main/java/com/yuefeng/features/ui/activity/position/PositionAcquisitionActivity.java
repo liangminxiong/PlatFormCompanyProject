@@ -269,21 +269,27 @@ public class PositionAcquisitionActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BdLocationUtil.getInstance().stopLocation();
+    }
+
     private void useBdGpsLocation() {
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
-                if (location == null) {
+                if (location == null) {requestPermissions();
                     return;
                 }
-                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
                     firstLocation(latitude, longitude, address);
-                } else {
-                    requestPermissions();
-                }
+//                } else {
+//                    requestPermissions();
+//                }
 
             }
         }, Constans.BDLOCATION_TIME);
@@ -291,8 +297,10 @@ public class PositionAcquisitionActivity extends BaseActivity {
 
     private void firstLocation(double latitude, double longitude, String address) {
 
-        int length = address.length();
-        address = address.substring(2, length);
+        if (!TextUtils.isEmpty(address)) {
+            int length = address.length();
+            address = address.substring(2, length);
+        }
         latLngTemp = new LatLng(latitude, longitude);
         if (isFirstLoc) {
             isFirstLoc = false;

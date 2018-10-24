@@ -19,7 +19,7 @@ import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.view.timeview.TimePickerView;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.adapter.CarLllegalWorkListAdapter;
+import com.yuefeng.features.adapter.CarHistoryLllegalWorkListAdapter;
 import com.yuefeng.features.contract.HistoryLllegalWorkContract;
 import com.yuefeng.features.event.LllegalWorkEvent;
 import com.yuefeng.features.presenter.HistoryLllegalWorkPresenter;
@@ -58,7 +58,7 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
     private HistoryLllegalWorkPresenter presenter;
 
     private List<MsgDataBean> listData = new ArrayList<>();
-    private CarLllegalWorkListAdapter adapter;
+    private CarHistoryLllegalWorkListAdapter adapter;
     private String startTime;
     private String endTime;
 
@@ -92,7 +92,7 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
     }
 
     private void initRecycler() {
-        adapter = new CarLllegalWorkListAdapter(R.layout.recyclerview_item_lllegals, listData);
+        adapter = new CarHistoryLllegalWorkListAdapter(R.layout.recyclerview_item_historylllegals, listData);
         recyclerview.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)

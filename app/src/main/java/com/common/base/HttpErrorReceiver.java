@@ -6,11 +6,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.common.event.NetWorkChangeEvent;
-import com.common.utils.Constans;
 import com.common.utils.ToastUtils;
-
-import org.greenrobot.eventbus.EventBus;
 
 public class HttpErrorReceiver extends BroadcastReceiver {
     @Override
@@ -22,9 +18,9 @@ public class HttpErrorReceiver extends BroadcastReceiver {
             //获取ConnectivityManager对象对应的NetworkInfo对象
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             if (networkInfo != null && networkInfo.isAvailable()) {
-                EventBus.getDefault().post(new NetWorkChangeEvent(Constans.NET_WORK_AVAILABLE));
+//                EventBus.getDefault().post(new NetWorkChangeEvent(Constans.NET_WORK_AVAILABLE));
             } else {
-                EventBus.getDefault().post(new NetWorkChangeEvent(Constans.NET_WORK_DISABLED));
+//                EventBus.getDefault().post(new NetWorkChangeEvent(Constans.NET_WORK_DISABLED));
                 ToastUtils.showToast("当前无网络");
             }
         }

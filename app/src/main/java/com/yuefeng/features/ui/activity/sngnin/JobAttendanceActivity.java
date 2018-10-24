@@ -123,16 +123,18 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
-                if (location == null) {
+                if (location == null) {requestPermissions();
                     return;
                 }
-                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
 
-                    int length = address.length();
-                    address = address.substring(2, length);
+                    if (!TextUtils.isEmpty(address)) {
+                        int length = address.length();
+                        address = address.substring(2, length);
+                    }
                     if (isFirstLocation) {
                         isFirstLocation = false;
                         if (!TextUtils.isEmpty(address)) {
@@ -142,9 +144,19 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
                             tvAddress.setText("点击重新定位");
                         }
                     }
-                }
+//                }else {
+//                    isFirstLocation = true;
+//                    tvAddress.setText("点击重新定位");
+//                }
             }
         }, Constans.BDLOCATION_TIME);
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BdLocationUtil.getInstance().stopLocation();
     }
 
     @Override

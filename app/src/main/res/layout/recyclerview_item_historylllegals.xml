@@ -8,9 +8,8 @@
     <RelativeLayout
         android:id="@+id/ll_layout_item"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:layout_marginBottom="@dimen/dp_8"
-        android:background="@drawable/shape_cricle_bg_gray">
+        android:layout_height="90dp">
+        <!--android:background="@drawable/shape_cricle_bg_gray_top0">-->
 
         <ImageView
             android:id="@+id/iv_item_image"
@@ -54,7 +53,6 @@
             android:paddingEnd="@dimen/sp_15"
             android:paddingTop="@dimen/dp_10"
             android:singleLine="true"
-            android:text="13:52"
             android:textColor="@color/gray_99"
             tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry"/>
         <!--android:textSize="@dimen/sp_14"-->

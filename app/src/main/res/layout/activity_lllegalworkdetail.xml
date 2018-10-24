@@ -50,11 +50,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_40"
                 android:layout_centerInParent="true"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:layout_marginTop="@dimen/dp_5"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="@dimen/sp_17"
-                android:layout_marginBottom="@dimen/dp_5"
-                android:layout_marginTop="@dimen/dp_5"/>
+                android:textSize="@dimen/sp_17"/>
 
 
             <TextView
@@ -99,8 +99,8 @@
                 android:layout_height="@dimen/dp_30">
 
                 <View
-                    android:layout_width="60dp"
-                    android:layout_height="@dimen/dp_3"
+                    android:layout_width="@dimen/dp_70"
+                    android:layout_height="@dimen/dp_5"
                     android:layout_centerInParent="true"
                     android:background="@mipmap/u132"/>
 
@@ -118,7 +118,8 @@
                     android:layout_marginStart="@dimen/dp_15"
                     android:gravity="center_vertical"
                     android:singleLine="true"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    tools:ignore="RelativeOverlap"/>
 
                 <TextView
                     android:id="@+id/tv_native"
@@ -127,7 +128,7 @@
                     android:layout_alignParentEnd="true"
                     android:gravity="center"
                     android:text="导航"
-                    android:textColor="@color/titel_color"
+                    android:textColor="@color/green_0e"
                     tools:ignore="HardcodedText"/>
 
             </RelativeLayout>
@@ -139,7 +140,7 @@
                 android:layout_marginStart="@dimen/dp_15"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:textColor="@color/gray"/>
+                android:textColor="@color/black_32"/>
 
             <LinearLayout
                 android:id="@+id/ll_content_visible"
@@ -155,7 +156,8 @@
                     android:layout_marginStart="@dimen/dp_15"
                     android:gravity="center_vertical"
                     android:singleLine="true"
-                    android:textColor="@color/gray"/>
+                    android:textColor="@color/black_32"
+                    />
 
                 <TextView
                     android:id="@+id/tv_class"
@@ -164,7 +166,8 @@
                     android:layout_marginStart="@dimen/dp_15"
                     android:gravity="center_vertical"
                     android:singleLine="true"
-                    android:textColor="@color/gray"/>
+                    android:textColor="@color/black_32"
+                    />
 
                 <TextView
                     android:id="@+id/search_history_lllegal"
@@ -176,9 +179,10 @@
                     android:gravity="center_vertical"
                     android:singleLine="true"
                     android:text="查看历史违规"
-                    android:textColor="@color/titel_color"
+                    android:textColor="@color/green_0e"
+
                     android:visibility="visible"
-                    tools:ignore="HardcodedText"/>
+                    tools:ignore="HardcodedText,SpUsage"/>
 
 
             </LinearLayout>

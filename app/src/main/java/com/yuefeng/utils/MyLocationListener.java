@@ -1,5 +1,7 @@
 package com.yuefeng.utils;
 
+import android.text.TextUtils;
+
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 
@@ -35,8 +37,10 @@ public class MyLocationListener implements BDLocationListener {
             // 如果是网络定位
             // 获取地址信息
             String address = location.getAddrStr();
-            int length = address.length();
-            address = address.substring(2, length);
+            if (!TextUtils.isEmpty(address)) {
+                int length = address.length();
+                address = address.substring(2, length);
+            }
             map.put("address", address);
         }
         if (mOnLocationResultListener != null) {

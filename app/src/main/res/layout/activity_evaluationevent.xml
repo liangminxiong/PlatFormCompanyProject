@@ -12,16 +12,15 @@
     <include layout="@layout/title_bar_mvp"/>
 
 
-    <View style="@style/horizontal_gray_10"/>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40"
         android:layout_marginEnd="@dimen/dp_15"
         android:layout_marginStart="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_15"
         android:gravity="center_vertical"
-        android:text="发表评价"
-        android:textColor="@color/transparent33"
+        android:text="问题描述"
+        android:textColor="@color/gray_70"
         android:textSize="@dimen/sp_15"
         tools:ignore="HardcodedText"/>
 
@@ -34,10 +33,10 @@
         android:layout_weight="1"
         android:background="@null"
         android:gravity="left"
-        android:hint="请进行评价......"
+        android:hint="请输入问题描述..."
         android:maxLength="100"
-        android:textColor="@color/black"
-        android:textSize="@dimen/sp_14"
+        android:textColor="@color/gray_91"
+        android:textSize="@dimen/sp_13"
         tools:ignore="HardcodedText,LabelFor,RtlHardcoded,TextFields"/>
 
     <TextView
@@ -47,12 +46,23 @@
         android:layout_marginEnd="@dimen/dp_15"
         android:layout_marginStart="@dimen/dp_15"
         android:gravity="center_vertical|right"
-        android:text="100/100"
-        android:textColor="@color/transparent33"
+        android:text="还可以输入100字"
+        android:textColor="@color/gray_91"
         android:textSize="@dimen/sp_12"
         tools:ignore="HardcodedText,RtlHardcoded"/>
 
-    <View style="@style/horizontal_gray_10"/>
+    <View style="@style/horizontal_gray_15"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_15"
+        android:gravity="center_vertical"
+        android:text="服务评价"
+        android:textColor="@color/gray_70"
+        android:textSize="@dimen/sp_15"
+        tools:ignore="HardcodedText"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -61,15 +71,6 @@
         android:layout_marginStart="@dimen/dp_15"
         android:gravity="center"
         android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="服务评价"
-            android:textColor="@color/transparent33"
-            android:textSize="@dimen/sp_13"
-            tools:ignore="HardcodedText"/>
 
         <com.common.view.other.StarLinearLayout
             android:id="@+id/star"
@@ -97,20 +98,18 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.5"/>
+        android:layout_weight="1.5"
+        android:background="@color/color_f6"/>
 
-    <View style="@style/horizontal_line"/>
 
-    <TextView
+    <ImageView
         android:id="@+id/tv_upload"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_45"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/titel_color"
-        android:gravity="center"
-        android:text="上报"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_16"
-        tools:ignore="HardcodedText"/>
+        android:background="@color/color_f6"
+        android:padding="@dimen/dp_15"
+        android:src="@drawable/xq_close02"
+        tools:ignore="ContentDescription,HardcodedText"/>
 
 </LinearLayout>

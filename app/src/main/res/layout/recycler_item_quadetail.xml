@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/rl_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/tv_item_hour"
-        android:layout_width="40dp"
-        android:layout_height="@dimen/dp_30"
-        android:gravity="bottom"
-        android:textColor="@color/blue"
-        android:textSize="@dimen/sp_13"/>
+        android:id="@+id/tv_item_month"
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="@dimen/dp_26"
+        android:gravity="center"
+        android:paddingTop="@dimen/dp_5"
+        android:textSize="@dimen/sp_11"/>
 
     <TextView
-        android:id="@+id/tv_item_month"
-        android:layout_width="40dp"
-        android:layout_height="@dimen/dp_26"
-        android:layout_below="@id/tv_item_hour"
-        android:gravity="center"
-        android:textColor="@color/blue"
+        android:id="@+id/tv_item_hour"
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="@dimen/dp_30"
+        android:layout_below="@id/tv_item_month"
         android:textSize="@dimen/sp_11"/>
+
 
     <LinearLayout
         android:id="@+id/view"
@@ -29,7 +29,8 @@
         android:layout_marginStart="2dp"
         android:layout_toEndOf="@id/tv_item_hour"
         android:layout_toRightOf="@id/tv_item_hour"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="RtlHardcoded">
 
         <View
             android:layout_width="0.5dp"

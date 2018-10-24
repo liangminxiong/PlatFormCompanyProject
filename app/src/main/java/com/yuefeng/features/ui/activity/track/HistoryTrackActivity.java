@@ -384,15 +384,17 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
                 @Override
                 public void myLocation(BDLocation location) {
-                    if (location == null) {
+                    if (location == null) {requestPermissions();
                         return;
                     }
-                    if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+//                    if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
                         address = location.getAddrStr();
-                        int length = address.length();
-                        address = address.substring(2, length);
+                        if (!TextUtils.isEmpty(address)) {
+                            int length = address.length();
+                            address = address.substring(2, length);
+                        }
                         latLngTemp = new LatLng(latitude, longitude);
                         if (isFirstLoc) {
                             isFirstLoc = false;
@@ -404,9 +406,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                             mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
                             mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
                         }
-                    } else {
-                        requestPermissions();
-                    }
+//                    } else {
+//                        requestPermissions();
+//                    }
 
                 }
             }, Constans.BDLOCATION_TIME);
@@ -836,7 +838,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
     @Override
     public void onStop() {
-
+        BdLocationUtil.getInstance().stopLocation();
         super.onStop();
     }
 

@@ -50,8 +50,9 @@
                     android:layout_marginLeft="@dimen/dp_15"
                     android:layout_marginStart="@dimen/dp_15"
                     android:gravity="center_vertical"
-                    android:textColor="@color/gray"
-                    android:textSize="@dimen/sp_13"/>
+                    android:textColor="@color/black_32"
+                    android:textSize="@dimen/sp_13"
+                    tools:ignore="RtlHardcoded"/>
 
                 <TextView
                     android:id="@+id/tv_problem_time"
@@ -62,7 +63,7 @@
                     android:layout_marginEnd="@dimen/dp_15"
                     android:layout_marginRight="@dimen/dp_15"
                     android:gravity="center_vertical"
-                    android:textColor="@color/gray"
+                    android:textColor="@color/black_32"
                     android:textSize="@dimen/sp_13"
                     tools:ignore="RtlHardcoded"/>
 
@@ -97,6 +98,7 @@
                     android:layout_marginLeft="@dimen/dp_8"
                     android:layout_marginStart="@dimen/dp_8"
                     android:gravity="center"
+                    android:textColor="@color/black_32"
                     android:textSize="@dimen/sp_13"/>
 
                 <TextView
@@ -120,6 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_15"
                 android:layout_marginStart="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_8"
                 android:gravity="center_vertical"
                 android:textColor="@color/black_32"
                 android:textSize="@dimen/sp_15"
@@ -158,7 +161,7 @@
                 android:layout_marginLeft="@dimen/dp_15"
                 android:layout_marginStart="@dimen/dp_15"
                 android:gravity="center_vertical"
-                android:textColor="@color/gray"
+                android:textColor="@color/black_32"
                 android:textSize="@dimen/sp_13"
                 tools:ignore="RtlHardcoded"/>
 
@@ -195,12 +198,25 @@
                     tools:ignore="RtlHardcoded"/>
 
             </LinearLayout>
+f
+            <View style="@style/horizontal_line"/>
 
             <View
-                style="@style/horizontal_line"
-                android:layout_marginLeft="@dimen/dp_15"
-                android:layout_marginStart="@dimen/dp_15"
-                tools:ignore="RtlHardcoded"/>
+                android:layout_width="0.5dp"
+                android:layout_height="@dimen/dp_10"
+                android:layout_marginStart="71dp"
+                android:background="@color/list_divider"/>
+
+            <TextView
+                android:id="@+id/tv_itme_year"
+                android:layout_width="match_parent"
+                android:paddingStart="56dp"
+                android:background="@color/transition"
+                android:textSize="@dimen/sp_12"
+                android:textColor="@color/black_32"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                tools:ignore="RtlSymmetry"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview"
@@ -237,6 +253,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:scaleType="fitXY"
             android:src="@drawable/zhuanfa"
             tools:ignore="ContentDescription"/>
 
@@ -253,6 +270,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="@dimen/dp_20"
             android:layout_marginStart="@dimen/dp_20"
+            android:scaleType="fitXY"
             tools:ignore="ContentDescription"/>
 
         <View
@@ -281,6 +299,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/dp_15"
+            android:layout_marginStart="@dimen/dp_15"
+            android:scaleType="fitXY"
             tools:ignore="ContentDescription"/>
 
 

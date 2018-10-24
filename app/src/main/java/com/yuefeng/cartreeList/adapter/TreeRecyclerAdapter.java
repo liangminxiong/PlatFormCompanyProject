@@ -38,7 +38,7 @@ public abstract class TreeRecyclerAdapter extends RecyclerView.Adapter<RecyclerV
      * 默认不展开
      */
     private int defaultExpandLevel = 0;
-    public boolean isAllSelect;
+    public boolean isAllSelect;//是否单选
     /**
      * 展开与关闭的图片
      */

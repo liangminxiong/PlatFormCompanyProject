@@ -86,7 +86,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 
-/*作业监控*/
+/*定位信息*/
 
 public class JobMonitoringActivity extends BaseActivity implements
         TabLayout.OnTabSelectedListener, JobMoniroringContract.View, LocationUtils.OnResultMapListener {
@@ -301,15 +301,17 @@ public class JobMonitoringActivity extends BaseActivity implements
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
-                if (location == null) {
+                if (location == null) {requestPermissions();
                     return;
                 }
-                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
                     beginAddress = location.getAddrStr();
-                    int length = beginAddress.length();
-                    beginAddress = beginAddress.substring(2, length);
+                    if (!TextUtils.isEmpty(beginAddress)) {
+                        int length = beginAddress.length();
+                        beginAddress = beginAddress.substring(2, length);
+                    }
                     mlatLng = new LatLng(latitude, longitude);
                     if (isFirstLoc) {
                         isFirstLoc = false;
@@ -321,11 +323,21 @@ public class JobMonitoringActivity extends BaseActivity implements
                         mMarker = (Marker) (baiduMap.addOverlay(ooA));
                         baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
                     }
-                } else {
-                    requestPermissions();
-                }
+//                } else {
+//                    requestPermissions();
+//                }
             }
         }, Constans.BDLOCATION_TIME);
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (geoCoder != null) {
+            geoCoder.destroy();
+        }
+        BdLocationUtil.getInstance().stopLocation();
     }
 
     @OnClick(R.id.iv_isvisibility)
@@ -619,13 +631,6 @@ public class JobMonitoringActivity extends BaseActivity implements
 
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (geoCoder != null) {
-            geoCoder.destroy();
-        }
-    }
 
     @Override
     protected void onDestroy() {

@@ -52,6 +52,17 @@ public class TimeUtils {
         return time;
     }
 
+    public static String getYear() {
+        String time = "";
+        Calendar calendar = Calendar.getInstance();
+//获取系统的日期
+//年
+        int year = calendar.get(Calendar.YEAR);
+//月
+        time = year + "";
+        return time;
+    }
+
     public static String getYearMonthDay() {
         String time = "";
         Calendar calendar = Calendar.getInstance();

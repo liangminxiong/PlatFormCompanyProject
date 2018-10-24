@@ -40,7 +40,7 @@
                 android:layout_marginStart="@dimen/dp_20"
                 android:background="@color/transition"
                 android:gravity="center_vertical"
-                android:textColor="@color/gray"
+                android:textColor="@color/gray_21"
                 android:textSize="@dimen/sp_13"/>
 
         </LinearLayout>
@@ -66,8 +66,8 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:text="电话"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_15"
+                android:textColor="@color/black_32"
+                android:textSize="@dimen/sp_13"
                 tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry"/>
 
             <TextView
@@ -97,9 +97,9 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:text="班组"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_15"
-                tools:ignore="RtlHardcoded,RtlSymmetry"/>
+                android:textColor="@color/black_32"
+                android:textSize="@dimen/sp_13"
+                tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry"/>
 
             <TextView
                 android:id="@+id/tv_item_classname"
@@ -108,7 +108,7 @@
                 android:layout_marginStart="@dimen/dp_20"
                 android:background="@color/transition"
                 android:gravity="center_vertical"
-                android:textColor="@color/gray"
+                android:textColor="@color/black_32"
                 android:textSize="@dimen/sp_13"/>
 
 
@@ -128,9 +128,9 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:text="地址"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_15"
-                tools:ignore="RtlHardcoded,RtlSymmetry"/>
+                android:textColor="@color/black_32"
+                android:textSize="@dimen/sp_13"
+                tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry"/>
 
             <TextView
                 android:id="@+id/tv_item_addressname"
@@ -139,7 +139,7 @@
                 android:layout_marginStart="@dimen/dp_20"
                 android:background="@color/transition"
                 android:gravity="center_vertical"
-                android:textColor="@color/gray"
+                android:textColor="@color/black_32"
                 android:textSize="@dimen/sp_13"/>
 
 

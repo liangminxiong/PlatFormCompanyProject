@@ -2,7 +2,6 @@ package com.yuefeng.features.ui.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,6 +12,7 @@ import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,6 +32,7 @@ import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.EvaluationContract;
+import com.yuefeng.features.event.ProblemEvent;
 import com.yuefeng.features.event.SuccessProblemEvent;
 import com.yuefeng.features.presenter.SuccessProblemPresenter;
 import com.yuefeng.photo.adapter.GridImageAdapter;
@@ -70,11 +71,14 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     @BindView(R.id.tv_upload)
-    TextView tv_upload;
+    ImageView tv_upload;
     @BindView(R.id.tv_txt_count)
     TextView tvTxtCount;
     @BindView(R.id.edt_problem_txt)
     EditText edtProblem;
+
+    @BindView(R.id.tv_photo_big)
+    TextView tvPhotoBig;
 
 
     private CameraPhotoPopupWindow popupWindow;
@@ -82,7 +86,6 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
     private GridImageAdapter adapter;
     private String mImages;
     private String problemid;
-    private AlertDialog alertDilaog;
     private SuccessProblemPresenter presenter;
 
     @Override
@@ -104,7 +107,6 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
 //        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         tv_title.setText(R.string.uploaded_event);
-        tv_upload.setText(R.string.uploaded);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             problemid = (String) bundle.get("PROBLEMID");
@@ -130,7 +132,10 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int length = s.length();
-                tvTxtCount.setText(String.valueOf(length) + "/100");
+                if (length > 100) {
+                    return;
+                }
+                tvTxtCount.setText("还可以输入" + (100 - length) + "字");
             }
 
             @Override
@@ -293,6 +298,26 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void disposeProblemEvent(ProblemEvent event) {
+        dismissLoadingDialog();
+        switch (event.getWhat()) {
+            case Constans.PICSTURESUCESS:
+                selectList = (List<LocalMedia>) event.getData();
+                if (selectList.size() > 0) {
+                    showFilesSize(selectList);
+                }
+                break;
+
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void showFilesSize(List<LocalMedia> selectList) {
+        tvPhotoBig.setText("（已添加" + selectList.size() + "张照片,共" + PictureSelectorUtils.getFileSize(selectList) + "k,限传4张）");
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -333,6 +358,7 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
         if (selectList.size() <= 0) {
             return;
         }
+        showFilesSize(selectList);
         adapter.setList(selectList);
         adapter.notifyDataSetChanged();
         runOnUiThread(new Runnable() {

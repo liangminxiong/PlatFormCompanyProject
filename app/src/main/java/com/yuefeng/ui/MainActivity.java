@@ -89,7 +89,7 @@ public class MainActivity extends BaseActivity implements
 
     private int mTime = 10;
     private SigninCacheSureDialog sureDialog;
-    private static final int BDLOCATION_TIME = 5000;
+    private static final int BDLOCATION_TIME = 10000;
     private boolean isFirstLocation = true;
     private SignInPresenter presenter;
     private String userId;
@@ -197,24 +197,34 @@ public class MainActivity extends BaseActivity implements
             @Override
             public void myLocation(BDLocation location) {
                 if (location == null) {
+                    requestPermissions();
                     return;
                 }
-                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                    address = location.getAddrStr();
-                    int length = address.length();
-                    address = address.substring(2, length);
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
+//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+                address = location.getAddrStr();
+
 //                    LatLng latLng=BdLocationUtil.ConverCommonToBaidu()
-                    if (isFirstLocation) {
+                if (isFirstLocation) {
+                    if (!TextUtils.isEmpty(address)) {
+                        int length = address.length();
+                        address = address.substring(2, length);
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
                         isFirstLocation = false;
                         showSignInTime(longitude, latitude, address);
                     }
-                } else {
-                    requestPermissions();
                 }
+//                } else {
+
             }
+//            }
         }, BDLOCATION_TIME);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BdLocationUtil.getInstance().stopLocation();
     }
 
     /*倒计时*/

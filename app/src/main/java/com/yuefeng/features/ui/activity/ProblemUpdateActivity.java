@@ -27,7 +27,6 @@ import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
 import com.common.utils.LocationGpsUtils;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ViewUtils;
 import com.common.view.dialog.SucessCacheSureDialog;
@@ -126,7 +125,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
 //        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         ButterKnife.bind(this);
         presenter = new ProblemUploadPresenter(this, this);
-        ViewUtils.setEditHightOrWidth(edt_problem_txt, (int) AppUtils.mScreenHeight / 4, ActionBar.LayoutParams.MATCH_PARENT);
+        ViewUtils.setEditHightOrWidth(edt_problem_txt, (int) AppUtils.mScreenHeight / 5, ActionBar.LayoutParams.MATCH_PARENT);
 //        View view = findViewById(R.id.space);
 //        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
@@ -184,21 +183,29 @@ public class ProblemUpdateActivity extends BaseActivity implements
         }
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BdLocationUtil.getInstance().stopLocation();
+    }
+
     private void useBdGpsLocation() {
+
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
                 if (location == null) {
                     return;
                 }
-                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
-
-                    int length = address.length();
-                    address = address.substring(2, length);
-                    LogUtils.d("getLocation =00= " + latitude + " ++ " + longitude + " ++ " + address);
+                    if (!TextUtils.isEmpty(address)) {
+                        int length = address.length();
+                        address = address.substring(2, length);
+                    }
                     if (isFirstLocation) {
                         isFirstLocation = false;
                         PreferencesUtils.putString(ProblemUpdateActivity.this, "Fengrun", "");
@@ -209,7 +216,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
                             isFirstLocation = true;
                         }
                     }
-                }
+//                }
             }
         }, BDLOCATION_TIME);
     }
@@ -289,7 +296,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
         tv_photo_big.setText("（已添加" + selectList.size() + "张照片,共" + PictureSelectorUtils.getFileSize(selectList) + "k,限传4张）");
     }
 
-
+   /*图片选择*/
     private void selectPhoto() {
         FullyGridLayoutManager manager = new FullyGridLayoutManager(ProblemUpdateActivity.this, Constans.FOUR, GridLayoutManager.VERTICAL, false);
         recyclerview.setLayoutManager(manager);

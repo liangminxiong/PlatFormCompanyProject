@@ -98,12 +98,12 @@ public class LllegalWorkDetailActivity extends BaseActivity {
 //        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         getCarListInfos();
-        tvAddress.setTextSize(14);
-        tvNative.setTextSize(13);
+        tvAddress.setTextSize(15);
+        tvNative.setTextSize(15);
         tvDistance.setTextSize(13);
         tvType.setTextSize(13);
         tvClass.setTextSize(13);
-        searchHistoryLllegal.setTextSize(13);
+        searchHistoryLllegal.setTextSize(15);
     }
 
     /*车辆列表*/
@@ -180,10 +180,10 @@ public class LllegalWorkDetailActivity extends BaseActivity {
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
-                if (location == null) {
+                if (location == null) {requestPermissions();
                     return;
                 }
-                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
                     latLng = new LatLng(latitude, longitude);
@@ -201,12 +201,19 @@ public class LllegalWorkDetailActivity extends BaseActivity {
                             showCarDetailInfos(latitude, longitude);
                         }
                     }
-                } else {
-                    requestPermissions();
-                }
+//                } else {
+//                    requestPermissions();
+//                }
 
             }
         }, Constans.BDLOCATION_TIME);
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BdLocationUtil.getInstance().stopLocation();
     }
 
     /*show轨迹  划线*/

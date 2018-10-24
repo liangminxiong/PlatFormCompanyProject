@@ -11,6 +11,7 @@
     <color name="gray_05">#05AAA9</color>
     <color name="gray_99">#999999</color>
     <color name="gray_87">#878B8E</color>
+    <color name="gray_21">#212121</color>
     <color name="gray_3f">#3F3F3F</color>
     <color name="gray_20">#202020</color>
     <color name="gray_1f">#1F1F1F</color>
@@ -29,7 +30,7 @@
     <color name="bg_gray">#f5f5f5</color>
 
     <color name="text_font">#333333</color>
-    <color name="text_font_gray">#999999</color>
+    <color name="text_font_gray">#909090</color>
     <color name="text_font_white">#ffffff</color>
     <color name="pink_red">#fcd0d0</color>
     <color name="common_background">#f5f5f5</color>
@@ -41,7 +42,7 @@
     <color name="search_text">#dcdada</color>
     <color name="seven">#f5f5f5</color>
     <color name="search_content">#4C4C4C</color>
-    <color name="md_grey_500">#9e9e9e</color>
+    <color name="md_grey_500">#707070</color>
     <color name="color_f6">#f6f6f6</color>
     <color name="list_divider">#eeeeee</color>
     <color name="gray_hand_bg">#F5F5F5</color>
@@ -53,6 +54,7 @@
     <color name="red_hand_color">#f7aeae</color>
     <color name="light">#efeeee</color>
     <color name="titel_color">#1fa483</color>
+    <color name="green_0e">#0E9A3F</color>
     <color name="finish_color">#fe874b</color>
     <color name="carryon_color">#ffa63b</color>
     <color name="red_alittle">#fff5f4</color>
@@ -64,6 +66,7 @@
     <color name="gray_c8">#C8F8F4</color>
     <color name="gray_1e">#1EF1F1</color>
     <color name="gray_70">#707070</color>
+    <color name="gray_91">#919191</color>
     <color name="member_blue">#74a7ff</color>
     <!--覆盖颜色-->
     <color name="bgColor_overlay">#60000000</color>

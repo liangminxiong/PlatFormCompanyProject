@@ -67,7 +67,7 @@ public class QualityInspectionDetailAdapter extends BaseItemDraggableAdapter<Eve
             String yearTime = yearHour[0];
             String hourTime = yearHour[1];
             String month = yearTime.substring(5, 10);
-            String hour = hourTime.substring(0, 5);
+            String hour = hourTime.substring(0, 8);
 //            Log.d(TAG, "convert:aaaa " + things);
             if (things.equals("关闭问题")) {
                 if (TextUtils.isEmpty(detail)) {
@@ -80,7 +80,7 @@ public class QualityInspectionDetailAdapter extends BaseItemDraggableAdapter<Eve
                 } else {
                     pinjia = "评价:" + pinjia;
                 }
-            }else if (things.equals("完成处理")){
+            } else if (things.equals("完成处理")) {
                 if (TextUtils.isEmpty(pinjia)) {
                     pinjia = "评价:无";
                 } else {
@@ -101,15 +101,15 @@ public class QualityInspectionDetailAdapter extends BaseItemDraggableAdapter<Eve
         if (!TextUtils.isEmpty(imgurl)) {
             showImgUrl(imgurl);
             if (detail.length() > 60) {
-                layoutParams.height = DensityUtil.dip2px(mContext,220);
+                layoutParams.height = DensityUtil.dip2px(mContext, 220);
             } else {
-                layoutParams.height = DensityUtil.dip2px(mContext,150);
+                layoutParams.height = DensityUtil.dip2px(mContext, 150);
             }
         } else {
             if (detail.length() > 60) {
-                layoutParams.height = DensityUtil.dip2px(mContext,150);
+                layoutParams.height = DensityUtil.dip2px(mContext, 150);
             } else {
-                layoutParams.height = DensityUtil.dip2px(mContext,80);
+                layoutParams.height = DensityUtil.dip2px(mContext, 80);
             }
         }
         rl_item.setLayoutParams(layoutParams);

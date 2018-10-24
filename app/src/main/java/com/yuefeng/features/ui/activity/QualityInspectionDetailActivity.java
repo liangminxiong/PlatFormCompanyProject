@@ -19,6 +19,7 @@ import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
+import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.QualityInspectionDetailAdapter;
 import com.yuefeng.features.contract.QualityDetailContract;
@@ -84,6 +85,8 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
     TextView tv_problem_address;
     @BindView(R.id.tv_problem_class)
     TextView tv_problem_class;
+    @BindView(R.id.tv_itme_year)
+    TextView tv_itme_year;
 
     @BindView(R.id.tv_problem_usetime)
     TextView tv_problem_usetime;
@@ -156,12 +159,12 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         if (type.equals("1")) {
             llItemOne.setVisibility(View.GONE);
             llItemTwo.setVisibility(View.VISIBLE);
-            ivItemClaim.setImageResource(R.drawable.xq_zhuanfa);
-            ivItemForward.setImageResource(R.drawable.xq_renling);
+            ivItemClaim.setImageResource(R.drawable.xq_zhuanfa02);
+            ivItemForward.setImageResource(R.drawable.xq_renling02);
         } else if (type.equals("2")) {
-            ivCommon.setImageResource(R.drawable.finish_023x);
+            ivCommon.setImageResource(R.drawable.xq_finish02);
         } else if (type.equals("3")) {
-            ivCommon.setImageResource(R.drawable.close_023x);
+            ivCommon.setImageResource(R.drawable.xq_close02);
         } else {
             llItemOne.setVisibility(View.GONE);
             llItemTwo.setVisibility(View.GONE);
@@ -297,7 +300,7 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
     }
 
     private void initRecycler() {
-
+        tv_itme_year.setText(TimeUtils.getYear());
         detailAdapter = new QualityInspectionDetailAdapter(R.layout.recycler_item_quadetail, listData);
         recyclerview.setAdapter(detailAdapter);
     }

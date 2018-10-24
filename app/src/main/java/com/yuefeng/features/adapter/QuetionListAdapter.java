@@ -28,10 +28,10 @@ public class QuetionListAdapter extends BaseItemDraggableAdapter<QuestionListBea
             address = TextUtils.isEmpty(address) ? "" : address;
             helper.setText(R.id.tv_item_name, name)
                     .setGone(R.id.tv_item_type,false)
-                    .setTextColor(R.id.tv_item_name, mContext.getResources().getColor(R.color.black))
+                    .setTextColor(R.id.tv_item_name, mContext.getResources().getColor(R.color.black_32))
                     .setVisible(R.id.tv_item_other, true)
                     .setText(R.id.tv_item_other, address)
-                    .setTextColor(R.id.tv_item_other, mContext.getResources().getColor(R.color.gray_99));
+                    .setTextColor(R.id.tv_item_other, mContext.getResources().getColor(R.color.gray_21));
         }
     }
 }

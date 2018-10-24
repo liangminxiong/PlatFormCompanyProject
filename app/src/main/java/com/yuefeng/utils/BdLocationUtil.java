@@ -35,6 +35,7 @@ public class BdLocationUtil {
 
     private LocationClient locationClient;
     private static String address;
+    private static BdLocationUtil instance;
 
     /**
      * 单例
@@ -42,11 +43,14 @@ public class BdLocationUtil {
      * @return
      */
     public static BdLocationUtil getInstance() {
-        return LocationHolder.INSTANCE;
-    }
-
-    private static class LocationHolder {
-        private static final BdLocationUtil INSTANCE = new BdLocationUtil();
+        if (instance == null) {
+            synchronized (BdLocationUtil.class) {
+                if (instance == null) {
+                    instance = new BdLocationUtil();
+                }
+            }
+        }
+        return instance;
     }
 
     private BdLocationUtil() {
@@ -78,8 +82,10 @@ public class BdLocationUtil {
         locationClient.registerLocationListener(new BDAbstractLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation location) {
-                listener.myLocation(location);
-                locationClient.stop();
+                if (location != null) {
+                    listener.myLocation(location);
+                    locationClient.stop();
+                }
             }
         });
         locationClient.start();
@@ -93,10 +99,10 @@ public class BdLocationUtil {
     }
 
     public void stopLocation() {
-        if (locationClient != null) {
-            locationClient.stop();
-            locationClient = null;
-        }
+//        if (locationClient != null) {
+//            locationClient.stop();
+//            locationClient = null;
+//        }
     }
 
     public static LatLng ConverCommonToBaidu(LatLng sourceLatLng) {
