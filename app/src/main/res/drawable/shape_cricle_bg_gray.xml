@@ -25,8 +25,8 @@
     <!-- 背景部分 -->
     <!-- 形象的表达：bottom代表背景部分在上边缘超出阴影的高度，right代表背景部分在左边超出阴影的宽度（相对应的offset） -->
     <item
-        android:bottom="3dp"
-        android:right="3dp">
+        android:bottom="2dp"
+        android:right="2dp">
         <shape android:shape="rectangle">
 
             <gradient

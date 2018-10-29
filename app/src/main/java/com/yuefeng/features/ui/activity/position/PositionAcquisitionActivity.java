@@ -59,7 +59,9 @@ import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.StringSingleAdapter;
-import com.yuefeng.features.event.SuccessProblemEvent;
+import com.yuefeng.features.contract.PositionAcquisitionContract;
+import com.yuefeng.features.event.PositionAcquisitionEvent;
+import com.yuefeng.features.presenter.PositionAcquisitionPresenter;
 import com.yuefeng.features.ui.view.MsgCollectionPopupWindow;
 import com.yuefeng.photo.adapter.GridImageAdapter;
 import com.yuefeng.photo.other.FullyGridLayoutManager;
@@ -84,7 +86,7 @@ import io.reactivex.functions.Consumer;
 
 
 /*定位采集*/
-public class PositionAcquisitionActivity extends BaseActivity {
+public class PositionAcquisitionActivity extends BaseActivity implements PositionAcquisitionContract.View {
 
     @BindView(R.id.tv_title)
     TextView tv_title;
@@ -150,8 +152,9 @@ public class PositionAcquisitionActivity extends BaseActivity {
     private BaiduMap baiduMap;
     private MarkerOptions ooA;
     private Marker mMarker;
-    BitmapDescriptor beginImage = BitmapDescriptorFactory.fromResource(R.drawable.worker);
-    BitmapDescriptor endImage = BitmapDescriptorFactory.fromResource(R.drawable.problem);
+    BitmapDescriptor personalImage = BitmapDescriptorFactory.fromResource(R.drawable.worker);
+    BitmapDescriptor beginImage = BitmapDescriptorFactory.fromResource(R.drawable.start);
+    BitmapDescriptor endImage = BitmapDescriptorFactory.fromResource(R.drawable.destination);
     private double latitude;
     private double longitude;
     private String address;
@@ -182,9 +185,7 @@ public class PositionAcquisitionActivity extends BaseActivity {
     private StringSingleAdapter singleAdapter;
     private List<String> listData = new ArrayList<>();
     private String typeWhat;
-    private String hourStr;
-    private String minuteStr;
-    private String secondStr;
+    private PositionAcquisitionPresenter presenter;
 
     @Override
     protected int getContentViewResId() {
@@ -198,10 +199,7 @@ public class PositionAcquisitionActivity extends BaseActivity {
         }
         ButterKnife.bind(this);
         tv_title.setText(R.string.position_acquisition);
-//        View view = findViewById(R.id.space);
-//
-//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+        presenter = new PositionAcquisitionPresenter(this, this);
         infrastructureStr = "";
         workAreaStr = "";
         initRlType();
@@ -213,13 +211,8 @@ public class PositionAcquisitionActivity extends BaseActivity {
         ctTimerCircle.setFormat("%s");
     }
 
-
     private void initRlType() {
         ViewUtils.setRLHightOrWidth(rlSelectType, (int) AppUtils.mScreenHeight / 4, ActionBar.LayoutParams.MATCH_PARENT);
-    }
-
-    private void initLLTimer() {
-        ViewUtils.setRLHightOrWidth(rl_time, (int) AppUtils.mScreenHeight / 5, ActionBar.LayoutParams.MATCH_PARENT);
     }
 
 
@@ -242,8 +235,9 @@ public class PositionAcquisitionActivity extends BaseActivity {
                     public void accept(Boolean granted) throws Exception {
                         if (!granted) {
                             showSuccessToast("App未能获取相关权限，部分功能可能不能正常使用.");
+                        } else {
+                            getLocation();
                         }
-                        getLocation();
                     }
                 });
     }
@@ -279,14 +273,15 @@ public class PositionAcquisitionActivity extends BaseActivity {
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
-                if (location == null) {requestPermissions();
+                if (location == null) {
+                    requestPermissions();
                     return;
                 }
 //                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                    address = location.getAddrStr();
-                    firstLocation(latitude, longitude, address);
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                address = location.getAddrStr();
+                firstLocation(latitude, longitude, address);
 //                } else {
 //                    requestPermissions();
 //                }
@@ -305,8 +300,8 @@ public class PositionAcquisitionActivity extends BaseActivity {
         if (isFirstLoc) {
             isFirstLoc = false;
             MapStatus ms = new MapStatus.Builder().target(latLngTemp)
-                    .overlook(-20).zoom(14).build();
-            ooA = new MarkerOptions().icon(beginImage).zIndex(10);
+                    .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
+            ooA = new MarkerOptions().icon(personalImage).zIndex(10);
             ooA.position(latLngTemp);
             mMarker = null;
             mMarker = (Marker) (baiduMap.addOverlay(ooA));
@@ -324,22 +319,17 @@ public class PositionAcquisitionActivity extends BaseActivity {
 
             @Override
             public void updateLastLocation(Location location) {
-                latitude = location.getLongitude();
-                longitude = location.getLatitude();
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
             }
 
             @SuppressLint("SetTextI18n")
             @Override
             public void updateLocation(Location location) {
-                latitude = (location.getLongitude() + 0.05);
-                longitude = (location.getLatitude() + 0.05);
-//                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
-                latLng = new LatLng(latitude, longitude);
-
-                if (latLngTemp != null) {
-                    starDrawTrackLine();
-//                    drawTrackLine(latLngTemp);
-                }
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+                starDrawTrackLine(latLng);
             }
 
             @Override
@@ -355,54 +345,47 @@ public class PositionAcquisitionActivity extends BaseActivity {
         });
     }
 
-    private void starDrawTrackLine() {
+    private void starDrawTrackLine(LatLng latLng) {
         assert latLng != null;
         distance = DistanceUtil.getDistance(latLngTemp, latLng);
 
         String stringDouble = StringUtils.getStringDistance(distance);
-        LogUtils.d("getLocation== +++" + points.size() + " ++ ++ " + stringDouble);
+//        LogUtils.d("getLocation== +++" + points.size() + " ++ ++ " + stringDouble);
         if (distance > 1) {
             latLngTemp = latLng;
-            if (distance < 500) {
-                drawTrackLine(latLngTemp);
-            }
-
+            drawTrackLine(latLng, distance);
         }
     }
 
-    private void drawTrackLine(LatLng latLngTemp) {
-        points.add(latLngTemp);//如果要运动完成后画整个轨迹，位置点都在这个集合中
+    private void drawTrackLine(LatLng latLng, double distance) {
+        int zoom = 0;
+        if (distance > 100) {
+            zoom = Constans.BAIDU_ZOOM_FOUTTEEN;
+        } else {
+            zoom = Constans.BAIDU_ZOOM_EIGHTEEN;
+        }
+        try {
+            if (mPolyline != null) {
+                mPolyline.remove();
+            }
+            points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
+            if (points.size() > 1 && baiduMap != null) {
+                //清除上一次轨迹，避免重叠绘画
+                baiduMap.clear();
 
-//        LatLng p1 = new LatLng(39.97923, 116.357428);
-//        LatLng p2 = new LatLng(39.94923, 116.397428);
-//        LatLng p3 = new LatLng(39.97923, 116.437428);
-//        LatLng p4 = new LatLng(39.96923, 116.367428);
-//        LatLng p5 = new LatLng(39.95923, 116.368428);
-//        LatLng p6 = new LatLng(39.95323, 116.362428);
-//        LatLng p7 = new LatLng(39.95423, 116.363428);
-//        LatLng p8 = new LatLng(39.95123, 116.364428);
-//        points.add(p1);
-//        points.add(p2);
-//        points.add(p3);
-//        points.add(p4);
-//        points.add(p5);
-//        points.add(p6);
-//        points.add(p7);
-//        points.add(p8);
+                //起始点图层也会被清除，重新绘画
+                MarkerOptions oStart = new MarkerOptions();
+                oStart.position(points.get(0));
+                oStart.icon(beginImage);
+                baiduMap.addOverlay(oStart);
 
-        if (points.size() > 1) {
-            //清除上一次轨迹，避免重叠绘画
-            assert baiduMap != null;
-            baiduMap.clear();
-            //起始点图层也会被清除，重新绘画
-            MarkerOptions oStart = new MarkerOptions();
-            oStart.position(points.get(0));
-            oStart.icon(beginImage);
-            baiduMap.addOverlay(oStart);
-            //将points集合中的点绘制轨迹线条图层，显示在地图上
-            OverlayOptions ooPolyline = new PolylineOptions().width(13).color(Color.RED).points(points);
-            baiduMap.addOverlay(ooPolyline);
-            LogUtils.d("getLocation== +++" + points.size() + " ++ ++ " + points.get(points.size() - 1));
+                OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
+                mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
+                BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), zoom);
+                LogUtils.d("getLocation== +++" + points.size() + " ++ ++ " + points.get(points.size() - 1));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -415,9 +398,9 @@ public class PositionAcquisitionActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void disposeSuccessProblemEvent(SuccessProblemEvent event) {
+    public void disposePositionAcquisitionEvent(PositionAcquisitionEvent event) {
         switch (event.getWhat()) {
-            case Constans.CARRY_SUCESS:
+            case Constans.MSGCOLECTION_SSUCESS:
 
                 break;
             default:
@@ -448,6 +431,8 @@ public class PositionAcquisitionActivity extends BaseActivity {
         mapview.getMap().clear();
         mapview.onDestroy();
         mapview = null;
+        beginImage.recycle();
+        endImage.recycle();
     }
 
     @OnClick({R.id.tv_carryon, R.id.tv_finish, R.id.btn_beginorstop, R.id.tv_release,
@@ -563,34 +548,8 @@ public class PositionAcquisitionActivity extends BaseActivity {
         ll_finish.setVisibility(View.VISIBLE);
         tvQuduanType.setText(type);
         selectPhoto();
-
-        showHowLongTime();
-    }
-
-    /*结束展示时间*/
-    @SuppressLint("SetTextI18n")
-    private void showHowLongTime() {
-        String time = "";
-        String hour = "";
-        String miniteSecond = "";
-        LogUtils.d("showHowLongtiME = " + timeLong + " ++ " + timeLong.length());
-        if (!TextUtils.isEmpty(timeLong)) {
-            int length = timeLong.length();
-            if (length > 5) {//小时
-                hourStr = timeLong.substring(0, 2);
-                minuteStr = timeLong.substring(3, 5);
-                secondStr = timeLong.substring(6, 8);
-                hourStr = StringUtils.getTimeNoZero(hourStr);
-                /* android:text="本次采集持续1分钟，距离0.1公里"*/
-                hour = hourStr + "小时";
-            } else {
-                minuteStr = timeLong.substring(0, 2);
-                secondStr = timeLong.substring(3, 5);
-            }
-            minuteStr = StringUtils.getTimeNoZero(minuteStr);
-            secondStr = StringUtils.getTimeNoZero(secondStr);
-            miniteSecond = minuteStr + "分" + secondStr + "秒,";
-            time = "本次采集持续" + hour + miniteSecond + "距离0.1公里";
+        if (presenter != null) {
+            String time = presenter.showHowLongTime(timeLong);
             tvTimeDistance.setText(time);
         }
     }

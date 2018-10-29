@@ -63,9 +63,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_user_name"
             android:layout_marginStart="@dimen/dp_20"
-            android:layout_toEndOf="@id/img_user_view"
-            android:text="15514565555"
             android:layout_marginTop="@dimen/dp_10"
+            android:layout_toEndOf="@id/img_user_view"
             android:textColor="@color/gray_3f"
             android:textSize="@dimen/sp_14"
             tools:ignore="HardcodedText"/>
@@ -93,6 +92,7 @@
         android:id="@+id/ui_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/ll_customer_selector"
         app:iconLeft="@drawable/ic_share_app"
         app:itemText="修改密码"/>
 
@@ -114,6 +114,7 @@
         android:id="@+id/ui_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/ll_customer_selector"
         app:iconLeft="@drawable/ic_person_us"
         app:itemText="关于软件"/>
 
@@ -128,6 +129,7 @@
         android:id="@+id/ui_setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/ll_customer_selector"
         app:iconLeft="@drawable/ic_language_choose"
         app:itemText="退出登录"/>
 

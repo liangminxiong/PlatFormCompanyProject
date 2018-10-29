@@ -49,6 +49,12 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     private boolean cheche_pwd = false;
     private boolean isRemberPwd;
 
+
+    @Override
+    protected int getContentViewResId() {
+        return R.layout.activity_login;
+    }
+
     @Subscribe
     @Override
     protected void initView(Bundle savedInstanceState) {
@@ -182,6 +188,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 }
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.HAVE_USER_DATAS, true);
                 PreferencesUtils.putString(LoginActivity.this, Constans.ORGID, loginInfo.getOrgId());
+                PreferencesUtils.putString(LoginActivity.this, Constans.TELNUM, loginInfo.getTelNum());
                 PreferencesUtils.putString(LoginActivity.this, Constans.ID, loginInfo.getId());
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.ISREG, loginInfo.isIsreg());
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
@@ -204,7 +211,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 
     private void checkVersion() {
         if (!HasCheckUpdate) {
-            mUpdateManager = new UpdateManager(LoginActivity.this, true);
+            mUpdateManager = new UpdateManager(LoginActivity.this, false);
             mUpdateManager.checkVersion();
             HasCheckUpdate = true;
         }
@@ -220,10 +227,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         }
     }
 
-    @Override
-    protected int getContentViewResId() {
-        return R.layout.activity_login;
-    }
 
     @Override
     protected void onDestroy() {

@@ -33,13 +33,15 @@ public class Constans {
     public static final int RELOGIN = 13;//重新登录
     public static final int USERERROR = 12;//用户相关错误
     public static final int UPDATAAPP_SUCCESS = 14;//获取更新信息成功
-    public static final int UPDATAAPP_ERROR = 15;//获取更新信息失败
+    public static final int BAIDU_ZOOM_FOUTTEEN = 14;
+    public static final int BAIDU_ZOOM_EIGHTEEN = 18;
     public static final String USERNAME = "user_name";//存储用户名
     public static final String USERPASSWORD = "user_pwd";//存储用户名密码
     public static final String ANDROID = "android";
     public static final String ORGID = "orgId";
     public static final String ID = "id";
     public static final String ISREG = "Isreg";
+    public static final String TELNUM = "Telnum";
     public static final int COLLECTSIZE = 41;//获取收藏size
     public static final int COLLECTSIZEERROR = 42;//获取收藏size失败
     /*
@@ -131,6 +133,12 @@ public class Constans {
      * */
     public static final int SNGNIN_SSUCESS = 90;//考勤成功
     public static final int SNGNIN_ERROR = 91;//考勤失败
+    public static final int MSGCOLECTION_SSUCESS = 92;//信息采集成功
+    public static final int MSGCOLECTION_ERROR = 93;//失败
+
+    /*修改密码 110 */
+    public static final int CHANGEPWD_SSUCESS = 110;//修改密码成功
+    public static final int CHANGEPWD_ERROR = 111;//失败
 
 
     /*导航*/

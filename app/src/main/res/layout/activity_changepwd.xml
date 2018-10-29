@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/color_f6"
+              android:orientation="vertical">
+
+    <include layout="@layout/title_bar_mvp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_8"
+        android:text="旧密码："
+        android:textSize="@dimen/sp_13"
+        tools:ignore="HardcodedText,RtlSymmetry"/>
+
+    <EditText
+        android:id="@+id/edt_oldpwd"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:background="@color/white"
+        android:hint="若包含字母，请注意区分大小写"
+        android:paddingStart="@dimen/dp_20"
+        android:textColor="@color/black_32"
+        android:textSize="@dimen/sp_13"
+        tools:ignore="HardcodedText,RtlSymmetry"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_34"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/dp_20"
+        android:text="新密码："
+        android:textSize="@dimen/sp_13"
+        tools:ignore="HardcodedText,RtlSymmetry"/>
+
+    <EditText
+        android:id="@+id/edt_newpwd"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:background="@color/white"
+        android:hint="6-8位数字或字母"
+        android:paddingStart="@dimen/dp_20"
+        android:textColor="@color/black_32"
+        android:textSize="@dimen/sp_13"
+        tools:ignore="HardcodedText,RtlSymmetry,TextFields"/>
+
+    <Button
+        android:id="@+id/btn_sure"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginEnd="@dimen/dp_20"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_30"
+        android:background="@drawable/title_stuta"
+        android:text="@string/sure"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_16"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@color/transparent"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cb_show_pwd"
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:background="@drawable/selector_pwd_visiblegone"
+            android:button="@null"/>
+
+        <TextView
+            android:id="@+id/tv_visible_gone"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/dp_3"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/sp_13"
+            tools:ignore="HardcodedText"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

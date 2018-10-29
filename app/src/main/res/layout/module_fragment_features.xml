@@ -57,7 +57,8 @@
                 <RelativeLayout
                     android:id="@+id/rl_problemupload"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ll_customer_selector">
 
                     <ImageView
                         android:id="@+id/iv_problemupload"
@@ -88,7 +89,8 @@
                 <RelativeLayout
                     android:id="@+id/rl_qualityxuncha"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ll_customer_selector">
 
                     <ImageView
                         android:id="@+id/iv_qualityxuncha"
@@ -118,7 +120,8 @@
                 <RelativeLayout
                     android:id="@+id/rl_operationweigui"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ll_customer_selector">
 
                     <ImageView
                         android:id="@+id/iv_operationweigui"
@@ -148,7 +151,8 @@
                 <RelativeLayout
                     android:id="@+id/rl_kaoqin"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ll_customer_selector">
 
                     <ImageView
                         android:id="@+id/iv_kaoqin"
@@ -201,7 +205,8 @@
                 <RelativeLayout
                     android:id="@+id/rl_msgcollection"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ll_customer_selector">
 
                     <ImageView
                         android:id="@+id/iv_msgcollection"
@@ -231,7 +236,8 @@
                 <RelativeLayout
                     android:id="@+id/rl_historytrack"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ll_customer_selector">
 
                     <ImageView
                         android:id="@+id/iv_historytrack"
@@ -261,7 +267,8 @@
                 <RelativeLayout
                     android:id="@+id/rl_operationbianji"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ll_customer_selector">
 
                     <ImageView
                         android:id="@+id/iv_operationbianji"
@@ -291,7 +298,8 @@
                 <RelativeLayout
                     android:id="@+id/rl_videojian"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ll_customer_selector">
 
                     <ImageView
                         android:id="@+id/iv_videojian"

@@ -404,7 +404,7 @@ public class MainActivity extends BaseActivity implements
 
     private void checkVersion() {
         if (!HasCheckUpdate) {
-            mUpdateManager = new UpdateManager(MainActivity.this, true);
+            mUpdateManager = new UpdateManager(MainActivity.this, false);
             mUpdateManager.checkVersion();
             HasCheckUpdate = true;
         }

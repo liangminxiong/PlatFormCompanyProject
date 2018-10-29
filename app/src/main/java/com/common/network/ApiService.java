@@ -61,6 +61,8 @@ public interface ApiService {
     String getGpsDatasByTer = "getGpsDatasByTer";
 
     String H5URL_DAKA = NetworkUrl.ANDROID_TEST_SERVICE + "zgbd_voc/jsps/html5/zykq.html?";
+    /*修改密码*/
+    String UPDATEPASSWORD = "updatepassword";
 
 
     /*登录用户*/
@@ -165,4 +167,12 @@ public interface ApiService {
             @Query("organid") String organid,
             @Query("userid") String userid,
             @Query("isreg") String isreg);
+
+    /*问题类型处理过程*/
+    @POST(MIA)
+    Observable<SubmitBean> changePwd(
+            @Query("function") String function,
+            @Query("id") String id,
+            @Query("oldpassword") String oldpassword,
+            @Query("newpassword") String newpassword);
 }

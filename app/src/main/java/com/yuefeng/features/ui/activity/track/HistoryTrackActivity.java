@@ -58,6 +58,7 @@ import com.yuefeng.features.modle.WheelPathDatasBean;
 import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
 import com.yuefeng.features.presenter.CarListPresenter;
 import com.yuefeng.utils.BdLocationUtil;
+import com.yuefeng.utils.CarStateIconUtils;
 import com.yuefeng.utils.DatasUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -384,28 +385,29 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
                 @Override
                 public void myLocation(BDLocation location) {
-                    if (location == null) {requestPermissions();
+                    if (location == null) {
+                        requestPermissions();
                         return;
                     }
 //                    if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                        latitude = location.getLatitude();
-                        longitude = location.getLongitude();
-                        address = location.getAddrStr();
-                        if (!TextUtils.isEmpty(address)) {
-                            int length = address.length();
-                            address = address.substring(2, length);
-                        }
-                        latLngTemp = new LatLng(latitude, longitude);
-                        if (isFirstLoc) {
-                            isFirstLoc = false;
-                            MapStatus ms = new MapStatus.Builder().target(latLngTemp)
-                                    .overlook(-20).zoom(14).build();
-                            ooA = new MarkerOptions().icon(location_icon).zIndex(10);
-                            ooA.position(latLngTemp);
-                            mMarker = null;
-                            mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
-                            mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
-                        }
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    address = location.getAddrStr();
+                    if (!TextUtils.isEmpty(address)) {
+                        int length = address.length();
+                        address = address.substring(2, length);
+                    }
+                    latLngTemp = new LatLng(latitude, longitude);
+                    if (isFirstLoc) {
+                        isFirstLoc = false;
+                        MapStatus ms = new MapStatus.Builder().target(latLngTemp)
+                                .overlook(-20).zoom(14).build();
+                        ooA = new MarkerOptions().icon(location_icon).zIndex(10);
+                        ooA.position(latLngTemp);
+                        mMarker = null;
+                        mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
+                        mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
+                    }
 //                    } else {
 //                        requestPermissions();
 //                    }
@@ -544,7 +546,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 terminal = allNodes.get(i).getTerminalNO();
             }
         }
-        getSelectCarInfos(carNumber, terminal);
+        if (!TextUtils.isEmpty(terminal)) {
+            getSelectCarInfos(carNumber, terminal);
+        }
     }
 
 
@@ -596,19 +600,20 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             double Longitude = trackData.getLo();
             LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(Latitude, Longitude));// 转经纬度;
             double ang = mTrackDatas.get(index).getAng();
+            imageInt = CarStateIconUtils.getImageInt("2", ang);
 //        p1 = new LatLng(23.2313123, 113.43214);
             if (mMarker != null) {
                 mMarker.remove();
             }
             BitmapDescriptor map_location = BitmapDescriptorFactory.fromResource(imageInt);
 
-            if (index == 0) {
+//            if (index == 0) {
                 ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
                 BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
-            } else {
-                ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
-                BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
-            }
+//            } else {
+//                ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
+//                BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
+//            }
             trackDataTn = trackData.getTn();
             trackDataTn = TextUtils.isEmpty(trackDataTn) ? String.valueOf(index) : trackDataTn;
             mMarker = (Marker) (mBaiduMap.addOverlay(ooA));

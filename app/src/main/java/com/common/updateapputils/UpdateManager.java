@@ -70,8 +70,8 @@ public class UpdateManager implements View.OnClickListener {
                     if (Integer.valueOf(version.VerCode) > NewVersion && NewVersion > 0) {
                         ShowUpdateDialog();
                     } else {
-                        if (!isLogin) {
-                            ToastUtils.showToast(mContext.getString(R.string.is_newest_version));
+                        if (isLogin) {
+                            ToastUtils.success(mContext.getString(R.string.is_newest_version));
                         }
                     }
                     break;

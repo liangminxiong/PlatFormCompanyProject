@@ -170,6 +170,8 @@
         <activity android:name="com.yuefeng.features.ui.activity.sngnin.SupervisorSngnInActivity"/>
         <!--关于软件-->
         <activity android:name="com.yuefeng.usercenter.ui.activity.AboutAppInfosActivity"/>
+        <!--修改密码-->
+        <activity android:name="com.yuefeng.usercenter.ui.activity.ChangePassWordActivity"/>
 
         <!-- 监听网络变化的广播 -->
         <receiver
@@ -221,7 +223,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
+            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
 
         <service
             android:name="com.baidu.location.f"

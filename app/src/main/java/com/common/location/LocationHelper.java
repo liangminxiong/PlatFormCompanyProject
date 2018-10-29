@@ -78,7 +78,6 @@ public class LocationHelper implements LocationListener {
         if (mListener != null) {
             if (count % multipleNumber == 0) {
                 mListener.updateLocation(location);
-                Log.d(TAG, "onLocationChanged: " + count);
             }
             count++;
             if (count > 65530) {

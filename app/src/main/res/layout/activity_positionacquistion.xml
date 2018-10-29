@@ -268,7 +268,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg03_white"
+                android:background="@drawable/shape_cricle_bg_gray"
                 android:orientation="vertical">
 
 

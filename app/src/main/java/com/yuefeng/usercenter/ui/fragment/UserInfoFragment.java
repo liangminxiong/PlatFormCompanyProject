@@ -1,7 +1,6 @@
 package com.yuefeng.usercenter.ui.fragment;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -22,7 +21,6 @@ import com.common.event.ReloginEvent;
 import com.common.utils.AppManager;
 import com.common.utils.Constans;
 import com.common.utils.DataCleanManager;
-import com.common.utils.FileUtils;
 import com.common.utils.ImageUtils;
 import com.common.utils.PermissionUtil;
 import com.common.utils.PreferencesUtils;
@@ -32,6 +30,7 @@ import com.yuefeng.commondemo.R;
 import com.yuefeng.login_splash.ui.LoginActivity;
 import com.yuefeng.ui.MyApplication;
 import com.yuefeng.usercenter.ui.activity.AboutAppInfosActivity;
+import com.yuefeng.usercenter.ui.activity.ChangePassWordActivity;
 import com.yuefeng.usercenter.ui.view.DeleteCacheDialog;
 import com.yuefeng.usercenter.ui.view.UserInfoItemView;
 
@@ -63,6 +62,8 @@ public class UserInfoFragment extends BaseMvpFragment {
     ImageView userView;
     @BindView(R.id.tv_user_name)
     TextView userName;
+    @BindView(R.id.tv_user_phone)
+    TextView tvUserPhone;
     @BindView(R.id.tv_tab_name)
     TextView tv_tab_name;
     @BindView(R.id.ui_share)
@@ -96,6 +97,14 @@ public class UserInfoFragment extends BaseMvpFragment {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_app);
         userView.setImageBitmap(bitmap);
         tv_tab_name.setText(my_name);
+        initUI();
+    }
+
+    private void initUI() {
+        String telNum = PreferencesUtils.getString(getContext(), Constans.TELNUM);
+        if (!TextUtils.isEmpty(telNum)) {
+            tvUserPhone.setText(telNum);
+        }
     }
 
     @Override
@@ -157,7 +166,7 @@ public class UserInfoFragment extends BaseMvpFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.ui_share://修改密码
-                showSuccessToast("待开发");
+                startActivity(new Intent(getActivity(), ChangePassWordActivity.class));
                 break;
             case R.id.ui_clean:
                 DeleteCacheDialog deleteCacheDialog = new DeleteCacheDialog(getContext());
@@ -178,6 +187,7 @@ public class UserInfoFragment extends BaseMvpFragment {
                 break;
             case R.id.ui_author://关于软件
                 startActivity(new Intent(getActivity(), AboutAppInfosActivity.class));
+
                 break;
             case R.id.ui_setting://退出登录
                 outOfLogin();
@@ -338,104 +348,6 @@ public class UserInfoFragment extends BaseMvpFragment {
         }
     }
 
-    /**
-     * 拍照之后，启动裁剪
-     *
-     * @param camerapath 路径
-     * @return
-     */
-    public Uri cutForCamera(Activity context, String camerapath, String outputPath, String authority, int requestCode, int width, int heigh) {
-        try {
-            //设置裁剪之后的图片路径文件
-            File cutfile = new File(outputPath);
-            //初始化 uri
-            Uri imageUri = null; //返回来的 uri
-            Uri outputUri = null; //真实的 uri
-            Intent intent = new Intent("com.android.camera.action.CROP");
-            //拍照留下的图片
-            File camerafile = new File(camerapath);
-//            if (Build.VERSION.SDK_INT >= 24) {
-//                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//                imageUri = FileProvider.getUriForFile(context,
-//                        authority,
-//                        camerafile);
-//            } else {
-            imageUri = Uri.fromFile(camerafile);
-//            }
-            outputUri = Uri.fromFile(cutfile);
-            // crop为true是设置在开启的intent中设置显示的view可以剪裁
-            intent.putExtra("crop", true);
-            // aspectX,aspectY 是宽高的比例，这里设置正方形
-            intent.putExtra("aspectX", 1);
-            intent.putExtra("aspectY", 1);
-            //设置要裁剪的宽高
-            intent.putExtra("outputX", width);
-            intent.putExtra("outputY", heigh);
-            intent.putExtra("scale", true);
-            //如果图片过大，会导致oom，这里设置为false
-            intent.putExtra("return-data", false);
-            if (imageUri != null) {
-                intent.setDataAndType(imageUri, "image/*");
-            }
-            if (outputUri != null) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
-            }
-            intent.putExtra("noFaceDetection", true);
-            //压缩图片
-            intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-            startActivityForResult(intent, requestCode);
-            return outputUri;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * 图片裁剪
-     *
-     * @param uri
-     * @return
-     */
-    public Uri cutForPhoto(Activity context, Uri uri, String path, int requestCode, int width, int heigh) {
-        try {
-            //直接裁剪
-            Intent intent = new Intent("com.android.camera.action.CROP");
-            //设置裁剪之后的图片路径文件
-            File cutfile = new File(path + "/" + System.currentTimeMillis() + ".jpg"); //随便命名一个
-            FileUtils.creatFile(cutfile);
-            //初始化 uri
-            Uri imageUri = uri; //返回来的 uri
-            Uri outputUri = null; //真实的 uri
-            outputUri = Uri.fromFile(cutfile);
-            // crop为true是设置在开启的intent中设置显示的view可以剪裁
-            intent.putExtra("crop", true);
-            // aspectX,aspectY 是宽高的比例，这里设置正方形
-            intent.putExtra("aspectX", 1);
-            intent.putExtra("aspectY", 1);
-            //设置要裁剪的宽高
-            intent.putExtra("outputX", width);
-            intent.putExtra("outputY", heigh);
-            intent.putExtra("scale", true);
-            //如果图片过大，会导致oom，这里设置为false
-            intent.putExtra("return-data", false);
-            if (imageUri != null) {
-                intent.setDataAndType(imageUri, "image/*");
-            }
-            if (outputUri != null) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
-            }
-            intent.putExtra("noFaceDetection", true);
-            //压缩图片
-            intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-            startActivityForResult(intent, requestCode);
-            return outputUri;
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     @Override
     public void onResume() {
