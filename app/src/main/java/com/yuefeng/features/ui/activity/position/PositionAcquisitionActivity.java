@@ -45,7 +45,6 @@ import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
 import com.common.utils.LocationGpsUtils;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
@@ -187,6 +186,11 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     private String typeWhat;
     private PositionAcquisitionPresenter presenter;
 
+    /*是否采集*/
+    private boolean isPositionAcquisition = false;
+    /*选择网格还是路段*/
+    private int typePosition = 0;
+
     @Override
     protected int getContentViewResId() {
         return R.layout.activity_positionacquistion;
@@ -281,6 +285,10 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 address = location.getAddrStr();
+                if (!TextUtils.isEmpty(address)) {
+                    int length = address.length();
+                    address = address.substring(2, length);
+                }
                 firstLocation(latitude, longitude, address);
 //                } else {
 //                    requestPermissions();
@@ -346,12 +354,15 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     }
 
     private void starDrawTrackLine(LatLng latLng) {
-        assert latLng != null;
+        if (latLng == null) {
+            return;
+        }
         distance = DistanceUtil.getDistance(latLngTemp, latLng);
+        if (distance < 1000) {
 
-        String stringDouble = StringUtils.getStringDistance(distance);
+
+            String stringDouble = StringUtils.getStringDistance(distance);
 //        LogUtils.d("getLocation== +++" + points.size() + " ++ ++ " + stringDouble);
-        if (distance > 1) {
             latLngTemp = latLng;
             drawTrackLine(latLng, distance);
         }
@@ -368,7 +379,11 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             if (mPolyline != null) {
                 mPolyline.remove();
             }
-            points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
+            if (isPositionAcquisition) {
+                points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
+            } else {
+                return;
+            }
             if (points.size() > 1 && baiduMap != null) {
                 //清除上一次轨迹，避免重叠绘画
                 baiduMap.clear();
@@ -382,7 +397,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
                 mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
                 BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), zoom);
-                LogUtils.d("getLocation== +++" + points.size() + " ++ ++ " + points.get(points.size() - 1));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -443,7 +457,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 tv_carryon();
                 break;
             case R.id.tv_finish://结束
-                tv_finish();
+                tv_finish("1");
                 break;
             case R.id.btn_beginorstop:
                 beginOrStop();
@@ -527,6 +541,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         if (!TextUtils.isEmpty(timeLong)) {
             tvTimer.setText(timeLong);
         }
+        isPositionAcquisition = false;
         initCtStop();
     }
 
@@ -537,7 +552,8 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     }
 
     /*结束*/
-    private void tv_finish() {
+    @SuppressLint("SetTextI18n")
+    private void tv_finish(String typeDistance) {
         ll_timer.setVisibility(View.INVISIBLE);
         if (!TextUtils.isEmpty(infrastructureStr)) {
             type = infrastructureStr;
@@ -548,9 +564,20 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         ll_finish.setVisibility(View.VISIBLE);
         tvQuduanType.setText(type);
         selectPhoto();
-        if (presenter != null) {
-            String time = presenter.showHowLongTime(timeLong);
-            tvTimeDistance.setText(time);
+        if (typeDistance.equals("2")) {
+            tvTimeDistance.setText("本次采集地址:" + address);
+        } else {
+            if (presenter != null) {
+                String time = presenter.showHowLongTime(timeLong);
+                tvTimeDistance.setText(time);
+            }
+            //起始点图层也会被清除，重新绘画
+            if (points.size() > 0 && baiduMap != null) {
+                MarkerOptions oStart = new MarkerOptions();
+                oStart.position(points.get(points.size() - 1));
+                oStart.icon(endImage);
+                baiduMap.addOverlay(oStart);
+            }
         }
     }
 
@@ -558,6 +585,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     private void tv_carryon() {
         ll_timer.setVisibility(View.INVISIBLE);
         rl_select_start.setVisibility(View.VISIBLE);
+        isPositionAcquisition = true;
         initCtStart();
     }
 
@@ -569,10 +597,16 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             showSuccessToast("请选择一种标注类型");
             return;
         }
-        initCtStart();
-        rlSelectType.setVisibility(View.INVISIBLE);
-        btnBeginorstop.setVisibility(View.INVISIBLE);
-        rl_select_start.setVisibility(View.VISIBLE);
+        if (!TextUtils.isEmpty(workAreaStr)) {//选择作业区段
+            isPositionAcquisition = true;
+            initCtStart();
+            rlSelectType.setVisibility(View.INVISIBLE);
+            btnBeginorstop.setVisibility(View.INVISIBLE);
+            rl_select_start.setVisibility(View.VISIBLE);
+        } else {//选择基础设施
+            tv_finish("2");
+            isPositionAcquisition = false;
+        }
     }
 
     /*计时器start*/
@@ -705,7 +739,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                     break;
             }
         }
-
     }
 
     /*展示图片*/

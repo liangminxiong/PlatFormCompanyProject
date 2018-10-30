@@ -279,6 +279,7 @@
                     android:layout_marginTop="@dimen/dp_10"
                     android:background="@color/transition"
                     android:gravity="center"
+                    android:visibility="visible"
                     android:textColor="@color/red_des_msg"
                     android:textSize="@dimen/sp_14"/>
 
@@ -328,6 +329,7 @@
                         android:layout_marginEnd="@dimen/dp_40"
                         android:background="@drawable/shape_gray_line"
                         android:gravity="center_vertical"
+                        android:paddingStart="@dimen/dp_5"
                         android:hint="请填写名称"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_14"

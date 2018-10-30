@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import io.reactivex.functions.Consumer;
 
 /**
+ * 引导界面
  */
 
 public class SplashActivity extends BaseActivity {
@@ -52,6 +53,8 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void initCountDown() {
+        try {
+
         boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
         if (isHaveDatas) {
             String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
@@ -64,6 +67,9 @@ public class SplashActivity extends BaseActivity {
             startActivity(new Intent(SplashActivity.this, LoginActivity.class));
         }
         finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressLint("CheckResult")

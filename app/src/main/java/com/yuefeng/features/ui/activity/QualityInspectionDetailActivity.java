@@ -361,7 +361,7 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         getEventDetailInfos(problemid);
         showProblemState("3");
         type = "3";
-        ivCommon.setImageResource(R.drawable.finish_023x);
+        ivCommon.setImageResource(R.drawable.xq_finish02);
         llItemTwo.setVisibility(View.GONE);
         llItemOne.setVisibility(View.VISIBLE);
     }
@@ -402,7 +402,7 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
                     EventBus.getDefault().postSticky(new AllProblemEvent(Constans.CARRY_SUCESS, ""));
                     EventBus.getDefault().postSticky(new CommonEvent(Constans.COUNT_AGAIN_SUCESS, ""));
                     llItemOne.setVisibility(View.VISIBLE);
-                    ivCommon.setImageResource(R.drawable.close_023x);
+                    ivCommon.setImageResource(R.drawable.xq_close02);
                     showProblemState("3");
                     type = "3";
                     getEventDetailInfos(problemid);

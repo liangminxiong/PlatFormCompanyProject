@@ -170,15 +170,15 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
         if (TextUtils.isEmpty(address)) {
             address = "暂无地址!";
         }
-
-        if (lenght > 0 || adapter != null) {
-            if (count <= (lenght - 1)) {
-                list.get(count).setAddress(address);
-                adapter.notifyDataSetChanged();
-                count++;
-                benginGetAddress(count, false);
+        if (!address.contains("广东省")) {
+            if (lenght > 0 || adapter != null) {
+                if (count <= (lenght - 1)) {
+                    list.get(count).setAddress(address);
+                    adapter.notifyDataSetChanged();
+                    count++;
+                    benginGetAddress(count, false);
+                }
             }
-
         }
     }
 

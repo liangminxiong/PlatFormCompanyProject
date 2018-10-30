@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -57,6 +58,7 @@ public class TreesListsPopupWindow extends PopupWindow {
     private String terminal;
     private List<Node> carDatas;
     private String name;
+    private ImageView iv_search;
 
     public TreesListsPopupWindow(Context context, List<Node> carDatas) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
@@ -87,6 +89,7 @@ public class TreesListsPopupWindow extends PopupWindow {
         RelativeLayout iv_back = (RelativeLayout) rootView.findViewById(R.id.iv_back);
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         tv_search_txt = (TextInputEditText) rootView.findViewById(R.id.tv_search_txt);
+        iv_search = (ImageView) rootView.findViewById(R.id.iv_search);
         tv_setting = (TextView) rootView.findViewById(R.id.tv_title_setting);
         recyclerview_after.setLayoutManager(new LinearLayoutManager(mContext));
         initRecycleView();
@@ -110,7 +113,7 @@ public class TreesListsPopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 if (mOnItemClickListener != null)
-                    mOnItemClickListener.onSure();
+                    mOnItemClickListener.onSure(name, terminal);
             }
         });
 
@@ -128,9 +131,11 @@ public class TreesListsPopupWindow extends PopupWindow {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count > 0) {
                     recyclerview.setVisibility(View.GONE);
+                    iv_search.setVisibility(View.GONE);
                     recyclerview_after.setVisibility(View.VISIBLE);
                 } else {
                     recyclerview.setVisibility(View.VISIBLE);
+                    iv_search.setVisibility(View.VISIBLE);
                     recyclerview_after.setVisibility(View.GONE);
                 }
                 key = s.toString();
@@ -151,16 +156,28 @@ public class TreesListsPopupWindow extends PopupWindow {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
                 name = listData.get(position).getName();
                 terminal = listData.get(position).getTerminal();
+
                 if (!TextUtils.isEmpty(terminal)) {
                     if (isShowing())
                         dismiss();
                     if (mOnItemClickListener != null)
-                        mOnItemClickListener.onSelectCar(name,terminal);
+                        mOnItemClickListener.onSelectCar(name, terminal);
                 }
             }
         });
+        adapterSelect.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                name = listData.get(position).getName();
+                terminal = listData.get(position).getTerminal();
+//                if (mOnItemClickListener != null)
+//                    mOnItemClickListener.onSure(name,terminal);
+            }
+        });
+
     }
 
 
@@ -217,9 +234,9 @@ public class TreesListsPopupWindow extends PopupWindow {
 
 //        void onSearch(String key);
 
-        void onSure();
+        void onSure(String name, String terminal);
 
-        void onSelectCar(String carNumber,String terminal);
+        void onSelectCar(String carNumber, String terminal);
     }
 
     /**

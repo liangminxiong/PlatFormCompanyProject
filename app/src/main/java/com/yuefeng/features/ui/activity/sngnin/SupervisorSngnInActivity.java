@@ -330,8 +330,12 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
 
     /*展示数据*/
     private void showCarlistDatas(List<CarListInfosMsgBean> organs) {
+        try {
         nodeList.clear();
         nodeList = DatasUtils.ReturnTreesDatas(organs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -375,6 +379,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
 
     /*提交成功*/
     private void showSubmitSucessDialog() {
+        try{
         SubmitDialog submitDialog = new SubmitDialog(this);
         submitDialog.setTextContent("您已打卡成功!\n是否退出该界面");
         submitDialog.setDeletaCacheListener(new SubmitDialog.DeletaCacheListener() {
@@ -389,10 +394,15 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
             }
         });
         submitDialog.show();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
     /*人员列表*/
     private void initTreeListPopupView() {
+        try {
+
         popupWindowTree = new PersonalListPopupWindow(this, nodeList);
         popupWindowTree.setTitleText("选择人员");
         popupWindowTree.setSettingText("提交");
@@ -420,6 +430,9 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
         });
 
         popupWindowTree.showAtLocation(llParent, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -438,6 +451,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     /*展示图片*/
     @SuppressLint("SetTextI18n")
     private void showPhotos(Intent data) {
+        try {
         // 图片选择结果回调
         selectList = PictureSelector.obtainMultipleResult(data);
         // 例如 LocalMedia 里面返回三种path
@@ -469,6 +483,9 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
                 dismissLoadingDialog();
             }
         });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -222,6 +222,7 @@ public class FeaturesFragment extends BaseMvpFragment {
         intent.setClass(Objects.requireNonNull(getActivity()), HistoryTrackActivity.class);
         intent.putExtra("terminalNO", "");
         intent.putExtra("TYPE", "2");
+        intent.putExtra("carNum", "2");
         startActivity(intent);
     }
 

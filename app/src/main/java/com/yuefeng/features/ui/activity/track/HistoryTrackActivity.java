@@ -115,7 +115,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     @BindDrawable(R.drawable.list)
     Drawable list_tree;
 
-    private String terminal;
+    private String terminal = "";
 
     private boolean IsPlaying = false;
     private Thread playThread = null;
@@ -135,7 +135,6 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     // 标记是显示Checkbox还是隐藏
     private boolean isHide = false;
     public boolean isFirstLoc = true;
-    private BitmapDescriptor location_icon = BitmapDescriptorFactory.fromResource(R.drawable.worker);
     private Marker mMarker;
     private String startTime;
     private boolean startEndTime;
@@ -158,6 +157,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private String carNumber;
     private MarkerOptions ooA;
     private String trackDataTn;
+    /*选中的车集合*/
+    private List<String> selectList = new ArrayList<>();
 
 
     @Override
@@ -172,13 +173,12 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             EventBus.getDefault().register(this);
         }
         presenter = new CarListPresenter(this, this);
-
+        initTitle();
         initUI();
 
         getTeNum();
         mTrackDatas.clear();
         latLngTemp = null;
-        terminal = "";
 
     }
 
@@ -187,22 +187,29 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
         assert bundle != null;
         terminal = (String) bundle.get("terminalNO");
         type = (String) bundle.get("TYPE");
+        String carNum = (String) bundle.get("carNum");
         assert type != null;
-        LogUtils.d(terminal + "terminal111");
-        assert terminal != null;
+//        assert terminal != null;
+        LogUtils.d(terminal + "+++ terminal111 ++ " + type);
         if (type.equals("worker")) {
-            tvTitle.setText("人员轨迹");
+            if (!TextUtils.isEmpty(carNum)) {
+                tvTitle.setText(carNum);
+            }
             imageInt = R.drawable.worker;
             getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
         } else if (type.equals("vehicle")) {
-            tvTitle.setText("车辆轨迹");
-            imageInt = R.drawable.vehicle;
+            if (!TextUtils.isEmpty(carNum)) {
+                tvTitle.setText(carNum);
+            }
+            imageInt = R.drawable.guiji_ljc_01;
             getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
         } else {
             getCarList();
+            imageInt = R.drawable.guiji_ljc_01;
             tvTitle.setText("历史轨迹");
             tvTitleSetting.setBackground(list_tree);
         }
+        requestPermissions(imageInt);
     }
 
     /*车辆列表*/
@@ -215,13 +222,12 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     }
 
     private void getTeNum() {
-        initTitle();
         mSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener());
         mHandler = new MyHandler();
     }
 
     private void initTitle() {
-        starttime = TimeUtils.getStartTimeofDay();
+        starttime = TimeUtils.getThreeHoursTime();
         endtime = TimeUtils.getCurrentTime();
         tvStartTime.setText(starttime);
         tvEndTime.setText(endtime);
@@ -229,7 +235,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
         tvEndTime.setSelected(false);
     }
 
-
+    /*获取轨迹*/
     private void getTrackData(String terminal, String startTime, String endTime) {
 
 //        boolean twoDayOffset2 = TimeUtils.getTwoDayOffset2(startTime, endTime);
@@ -273,6 +279,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 } else {
                     showSuccessToast("旗下无车辆");
                 }
+                break;
+            case Constans.TRACK_ERROR:
+                showSuccessToast("访问失败!");
                 break;
             default:
 //                showSuccessToast("获取数据失败，请重试");
@@ -336,7 +345,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             if (lls.size() > 1) {
                 OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.BLUE).points(lls);
                 mPolyline = (Polyline) mBaiduMap.addOverlay(ooPolyline);
-                BdLocationUtil.MoveMapToCenter(mBaiduMap, lls.get(lls.size() - 1), 14);
+                BdLocationUtil.MoveMapToCenter(mBaiduMap, lls.get(lls.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -345,14 +354,16 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
     @Override
     protected void initData() {
-        requestPermissions();
+
     }
 
     /**
      * 百度地图定位的请求方法 拿到国、省、市、区、地址
+     *
+     * @param imageInt
      */
     @SuppressLint("CheckResult")
-    private void requestPermissions() {
+    private void requestPermissions(final int imageInt) {
         RxPermissions rxPermission = new RxPermissions(this);
         rxPermission.request(
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -363,13 +374,13 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                         if (!granted) {
                             showSuccessToast("App未能获取相关权限，部分功能可能不能正常使用.");
                         }
-                        getLocation();
+                        getLocation(imageInt);
                     }
                 });
     }
 
     /*定位*/
-    private void getLocation() {
+    private void getLocation(final int imageInt) {
         try {
             mBaiduMap = mapview.getMap();
             // 地图初始化
@@ -386,7 +397,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 @Override
                 public void myLocation(BDLocation location) {
                     if (location == null) {
-                        requestPermissions();
+                        requestPermissions(imageInt);
                         return;
                     }
 //                    if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
@@ -402,7 +413,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                         isFirstLoc = false;
                         MapStatus ms = new MapStatus.Builder().target(latLngTemp)
                                 .overlook(-20).zoom(14).build();
-                        ooA = new MarkerOptions().icon(location_icon).zIndex(10);
+                        ooA = new MarkerOptions();
+                        ooA.icon(BitmapDescriptorFactory.fromResource(imageInt));
+                        ooA.zIndex(10);
                         ooA.position(latLngTemp);
                         mMarker = null;
                         mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
@@ -482,6 +495,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     /*车辆列表*/
     private void initPopupView() {
         try {
+            selectList.clear();
             popupWindow = new TreesListsPopupWindow(this, datas);
             popupWindow.setTitleText("车辆列表");
             popupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
@@ -494,9 +508,10 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 }
 
                 @Override
-                public void onSure() {
-                    showSelectItemDatas();
+                public void onSure(String name, String terminal) {
                     popupWindow.dismiss();
+                    getSelectCarInfos(name, terminal);
+                    showSelectItemDatas();
                 }
 
                 @Override
@@ -544,6 +559,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             if (allNodes.get(i).isChecked()) {
                 carNumber = allNodes.get(i).getName();
                 terminal = allNodes.get(i).getTerminalNO();
+//                if (!TextUtils.isEmpty(terminal)) {
+//                    selectList.add(terminal);
+//                }
             }
         }
         if (!TextUtils.isEmpty(terminal)) {
@@ -575,7 +593,6 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             ivShowtime.setVisibility(View.VISIBLE);
             getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
         } else {
-
             if (type.equals("2")) {
                 showSuccessToast("请先选车");
             }
@@ -600,7 +617,11 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             double Longitude = trackData.getLo();
             LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(Latitude, Longitude));// 转经纬度;
             double ang = mTrackDatas.get(index).getAng();
-            imageInt = CarStateIconUtils.getImageInt("2", ang);
+            if (type.equals("worker")) {
+                imageInt = R.drawable.worker;
+            }else {
+                imageInt = CarStateIconUtils.getImageInt("2", ang);
+            }
 //        p1 = new LatLng(23.2313123, 113.43214);
             if (mMarker != null) {
                 mMarker.remove();
@@ -608,8 +629,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             BitmapDescriptor map_location = BitmapDescriptorFactory.fromResource(imageInt);
 
 //            if (index == 0) {
-                ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
-                BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
+            ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
+            BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
 //            } else {
 //                ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
 //                BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
@@ -665,7 +686,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 endtime = TimeUtils.getTimeHourMin(date);
                 Log.d("tag", "onTimeSelect  aa: " + endtime);
                 if (!TextUtils.isEmpty(tvStartTime.getText().toString().trim())) {
-                    startEndTime = TimeUtils.getBoolenStartEndTime(startTime, endtime);
+                    startEndTime = TimeUtils.getBoolenStartEndTime(tvStartTime.getText().toString().trim(),
+                            tvEndTime.getText().toString().trim());
                     if (startEndTime) {
                         showSuccessToast("请重新选择时间");
                         return;

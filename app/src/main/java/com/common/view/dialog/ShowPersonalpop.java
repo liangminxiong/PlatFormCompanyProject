@@ -2,6 +2,7 @@ package com.common.view.dialog;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +73,16 @@ public class ShowPersonalpop extends PopupWindow {
                 }
             }
         });
+        tv_item_phonename.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                dismiss();
+                if (takePhotoTouch != null) {
+                    takePhotoTouch.takePhone();
+
+                }
+            }
+        });
         tv_item_native.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +110,10 @@ public class ShowPersonalpop extends PopupWindow {
             tv_item_video.setVisibility(View.VISIBLE);
         }
         tv_item_name.setText(name);
+        phone = TextUtils.isEmpty(phone) ? "" : phone;
+        if (phone.equals("null")) {
+            phone = "无";
+        }
         tv_item_chiwei.setText(position);
         switch (position) {
             case "在线":
@@ -135,5 +150,6 @@ public class ShowPersonalpop extends PopupWindow {
 
         void takeNativ();//导航
 
+        void takePhone();//打电话
     }
 }

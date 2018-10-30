@@ -1,9 +1,11 @@
 package com.common.utils;
 
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -49,5 +51,24 @@ public class ViewUtils {
         params.height = height;
         params.width = width;
         editText.setLayoutParams(params);
+    }
+
+    /*PopupWindow是否显示*/
+    public static boolean isPopuwindowShowing(PopupWindow popupwindow) {
+        if (popupwindow != null) {
+            return popupwindow.isShowing();
+        }
+        return false;
+    }
+
+    /*LinearLayout 显示隐藏*/
+    public static void setLlVisible(LinearLayout linearLayout, boolean visible) {
+        int type = 0;
+        if (visible) {
+            type = View.INVISIBLE;
+        } else {
+            type = View.VISIBLE;
+        }
+        linearLayout.setVisibility(type);
     }
 }

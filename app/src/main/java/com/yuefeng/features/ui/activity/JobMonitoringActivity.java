@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -46,6 +48,7 @@ import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
+import com.common.utils.ViewUtils;
 import com.common.view.dialog.ShowPersonalpop;
 import com.common.view.dialog.ShowProblempop;
 import com.common.view.dialog.SucessCacheSureDialog;
@@ -105,6 +108,8 @@ public class JobMonitoringActivity extends BaseActivity implements
     LinearLayout ll_tab;
     @BindView(R.id.ll_root)
     LinearLayoutCompat ll_root;
+    @BindView(R.id.ll_tab_visible)
+    LinearLayout ll_tab_visible;
     @BindView(R.id.mapview)
     TextureMapView mapview;
     @BindView(R.id.iv_isvisibility)
@@ -183,7 +188,6 @@ public class JobMonitoringActivity extends BaseActivity implements
         presenter = new JobMonitoringPresenter(this, this);
 
 //        View view = findViewById(R.id.space);
-//
 //        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         tv_title.setText("定位信息");
@@ -232,7 +236,10 @@ public class JobMonitoringActivity extends BaseActivity implements
         viewPager.setOffscreenPageLimit(tabItemInfos.size());
         tabLayout.setupWithViewPager(viewPager);
         isFirstError = false;
+        initBaiduMap();
         requestPermissions();
+
+        isFirstLoc = false;
     }
 
     private void initTabViewCount(List<String> stringList) {
@@ -287,6 +294,41 @@ public class JobMonitoringActivity extends BaseActivity implements
     }
 
     private void getLocation() {
+
+        BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
+            @Override
+            public void myLocation(BDLocation location) {
+                if (location == null) {
+                    requestPermissions();
+                    return;
+                }
+//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                beginAddress = location.getAddrStr();
+                if (!TextUtils.isEmpty(beginAddress)) {
+                    int length = beginAddress.length();
+                    beginAddress = beginAddress.substring(2, length);
+                }
+                mlatLng = new LatLng(latitude, longitude);
+                if (isFirstLoc) {
+                    isFirstLoc = false;
+                    MapStatus ms = new MapStatus.Builder().target(mlatLng)
+                            .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
+                    ooA = new MarkerOptions().icon(worker).zIndex(10);
+                    ooA.position(mlatLng);
+                    mMarker = null;
+                    mMarker = (Marker) (baiduMap.addOverlay(ooA));
+                    baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
+                }
+//                } else {
+//                    requestPermissions();
+//                }
+            }
+        }, Constans.BDLOCATION_TIME);
+    }
+
+    private void initBaiduMap() {
         baiduMap = mapview.getMap();
         // 地图初始化
         mapview.showZoomControls(false);// 缩放控件是否显示
@@ -297,37 +339,6 @@ public class JobMonitoringActivity extends BaseActivity implements
         // 定位初始化
 
         baiduMap.showMapPoi(true);
-
-        BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
-            @Override
-            public void myLocation(BDLocation location) {
-                if (location == null) {requestPermissions();
-                    return;
-                }
-//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    beginAddress = location.getAddrStr();
-                    if (!TextUtils.isEmpty(beginAddress)) {
-                        int length = beginAddress.length();
-                        beginAddress = beginAddress.substring(2, length);
-                    }
-                    mlatLng = new LatLng(latitude, longitude);
-                    if (isFirstLoc) {
-                        isFirstLoc = false;
-                        MapStatus ms = new MapStatus.Builder().target(mlatLng)
-                                .overlook(-20).zoom(14).build();
-                        ooA = new MarkerOptions().icon(worker).zIndex(10);
-                        ooA.position(mlatLng);
-                        mMarker = null;
-                        mMarker = (Marker) (baiduMap.addOverlay(ooA));
-                        baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
-                    }
-//                } else {
-//                    requestPermissions();
-//                }
-            }
-        }, Constans.BDLOCATION_TIME);
     }
 
 
@@ -462,7 +473,8 @@ public class JobMonitoringActivity extends BaseActivity implements
                         if ((Double.valueOf(longitude) < 140.0) || (Double.valueOf(longitude) > 65.0)
                                 || (Double.valueOf(latitude) < 56.0) || (Double.valueOf(latitude) > 12.0)) {
                             isFirstLoc = false;
-                            BdLocationUtil.MoveMapToCenter(baiduMap, BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude))), 16);
+                            BdLocationUtil.MoveMapToCenter(baiduMap, BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude),
+                                    Double.valueOf(longitude))), Constans.BAIDU_ZOOM_EIGHTEEN);
                         }
                     }
                 }
@@ -518,7 +530,8 @@ public class JobMonitoringActivity extends BaseActivity implements
                         if ((Double.valueOf(longitude) < 140.0) || (Double.valueOf(longitude) > 65.0)
                                 || (Double.valueOf(latitude) < 56.0) || (Double.valueOf(latitude) > 12.0)) {
                             isFirstLoc = false;
-                            BdLocationUtil.MoveMapToCenter(baiduMap, BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude))), 16);
+                            BdLocationUtil.MoveMapToCenter(baiduMap, BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude),
+                                    Double.valueOf(longitude))), Constans.BAIDU_ZOOM_EIGHTEEN);
                         }
                     }
                 }
@@ -573,7 +586,8 @@ public class JobMonitoringActivity extends BaseActivity implements
                                 || (Double.valueOf(latitude) < 56.0) || (Double.valueOf(latitude) > 12.0)) {
                             isFirstLoc = false;
                             isFirstLoc = false;
-                            BdLocationUtil.MoveMapToCenter(baiduMap, new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)), 16);
+                            BdLocationUtil.MoveMapToCenter(baiduMap, new LatLng(Double.valueOf(latitude),
+                                    Double.valueOf(longitude)), Constans.BAIDU_ZOOM_EIGHTEEN);
                         }
                     }
                 }
@@ -645,6 +659,15 @@ public class JobMonitoringActivity extends BaseActivity implements
         if (mLocationUtils != null) {
             mLocationUtils.onDestory();
         }
+        if (baiduMap != null) {
+            baiduMap.clear();
+        }
+        if (mapview != null) {
+            mapview.onDestroy();
+        }
+        vehicle.recycle();
+        worker.recycle();
+
     }
 
 
@@ -751,6 +774,13 @@ public class JobMonitoringActivity extends BaseActivity implements
         ShowProblempop phototpop = new ShowProblempop(JobMonitoringActivity.this);
         phototpop.setTextContent(name, state, colorInt, des, uploadpeoplename, time, address);
         phototpop.showTakePop(ll_root);
+        phototpop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                ViewUtils.setLlVisible(ll_tab_visible, false);
+            }
+        });
+        ViewUtils.setLlVisible(ll_tab_visible, ViewUtils.isPopuwindowShowing(phototpop));
     }
 
     /*弹底车辆部框*/
@@ -793,6 +823,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         endAddress = address;
         distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
         terminalNO = vehicleList.getTerminalNO();
+        final String registrationNO = vehicleList.getRegistrationNO();
         terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
         phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
         isVisible = true;
@@ -805,15 +836,27 @@ public class JobMonitoringActivity extends BaseActivity implements
 
             @Override
             public void takeTrack() {//轨迹
-                intoTrack(terminalNO, "vehicle");
+                intoTrack(terminalNO, "vehicle", registrationNO);
             }
 
             @Override
             public void takeNativ() {//导航
                 initNavicar(distance);
             }
+
+            @Override
+            public void takePhone() {
+
+            }
         });
         phototpop.showTakePop(ll_root);
+        phototpop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                ViewUtils.setLlVisible(ll_tab_visible, false);
+            }
+        });
+        ViewUtils.setLlVisible(ll_tab_visible, ViewUtils.isPopuwindowShowing(phototpop));
     }
 
     /*视频监控*/
@@ -857,11 +900,16 @@ public class JobMonitoringActivity extends BaseActivity implements
 //        endAddress = address;
         terminalNO = personalList.getTerminalNO();
         terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
-
         distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
         isVisible = false;
         phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
         phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible);
+        phototpop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                ViewUtils.setLlVisible(ll_tab_visible, false);
+            }
+        });
         phototpop.setTakePhotoTouch(new ShowPersonalpop.TakePhotoTouch() {
             @Override
             public void onVideo() {
@@ -870,15 +918,26 @@ public class JobMonitoringActivity extends BaseActivity implements
 
             @Override
             public void takeTrack() {//轨迹
-                intoTrack(terminalNO, "worker");
+                intoTrack(terminalNO, "worker", name);
             }
 
             @Override
             public void takeNativ() {//导航
                 initNavicar(distance);
             }
+
+            @Override
+            public void takePhone() {//打电话
+                if (!TextUtils.isEmpty(tel)) {
+                    Uri uri = Uri.parse("tel:" + tel);
+                    Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+                    startActivity(intent);
+                }
+            }
         });
         phototpop.showTakePop(ll_root);
+
+        ViewUtils.setLlVisible(ll_tab_visible, ViewUtils.isPopuwindowShowing(phototpop));
     }
 
 
@@ -909,7 +968,7 @@ public class JobMonitoringActivity extends BaseActivity implements
     }
 
     /*跳转轨迹*/
-    private void intoTrack(String terminalNO, String type) {
+    private void intoTrack(String terminalNO, String type, String carNum) {
         if (latLng != null) {
             Intent intent = new Intent();
             intent.setClass(JobMonitoringActivity.this, HistoryTrackActivity.class);
@@ -917,6 +976,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 //            intent.putExtra("lat", String.valueOf(latLng.latitude));
 //            intent.putExtra("lng", String.valueOf(latLng.longitude));
             intent.putExtra("TYPE", type);
+            intent.putExtra("carNum", carNum);
             startActivity(intent);
         } else {
             showSuccessToast("暂无轨迹");

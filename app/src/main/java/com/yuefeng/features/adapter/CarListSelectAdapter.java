@@ -27,7 +27,8 @@ public class CarListSelectAdapter extends BaseItemDraggableAdapter<CarListSelect
             type = item.getType();
             name = TextUtils.isEmpty(name) ? " " : name;
             type = TextUtils.isEmpty(type) ? "2" : type;
-            helper.setText(R.id.id_treenode_label, name);
+            helper.setText(R.id.id_treenode_label, name)
+                    .addOnClickListener(R.id.cb_select_tree);
             if (type.contains("0")) {
                 icon_car_image = R.drawable.icon_car_offline;
             } else if (type.contains("1")) {

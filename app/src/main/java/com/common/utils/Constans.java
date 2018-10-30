@@ -34,7 +34,7 @@ public class Constans {
     public static final int USERERROR = 12;//用户相关错误
     public static final int UPDATAAPP_SUCCESS = 14;//获取更新信息成功
     public static final int BAIDU_ZOOM_FOUTTEEN = 14;
-    public static final int BAIDU_ZOOM_EIGHTEEN = 18;
+    public static final int BAIDU_ZOOM_EIGHTEEN = 19;
     public static final String USERNAME = "user_name";//存储用户名
     public static final String USERPASSWORD = "user_pwd";//存储用户名密码
     public static final String ANDROID = "android";

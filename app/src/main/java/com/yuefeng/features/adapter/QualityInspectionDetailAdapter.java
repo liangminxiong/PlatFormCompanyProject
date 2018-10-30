@@ -100,13 +100,17 @@ public class QualityInspectionDetailAdapter extends BaseItemDraggableAdapter<Eve
         layoutParams = rl_item.getLayoutParams();
         if (!TextUtils.isEmpty(imgurl)) {
             showImgUrl(imgurl);
-            if (detail.length() > 60) {
+            if (detail.length() > 80) {
+                layoutParams.height = DensityUtil.dip2px(mContext, 250);
+            } else if (detail.length() > 60) {
                 layoutParams.height = DensityUtil.dip2px(mContext, 220);
             } else {
                 layoutParams.height = DensityUtil.dip2px(mContext, 150);
             }
         } else {
-            if (detail.length() > 60) {
+            if (detail.length() > 80) {
+                layoutParams.height = DensityUtil.dip2px(mContext, 180);
+            } else if (detail.length() > 60) {
                 layoutParams.height = DensityUtil.dip2px(mContext, 150);
             } else {
                 layoutParams.height = DensityUtil.dip2px(mContext, 80);

@@ -686,6 +686,18 @@ public class TimeUtils {
     }
 
     /**
+     * 获取一个小时之前的时间
+     *
+     * @return
+     */
+    public static String getThreeHoursTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date hourDate = new Date(System.currentTimeMillis() - 10800000);
+        String hDate = formatter.format(hourDate);
+        return hDate;
+    }
+
+    /**
      * 返回 HH：mm:ss
      *
      * @return

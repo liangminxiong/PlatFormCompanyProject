@@ -184,9 +184,11 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
             }
 
             @Override
-            public void onSure() {
-                showSelectItemDatas();
+            public void onSure(String name, String terminal) {
+
                 carListPopupWindow.dismiss();
+                showSelectItemDatas();
+                showVideoList(terminal);
             }
 
             @Override

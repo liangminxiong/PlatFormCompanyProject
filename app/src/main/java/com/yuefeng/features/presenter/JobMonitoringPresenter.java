@@ -50,6 +50,31 @@ public class JobMonitoringPresenter extends BasePresenterImpl<JobMoniroringContr
                         dismissLoadingDialog();
                         EventBus.getDefault().postSticky(new JobMonitoringEvent(Constans.JOB_ERROR, e.getMsg()));
                     }
+
+                    @Override
+                    public void onNext(GetJobMonitotingBean getJobMonitotingBean) {
+                        super.onNext(getJobMonitotingBean);
+//                        dismissLoadingDialog();
+//                        EventBus.getDefault().postSticky(new JobMonitoringEvent(Constans.JOB_ERROR, ""));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new JobMonitoringEvent(Constans.JOB_ERROR, ""));
+
+                    }
+
+                    @Override
+                    protected void onStart(Disposable d) {
+                        super.onStart(d);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        super.onComplete();
+                    }
                 });
     }
 
