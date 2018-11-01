@@ -113,7 +113,7 @@ public class QualityInspectionDetailAdapter extends BaseItemDraggableAdapter<Eve
             } else if (detail.length() > 60) {
                 layoutParams.height = DensityUtil.dip2px(mContext, 150);
             } else {
-                layoutParams.height = DensityUtil.dip2px(mContext, 80);
+                layoutParams.height = DensityUtil.dip2px(mContext, 100);
             }
         }
         rl_item.setLayoutParams(layoutParams);

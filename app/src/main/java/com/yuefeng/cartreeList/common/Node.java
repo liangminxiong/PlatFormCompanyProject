@@ -61,6 +61,7 @@ public class Node<T, B> {
      * 是否被checked选中
      */
     private boolean isChecked;
+    private boolean isvisible;
     /**
      * 是否为新添加的
      */
@@ -91,6 +92,23 @@ public class Node<T, B> {
         this.speed = speed;
         this.obd = obd;
         this.address = address;
+    }
+
+    /*是否有状态 state*/
+    public Node(T id, T pId, String name, String count, String stateType, String terminalNO, String gt, String speed, String obd, String address, boolean isvisible) {
+        super();
+        this.id = id;
+        this.pId = pId;
+        this.name = name;
+        this.count = count;
+        this.stateType = stateType;
+        this.terminalNO = terminalNO;
+
+        this.gt = gt;
+        this.speed = speed;
+        this.obd = obd;
+        this.address = address;
+        this.isvisible = isvisible;
     }
 
     public Node(T id, T pId, String name, B bean) {
@@ -264,5 +282,13 @@ public class Node<T, B> {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public boolean isIsvisible() {
+        return isvisible;
+    }
+
+    public void setIsvisible(boolean isvisible) {
+        this.isvisible = isvisible;
     }
 }

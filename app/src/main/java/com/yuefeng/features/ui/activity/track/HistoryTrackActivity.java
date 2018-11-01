@@ -503,7 +503,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
             popupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
                 @Override
-                public void onGoBack() {
+                public void onGoBack(String name, String terminal) {
                     popupWindow.dismiss();
                 }
 
@@ -618,7 +618,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(Latitude, Longitude));// 转经纬度;
             double ang = mTrackDatas.get(index).getAng();
             if (type.equals("worker")) {
-                imageInt = R.drawable.worker;
+//                imageInt = R.drawable.worker;
             }else {
                 imageInt = CarStateIconUtils.getImageInt("2", ang);
             }

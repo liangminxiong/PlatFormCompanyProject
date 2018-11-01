@@ -8,6 +8,7 @@ import com.common.utils.Constans;
 import com.yuefeng.features.contract.VideolistVContract;
 import com.yuefeng.features.event.LllegalWorkEvent;
 import com.yuefeng.features.modle.carlist.CarListInfosBean;
+import com.yuefeng.features.modle.video.VideoEquipmentBean;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -15,7 +16,7 @@ import org.greenrobot.eventbus.EventBus;
 import io.reactivex.disposables.Disposable;
 
 /**
- * 轨迹
+ * 视频
  */
 
 public class VideolistVPresenter extends BasePresenterImpl<VideolistVContract.View,
@@ -28,7 +29,7 @@ public class VideolistVPresenter extends BasePresenterImpl<VideolistVContract.Vi
     @Override
     public void getCarListInfos(String function, String organid, String userid, String isreg) {
 
-        HttpObservable.getObservable(apiRetrofit.getCarListInfos(function, organid, userid, isreg))
+        HttpObservable.getObservable(apiRetrofit.getVideoTree(function, organid, userid, isreg))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<CarListInfosBean>() {
                     @Override
@@ -44,6 +45,39 @@ public class VideolistVPresenter extends BasePresenterImpl<VideolistVContract.Vi
                                 EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_SSUCESS, o.getMsg()));
                             } else {
                                 EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_ERROR, e.getMsg()));
+                    }
+                });
+
+    }
+
+    /*视频列表*/
+    @Override
+    public void getVideoTree(String function, String organid, String userid, String isreg) {
+
+        HttpObservable.getObservable(apiRetrofit.getVideoTree(function, organid, userid, isreg))
+//                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
+                .subscribe(new HttpResultObserver<VideoEquipmentBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(VideoEquipmentBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_SSUCESS, o.getData()));
+                            } else {
+                                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_ERROR, o.getData()));
                             }
                         }
                     }

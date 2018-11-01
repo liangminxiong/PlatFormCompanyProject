@@ -19,21 +19,22 @@ import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ResourcesUtils;
+import com.common.view.popuwindow.PersonalListPopupWindow;
 import com.common.view.popuwindow.TreesListsPopupWindow;
 import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.adapter.CarListSelectAdapter;
 import com.yuefeng.features.adapter.MyLllegalPageAdapter;
 import com.yuefeng.features.contract.LllegalWorkContract;
 import com.yuefeng.features.event.LllegalWorkEvent;
 import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
-import com.yuefeng.features.modle.carlist.CarListSelectBean;
 import com.yuefeng.features.presenter.LllegalWorkPresenter;
 import com.yuefeng.features.ui.fragment.Lllegal.CarLllegalWorkListFragment;
 import com.yuefeng.features.ui.fragment.Lllegal.PersonalLllegalWorkListFragment;
+import com.yuefeng.personaltree.model.PersonalParentBean;
 import com.yuefeng.utils.DatasUtils;
+import com.yuefeng.utils.PersonalDatasUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -78,8 +79,9 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
     private MyLllegalPageAdapter viewPagerAdapter;
 
     private boolean isCarOrPersonalList = true;
-    private CarListSelectAdapter adapter;
-    private List<CarListSelectBean> listData = new ArrayList<>();
+    private List<PersonalParentBean> treeListData = new ArrayList<>();
+    private List<Node> nodeList = new ArrayList<>();
+    private PersonalListPopupWindow popupWindowTree;
 
     @Override
     protected int getContentViewResId() {
@@ -141,12 +143,24 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 
     }
 
+    /*人员列表*/
+    private void getTreeListData() {
+        if (presenter != null) {
+            String pid = PreferencesUtils.getString(this, "orgId", "");
+            String userid = PreferencesUtils.getString(this, "id", "");
+//            pid = "dg1954";
+//            userid = "19f66fabffffffc975d0e8f475995ee6";
+            presenter.getPersontree(ApiService.GETPERSONTREE, userid, pid);
+        }
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void disposeLllegalWorkEvent(LllegalWorkEvent event) {
         switch (event.getWhat()) {
             case Constans.CARLIST_SSUCESS:
+                getTreeListData();
                 carListData = (List<CarListInfosMsgBean>) event.getData();
                 if (carListData.size() > 0) {
                     showCarlistDatas(carListData);
@@ -154,45 +168,68 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
                     showSuccessToast("旗下无车辆");
                 }
                 break;
+
+            case Constans.PERSONALLIST_SSUCESS://人员列表成功
+                treeListData = (List<PersonalParentBean>) event.getData();
+                if (treeListData.size() > 0) {
+                    showPersonallistDatas(treeListData);
+                }
+                break;
+            case Constans.CARLIST_ERROR://车辆列表成功
+                getTreeListData();
+                break;
             default:
                 break;
 
         }
     }
 
+    /*人员列表展示数据*/
+    private void showPersonallistDatas(List<PersonalParentBean> organs) {
+        try {
+            nodeList.clear();
+            nodeList = PersonalDatasUtils.ReturnPersonalTreesDatas(organs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /*展示数据*/
     private void showCarlistDatas(List<CarListInfosMsgBean> organs) {
-        carDatas.clear();
-        carDatas = DatasUtils.ReturnTreesDatas(organs);
+        try {
+            carDatas.clear();
+            carDatas = DatasUtils.ReturnTreesDatas(organs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*车辆列表*/
     private void initCarlistPopupView() {
-        carListPopupWindow = new TreesListsPopupWindow(this,carDatas);
-        carListPopupWindow.setTitleText("车辆列表");
-        carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
+        if (carDatas.size() > 0) {
+            carListPopupWindow = new TreesListsPopupWindow(this, carDatas);
+            carListPopupWindow.setTitleText("车辆列表");
+            carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
+            showTreesCarListData(carDatas);
+            carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
+                @Override
+                public void onGoBack(String name, String terminal) {
+                    carListPopupWindow.dismiss();
+                }
 
-        showTreesCarListData(carDatas);
-        carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
-            @Override
-            public void onGoBack() {
-                carListPopupWindow.dismiss();
-            }
+                @Override
+                public void onSure(String name, String terminal) {
+                    carListPopupWindow.dismiss();
+                    showSelectItemDatas();
+                }
 
+                @Override
+                public void onSelectCar(String carNumber, String terminal) {
 
-            @Override
-            public void onSure(String name, String terminal) {
-                carListPopupWindow.dismiss();
-                showSelectItemDatas();
-            }
-
-            @Override
-            public void onSelectCar(String carNumber, String terminal) {
-
-            }
-        });
-
-        carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+                }
+            });
+            carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+        }
     }
 
 
@@ -206,15 +243,16 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 //                carlistAdapter.notifyDataSetChanged();
 //            }
             carListPopupWindow.recyclerview.setAdapter(carlistAdapter);
-        }
-//        carlistAdapter.notifyDataSetChanged();
-        carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
-            @Override
-            public void onClick(Node node, int position) {
-                showSelectItemDatas();
-            }
 
-        });
+//        carlistAdapter.notifyDataSetChanged();
+            carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
+                @Override
+                public void onClick(Node node, int position) {
+                    showSelectItemDatas();
+                }
+
+            });
+        }
     }
 
 
@@ -235,7 +273,7 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
             if (carListPopupWindow != null) {
                 carListPopupWindow.dismiss();
             }
-        showSuccessToast(carNumber);
+            showSuccessToast(carNumber);
         }
     }
 
@@ -273,9 +311,43 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
                 if (isCarOrPersonalList) {
                     initCarlistPopupView();
                 } else {
-                    showSuccessToast("正在开发...");
+                    initTreeListPopupView();
                 }
                 break;
+        }
+    }
+
+    /*人员列表*/
+    private void initTreeListPopupView() {
+        try {
+            if (nodeList.size() > 0) {
+                popupWindowTree = new PersonalListPopupWindow(this, nodeList, true);
+                popupWindowTree.setTitleText("选择人员");
+                popupWindowTree.setSettingText("确定");
+                popupWindowTree.setOnItemClickListener(new PersonalListPopupWindow.OnItemClickListener() {
+                    @Override
+                    public void onGoBack(String listName, String userId,String terminal) {
+                        popupWindowTree.dismiss();
+                        if (!TextUtils.isEmpty(listName)) {
+                            showSuccessToast(listName);
+                        }
+                    }
+                    @Override
+                    public void onSure(String listName, String userId,String terminal) {
+                        popupWindowTree.dismiss();
+                        if (!TextUtils.isEmpty(listName)) {
+                            showSuccessToast(listName);
+                        }
+                    }
+
+                    @Override
+                    public void onSelectCar(String carNumber, String userId,String terminal) {
+                    }
+                });
+                popupWindowTree.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

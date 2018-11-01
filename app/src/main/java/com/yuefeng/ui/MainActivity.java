@@ -375,7 +375,7 @@ public class MainActivity extends BaseActivity implements
     private void personalSignIn(double longitude, double latitude, String address) {
         userId = PreferencesUtils.getString(this, Constans.ID, "");
         presenter.signIn(ApiService.QIANDAO, userId, "", "",
-                String.valueOf(longitude), String.valueOf(latitude), address, "0");
+                String.valueOf(longitude), String.valueOf(latitude), address, Constans.TYPE_ZERO);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

@@ -5,7 +5,6 @@ import android.app.ActionBar;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -27,16 +26,15 @@ import com.common.utils.ViewUtils;
 import com.common.view.popuwindow.TreesListsPopupWindow;
 import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
-import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.CarListSelectAdapter;
 import com.yuefeng.features.contract.VideolistVContract;
 import com.yuefeng.features.event.LllegalWorkEvent;
-import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
 import com.yuefeng.features.modle.carlist.CarListSelectBean;
+import com.yuefeng.features.modle.video.ChangeVideoEquipmentDataBean;
 import com.yuefeng.features.presenter.VideolistVPresenter;
 import com.yuefeng.features.ui.view.VideoPopupWindow;
-import com.yuefeng.utils.DatasUtils;
+import com.yuefeng.utils.VideoDatasUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -81,7 +79,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     private UpdateViewThreadOne mUpdateViewThreadOne = null;
     private VideoPopupWindow popupWindow;
 
-    private List<CarListInfosMsgBean> carListData = new ArrayList<>();
+    private List<ChangeVideoEquipmentDataBean> carListData = new ArrayList<>();
     private List<Node> carDatas = new ArrayList<>();
     private List<Node> carDatasSelect = new ArrayList<>();
     private VideolistVPresenter presenter;
@@ -142,7 +140,9 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
         if (presenter != null) {
             String pid = PreferencesUtils.getString(this, "orgId", "");
             String userid = PreferencesUtils.getString(this, "id", "");
-            presenter.getCarListInfos(ApiService.LOADVEHICLELIST, pid, userid, "0");
+            pid = "dg1954";
+            userid = "b91f05e4ffffffc901823b59d8146e3d";
+            presenter.getVideoTree(ApiService.GETVIDEOTREE, pid, userid, "0");
         }
     }
 
@@ -151,11 +151,11 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     public void disposeLllegalWorkEvent(LllegalWorkEvent event) {
         switch (event.getWhat()) {
             case Constans.CARLIST_SSUCESS:
-                carListData = (List<CarListInfosMsgBean>) event.getData();
+                carListData = (List<ChangeVideoEquipmentDataBean>) event.getData();
                 if (carListData.size() > 0) {
                     showCarlistDatas(carListData);
                 } else {
-                    showSuccessToast("旗下无车辆");
+                    showSuccessToast("旗下无监控车辆");
                 }
                 break;
             default:
@@ -165,83 +165,45 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     }
 
     /*展示数据*/
-    private void showCarlistDatas(List<CarListInfosMsgBean> organs) {
-        carDatas.clear();
-        carDatas = DatasUtils.ReturnTreesDatas(organs);
+    private void showCarlistDatas(List<ChangeVideoEquipmentDataBean> organs) {
+        try {
+            carDatas.clear();
+            carDatas = VideoDatasUtils.ReturnTreesDatas(organs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*车辆列表*/
     private void initCarlistPopupView() {
-        carListPopupWindow = new TreesListsPopupWindow(this, carDatas);
-        carListPopupWindow.setTitleText("车辆列表");
-        carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
-        showTreesCarListData(carDatas);
-
-        carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
-            @Override
-            public void onGoBack() {
-                carListPopupWindow.dismiss();
-            }
-
-            @Override
-            public void onSure(String name, String terminal) {
-
-                carListPopupWindow.dismiss();
-                showSelectItemDatas();
-                showVideoList(terminal);
-            }
-
-            @Override
-            public void onSelectCar(String carNumber, String terminal) {
-                showVideoList(terminal);
-            }
-        });
-
-        carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
-    }
-
-
-    private void showTreesCarListData(List<Node> carDatas) {
         if (carDatas.size() > 0) {
-            carListPopupWindow.recyclerview.setLayoutManager(new LinearLayoutManager(this));
-//            if (carlistAdapter == null) {
-            carlistAdapter = new SimpleTreeRecyclerAdapter(carListPopupWindow.recyclerview, this,
-                    carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, true);
-//            } else {
-//                carlistAdapter.notifyDataSetChanged();
-//            }
-            carListPopupWindow.recyclerview.setAdapter(carlistAdapter);
-        }
-//        carlistAdapter.notifyDataSetChanged();
-        carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
-            @Override
-            public void onClick(Node node, int position) {
-                showSelectItemDatas();
-            }
+            carListPopupWindow = new TreesListsPopupWindow(this, carDatas);
+            carListPopupWindow.setTitleText("车辆列表");
+            carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
 
-        });
+            carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
+                @Override
+                public void onGoBack(String name, String terminal) {
+                    tv_title.setText(name);
+                    showVideoList(terminal);
+                }
+
+                @Override
+                public void onSure(String name, String terminal) {
+                    tv_title.setText(name);
+                    showVideoList(terminal);
+                }
+
+                @Override
+                public void onSelectCar(String carNumber, String terminal) {
+                    showVideoList(terminal);
+                }
+            });
+
+            carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+        }
     }
 
-    /*点击车*/
-    @SuppressLint("SetTextI18n")
-    private void showSelectItemDatas() {
-        if (carlistAdapter == null) {
-            return;
-        }
-        final List<Node> allNodes = carlistAdapter.getAllNodes();
-        for (int i = 0; i < allNodes.size(); i++) {
-            if (allNodes.get(i).isChecked()) {
-                carNumber = allNodes.get(i).getName();
-                terminal = allNodes.get(i).getTerminalNO();
-            }
-        }
-        if (!TextUtils.isEmpty(terminal)) {
-            if (carListPopupWindow != null) {
-                carListPopupWindow.dismiss();
-            }
-            showVideoList(terminal);
-        }
-    }
 
     /*获取*/
     private void showVideoList(String terminal) {

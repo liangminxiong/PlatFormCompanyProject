@@ -10,6 +10,7 @@ import com.yuefeng.features.modle.WheelPathBean;
 import com.yuefeng.features.modle.carlist.CarListInfosBean;
 import com.yuefeng.features.modle.video.VideoEquipmentBean;
 import com.yuefeng.login_splash.model.LoginBean;
+import com.yuefeng.personaltree.model.PersoanlTreeListBean;
 
 import io.reactivex.Observable;
 import retrofit2.http.Field;
@@ -56,6 +57,11 @@ public interface ApiService {
     String QIANDAO = "qiandao";
     /*车辆列表*/
     String LOADVEHICLELIST = "LoadVehicleList3";
+    /*人员列表*/
+    String GETPERSONTREE = "getpersontree";
+
+    /*视频列表*/
+    String GETVIDEOTREE = "getvideotree";
 
     /*车辆轨迹*/
     String getGpsDatasByTer = "getGpsDatasByTer";
@@ -134,7 +140,7 @@ public interface ApiService {
             @Query("function") String function,
             @Query("pid") String pid);
 
-    /*签到*/
+    /*个人签到*/
     @POST(MIA_HW)
     Observable<SubmitBean> signIn(
             @Query("function") String function,
@@ -145,6 +151,20 @@ public interface ApiService {
             @Query("lat") String lat,
             @Query("address") String address,
             @Query("type") String type);
+
+    /*主管签到*/
+    @POST(MIA_HW)
+    Observable<SubmitBean> spSignIn(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Query("terflag") String terflag,
+            @Query("useridflag") String useridflag,
+            @Query("lon") String lon,
+            @Query("lat") String lat,
+            @Query("address") String address,
+            @Query("type") String type,
+            @Query("memo") String memo,
+            @Query("imageArrays") String imageArrays);
 
     /*轨迹*/
     @POST(MIA)
@@ -168,6 +188,14 @@ public interface ApiService {
             @Query("userid") String userid,
             @Query("isreg") String isreg);
 
+    /*视频列表*/
+    @POST(MIA)
+    Observable<VideoEquipmentBean> getVideoTree(
+            @Query("function") String function,
+            @Query("organid") String organid,
+            @Query("userid") String userid,
+            @Query("isreg") String isreg);
+
     /*问题类型处理过程*/
     @POST(MIA)
     Observable<SubmitBean> changePwd(
@@ -175,4 +203,11 @@ public interface ApiService {
             @Query("id") String id,
             @Query("oldpassword") String oldpassword,
             @Query("newpassword") String newpassword);
+
+    /*签到*/
+    @POST(MIA_HW)
+    Observable<PersoanlTreeListBean> getPersontree(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Query("pid") String pid);
 }

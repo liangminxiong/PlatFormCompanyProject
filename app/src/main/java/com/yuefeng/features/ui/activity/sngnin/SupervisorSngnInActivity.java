@@ -9,6 +9,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -23,7 +24,6 @@ import com.common.utils.ImageUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
-import com.common.view.dialog.SubmitDialog;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
 import com.common.view.popuwindow.PersonalListPopupWindow;
 import com.luck.picture.lib.PictureSelector;
@@ -37,13 +37,13 @@ import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.SupervisorSngnInContract;
 import com.yuefeng.features.event.ProblemEvent;
 import com.yuefeng.features.event.SupervisorSngnInEvent;
-import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
 import com.yuefeng.features.presenter.SupervisorSngnInPresenter;
+import com.yuefeng.personaltree.model.PersonalParentBean;
 import com.yuefeng.photo.adapter.GridImageAdapter;
 import com.yuefeng.photo.other.FullyGridLayoutManager;
 import com.yuefeng.photo.utils.PictureSelectorUtils;
 import com.yuefeng.utils.BdLocationUtil;
-import com.yuefeng.utils.DatasUtils;
+import com.yuefeng.utils.PersonalDatasUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -73,8 +73,6 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     TextView tvAddress;
     @BindView(R.id.tv_personal)
     TextView tvPersonal;
-    @BindView(R.id.ll_personal)
-    LinearLayout llPersonal;
     @BindView(R.id.tv_photo_big)
     TextView tvPhotoBig;
     @BindView(R.id.recyclerview)
@@ -95,10 +93,12 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     private List<LocalMedia> selectList = new ArrayList<>();
     private GridImageAdapter adapter;
     private String mImagesArrays;
-    private List<CarListInfosMsgBean> treeListData = new ArrayList<>();
+    private List<PersonalParentBean> treeListData = new ArrayList<>();
     private List<Node> nodeList = new ArrayList<>();
     private SupervisorSngnInPresenter presenter;
     private PersonalListPopupWindow popupWindowTree;
+    private String useridflag;
+    private String terflag;
 
     @Override
     protected int getContentViewResId() {
@@ -119,18 +119,21 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
         getTreeListData();
     }
 
-    /*车辆列表*/
+    /*人员列表*/
     private void getTreeListData() {
         if (presenter != null) {
             String pid = PreferencesUtils.getString(this, "orgId", "");
             String userid = PreferencesUtils.getString(this, "id", "");
-            presenter.getCarListInfos(ApiService.LOADVEHICLELIST, pid, userid, "0");
+//            pid = "dg1954";
+//            userid = "19f66fabffffffc975d0e8f475995ee6";
+            presenter.getPersontree(ApiService.GETPERSONTREE, userid, pid);
         }
     }
 
     private void initUI() {
         tvTitle.setText("主管打卡");
         tvTitleSetting.setText("提交");
+        tvPersonal.setMovementMethod(ScrollingMovementMethod.getInstance());
     }
 
     /*图片选择*/
@@ -259,7 +262,8 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
-                if (location == null) {requestPermissions();
+                if (location == null) {
+                    requestPermissions();
                     return;
                 }
                 latitude = location.getLatitude();
@@ -313,11 +317,18 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposeSupervisorSngnInEvent(SupervisorSngnInEvent event) {
         switch (event.getWhat()) {
-            case Constans.CARLIST_SSUCESS://人员列表成功
-                treeListData = (List<CarListInfosMsgBean>) event.getData();
+            case Constans.PERSONALLIST_SSUCESS://人员列表成功
+                treeListData = (List<PersonalParentBean>) event.getData();
                 if (treeListData.size() > 0) {
-                    showCarlistDatas(treeListData);
+                    showPersonallistDatas(treeListData);
                 }
+                break;
+
+            case Constans.LOGIN://人员列表成功
+                showSuccessDialog("您已打卡成功!\n是否退出该界面");
+                break;
+            case Constans.USERERROR://人员列表成功
+                showSuccessToast("打卡失败，请重试!");
                 break;
 
             default:
@@ -329,10 +340,10 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
 
 
     /*展示数据*/
-    private void showCarlistDatas(List<CarListInfosMsgBean> organs) {
+    private void showPersonallistDatas(List<PersonalParentBean> organs) {
         try {
-        nodeList.clear();
-        nodeList = DatasUtils.ReturnTreesDatas(organs);
+            nodeList.clear();
+            nodeList = PersonalDatasUtils.ReturnPersonalTreesDatas(organs);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -363,7 +374,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_title_setting:
-                showSubmitSucessDialog();
+                sngnIn();
                 break;
             case R.id.tv_address:
                 if (isFirstLocation) {
@@ -377,59 +388,55 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
         }
     }
 
-    /*提交成功*/
-    private void showSubmitSucessDialog() {
-        try{
-        SubmitDialog submitDialog = new SubmitDialog(this);
-        submitDialog.setTextContent("您已打卡成功!\n是否退出该界面");
-        submitDialog.setDeletaCacheListener(new SubmitDialog.DeletaCacheListener() {
-            @Override
-            public void sure() {
-                finish();
-            }
-
-            @Override
-            public void cancle() {
-
-            }
-        });
-        submitDialog.show();
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+    /*签到*/
+    private void sngnIn() {
+        String memo = edtMemo.getText().toString().trim();
+        if (presenter != null) {
+            String userId = PreferencesUtils.getString(this, Constans.ID, "");
+            presenter.spSignIn(ApiService.QIANDAO, userId, terflag, useridflag,
+                    String.valueOf(longitude), String.valueOf(latitude), address, Constans.TYPE_TWO, memo, mImagesArrays);
+        }
     }
 
     /*人员列表*/
     private void initTreeListPopupView() {
         try {
-
-        popupWindowTree = new PersonalListPopupWindow(this, nodeList);
-        popupWindowTree.setTitleText("选择人员");
-        popupWindowTree.setSettingText("提交");
-        popupWindowTree.setOnItemClickListener(new PersonalListPopupWindow.OnItemClickListener() {
-            @Override
-            public void onGoBack() {
-                popupWindowTree.dismiss();
-            }
-
-
-            @Override
-            public void onSure(String listName) {
-                popupWindowTree.dismiss();
-                if (!TextUtils.isEmpty(listName)) {
-                    tvPersonal.setText(listName);
+            popupWindowTree = new PersonalListPopupWindow(this, nodeList, false);
+            popupWindowTree.setTitleText("选择人员");
+            popupWindowTree.setSettingText("确定");
+            popupWindowTree.setOnItemClickListener(new PersonalListPopupWindow.OnItemClickListener() {
+                @Override
+                public void onGoBack(String listName, String userId, String terminal) {
+                    popupWindowTree.dismiss();
+                    if (!TextUtils.isEmpty(listName)) {
+                        tvPersonal.setText(listName);
+                        useridflag = userId;
+                        terflag = terminal;
+                    }
                 }
-            }
 
-            @Override
-            public void onSelectCar(String carNumber, String terminal) {
-                if (!TextUtils.isEmpty(carNumber)) {
-                    tvPersonal.setText(carNumber);
+
+                @Override
+                public void onSure(String listName, String userId, String terminal) {
+                    popupWindowTree.dismiss();
+                    if (!TextUtils.isEmpty(listName)) {
+                        tvPersonal.setText(listName);
+                        useridflag = userId;
+                        terflag = terminal;
+                    }
                 }
-            }
-        });
 
-        popupWindowTree.showAtLocation(llParent, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+                @Override
+                public void onSelectCar(String carNumber, String userId, String terminal) {
+                    if (!TextUtils.isEmpty(carNumber)) {
+                        tvPersonal.setText(carNumber);
+                        useridflag = userId;
+                        terflag = terminal;
+                    }
+                }
+            });
+
+            popupWindowTree.showAtLocation(llParent, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -452,37 +459,37 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     @SuppressLint("SetTextI18n")
     private void showPhotos(Intent data) {
         try {
-        // 图片选择结果回调
-        selectList = PictureSelector.obtainMultipleResult(data);
-        // 例如 LocalMedia 里面返回三种path
-        // 1.media.getPath(); 为原图path
-        // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
-        // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
-        // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
-        if (selectList.size() <= 0) {
-            return;
-        }
-        showFilesSize(selectList);
-        adapter.setList(selectList);
-        adapter.notifyDataSetChanged();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                showLoadingDialog(getString(R.string.photo_processing));
+            // 图片选择结果回调
+            selectList = PictureSelector.obtainMultipleResult(data);
+            // 例如 LocalMedia 里面返回三种path
+            // 1.media.getPath(); 为原图path
+            // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+            // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+            // 如果裁剪并压缩了，已取压缩路径为准，因为是先裁剪后压缩的
+            if (selectList.size() <= 0) {
+                return;
             }
-        });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mImagesArrays = PictureSelectorUtils.compressionPhotos(SupervisorSngnInActivity.this, selectList, address);
-            }
-        }).start();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                dismissLoadingDialog();
-            }
-        });
+            showFilesSize(selectList);
+            adapter.setList(selectList);
+            adapter.notifyDataSetChanged();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showLoadingDialog(getString(R.string.photo_processing));
+                }
+            });
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    mImagesArrays = PictureSelectorUtils.compressionPhotos(SupervisorSngnInActivity.this, selectList, address);
+                }
+            }).start();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dismissLoadingDialog();
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }

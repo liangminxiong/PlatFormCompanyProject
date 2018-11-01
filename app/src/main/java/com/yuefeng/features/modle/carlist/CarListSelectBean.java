@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class CarListSelectBean implements Serializable {
 
+    private String id;
     private String name;
     private String type;
     private String terminal;
@@ -11,6 +12,7 @@ public class CarListSelectBean implements Serializable {
     @Override
     public String toString() {
         return "CarListSelectBean{" +
+                "id='" + id + '\'' +
                 "name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", terminal='" + terminal + '\'' +
@@ -41,4 +43,11 @@ public class CarListSelectBean implements Serializable {
         this.terminal = terminal;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

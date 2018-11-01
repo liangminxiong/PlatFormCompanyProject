@@ -9,6 +9,7 @@ import com.yuefeng.features.contract.LllegalWorkContract;
 import com.yuefeng.features.event.LllegalWorkEvent;
 import com.yuefeng.features.modle.carlist.CarListInfosBean;
 import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity;
+import com.yuefeng.personaltree.model.PersoanlTreeListBean;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -57,8 +58,36 @@ public class LllegalWorkPresenter extends BasePresenterImpl<LllegalWorkContract.
 
     }
 
+    /*获取人员*/
     @Override
-    public void getPersonalListInfos(String function, String organid, String userid, String isreg) {
+    public void getPersontree(String function, String userid, String pid) {
+
+        HttpObservable.getObservable(apiRetrofit.getPersontree(function, userid, pid))
+//                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
+                .subscribe(new HttpResultObserver<PersoanlTreeListBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(PersoanlTreeListBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.PERSONALLIST_SSUCESS, o.getMsg()));
+                            } else {
+                                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.PERSONALLIST_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.PERSONALLIST_ERROR, e.getMsg()));
+                    }
+                });
 
     }
 

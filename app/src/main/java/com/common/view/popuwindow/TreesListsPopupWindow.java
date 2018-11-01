@@ -3,6 +3,7 @@ package com.common.view.popuwindow;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,7 +26,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
+import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.CarListSelectAdapter;
 import com.yuefeng.features.modle.carlist.CarListSelectBean;
@@ -59,6 +62,8 @@ public class TreesListsPopupWindow extends PopupWindow {
     private List<Node> carDatas;
     private String name;
     private ImageView iv_search;
+    private SimpleTreeRecyclerAdapter carlistAdapter;
+    private String carNumber;
 
     public TreesListsPopupWindow(Context context, List<Node> carDatas) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
@@ -66,7 +71,7 @@ public class TreesListsPopupWindow extends PopupWindow {
         this.carDatas = carDatas;
         //设置点击空白处消失
         setTouchable(true);
-        setOutsideTouchable(true);
+        setOutsideTouchable(false);
         setClippingEnabled(false);
 
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
@@ -93,12 +98,14 @@ public class TreesListsPopupWindow extends PopupWindow {
         tv_setting = (TextView) rootView.findViewById(R.id.tv_title_setting);
         recyclerview_after.setLayoutManager(new LinearLayoutManager(mContext));
         initRecycleView();
-
+        if (carDatas.size() > 0) {
+            showTreesCarListData(carDatas);
+        }
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnItemClickListener != null)
-                    mOnItemClickListener.onGoBack();
+                dismiss();
+                showSelectItemDatas();
             }
         });
 
@@ -112,12 +119,54 @@ public class TreesListsPopupWindow extends PopupWindow {
         tv_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnItemClickListener != null)
-                    mOnItemClickListener.onSure(name, terminal);
+                dismiss();
+                showSelectItemDatas();
             }
         });
 
         initSeacherWatcher();
+    }
+
+    private void showTreesCarListData(List<Node> carDatas) {
+        if (carDatas.size() > 0) {
+            recyclerview.setLayoutManager(new LinearLayoutManager(mContext));
+//            if (carlistAdapter == null) {
+            carlistAdapter = new SimpleTreeRecyclerAdapter(recyclerview, mContext,
+                    carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, true);
+//            } else {
+//                carlistAdapter.notifyDataSetChanged();
+//            }
+            recyclerview.setAdapter(carlistAdapter);
+        }
+//        carlistAdapter.notifyDataSetChanged();
+        carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
+            @Override
+            public void onClick(Node node, int position) {
+                showSelectItemDatas();
+            }
+
+        });
+    }
+
+    /*点击车*/
+    @SuppressLint("SetTextI18n")
+    private void showSelectItemDatas() {
+        if (carlistAdapter == null) {
+            return;
+        }
+        final List<Node> allNodes = carlistAdapter.getAllNodes();
+        for (int i = 0; i < allNodes.size(); i++) {
+            if (allNodes.get(i).isChecked()) {
+                carNumber = allNodes.get(i).getName();
+                terminal = allNodes.get(i).getTerminalNO();
+            }
+        }
+        if (!TextUtils.isEmpty(terminal)) {
+            if (mOnItemClickListener != null)
+                mOnItemClickListener.onSure(carNumber, terminal);
+            assert mOnItemClickListener != null;
+            mOnItemClickListener.onGoBack(carNumber, terminal);
+        }
     }
 
     private void initSeacherWatcher() {
@@ -161,10 +210,10 @@ public class TreesListsPopupWindow extends PopupWindow {
                 terminal = listData.get(position).getTerminal();
 
                 if (!TextUtils.isEmpty(terminal)) {
-                    if (isShowing())
-                        dismiss();
                     if (mOnItemClickListener != null)
-                        mOnItemClickListener.onSelectCar(name, terminal);
+                        mOnItemClickListener.onSure(name, terminal);
+                    assert mOnItemClickListener != null;
+                    mOnItemClickListener.onGoBack(name, terminal);
                 }
             }
         });
@@ -173,8 +222,10 @@ public class TreesListsPopupWindow extends PopupWindow {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 name = listData.get(position).getName();
                 terminal = listData.get(position).getTerminal();
-//                if (mOnItemClickListener != null)
-//                    mOnItemClickListener.onSure(name,terminal);
+                if (mOnItemClickListener != null)
+                    mOnItemClickListener.onSure(name, terminal);
+                assert mOnItemClickListener != null;
+                mOnItemClickListener.onGoBack(name, terminal);
             }
         });
 
@@ -230,7 +281,7 @@ public class TreesListsPopupWindow extends PopupWindow {
     }
 
     public interface OnItemClickListener {
-        void onGoBack();
+        void onGoBack(String name, String terminal);
 
 //        void onSearch(String key);
 

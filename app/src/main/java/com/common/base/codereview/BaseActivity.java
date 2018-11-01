@@ -32,7 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     public RelativeLayout iv_back;
     public TextView tv_title;
     private LoadingDialog loadingDialog;
-    private boolean isOnclick =true;
+    private boolean isOnclick = true;
 
     static {
         //5.0以下兼容vector
@@ -57,7 +57,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         iv_back = findViewById(R.id.iv_back);
         tv_title = findViewById(R.id.tv_title);
         iv_back.setOnClickListener(this);
-        isOnclick =true;
+        isOnclick = true;
     }
 
     protected boolean isNeedTranslateBar() {
@@ -72,29 +72,31 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         sureDialog = new SucessCacheSureDialog(this);
     }
 
-    public SucessCacheSureDialog showSuccessDialog(String txt) {
-        if (sureDialog == null) {
-            sureDialog = new SucessCacheSureDialog(this);
-        }
-        sureDialog.setTextContent(txt);
-        sureDialog.setCancleGone();
-        sureDialog.setDeletaCacheListener(new SucessCacheSureDialog.DeletaCacheListener() {
-            @Override
-            public void sure() {
-                sureDialog.dismiss();
-                finish();
+    public void showSuccessDialog(String txt) {
+        try {
+            if (sureDialog == null) {
+                sureDialog = new SucessCacheSureDialog(this);
             }
+            sureDialog.setTextContent(txt);
+            sureDialog.setDeletaCacheListener(new SucessCacheSureDialog.DeletaCacheListener() {
+                @Override
+                public void sure() {
+                    sureDialog.dismiss();
+                    finish();
+                }
 
-            @Override
-            public void cancle() {
-                sureDialog.dismiss();
+                @Override
+                public void cancle() {
+                    sureDialog.dismiss();
+                }
+            });
+
+            if (!isFinishing()) {
+                sureDialog.show();
             }
-        });
-
-        if (!isFinishing()) {
-            sureDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return null;
     }
 
     public void showLoadingDialog(String txt) {
@@ -139,7 +141,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         switch (v.getId()) {
             case R.id.iv_back:
                 if (isOnclick) {
-                    isOnclick =false;
+                    isOnclick = false;
                     finish();
                 }
                 break;

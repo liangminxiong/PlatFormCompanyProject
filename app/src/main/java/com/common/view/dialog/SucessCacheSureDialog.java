@@ -16,10 +16,6 @@ import com.yuefeng.commondemo.R;
 
 
 /**
- * Created by seven
- * on 2018/6/2
- * email:seven2016s@163.com
- * 删除
  */
 
 public class SucessCacheSureDialog extends Dialog {

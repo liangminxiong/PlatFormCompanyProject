@@ -13,7 +13,7 @@ public interface LllegalWorkContract {
         void getCarListInfos(String function, String organid, String userid, String isreg);
 
         /*人员列表*/
-        void getPersonalListInfos(String function, String organid, String userid, String isreg);
+        void getPersontree(String function, String userid, String pid);
 
         /*车辆违章列表*/
         void getCarLllegalListInfos(String function, String organid, String userid, String isreg);

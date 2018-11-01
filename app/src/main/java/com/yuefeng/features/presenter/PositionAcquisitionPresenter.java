@@ -116,10 +116,11 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
 
     /*结束展示时间*/
     @SuppressLint("SetTextI18n")
-    public String showHowLongTime(String timeLong) {
+    public String showHowLongTime(String timeLong, String distance, int type) {
         String time = "";
         String hour = "";
         String miniteSecond = "";
+        String typeWhat = "";
         if (!TextUtils.isEmpty(timeLong)) {
             int length = timeLong.length();
             if (length > 5) {//小时
@@ -136,7 +137,12 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
             minuteStr = StringUtils.getTimeNoZero(minuteStr);
             secondStr = StringUtils.getTimeNoZero(secondStr);
             miniteSecond = minuteStr + "分" + secondStr + "秒,";
-            time = "本次采集持续" + hour + miniteSecond + "距离0.1公里";
+            if (type == 0) {
+                typeWhat = "平方米";
+            } else {
+                typeWhat = "公里";
+            }
+            time = "本次采集持续" + hour + miniteSecond + "距离" + distance + typeWhat;
         }
         return time;
     }

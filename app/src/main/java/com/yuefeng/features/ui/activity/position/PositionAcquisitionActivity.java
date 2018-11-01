@@ -66,6 +66,7 @@ import com.yuefeng.photo.adapter.GridImageAdapter;
 import com.yuefeng.photo.other.FullyGridLayoutManager;
 import com.yuefeng.photo.utils.PictureSelectorUtils;
 import com.yuefeng.utils.BdLocationUtil;
+import com.yuefeng.utils.LocationUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -208,6 +209,9 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         workAreaStr = "";
         initRlType();
         initChronometer();
+
+//        RefWatcher refWatcher = MyApplication.getRefWatcher(this);//1
+//        refWatcher.watch(this);
     }
 
     private void initChronometer() {
@@ -299,24 +303,27 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     }
 
     private void firstLocation(double latitude, double longitude, String address) {
-
-        if (!TextUtils.isEmpty(address)) {
-            int length = address.length();
-            address = address.substring(2, length);
-        }
-        latLngTemp = new LatLng(latitude, longitude);
-        if (isFirstLoc) {
-            isFirstLoc = false;
-            MapStatus ms = new MapStatus.Builder().target(latLngTemp)
-                    .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
-            ooA = new MarkerOptions().icon(personalImage).zIndex(10);
-            ooA.position(latLngTemp);
-            mMarker = null;
-            mMarker = (Marker) (baiduMap.addOverlay(ooA));
-            baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
+        try {
+            if (!TextUtils.isEmpty(address)) {
+                int length = address.length();
+                address = address.substring(2, length);
+            }
+            latLngTemp = new LatLng(latitude, longitude);
+            if (isFirstLoc) {
+                isFirstLoc = false;
+                MapStatus ms = new MapStatus.Builder().target(latLngTemp)
+                        .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
+                ooA = new MarkerOptions().icon(personalImage).zIndex(10);
+                ooA.position(latLngTemp);
+                mMarker = null;
+                mMarker = (Marker) (baiduMap.addOverlay(ooA));
+                baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
 //            BdLocationUtil.MoveMapToCenter(baiduMap, latLngTemp, 14);
-            PreferencesUtils.putString(PositionAcquisitionActivity.this, "Fengrun", "");
-            PreferencesUtils.putString(PositionAcquisitionActivity.this, "mAddress", address);
+                PreferencesUtils.putString(PositionAcquisitionActivity.this, "Fengrun", "");
+                PreferencesUtils.putString(PositionAcquisitionActivity.this, "mAddress", address);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -357,46 +364,30 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         if (latLng == null) {
             return;
         }
-        distance = DistanceUtil.getDistance(latLngTemp, latLng);
+        double distance = DistanceUtil.getDistance(latLngTemp, latLng);
         if (distance < 1000) {
-
-
-            String stringDouble = StringUtils.getStringDistance(distance);
-//        LogUtils.d("getLocation== +++" + points.size() + " ++ ++ " + stringDouble);
             latLngTemp = latLng;
-            drawTrackLine(latLng, distance);
+            drawTrackLine(latLng);
         }
     }
 
-    private void drawTrackLine(LatLng latLng, double distance) {
-        int zoom = 0;
-        if (distance > 100) {
-            zoom = Constans.BAIDU_ZOOM_FOUTTEEN;
-        } else {
-            zoom = Constans.BAIDU_ZOOM_EIGHTEEN;
-        }
+    private void drawTrackLine(LatLng latLng) {
         try {
-            if (mPolyline != null) {
-                mPolyline.remove();
-            }
             if (isPositionAcquisition) {
                 points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
-            } else {
-                return;
-            }
-            if (points.size() > 1 && baiduMap != null) {
-                //清除上一次轨迹，避免重叠绘画
-                baiduMap.clear();
+                if (points.size() > 1 && baiduMap != null) {
+                    //清除上一次轨迹，避免重叠绘画
+                    baiduMap.clear();
+                    //起始点图层也会被清除，重新绘画
+                    MarkerOptions oStart = new MarkerOptions();
+                    oStart.position(points.get(0));
+                    oStart.icon(beginImage);
+                    baiduMap.addOverlay(oStart);
 
-                //起始点图层也会被清除，重新绘画
-                MarkerOptions oStart = new MarkerOptions();
-                oStart.position(points.get(0));
-                oStart.icon(beginImage);
-                baiduMap.addOverlay(oStart);
-
-                OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
-                mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
-                BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), zoom);
+                    OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
+                    mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
+                    BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -515,6 +506,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 typeWhat = listData.get(position);
+
                 if (msgPopupWindow != null) {
                     msgPopupWindow.dismiss();
                 }
@@ -525,9 +517,9 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 if (isWhatType) {
                     recyclerviewLeft.setText(typeWhat);
                 } else {
+                    typePosition = 1;
                     recyclerviewRight.setText(typeWhat);
                 }
-
             }
         });
         msgPopupWindow.showPopuWindow(parent);
@@ -567,17 +559,51 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         if (typeDistance.equals("2")) {
             tvTimeDistance.setText("本次采集地址:" + address);
         } else {
-            if (presenter != null) {
-                String time = presenter.showHowLongTime(timeLong);
-                tvTimeDistance.setText(time);
+            initAreaOrDistance();
+        }
+    }
+
+    /*距离或者面积*/
+    private void initAreaOrDistance() {
+        LatLng latLngTemp = null;
+        String area = "";
+        if (points.size() > 2) {
+            if (typePosition == 0) {//网格
+
+                area = LocationUtils.getArea(points);
+            } else {//路段
+                for (int i = 0; i < points.size(); i++) {
+                    if (latLngTemp != null) {
+                        distance = distance + DistanceUtil.getDistance(latLngTemp, points.get(i));
+                    }
+                    latLngTemp = points.get(i);
+                }
+                distance = distance / 1000.0;
+                area = StringUtils.getStringDistance(distance);
             }
+        }
+
+        if (presenter != null) {
+            String time = presenter.showHowLongTime(timeLong, area, typePosition);
+            tvTimeDistance.setText(time);
+        }
+        //起始点图层也会被清除，重新绘画
+        if (points.size() > 1) {
+            //清除上一次轨迹，避免重叠绘画
+            baiduMap.clear();
             //起始点图层也会被清除，重新绘画
-            if (points.size() > 0 && baiduMap != null) {
-                MarkerOptions oStart = new MarkerOptions();
-                oStart.position(points.get(points.size() - 1));
-                oStart.icon(endImage);
-                baiduMap.addOverlay(oStart);
-            }
+            MarkerOptions oStart = new MarkerOptions();
+            oStart.position(points.get(0));
+            oStart.icon(beginImage);
+            baiduMap.addOverlay(oStart);
+
+            OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
+            mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
+            BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
+            MarkerOptions oEnd = new MarkerOptions();
+            oEnd.position(points.get(points.size() - 1));
+            oEnd.icon(endImage);
+            baiduMap.addOverlay(oEnd);
         }
     }
 

@@ -11,21 +11,21 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.common.utils.Constans;
 import com.yuefeng.cartreeList.common.Node;
-import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
 import com.yuefeng.features.modle.carlist.CarListSelectBean;
-import com.yuefeng.features.modle.carlist.Organ;
-import com.yuefeng.features.modle.carlist.OrgansBean;
-import com.yuefeng.features.modle.carlist.VehiclesBean;
-import com.yuefeng.features.modle.carlist.VehiclesBeanX;
+import com.yuefeng.features.modle.video.ChangeVideoEquipmentDataBean;
+import com.yuefeng.features.modle.video.Organ;
+import com.yuefeng.features.modle.video.OrgansBean;
+import com.yuefeng.features.modle.video.VideoesBean;
+import com.yuefeng.features.modle.video.VideoesXBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 2018/5/7.
+ * 视频
  */
 
-public class DatasUtils {
+public class VideoDatasUtils {
 
     private static final String TAG = "tag";
     private static int firstOsize;
@@ -33,7 +33,7 @@ public class DatasUtils {
     private static String secondOrgShortName;
     private static String firstVRegistrationNO;
     private static int firstVsize;
-    private static List<VehiclesBean> secondVehicles;
+    private static List<VideoesBean> secondVehicles;
     private static int secondVsize;
     private static String firstVehicleId;
     private static String secondVehicleId;
@@ -41,7 +41,7 @@ public class DatasUtils {
     private static int secondOsize;
     private static String thirdOrgansId;
     private static String thirdOrgansOrgShortName;
-    private static List<VehiclesBean> thirdVehicles;
+    private static List<VideoesBean> thirdVehicles;
     private static int thirdVsize;
     private static List<Organ> thirdOrgans;
     private static int thirdOsize;
@@ -49,7 +49,7 @@ public class DatasUtils {
     private static String thirdVehicleRegistrationNO;
     private static String thirdOrganId;
     private static String thirdOrganOrgShortName;
-    private static List<VehiclesBean> fourthvehicles;
+    private static List<VideoesBean> fourthvehicles;
     private static int fourthVsize;
     private static List<Organ> fourthOrgans;
     private static int fourthOsize;
@@ -57,7 +57,7 @@ public class DatasUtils {
     private static String fourthvehicleRegistrationNO;
     private static String fourthOrganId;
     private static String fourthOrganOrgShortName;
-    private static List<VehiclesBean> fifthVehicles;
+    private static List<VideoesBean> fifthVehicles;
     private static int fifthVsize;
     private static List<Organ> fifthOrgans;
     private static String fifthVehicleId;
@@ -65,7 +65,7 @@ public class DatasUtils {
     private static int fifthOsize;
     private static String fifthOrganId;
     private static String fifthOrganOrgShortName;
-    private static List<VehiclesBean> sixthVehicles;
+    private static List<VideoesBean> sixthVehicles;
     private static int sixthVsize;
     private static List<Organ> sixthOrganOrgans;
     private static int sixthOsize;
@@ -99,7 +99,7 @@ public class DatasUtils {
     private static String sStrSixth;
 
     /*车辆列表 ================begin===================*/
-    public static List<Node> ReturnTreesDatas(List<CarListInfosMsgBean> msg) {
+    public static List<Node> ReturnTreesDatas(List<ChangeVideoEquipmentDataBean> msg) {
 
         List<Node> mDatas = new ArrayList<Node>();
 
@@ -110,24 +110,24 @@ public class DatasUtils {
 
         String treeStr = initDatasTreeStr(msg);
 
-        CarListInfosMsgBean msgBean = msg.get(0);
+        ChangeVideoEquipmentDataBean msgBean = msg.get(0);
 
-        String orgShortName = msgBean.getOrgShortName();
+        String orgShortName = msgBean.getOrgName();
         String fatherPid = msgBean.getPid();
         String fatherId = msgBean.getId();
 
 
-        List<VehiclesBeanX> firstVehicles = msgBean.getVehicles();
+        List<VideoesXBean> firstVehicles = msgBean.getVehicle();
         firstVsize = firstVehicles.size();
 
-        List<OrgansBean> firstOrgans = msgBean.getOrgans();
+        List<OrgansBean> firstOrgans = msgBean.getOrgan();
         firstOsize = firstOrgans.size();
         /*第一层*/
         // id , pid , label , 其他属性
         mDatas.add(new Node(fatherId, fatherPid, orgShortName, treeStr, "", "", "", "", "", ""));
 
         if (firstVsize > 0) {
-            for (VehiclesBeanX firstVehicle : firstVehicles) {
+            for (VideoesXBean firstVehicle : firstVehicles) {
                 firstVehicleId = firstVehicle.getId();
                 firstVRegistrationNO = firstVehicle.getRegistrationNO();
                 firstVehicleStateType = firstVehicle.getStateType();
@@ -147,10 +147,10 @@ public class DatasUtils {
                 String strSecond = initDatasTreeStrSecond(firstOrgan);
 
                 secondId = firstOrgan.getId();
-                secondOrgShortName = firstOrgan.getOrgShortName();
+                secondOrgShortName = firstOrgan.getOrgName();
 
 
-                secondVehicles = firstOrgan.getVehicles();
+                secondVehicles = firstOrgan.getVideoes();
                 secondVsize = secondVehicles.size();
 
                 List<Organ> organs = firstOrgan.getOrgans();
@@ -161,7 +161,7 @@ public class DatasUtils {
 
 
                 if (secondVsize > 0) {
-                    for (VehiclesBean secondVehicle : secondVehicles) {
+                    for (VideoesBean secondVehicle : secondVehicles) {
                         secondVehicleId = secondVehicle.getId();
                         secondVehicleRegistrationNO = secondVehicle.getRegistrationNO();
                         secondVehicleStateType = secondVehicle.getStateType();
@@ -180,9 +180,9 @@ public class DatasUtils {
                     for (Organ organ : organs) {
                         String strThird = initDatasTreeStrThird(organ);
                         thirdOrgansId = organ.getId();
-                        thirdOrgansOrgShortName = organ.getOrgShortName();
+                        thirdOrgansOrgShortName = organ.getOrgName();
 
-                        thirdVehicles = organ.getVehicles();
+                        thirdVehicles = organ.getVideoes();
                         thirdVsize = thirdVehicles.size();
 
                         thirdOrgans = organ.getOrgans();
@@ -193,7 +193,7 @@ public class DatasUtils {
 
 
                         if (thirdVsize > 0) {
-                            for (VehiclesBean thirdVehicle : thirdVehicles) {
+                            for (VideoesBean thirdVehicle : thirdVehicles) {
                                 thirdVehicleId = thirdVehicle.getId();
                                 thirdVehicleRegistrationNO = thirdVehicle.getRegistrationNO();
                                 thirdVehicleStateType = thirdVehicle.getStateType();
@@ -213,9 +213,9 @@ public class DatasUtils {
                                 String strFouth = initDatasTreeStrFouth(thirdOrgan);
 
                                 thirdOrganId = thirdOrgan.getId();
-                                thirdOrganOrgShortName = thirdOrgan.getOrgShortName();
+                                thirdOrganOrgShortName = thirdOrgan.getOrgName();
 
-                                fourthvehicles = thirdOrgan.getVehicles();
+                                fourthvehicles = thirdOrgan.getVideoes();
                                 fourthVsize = fourthvehicles.size();
 
                                 fourthOrgans = thirdOrgan.getOrgans();
@@ -225,7 +225,7 @@ public class DatasUtils {
 
 
                                 if (fourthVsize > 0) {
-                                    for (VehiclesBean fourthvehicle : fourthvehicles) {
+                                    for (VideoesBean fourthvehicle : fourthvehicles) {
                                         fourthvehicleId = fourthvehicle.getId();
                                         fourthvehicleRegistrationNO = fourthvehicle.getRegistrationNO();
                                         fourthvehicleStateType = fourthvehicle.getStateType();
@@ -244,9 +244,9 @@ public class DatasUtils {
 
                                         String strFifth = initDatasTreeStrFouth(fourthOrgan);
                                         fourthOrganId = fourthOrgan.getId();
-                                        fourthOrganOrgShortName = fourthOrgan.getOrgShortName();
+                                        fourthOrganOrgShortName = fourthOrgan.getOrgName();
 
-                                        fifthVehicles = fourthOrgan.getVehicles();
+                                        fifthVehicles = fourthOrgan.getVideoes();
                                         fifthVsize = fifthVehicles.size();
 
                                         fifthOrgans = fourthOrgan.getOrgans();
@@ -257,7 +257,7 @@ public class DatasUtils {
 
 
                                         if (fifthVsize > 0) {
-                                            for (VehiclesBean fifthVehicle : fifthVehicles) {
+                                            for (VideoesBean fifthVehicle : fifthVehicles) {
                                                 fifthVehicleId = fifthVehicle.getId();
                                                 fifthVehicleRegistrationNO = fifthVehicle.getRegistrationNO();
                                                 fifthVehicleStateType = fifthVehicle.getStateType();
@@ -277,9 +277,9 @@ public class DatasUtils {
 
                                                 String strSixth = initDatasTreeStrFouth(fourthOrgan);
                                                 fifthOrganId = fifthOrgan.getId();
-                                                fifthOrganOrgShortName = fifthOrgan.getOrgShortName();
+                                                fifthOrganOrgShortName = fifthOrgan.getOrgName();
 
-                                                sixthVehicles = fifthOrgan.getVehicles();
+                                                sixthVehicles = fifthOrgan.getVideoes();
                                                 sixthVsize = sixthVehicles.size();
 
                                                 sixthOrganOrgans = fifthOrgan.getOrgans();
@@ -289,7 +289,7 @@ public class DatasUtils {
 
 
                                                 if (sixthVsize > 0) {
-                                                    for (VehiclesBean sixthVehicle : sixthVehicles) {
+                                                    for (VideoesBean sixthVehicle : sixthVehicles) {
                                                         sixthVehicleId = sixthVehicle.getId();
                                                         sixthVehicleRegistrationNO = sixthVehicle.getRegistrationNO();
                                                         sixthVehicleStateType = sixthVehicle.getStateType();
@@ -316,7 +316,7 @@ public class DatasUtils {
     }
 
 
-    private static String initDatasTreeStr(List<CarListInfosMsgBean> msg) {
+    private static String initDatasTreeStr(List<ChangeVideoEquipmentDataBean> msg) {
 
         String countAllStr = "";
         int count = 0;
@@ -326,19 +326,19 @@ public class DatasUtils {
         if (size <= 0) {
             return "";
         }
-        CarListInfosMsgBean msgBean = msg.get(0);
+        ChangeVideoEquipmentDataBean msgBean = msg.get(0);
 
         /*第二层*/
-        List<VehiclesBeanX> firstVehicles = msgBean.getVehicles();
+        List<VideoesXBean> firstVehicles = msgBean.getVehicle();
         firstVsize = firstVehicles.size();
 
-        List<OrgansBean> firstOrgans = msgBean.getOrgans();
+        List<OrgansBean> firstOrgans = msgBean.getOrgan();
         firstOsize = firstOrgans.size();
 
         // id , pid , label , 其他属性
 
         if (firstVsize > 0) {
-            for (VehiclesBeanX firstVehicle : firstVehicles) {
+            for (VideoesXBean firstVehicle : firstVehicles) {
                 firstVehicleStateType = firstVehicle.getStateType();
                 countAll++;
                 if (firstVehicleStateType.contains("1")) {
@@ -352,13 +352,13 @@ public class DatasUtils {
         if (firstOsize > 0) {
             for (OrgansBean organ : firstOrgans) {
 
-                secondVehicles = organ.getVehicles();
+                secondVehicles = organ.getVideoes();
                 secondVsize = secondVehicles.size();
 
                 List<Organ> organs = organ.getOrgans();
                 secondOsize = organs.size();
                 if (secondVsize > 0) {
-                    for (VehiclesBean secondVehicle : secondVehicles) {
+                    for (VideoesBean secondVehicle : secondVehicles) {
                         stateType2 = secondVehicle.getStateType();
                         countAll++;
                         if (stateType2.contains("1")) {
@@ -374,14 +374,14 @@ public class DatasUtils {
                 if (secondOsize > 0) {
                     for (Organ secondOrgans : organs) {
 
-                        thirdVehicles = secondOrgans.getVehicles();
+                        thirdVehicles = secondOrgans.getVideoes();
                         thirdVsize = thirdVehicles.size();
 
                         thirdOrgans = secondOrgans.getOrgans();
                         thirdOsize = thirdOrgans.size();
 
                         if (thirdVsize > 0) {
-                            for (VehiclesBean thirdVehicle : thirdVehicles) {
+                            for (VideoesBean thirdVehicle : thirdVehicles) {
                                 countAll++;
                                 sStateType3 = thirdVehicle.getStateType();
                                 if (sStateType3.contains("1")) {
@@ -397,7 +397,7 @@ public class DatasUtils {
                         if (thirdOsize > 0) {
                             for (Organ thirdOrgan : thirdOrgans) {
 
-                                fourthvehicles = thirdOrgan.getVehicles();
+                                fourthvehicles = thirdOrgan.getVideoes();
                                 fourthVsize = fourthvehicles.size();
 
                                 fourthOrgans = thirdOrgan.getOrgans();
@@ -405,7 +405,7 @@ public class DatasUtils {
 
                                 String stateType4 = "";
                                 if (fourthVsize > 0) {
-                                    for (VehiclesBean fourthvehicle : fourthvehicles) {
+                                    for (VideoesBean fourthvehicle : fourthvehicles) {
                                         countAll++;
                                         stateType4 = fourthvehicle.getStateType();
                                         if (stateType4.contains("1")) {
@@ -420,7 +420,7 @@ public class DatasUtils {
                                 if (fourthOsize > 0) {
                                     for (Organ fourthOrgan : fourthOrgans) {
 
-                                        fifthVehicles = fourthOrgan.getVehicles();
+                                        fifthVehicles = fourthOrgan.getVideoes();
                                         fifthVsize = fifthVehicles.size();
 
                                         fifthOrgans = fourthOrgan.getOrgans();
@@ -429,7 +429,7 @@ public class DatasUtils {
 
                                         String stateType5 = "";
                                         if (fifthVsize > 0) {
-                                            for (VehiclesBean fifthVehicle : fifthVehicles) {
+                                            for (VideoesBean fifthVehicle : fifthVehicles) {
                                                 countAll++;
                                                 stateType5 = fifthVehicle.getStateType();
                                                 if (stateType5.equals("1")) {
@@ -443,7 +443,7 @@ public class DatasUtils {
 //                                        第六层
                                         if (fifthOsize > 0) {
                                             for (Organ fifthOrgan : fifthOrgans) {
-                                                sixthVehicles = fifthOrgan.getVehicles();
+                                                sixthVehicles = fifthOrgan.getVideoes();
                                                 sixthVsize = sixthVehicles.size();
 
                                                 sixthOrganOrgans = fifthOrgan.getOrgans();
@@ -451,7 +451,7 @@ public class DatasUtils {
 
                                                 String stateType6 = "";
                                                 if (sixthVsize > 0) {
-                                                    for (VehiclesBean sixthVehicle : sixthVehicles) {
+                                                    for (VideoesBean sixthVehicle : sixthVehicles) {
                                                         stateType6 = sixthVehicle.getStateType();
                                                         countAll++;
                                                         if (stateType6.contains("1")) {
@@ -473,7 +473,7 @@ public class DatasUtils {
             }
         }
         countAllStr = count + "/" + countAll;
-        return countAllStr;
+        return String.valueOf(countAll);
     }
 
     private static String initDatasTreeStrSecond(OrgansBean firstOrgans) {
@@ -483,13 +483,13 @@ public class DatasUtils {
         int countAll = 0;
 
 
-        secondVehicles = firstOrgans.getVehicles();
+        secondVehicles = firstOrgans.getVideoes();
         secondVsize = secondVehicles.size();
 
         List<Organ> organs = firstOrgans.getOrgans();
         secondOsize = organs.size();
         if (secondVsize > 0) {
-            for (VehiclesBean secondVehicle : secondVehicles) {
+            for (VideoesBean secondVehicle : secondVehicles) {
                 stateType2 = secondVehicle.getStateType();
                 countAll++;
                 if (stateType2.contains("1")) {
@@ -505,14 +505,14 @@ public class DatasUtils {
         if (secondOsize > 0) {
             for (Organ secondOrgans : organs) {
 
-                thirdVehicles = secondOrgans.getVehicles();
+                thirdVehicles = secondOrgans.getVideoes();
                 thirdVsize = thirdVehicles.size();
 
                 thirdOrgans = secondOrgans.getOrgans();
                 thirdOsize = thirdOrgans.size();
 
                 if (thirdVsize > 0) {
-                    for (VehiclesBean thirdVehicle : thirdVehicles) {
+                    for (VideoesBean thirdVehicle : thirdVehicles) {
                         countAll++;
                         sStateType3 = thirdVehicle.getStateType();
                         if (sStateType3.contains("1")) {
@@ -528,7 +528,7 @@ public class DatasUtils {
                 if (thirdOsize > 0) {
                     for (Organ thirdOrgan : thirdOrgans) {
 
-                        fourthvehicles = thirdOrgan.getVehicles();
+                        fourthvehicles = thirdOrgan.getVideoes();
                         fourthVsize = fourthvehicles.size();
 
                         fourthOrgans = thirdOrgan.getOrgans();
@@ -536,7 +536,7 @@ public class DatasUtils {
 
                         String stateType4 = "";
                         if (fourthVsize > 0) {
-                            for (VehiclesBean fourthvehicle : fourthvehicles) {
+                            for (VideoesBean fourthvehicle : fourthvehicles) {
                                 countAll++;
                                 stateType4 = fourthvehicle.getStateType();
                                 if (stateType4.contains("1")) {
@@ -551,7 +551,7 @@ public class DatasUtils {
                         if (fourthOsize > 0) {
                             for (Organ fourthOrgan : fourthOrgans) {
 
-                                fifthVehicles = fourthOrgan.getVehicles();
+                                fifthVehicles = fourthOrgan.getVideoes();
                                 fifthVsize = fifthVehicles.size();
 
                                 fifthOrgans = fourthOrgan.getOrgans();
@@ -560,7 +560,7 @@ public class DatasUtils {
 
                                 String stateType5 = "";
                                 if (fifthVsize > 0) {
-                                    for (VehiclesBean fifthVehicle : fifthVehicles) {
+                                    for (VideoesBean fifthVehicle : fifthVehicles) {
                                         countAll++;
                                         stateType5 = fifthVehicle.getStateType();
                                         if (stateType5.equals("1")) {
@@ -574,7 +574,7 @@ public class DatasUtils {
 //                                        第六层
                                 if (fifthOsize > 0) {
                                     for (Organ fifthOrgan : fifthOrgans) {
-                                        sixthVehicles = fifthOrgan.getVehicles();
+                                        sixthVehicles = fifthOrgan.getVideoes();
                                         sixthVsize = sixthVehicles.size();
 
                                         sixthOrganOrgans = fifthOrgan.getOrgans();
@@ -582,7 +582,7 @@ public class DatasUtils {
 
                                         String stateType6 = "";
                                         if (sixthVsize > 0) {
-                                            for (VehiclesBean sixthVehicle : sixthVehicles) {
+                                            for (VideoesBean sixthVehicle : sixthVehicles) {
                                                 stateType6 = sixthVehicle.getStateType();
                                                 countAll++;
                                                 if (stateType6.contains("1")) {
@@ -603,7 +603,7 @@ public class DatasUtils {
         }
 
         countAllStr = count + "/" + countAll;
-        return countAllStr;
+        return String.valueOf(countAll);
     }
 
 
@@ -614,13 +614,13 @@ public class DatasUtils {
         int countAll = 0;
 
 
-        secondVehicles = organ.getVehicles();
+        secondVehicles = organ.getVideoes();
         secondVsize = secondVehicles.size();
 
         List<Organ> organs = organ.getOrgans();
         secondOsize = organs.size();
         if (secondVsize > 0) {
-            for (VehiclesBean secondVehicle : secondVehicles) {
+            for (VideoesBean secondVehicle : secondVehicles) {
                 stateType2 = secondVehicle.getStateType();
                 countAll++;
                 if (stateType2.contains("1")) {
@@ -636,14 +636,14 @@ public class DatasUtils {
         if (secondOsize > 0) {
             for (Organ secondOrgans : organs) {
 
-                thirdVehicles = secondOrgans.getVehicles();
+                thirdVehicles = secondOrgans.getVideoes();
                 thirdVsize = thirdVehicles.size();
 
                 thirdOrgans = secondOrgans.getOrgans();
                 thirdOsize = thirdOrgans.size();
 
                 if (thirdVsize > 0) {
-                    for (VehiclesBean thirdVehicle : thirdVehicles) {
+                    for (VideoesBean thirdVehicle : thirdVehicles) {
                         countAll++;
                         sStateType3 = thirdVehicle.getStateType();
                         if (sStateType3.contains("1")) {
@@ -659,7 +659,7 @@ public class DatasUtils {
                 if (thirdOsize > 0) {
                     for (Organ thirdOrgan : thirdOrgans) {
 
-                        fourthvehicles = thirdOrgan.getVehicles();
+                        fourthvehicles = thirdOrgan.getVideoes();
                         fourthVsize = fourthvehicles.size();
 
                         fourthOrgans = thirdOrgan.getOrgans();
@@ -667,7 +667,7 @@ public class DatasUtils {
 
                         String stateType4 = "";
                         if (fourthVsize > 0) {
-                            for (VehiclesBean fourthvehicle : fourthvehicles) {
+                            for (VideoesBean fourthvehicle : fourthvehicles) {
                                 countAll++;
                                 stateType4 = fourthvehicle.getStateType();
                                 if (stateType4.contains("1")) {
@@ -682,7 +682,7 @@ public class DatasUtils {
                         if (fourthOsize > 0) {
                             for (Organ fourthOrgan : fourthOrgans) {
 
-                                fifthVehicles = fourthOrgan.getVehicles();
+                                fifthVehicles = fourthOrgan.getVideoes();
                                 fifthVsize = fifthVehicles.size();
 
                                 fifthOrgans = fourthOrgan.getOrgans();
@@ -691,7 +691,7 @@ public class DatasUtils {
 
                                 String stateType5 = "";
                                 if (fifthVsize > 0) {
-                                    for (VehiclesBean fifthVehicle : fifthVehicles) {
+                                    for (VideoesBean fifthVehicle : fifthVehicles) {
                                         countAll++;
                                         stateType5 = fifthVehicle.getStateType();
                                         if (stateType5.equals("1")) {
@@ -705,7 +705,7 @@ public class DatasUtils {
 //                                        第六层
                                 if (fifthOsize > 0) {
                                     for (Organ fifthOrgan : fifthOrgans) {
-                                        sixthVehicles = fifthOrgan.getVehicles();
+                                        sixthVehicles = fifthOrgan.getVideoes();
                                         sixthVsize = sixthVehicles.size();
 
                                         sixthOrganOrgans = fifthOrgan.getOrgans();
@@ -713,7 +713,7 @@ public class DatasUtils {
 
                                         String stateType6 = "";
                                         if (sixthVsize > 0) {
-                                            for (VehiclesBean sixthVehicle : sixthVehicles) {
+                                            for (VideoesBean sixthVehicle : sixthVehicles) {
                                                 stateType6 = sixthVehicle.getStateType();
                                                 countAll++;
                                                 if (stateType6.contains("1")) {
@@ -733,7 +733,7 @@ public class DatasUtils {
             }
         }
         countAllStr = count + "/" + countAll;
-        return countAllStr;
+        return String.valueOf(countAll);
     }
 
 
@@ -744,13 +744,13 @@ public class DatasUtils {
         int countAll = 0;
 
 
-        secondVehicles = organ.getVehicles();
+        secondVehicles = organ.getVideoes();
         secondVsize = secondVehicles.size();
 
         List<Organ> organs = organ.getOrgans();
         secondOsize = organs.size();
         if (secondVsize > 0) {
-            for (VehiclesBean secondVehicle : secondVehicles) {
+            for (VideoesBean secondVehicle : secondVehicles) {
                 stateType2 = secondVehicle.getStateType();
                 countAll++;
                 if (stateType2.contains("1")) {
@@ -766,14 +766,14 @@ public class DatasUtils {
         if (secondOsize > 0) {
             for (Organ secondOrgans : organs) {
 
-                thirdVehicles = secondOrgans.getVehicles();
+                thirdVehicles = secondOrgans.getVideoes();
                 thirdVsize = thirdVehicles.size();
 
                 thirdOrgans = secondOrgans.getOrgans();
                 thirdOsize = thirdOrgans.size();
 
                 if (thirdVsize > 0) {
-                    for (VehiclesBean thirdVehicle : thirdVehicles) {
+                    for (VideoesBean thirdVehicle : thirdVehicles) {
                         countAll++;
                         sStateType3 = thirdVehicle.getStateType();
                         if (sStateType3.contains("1")) {
@@ -789,7 +789,7 @@ public class DatasUtils {
                 if (thirdOsize > 0) {
                     for (Organ thirdOrgan : thirdOrgans) {
 
-                        fourthvehicles = thirdOrgan.getVehicles();
+                        fourthvehicles = thirdOrgan.getVideoes();
                         fourthVsize = fourthvehicles.size();
 
                         fourthOrgans = thirdOrgan.getOrgans();
@@ -797,7 +797,7 @@ public class DatasUtils {
 
                         String stateType4 = "";
                         if (fourthVsize > 0) {
-                            for (VehiclesBean fourthvehicle : fourthvehicles) {
+                            for (VideoesBean fourthvehicle : fourthvehicles) {
                                 countAll++;
                                 stateType4 = fourthvehicle.getStateType();
                                 if (stateType4.contains("1")) {
@@ -812,7 +812,7 @@ public class DatasUtils {
                         if (fourthOsize > 0) {
                             for (Organ fourthOrgan : fourthOrgans) {
 
-                                fifthVehicles = fourthOrgan.getVehicles();
+                                fifthVehicles = fourthOrgan.getVideoes();
                                 fifthVsize = fifthVehicles.size();
 
                                 fifthOrgans = fourthOrgan.getOrgans();
@@ -821,7 +821,7 @@ public class DatasUtils {
 
                                 String stateType5 = "";
                                 if (fifthVsize > 0) {
-                                    for (VehiclesBean fifthVehicle : fifthVehicles) {
+                                    for (VideoesBean fifthVehicle : fifthVehicles) {
                                         countAll++;
                                         stateType5 = fifthVehicle.getStateType();
                                         if (stateType5.equals("1")) {
@@ -835,7 +835,7 @@ public class DatasUtils {
 //                                        第六层
                                 if (fifthOsize > 0) {
                                     for (Organ fifthOrgan : fifthOrgans) {
-                                        sixthVehicles = fifthOrgan.getVehicles();
+                                        sixthVehicles = fifthOrgan.getVideoes();
                                         sixthVsize = sixthVehicles.size();
 
                                         sixthOrganOrgans = fifthOrgan.getOrgans();
@@ -843,7 +843,7 @@ public class DatasUtils {
 
                                         String stateType6 = "";
                                         if (sixthVsize > 0) {
-                                            for (VehiclesBean sixthVehicle : sixthVehicles) {
+                                            for (VideoesBean sixthVehicle : sixthVehicles) {
                                                 stateType6 = sixthVehicle.getStateType();
                                                 countAll++;
                                                 if (stateType6.contains("1")) {
@@ -863,7 +863,7 @@ public class DatasUtils {
             }
         }
         countAllStr = count + "/" + countAll;
-        return countAllStr;
+        return String.valueOf(countAll);
     }
 
     private static String returnAddress(final GeoCoder geoCoder, final String latTxt, final String lngTxt) {

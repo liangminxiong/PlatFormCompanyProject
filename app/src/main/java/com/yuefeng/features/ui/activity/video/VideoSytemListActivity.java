@@ -18,7 +18,6 @@ import com.yuefeng.features.contract.VideoListContract;
 import com.yuefeng.features.event.VideoListEvent;
 import com.yuefeng.features.modle.video.ChangeVideoEquipmentDataBean;
 import com.yuefeng.features.presenter.VideoListPresenter;
-import com.yuefeng.utils.ChangeDatasUtils;
 import com.yuefeng.videotreesList.Node;
 import com.yuefeng.videotreesList.OnTreeNodeClickListener;
 import com.yuefeng.videotreesList.adapter.SimpleTreeRecyclerAdapter;
@@ -132,7 +131,7 @@ public class VideoSytemListActivity extends BaseActivity implements VideoListCon
 //        //第四个参数  默认展开层级数 0为不展开
 //        //第五个参数  展开的图标
 //        //第六个参数  闭合的图标
-        mDatas = ChangeDatasUtils.ReturnTreesDatas(beanList);
+//        mDatas = ChangeDatasUtils.ReturnTreesDatas(beanList);
 
         mAdapter = new SimpleTreeRecyclerAdapter(recyclerview, this,
                 mDatas, 0, R.drawable.tree_open, R.drawable.tree_close, true);

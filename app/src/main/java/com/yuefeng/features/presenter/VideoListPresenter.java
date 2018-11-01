@@ -41,7 +41,7 @@ public class VideoListPresenter extends BasePresenterImpl<VideoListContract.View
                             if (o.isSuccess()) {
                                 EventBus.getDefault().post(new VideoListEvent(Constans.VIDEO_SSUCESS, o.getData()));
                             } else {
-                                EventBus.getDefault().post(new VideoListEvent(Constans.VIDEO_ERROR, o.getMsg()));
+                                EventBus.getDefault().post(new VideoListEvent(Constans.VIDEO_ERROR, o.getData()));
                             }
                         }
                     }

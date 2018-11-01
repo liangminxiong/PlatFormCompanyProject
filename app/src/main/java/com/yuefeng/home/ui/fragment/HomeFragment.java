@@ -7,6 +7,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -46,6 +47,8 @@ public class HomeFragment extends BaseMvpFragment {
     TextInputEditText tvSearchTxt;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
+    @BindView(R.id.rl_search)
+    RelativeLayout rlSearch;
 
     @BindString(R.string.tab_main_name)
     String msg_name;
@@ -68,6 +71,7 @@ public class HomeFragment extends BaseMvpFragment {
         tvSearchTxt.setCursorVisible(false);
         recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         initRecycleView();
+        rlSearch.setVisibility(View.INVISIBLE);
     }
 
     private void initRecycleView() {

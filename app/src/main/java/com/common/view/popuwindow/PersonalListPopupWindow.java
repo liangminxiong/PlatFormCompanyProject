@@ -33,7 +33,7 @@ import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.CarListSelectAdapter;
 import com.yuefeng.features.modle.carlist.CarListSelectBean;
-import com.yuefeng.utils.DatasUtils;
+import com.yuefeng.utils.PersonalDatasUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +46,7 @@ import java.util.List;
 
 public class PersonalListPopupWindow extends PopupWindow {
     private Context mContext;
+    private boolean isSingle;
     private OnItemClickListener mOnItemClickListener;
     private LinearLayoutCompat llPopupRoot;
     private boolean isShowAniming;//show动画是否在执行中
@@ -60,18 +61,24 @@ public class PersonalListPopupWindow extends PopupWindow {
     private String key;
     private CarListSelectAdapter adapterSelect;
     private List<CarListSelectBean> listData = new ArrayList<>();
-    private String terminal;
+    private String userId;
     private List<Node> carDatas;
     private String name;
     private SimpleTreeRecyclerAdapter treeListAdapter;
     private String personalName;
     private StringBuffer stringBuffer;
+    private StringBuffer stringBufferFlag;
+    private StringBuffer stringBufferTerflag;
     private String selectTreeName;
+    private String useridFlag;
+    private String terflag;
+    private String terminal;
 
-    public PersonalListPopupWindow(Context context, List<Node> carDatas) {
+    public PersonalListPopupWindow(Context context, List<Node> carDatas, boolean isSingle) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mContext = context;
         this.carDatas = carDatas;
+        this.isSingle = isSingle;
         //设置点击空白处消失
         setTouchable(true);
         setOutsideTouchable(true);
@@ -107,8 +114,8 @@ public class PersonalListPopupWindow extends PopupWindow {
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnItemClickListener != null)
-                    mOnItemClickListener.onGoBack();
+                dismiss();
+                showSelectItemDatas();
             }
         });
 
@@ -161,7 +168,7 @@ public class PersonalListPopupWindow extends PopupWindow {
 
     private void initRecycleView() {
         treeListAdapter = new SimpleTreeRecyclerAdapter(recyclerview, mContext,
-                carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, false);
+                carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, isSingle);
 //
         recyclerview.setAdapter(treeListAdapter);
         treeListAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
@@ -183,14 +190,24 @@ public class PersonalListPopupWindow extends PopupWindow {
             stringBuffer = new StringBuffer();
             stringBuffer.setLength(0);
         }
+        if (stringBufferFlag == null) {
+            stringBufferFlag = new StringBuffer();
+            stringBufferFlag.setLength(0);
+        }if (stringBufferTerflag == null) {
+            stringBufferTerflag = new StringBuffer();
+            stringBufferTerflag.setLength(0);
+        }
         final List<Node> allNodes = treeListAdapter.getAllNodes();
         for (int i = 0; i < allNodes.size(); i++) {
             if (allNodes.get(i).isChecked()) {
                 personalName = allNodes.get(i).getName();
-                terminal = allNodes.get(i).getTerminalNO();
-                LogUtils.d("shwoSelectItemName == " + personalName + " ++ " + terminal);
-                if (!TextUtils.isEmpty(personalName) && !TextUtils.isEmpty(terminal)) {
+                userId = (String) allNodes.get(i).getId();
+                terminal = (String) allNodes.get(i).getTerminalNO();
+                LogUtils.d("shwoSelectItemName == " + personalName + " ++ " + userId);
+                if (!TextUtils.isEmpty(personalName) && !TextUtils.isEmpty(userId)) {
                     stringBuffer.append(personalName).append(",");
+                    stringBufferFlag.append(userId).append(",");
+                    stringBufferTerflag.append(terminal).append(",");
                 }
             }
         }
@@ -198,10 +215,13 @@ public class PersonalListPopupWindow extends PopupWindow {
             selectTreeName = name;
         } else {
             selectTreeName = stringBuffer.toString();
+            useridFlag = stringBufferFlag.toString();
+            terminal = stringBufferTerflag.toString();
         }
-        if (!TextUtils.isEmpty(terminal)) {
+        if (!TextUtils.isEmpty(userId)) {
             if (mOnItemClickListener != null) {
-                mOnItemClickListener.onSure(selectTreeName);
+                mOnItemClickListener.onSure(selectTreeName, useridFlag,terminal);
+                mOnItemClickListener.onGoBack(selectTreeName, useridFlag,terminal);
             }
         }
     }
@@ -215,12 +235,46 @@ public class PersonalListPopupWindow extends PopupWindow {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 name = listData.get(position).getName();
+                userId = listData.get(position).getTerminal();
                 terminal = listData.get(position).getTerminal();
-                if (!TextUtils.isEmpty(terminal)) {
-                    if (isShowing())
-                        dismiss();
+                if (!TextUtils.isEmpty(userId)) {
+//                    if (isShowing())
+//                        dismiss();
                     if (mOnItemClickListener != null)
-                        mOnItemClickListener.onSelectCar(name, terminal);
+                        mOnItemClickListener.onSelectCar(name, userId,terminal);
+                }
+            }
+        });
+        adapterSelect.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                if (stringBuffer == null) {
+                    stringBuffer = new StringBuffer();
+                    stringBuffer.setLength(0);
+                }
+                if (stringBufferFlag == null) {
+                    stringBufferFlag = new StringBuffer();
+                    stringBufferFlag.setLength(0);
+                }
+                personalName = listData.get(position).getName();
+                userId = listData.get(position).getId();
+                terminal = listData.get(position).getTerminal();
+                if (!TextUtils.isEmpty(personalName) && !TextUtils.isEmpty(userId)) {
+                    stringBuffer.append(personalName).append(",");
+                    stringBufferFlag.append(userId).append(",");
+                }
+                if (!TextUtils.isEmpty(name)) {
+                    selectTreeName = name;
+                } else {
+                    selectTreeName = stringBuffer.toString();
+                    useridFlag = stringBufferFlag.toString();
+                    terminal = stringBufferTerflag.toString();
+                }
+                if (!TextUtils.isEmpty(userId)) {
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onSure(selectTreeName, useridFlag,terminal);
+                        mOnItemClickListener.onGoBack(selectTreeName, useridFlag,terminal);
+                    }
                 }
             }
         });
@@ -229,7 +283,7 @@ public class PersonalListPopupWindow extends PopupWindow {
 
     private void searchList(String key) {
         if (carDatas.size() > 0) {
-            List<CarListSelectBean> nodes = DatasUtils.carListSelect(carDatas, key);
+            List<CarListSelectBean> nodes = PersonalDatasUtils.carListSelect(carDatas, key);
             if (nodes.size() > 0) {
                 listData.clear();
                 listData.addAll(nodes);
@@ -276,13 +330,13 @@ public class PersonalListPopupWindow extends PopupWindow {
     }
 
     public interface OnItemClickListener {
-        void onGoBack();
+        void onGoBack(String listName, String userId, String terflag);
 
 //        void onSearch(String key);
 
-        void onSure(String listName);
+        void onSure(String listName, String userId, String terflag);
 
-        void onSelectCar(String carNumber, String terminal);
+        void onSelectCar(String carNumber, String userId, String terflag);
 
     }
 

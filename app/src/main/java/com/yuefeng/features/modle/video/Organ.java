@@ -12,21 +12,25 @@ import java.util.List;
 public class Organ implements Serializable {
 
     public Organ() {
+        organ = new ArrayList<>();
         organs = new ArrayList<>();
-        organsbeen = new ArrayList<>();
-        videoes = new ArrayList<>();
+        vehicle = new ArrayList<>();
     }
 
+
+
+    private String id;
+    private String pid;
+    private String orgShortName;
+    private String orgCode;
+    private String orgName;
     private String principal;
     private String principalTel;
     private String fax;
     private String address;
-    private String id;
-    private String pid;
-    private String orgName;
-    private List<Organ> organs;
-    private List<OrgansBean> organsbeen;
-    private List<VideoesBean> videoes;
+    private List<Organ> organ;
+    private List<OrgansBean> organs;
+    private List<VideoesBean> vehicle;
 
     public String getId() {
         return id;
@@ -45,11 +49,11 @@ public class Organ implements Serializable {
     }
 
     public String getOrgName() {
-        return orgName;
+        return orgShortName;
     }
 
     public void setOrgName(String orgName) {
-        this.orgName = orgName;
+        this.orgShortName = orgName;
     }
 
     public String getPrincipal() {
@@ -86,27 +90,27 @@ public class Organ implements Serializable {
 
 
     public List<Organ> getOrgans() {
-        return organs;
+        return organ;
     }
 
     public void setOrgans(List<Organ> organs) {
-        this.organs = organs;
+        this.organ = organs;
 
     }
 
     public List<OrgansBean> getOrgansbeen() {
-        return organsbeen;
+        return organs;
     }
 
     public void setOrgansbeen(List<OrgansBean> organsbeen) {
-        this.organsbeen = organsbeen;
+        this.organs = organsbeen;
     }
 
     public List<VideoesBean> getVideoes() {
-        return videoes;
+        return vehicle;
     }
 
     public void setVideoes(List<VideoesBean> videoes) {
-        this.videoes = videoes;
+        this.vehicle = videoes;
     }
 }

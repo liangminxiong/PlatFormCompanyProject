@@ -9,7 +9,11 @@ public interface SupervisorSngnInContract {
     }
 
     interface Presenter {
-        /*车辆列表*/
-        void getCarListInfos(String function, String organid, String userid, String isreg);
+        /*人员列表*/
+        void getPersontree(String function, String userid, String pid);
+
+        /*签到*/
+        void spSignIn(String function, String userid, String terflag, String useridflag,
+                      String lon, String lat, String address, String type, String memo, String imageArrays);
     }
 }

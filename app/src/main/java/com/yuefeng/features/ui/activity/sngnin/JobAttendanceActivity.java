@@ -13,8 +13,10 @@ import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
 import com.common.base.codereview.BaseActivity;
+import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
+import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
@@ -123,27 +125,28 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
-                if (location == null) {requestPermissions();
+                if (location == null) {
+                    requestPermissions();
                     return;
                 }
 //                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                    address = location.getAddrStr();
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                address = location.getAddrStr();
 
+                if (!TextUtils.isEmpty(address)) {
+                    int length = address.length();
+                    address = address.substring(2, length);
+                }
+                if (isFirstLocation) {
+                    isFirstLocation = false;
                     if (!TextUtils.isEmpty(address)) {
-                        int length = address.length();
-                        address = address.substring(2, length);
+                        tvAddress.setText(address);
+                    } else {
+                        isFirstLocation = true;
+                        tvAddress.setText("点击重新定位");
                     }
-                    if (isFirstLocation) {
-                        isFirstLocation = false;
-                        if (!TextUtils.isEmpty(address)) {
-                            tvAddress.setText(address);
-                        } else {
-                            isFirstLocation = true;
-                            tvAddress.setText("点击重新定位");
-                        }
-                    }
+                }
 //                }else {
 //                    isFirstLocation = true;
 //                    tvAddress.setText("点击重新定位");
@@ -184,6 +187,12 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
         switch (event.getWhat()) {
             case Constans.SNGNIN_SSUCESS://成功
                 break;
+            case Constans.LOGIN://个人签到成功
+                showSuccessDialog("签到成功,是否退出当前界面?");
+                break;
+            case Constans.USERERROR://个人签到失败
+                showSuccessToast("签到失败，请重试");
+                break;
 
             default:
 //                showSuccessToast("获取数据失败，请重试");
@@ -205,11 +214,20 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
                 }
                 break;
             case R.id.iv_personl_sngnin:
-                showSuccessToast("Personal");
+                signInOneself();
                 break;
             case R.id.iv_sp_sngnin:
-                startActivity(new Intent(JobAttendanceActivity.this,SupervisorSngnInActivity.class));
+                startActivity(new Intent(JobAttendanceActivity.this, SupervisorSngnInActivity.class));
                 break;
+        }
+    }
+
+    /*个人签到*/
+    private void signInOneself() {
+        if (presenter != null) {
+            String userId = PreferencesUtils.getString(this, Constans.ID, "");
+            presenter.signIn(ApiService.QIANDAO, userId, "", "",
+                    String.valueOf(longitude), String.valueOf(latitude), address, Constans.TYPE_ZERO);
         }
     }
 

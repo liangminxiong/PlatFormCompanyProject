@@ -11,5 +11,8 @@ public interface VideolistVContract {
     interface Presenter {
         /*车辆列表*/
         void getCarListInfos(String function, String organid, String userid, String isreg);
+
+        /*视频列表*/
+        void getVideoTree(String function, String organid, String userid, String isreg);
     }
 }

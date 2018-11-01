@@ -1,22 +1,20 @@
-package com.yuefeng.features.modle.video;
+package com.yuefeng.personaltree.model;
 
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by Administrator on 2018/4/28.
- */
+public class PersoanlTreeListBean implements Serializable {
 
-public class VideoEquipmentBean implements Serializable {
 
     /**
      * success : true
      * msgTitle : 成功提示
-     * msg : 操作成功!
+     *  msg
      */
+
     private boolean success;
     private String msgTitle;
-    private List<ChangeVideoEquipmentDataBean> msg;
+    private List<PersonalParentBean> msg;
 
     public boolean isSuccess() {
         return success;
@@ -34,12 +32,11 @@ public class VideoEquipmentBean implements Serializable {
         this.msgTitle = msgTitle;
     }
 
-
-    public List<ChangeVideoEquipmentDataBean> getData() {
+    public List<PersonalParentBean> getMsg() {
         return msg;
     }
 
-    public void setData(List<ChangeVideoEquipmentDataBean> data) {
-        this.msg = data;
+    public void setMsg(List<PersonalParentBean> msg) {
+        this.msg = msg;
     }
 }

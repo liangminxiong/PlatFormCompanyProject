@@ -19,15 +19,18 @@ public class OrgansBean implements Serializable {
      * organs : []
      */
 
+
     private String id;
     private String pid;
+    private String orgShortName;
     private String orgName;
+    private String orgCode;
     private String principal;
     private String principalTel;
     private String fax;
     private String address;
-    private List<Organ> organs;
-    private List<VideoesBean> videoes;
+    private List<Organ> organ;
+    private List<VideoesBean> vehicle;
 
     public String getId() {
         return id;
@@ -46,11 +49,11 @@ public class OrgansBean implements Serializable {
     }
 
     public String getOrgName() {
-        return orgName;
+        return orgShortName;
     }
 
     public void setOrgName(String orgName) {
-        this.orgName = orgName;
+        this.orgShortName = orgName;
     }
 
     public String getPrincipal() {
@@ -86,18 +89,18 @@ public class OrgansBean implements Serializable {
     }
 
     public List<Organ> getOrgans() {
-        return organs;
+        return organ;
     }
 
     public void setOrgans(List<Organ> organs) {
-        this.organs = organs;
+        this.organ = organs;
     }
 
     public List<VideoesBean> getVideoes() {
-        return videoes;
+        return vehicle;
     }
 
     public void setVideoes(List<VideoesBean> videoes) {
-        this.videoes = videoes;
+        this.vehicle = videoes;
     }
 }

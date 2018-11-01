@@ -391,7 +391,7 @@ public class JobMonitoringActivity extends BaseActivity implements
                     showErrorToast("加载失败，请重试");
                     isFirstError = true;
                 }
-                initListdatas("0", "0", "0");
+                initListdatas("人员(0)", "车辆(0)", "问题(0)");
                 break;
         }
     }
