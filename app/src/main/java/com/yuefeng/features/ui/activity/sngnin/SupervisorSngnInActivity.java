@@ -5,13 +5,13 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,6 +21,7 @@ import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
+import com.common.utils.MaxLengthWatcher;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
@@ -78,7 +79,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     @BindView(R.id.edt_memo)
-    TextInputEditText edtMemo;
+    EditText edtMemo;
     @BindView(R.id.ll_edt)
     LinearLayout llEdt;
     @BindView(R.id.ll_parent)
@@ -134,6 +135,8 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
         tvTitle.setText("主管打卡");
         tvTitleSetting.setText("提交");
         tvPersonal.setMovementMethod(ScrollingMovementMethod.getInstance());
+        /*最多可填写*/
+        edtMemo.addTextChangedListener(new MaxLengthWatcher(Constans.ONT_HUNDRED, edtMemo));
     }
 
     /*图片选择*/
@@ -370,7 +373,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
         tvPhotoBig.setText("（已添加" + selectList.size() + "张照片,共" + PictureSelectorUtils.getFileSize(selectList) + "k,限传4张）");
     }
 
-    @OnClick({R.id.tv_title_setting, R.id.tv_address, R.id.ll_personal})
+    @OnClick({R.id.tv_title_setting, R.id.tv_address, R.id.ll_personal, R.id.tv_personal})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_title_setting:
@@ -382,6 +385,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
                 }
                 break;
             case R.id.ll_personal:
+            case R.id.tv_personal:
 //                showSuccessToast("人员选择");
                 initTreeListPopupView();
                 break;

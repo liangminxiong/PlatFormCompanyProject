@@ -106,6 +106,7 @@ public class SimpleTreeRecyclerAdapter extends TreeRecyclerAdapter {
         }
         if (node.getCount().equals("0")) {
             viewHolder.rel.setVisibility(View.GONE);
+            viewHolder.cb.setVisibility(View.VISIBLE);
             viewHolder.label.setText(node.getName());
 
             viewHolder.tv_gpstime.setText("定位时间：" + StringUtils.returnStrTxt(node.getGt()));
@@ -114,6 +115,9 @@ public class SimpleTreeRecyclerAdapter extends TreeRecyclerAdapter {
 //            viewHolder.tv_address.setText("地址：" + node.getAddress());
         } else {
             viewHolder.rel.setVisibility(View.GONE);
+            if (isAllSelect) {
+                viewHolder.cb.setVisibility(View.INVISIBLE);
+            }
             viewHolder.label.setText(node.getName() + "(" + node.getCount() + ")");
         }
     }

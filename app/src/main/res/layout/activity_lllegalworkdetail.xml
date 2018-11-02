@@ -107,31 +107,32 @@
             </RelativeLayout>
 
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_30">
+                android:orientation="horizontal"
+                android:layout_height="@dimen/dp_40">
 
                 <TextView
                     android:id="@+id/tv_address"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/dp_15"
                     android:gravity="center_vertical"
-                    android:singleLine="true"
                     android:textColor="@color/black"
                     tools:ignore="RelativeOverlap"/>
 
                 <TextView
                     android:id="@+id/tv_native"
-                    android:layout_width="@dimen/dp_100"
+                    android:layout_width="@dimen/dp_60"
                     android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/dp_10"
                     android:gravity="center"
                     android:text="导航"
                     android:textColor="@color/green_0e"
                     tools:ignore="HardcodedText"/>
 
-            </RelativeLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_distance"

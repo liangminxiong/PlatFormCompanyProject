@@ -41,6 +41,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseActivity;
 import com.common.location.LocationHelper;
 import com.common.location.MyLocationListener;
+import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
@@ -60,6 +61,7 @@ import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.StringSingleAdapter;
 import com.yuefeng.features.contract.PositionAcquisitionContract;
 import com.yuefeng.features.event.PositionAcquisitionEvent;
+import com.yuefeng.features.modle.GetCaijiTypeMsgBean;
 import com.yuefeng.features.presenter.PositionAcquisitionPresenter;
 import com.yuefeng.features.ui.view.MsgCollectionPopupWindow;
 import com.yuefeng.photo.adapter.GridImageAdapter;
@@ -183,7 +185,9 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     private String type;
     private MsgCollectionPopupWindow msgPopupWindow;
     private StringSingleAdapter singleAdapter;
-    private List<String> listData = new ArrayList<>();
+    private List<GetCaijiTypeMsgBean> listData = new ArrayList<>();
+    private List<GetCaijiTypeMsgBean> listLine = new ArrayList<>();
+    private List<GetCaijiTypeMsgBean> listPoint = new ArrayList<>();
     private String typeWhat;
     private PositionAcquisitionPresenter presenter;
 
@@ -191,6 +195,10 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     private boolean isPositionAcquisition = false;
     /*选择网格还是路段*/
     private int typePosition = 0;
+    private List<GetCaijiTypeMsgBean> listType = new ArrayList<>();
+    private String typeId;
+    private String area;
+    private String lnglat;
 
     @Override
     protected int getContentViewResId() {
@@ -208,10 +216,13 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         infrastructureStr = "";
         workAreaStr = "";
         initRlType();
-        initChronometer();
+    }
 
-//        RefWatcher refWatcher = MyApplication.getRefWatcher(this);//1
-//        refWatcher.watch(this);
+    /*获取采集类型*/
+    private void getCaijiType() {
+        if (presenter != null) {
+            presenter.getCaijiType(ApiService.GETCAIJITYPE);
+        }
     }
 
     private void initChronometer() {
@@ -227,6 +238,8 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     @Override
     protected void initData() {
         requestPermissions();
+        initChronometer();
+        getCaijiType();
     }
 
     /**
@@ -336,6 +349,8 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             public void updateLastLocation(Location location) {
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
+                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+                longitude = latLng.longitude;
             }
 
             @SuppressLint("SetTextI18n")
@@ -344,6 +359,8 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
                 latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+                longitude = latLng.longitude;
+                latitude = latLng.latitude;
                 starDrawTrackLine(latLng);
             }
 
@@ -365,12 +382,13 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             return;
         }
         double distance = DistanceUtil.getDistance(latLngTemp, latLng);
-        if (distance < 1000) {
+        if (distance > 0) {
             latLngTemp = latLng;
-            drawTrackLine(latLng);
+            drawTrackLine(latLngTemp);
         }
     }
 
+    /*划线*/
     private void drawTrackLine(LatLng latLng) {
         try {
             if (isPositionAcquisition) {
@@ -394,23 +412,41 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         }
     }
 
-    protected double getLongitude() {
-        return longitude;
-    }
-
-    protected double getLatitude() {
-        return latitude;
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposePositionAcquisitionEvent(PositionAcquisitionEvent event) {
         switch (event.getWhat()) {
             case Constans.MSGCOLECTION_SSUCESS:
+                showSuccessDialog("上传成功，是否退出当前界面?");
+                break;
+            case Constans.MSGCOLECTION_ERROR://上传失败
+
+                break;
+            case Constans.GETCAIJI_SSUCESS://获采集类型成功
+                listType = (List<GetCaijiTypeMsgBean>) event.getData();
+                if (listType.size() > 0) {
+                    initCaijiTypeData(listType);
+                }
+                break;
+            case Constans.GETCAIJI_ERROR://获采集类型失败
 
                 break;
             default:
 
                 break;
+        }
+    }
+
+    /*采集类型数据*/
+    private void initCaijiTypeData(List<GetCaijiTypeMsgBean> listType) {
+        listPoint.clear();
+        listLine.clear();
+        for (GetCaijiTypeMsgBean typeMsgBean : listType) {
+            String code = typeMsgBean.getCode();
+            if (code.equals("1")) {
+                listLine.add(typeMsgBean);
+            } else {
+                listPoint.add(typeMsgBean);
+            }
         }
     }
 
@@ -450,23 +486,23 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             case R.id.tv_finish://结束
                 tv_finish("1");
                 break;
-            case R.id.btn_beginorstop:
+            case R.id.btn_beginorstop://开始采集
                 beginOrStop();
                 break;
             case R.id.tv_release:
                 tv_release();
                 break;
             case R.id.recyclerview_left://基础设施
-                initMsgPopuwindow(recyclerviewLeft, true);
                 initInFrastDatas();
+                initMsgPopuwindow(recyclerviewLeft, true);
                 workAreaStr = "";
                 recyclerviewRight.setText(workAreaStr);
                 break;
             case R.id.recyclerview_right://作业区段:
                 infrastructureStr = "";
                 recyclerviewLeft.setText(infrastructureStr);
-                initMsgPopuwindow(recyclerviewRight, false);
                 initWorkAreaDatas();
+                initMsgPopuwindow(recyclerviewRight, false);
                 break;
             case R.id.rl_select_start://点击暂停
                 cvTimerStop();
@@ -477,8 +513,11 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     /*作业区段数据*/
     private void initWorkAreaDatas() {
         listData.clear();
-        listData.add("网格");
-        listData.add("路段");
+        if (listLine.size() > 0) {
+            listData.addAll(listLine);
+        } else {
+            showSuccessToast("无作业区段,请联系负责人");
+        }
         if (singleAdapter != null) {
             singleAdapter.setNewData(listData);
         }
@@ -487,10 +526,12 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     /*基础设施数据*/
     private void initInFrastDatas() {
         listData.clear();
-        listData.add("生活垃圾收集点");
-        listData.add("垃圾站");
-        listData.add("公厕");
-        listData.add("中转站");
+        if (listPoint.size() > 0) {
+            listData.addAll(listPoint);
+
+        } else {
+            showSuccessToast("无设施,请联系负责人");
+        }
         if (singleAdapter != null) {
             singleAdapter.setNewData(listData);
         }
@@ -505,7 +546,8 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         singleAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                typeWhat = listData.get(position);
+                typeWhat = listData.get(position).getData();
+                typeId = listData.get(position).getOrderNum();
 
                 if (msgPopupWindow != null) {
                     msgPopupWindow.dismiss();
@@ -515,10 +557,15 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                     return;
                 }
                 if (isWhatType) {
+                    typePosition = 5;
                     recyclerviewLeft.setText(typeWhat);
                 } else {
-                    typePosition = 1;
                     recyclerviewRight.setText(typeWhat);
+                }
+                if (typeWhat.equals("线路")) {
+                    typePosition = 1;
+                } else {
+                    typePosition = 0;
                 }
             }
         });
@@ -540,7 +587,20 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
 
     /*发布*/
     private void tv_release() {
-        showSuccessToast("发布");
+        if (presenter != null && points.size() > 0) {
+
+            String pid = PreferencesUtils.getString(this, Constans.ORGID, "");
+            String userId = PreferencesUtils.getString(this, Constans.ID, "");
+            String tyepName = tvQuduanType.getText().toString().trim();
+            String name = edtMsgName.getText().toString().trim();
+            if (TextUtils.isEmpty(name)) {
+                showSuccessToast("请填写名称");
+                return;
+            }
+            lnglat = presenter.getLnglatStr(points);
+            presenter.upLoadmapInfo(ApiService.UPLOADMAPINFO, pid, userId, typeId, tyepName, name, lnglat,
+                    area, mImagesArrays);
+        }
     }
 
     /*结束*/
@@ -566,11 +626,11 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     /*距离或者面积*/
     private void initAreaOrDistance() {
         LatLng latLngTemp = null;
-        String area = "";
+        area = "";
         if (points.size() > 2) {
             if (typePosition == 0) {//网格
-
-                area = LocationUtils.getArea(points);
+                points.add(new LatLng(points.get(0).latitude, points.get(0).longitude));
+                area = LocationUtils.getArea(points);//面积
             } else {//路段
                 for (int i = 0; i < points.size(); i++) {
                     if (latLngTemp != null) {
@@ -581,6 +641,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 distance = distance / 1000.0;
                 area = StringUtils.getStringDistance(distance);
             }
+
         }
 
         if (presenter != null) {
@@ -601,7 +662,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
             BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
             MarkerOptions oEnd = new MarkerOptions();
-            oEnd.position(points.get(points.size() - 1));
+            oEnd.position(points.get(points.size() - 2));
             oEnd.icon(endImage);
             baiduMap.addOverlay(oEnd);
         }
@@ -623,6 +684,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             showSuccessToast("请选择一种标注类型");
             return;
         }
+        points.add(new LatLng(latitude, longitude));
         if (!TextUtils.isEmpty(workAreaStr)) {//选择作业区段
             isPositionAcquisition = true;
             initCtStart();
@@ -631,6 +693,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             rl_select_start.setVisibility(View.VISIBLE);
         } else {//选择基础设施
             tv_finish("2");
+            btnBeginorstop.setVisibility(View.INVISIBLE);
             isPositionAcquisition = false;
         }
     }
@@ -689,7 +752,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         public void onAddPicClick() {
             initPopupView();
         }
-
     };
 
     /*拍照，图片*/

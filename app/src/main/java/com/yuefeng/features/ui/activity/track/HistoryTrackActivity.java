@@ -496,7 +496,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private void initPopupView() {
         try {
             selectList.clear();
-            popupWindow = new TreesListsPopupWindow(this, datas);
+            popupWindow = new TreesListsPopupWindow(this, datas,true);
             popupWindow.setTitleText("车辆列表");
             popupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
             initTreeListDatas();

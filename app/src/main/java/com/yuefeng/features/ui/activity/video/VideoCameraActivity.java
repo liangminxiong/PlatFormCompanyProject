@@ -140,8 +140,8 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
         if (presenter != null) {
             String pid = PreferencesUtils.getString(this, "orgId", "");
             String userid = PreferencesUtils.getString(this, "id", "");
-            pid = "dg1954";
-            userid = "b91f05e4ffffffc901823b59d8146e3d";
+//            pid = "dg1954";
+//            userid = "b91f05e4ffffffc901823b59d8146e3d";
             presenter.getVideoTree(ApiService.GETVIDEOTREE, pid, userid, "0");
         }
     }
@@ -177,7 +177,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     /*车辆列表*/
     private void initCarlistPopupView() {
         if (carDatas.size() > 0) {
-            carListPopupWindow = new TreesListsPopupWindow(this, carDatas);
+            carListPopupWindow = new TreesListsPopupWindow(this, carDatas,true);
             carListPopupWindow.setTitleText("车辆列表");
             carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
 
@@ -196,7 +196,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
 
                 @Override
                 public void onSelectCar(String carNumber, String terminal) {
-                    showVideoList(terminal);
+//                    showVideoList(terminal);
                 }
             });
 

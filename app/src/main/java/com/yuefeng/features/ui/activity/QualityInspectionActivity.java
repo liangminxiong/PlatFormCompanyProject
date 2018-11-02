@@ -109,7 +109,8 @@ public class QualityInspectionActivity extends BaseActivity implements
 
         viewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager(), tabItemInfos, QualityInspectionActivity.this);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+//        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
         viewPager.setAdapter(viewPagerAdapter);
         viewPager.setOffscreenPageLimit(tabItemInfos.size());
         tabLayout.setupWithViewPager(viewPager);

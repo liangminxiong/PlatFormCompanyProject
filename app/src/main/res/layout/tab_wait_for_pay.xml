@@ -12,17 +12,21 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:gravity="center"
+        android:text="全部"
         android:textColor="@drawable/tab_item_name_selector"
-        android:textSize="13sp"/>
+        android:textSize="13sp"
+        tools:ignore="HardcodedText"/>
 
     <TextView
         android:id="@+id/tab_count"
-        android:layout_width="15dp"
-        android:layout_height="14dp"
-        android:layout_marginTop="5dp"
-        android:layout_toRightOf="@id/tab_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="@dimen/dp_2"
+        android:layout_alignParentRight="true"
         android:background="@drawable/shape_red_dot"
         android:gravity="center"
+        android:text="0"
         android:textColor="@android:color/white"
         android:textSize="@dimen/sp_9"
         android:visibility="visible"

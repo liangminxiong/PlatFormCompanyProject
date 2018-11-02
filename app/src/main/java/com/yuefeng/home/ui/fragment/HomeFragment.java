@@ -71,7 +71,7 @@ public class HomeFragment extends BaseMvpFragment {
         tvSearchTxt.setCursorVisible(false);
         recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         initRecycleView();
-        rlSearch.setVisibility(View.INVISIBLE);
+        rlSearch.setVisibility(View.VISIBLE);
     }
 
     private void initRecycleView() {

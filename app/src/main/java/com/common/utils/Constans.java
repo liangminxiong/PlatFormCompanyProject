@@ -50,6 +50,12 @@ public class Constans {
     public static final int GOBACK = 20;//
     public static final int COLLECTERROR = 22;//
 
+    /*字数 100 200 ...*/
+    public static final int ONT_HUNDRED = 100;
+    public static final int TWO_HUNDRED = 200;
+    public static final int THREE_HUNDRED = 300;
+
+
     /*
      * 问题上报 40-50
      * */
@@ -129,12 +135,15 @@ public class Constans {
     public static final int PERSONALLIST_ERROR = 89;//人员列表失败
 
     /*
-     * 作业考勤 90-100
+     * 作业考勤 信息采集 90-100
      * */
     public static final int SNGNIN_SSUCESS = 90;//考勤成功
     public static final int SNGNIN_ERROR = 91;//考勤失败
     public static final int MSGCOLECTION_SSUCESS = 92;//信息采集成功
     public static final int MSGCOLECTION_ERROR = 93;//失败
+
+    public static final int GETCAIJI_SSUCESS = 94;//获取采集类型成功
+    public static final int GETCAIJI_ERROR = 95;//失败
 
     /*修改密码 110 */
     public static final int CHANGEPWD_SSUCESS = 110;//修改密码成功

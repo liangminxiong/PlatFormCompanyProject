@@ -32,6 +32,7 @@
     <!-- SD卡读取权限，用户写入离线定位数据-->
     <uses-permission android:name="android.permission.REQUEST_PERMISSIONS"/>
     <uses-permission android:name="android.permission.ACCESS_GPS"/>
+
     <!-- 允许程序访问额外的定位提供者指令获取模拟定位信息 -->
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
     <!--相机-->
@@ -121,16 +122,20 @@
 
         <!--问题上报-->
         <activity
-            android:name="com.yuefeng.features.ui.activity.ProblemUpdateActivity"/>
-            <!--android:windowSoftInputMode="stateVisible|adjustResize"/>-->
+            android:name="com.yuefeng.features.ui.activity.ProblemUpdateActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--问题巡检-->
         <activity android:name="com.yuefeng.features.ui.activity.QualityInspectionActivity"/>
         <!--问题详情-->
         <activity android:name="com.yuefeng.features.ui.activity.QualityInspectionDetailActivity"/>
         <!--问题关闭-->
-        <activity android:name="com.yuefeng.features.ui.activity.EvaluationEventActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.EvaluationEventActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--完成问题-->
-        <activity android:name="com.yuefeng.features.ui.activity.SuccessProblemActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.SuccessProblemActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--作业监控-->
         <activity android:name="com.yuefeng.features.ui.activity.JobMonitoringActivity"/>
         <!--转发问题-->
@@ -144,7 +149,9 @@
         <!--诱导-->
         <activity android:name="com.yuefeng.features.ui.activity.nativ.DemoGuideActivity"/>
         <!--定位采集-->
-        <activity android:name="com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--视频监控-->
         <activity android:name="com.yuefeng.features.ui.activity.video.VideoSytemListActivity"/>
         <activity android:name="com.yuefeng.features.ui.activity.video.VideoCameraActivity"/>
@@ -167,7 +174,9 @@
         <!--作业考勤-->
         <activity android:name="com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity"/>
         <!--主管打卡-->
-        <activity android:name="com.yuefeng.features.ui.activity.sngnin.SupervisorSngnInActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.sngnin.SupervisorSngnInActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--关于软件-->
         <activity android:name="com.yuefeng.usercenter.ui.activity.AboutAppInfosActivity"/>
         <!--修改密码-->

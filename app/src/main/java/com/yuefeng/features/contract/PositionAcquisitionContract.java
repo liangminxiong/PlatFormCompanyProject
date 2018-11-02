@@ -10,6 +10,10 @@ public interface PositionAcquisitionContract {
 
     interface Presenter {
         /*信息采集*/
-        void msgColection(String function, String organid, String userid, String isreg);
+        void upLoadmapInfo(String function, String pid, String userid, String typeid,
+                           String typename, String name, String lnglat, String area,String imageArrays);
+
+        /*信息采集类型*/
+        void getCaijiType(String function);
     }
 }

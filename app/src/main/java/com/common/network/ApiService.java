@@ -8,6 +8,7 @@ import com.yuefeng.features.modle.GetQuestionCountBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.features.modle.WheelPathBean;
 import com.yuefeng.features.modle.carlist.CarListInfosBean;
+import com.yuefeng.features.modle.video.GetCaijiTypeBean;
 import com.yuefeng.features.modle.video.VideoEquipmentBean;
 import com.yuefeng.login_splash.model.LoginBean;
 import com.yuefeng.personaltree.model.PersoanlTreeListBean;
@@ -69,6 +70,10 @@ public interface ApiService {
     String H5URL_DAKA = NetworkUrl.ANDROID_TEST_SERVICE + "zgbd_voc/jsps/html5/zykq.html?";
     /*修改密码*/
     String UPDATEPASSWORD = "updatepassword";
+    /*获取采集类型*/
+    String GETCAIJITYPE = "getcaijitype";
+    /*上传采集数据*/
+    String UPLOADMAPINFO = "Uploadmapinfo";
 
 
     /*登录用户*/
@@ -210,4 +215,22 @@ public interface ApiService {
             @Query("function") String function,
             @Query("userid") String userid,
             @Query("pid") String pid);
+
+    /*获取信息采集类型*/
+    @POST(MIA_HW)
+    Observable<GetCaijiTypeBean> getCaijiType(
+            @Query("function") String function);
+
+    /*上传采集数据*/
+    @POST(MIA_HW)
+    Observable<SubmitBean> upLoadmapInfo(
+            @Query("function") String function,
+            @Query("pid") String pid,
+            @Query("userid") String userid,
+            @Query("typeid") String typeid,
+            @Query("typename") String typename,
+            @Query("name") String name,
+            @Query("lnglat") String lnglat,//经纬集合字符串
+            @Query("area") String area,
+            @Query("imageArrays") String imageArrays);
 }

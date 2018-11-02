@@ -38,7 +38,7 @@
             android:layout_weight="3"
             android:drawableEnd="@drawable/fold_right"
             android:drawablePadding="@dimen/dp_10"
-            android:gravity="center_vertical|right"
+            android:gravity="center_vertical"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14"
             tools:ignore="HardcodedText,RtlHardcoded"/>

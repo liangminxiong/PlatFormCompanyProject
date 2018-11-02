@@ -64,11 +64,13 @@ public class TreesListsPopupWindow extends PopupWindow {
     private ImageView iv_search;
     private SimpleTreeRecyclerAdapter carlistAdapter;
     private String carNumber;
+    private boolean isSingle;
 
-    public TreesListsPopupWindow(Context context, List<Node> carDatas) {
+    public TreesListsPopupWindow(Context context, List<Node> carDatas, boolean isSingle) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mContext = context;
         this.carDatas = carDatas;
+        this.isSingle = isSingle;
         //设置点击空白处消失
         setTouchable(true);
         setOutsideTouchable(false);
@@ -132,7 +134,7 @@ public class TreesListsPopupWindow extends PopupWindow {
             recyclerview.setLayoutManager(new LinearLayoutManager(mContext));
 //            if (carlistAdapter == null) {
             carlistAdapter = new SimpleTreeRecyclerAdapter(recyclerview, mContext,
-                    carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, true);
+                    carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, isSingle);
 //            } else {
 //                carlistAdapter.notifyDataSetChanged();
 //            }
@@ -154,48 +156,57 @@ public class TreesListsPopupWindow extends PopupWindow {
         if (carlistAdapter == null) {
             return;
         }
-        final List<Node> allNodes = carlistAdapter.getAllNodes();
-        for (int i = 0; i < allNodes.size(); i++) {
-            if (allNodes.get(i).isChecked()) {
-                carNumber = allNodes.get(i).getName();
-                terminal = allNodes.get(i).getTerminalNO();
+        if (TextUtils.isEmpty(name)) {
+            final List<Node> allNodes = carlistAdapter.getAllNodes();
+            for (int i = 0; i < allNodes.size(); i++) {
+                if (allNodes.get(i).isChecked()) {
+                    carNumber = allNodes.get(i).getName();
+                    terminal = allNodes.get(i).getTerminalNO();
+                }
             }
+        } else {
+            carNumber = name;
         }
         if (!TextUtils.isEmpty(terminal)) {
-            if (mOnItemClickListener != null)
+            if (mOnItemClickListener != null) {
                 mOnItemClickListener.onSure(carNumber, terminal);
+            }
             assert mOnItemClickListener != null;
             mOnItemClickListener.onGoBack(carNumber, terminal);
         }
     }
 
     private void initSeacherWatcher() {
-        tv_search_txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (count > 0) {
-                    recyclerview.setVisibility(View.GONE);
-                    iv_search.setVisibility(View.GONE);
-                    recyclerview_after.setVisibility(View.VISIBLE);
-                } else {
-                    recyclerview.setVisibility(View.VISIBLE);
-                    iv_search.setVisibility(View.VISIBLE);
-                    recyclerview_after.setVisibility(View.GONE);
+        try {
+            tv_search_txt.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 }
-                key = s.toString();
-                searchList(key);
-            }
 
-            @Override
-            public void afterTextChanged(Editable s) {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (count > 0) {
+                        carlistAdapter.notifyDataSetChanged();
+                        recyclerview.setVisibility(View.GONE);
+                        iv_search.setVisibility(View.GONE);
+                        recyclerview_after.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerview.setVisibility(View.VISIBLE);
+                        iv_search.setVisibility(View.VISIBLE);
+                        recyclerview_after.setVisibility(View.GONE);
+                    }
+                    key = s.toString();
+                    searchList(key);
+                }
 
-            }
-        });
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initRecycleView() {

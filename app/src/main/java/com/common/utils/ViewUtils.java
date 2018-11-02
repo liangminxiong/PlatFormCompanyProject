@@ -1,5 +1,9 @@
 package com.common.utils;
 
+import android.support.design.widget.TextInputEditText;
+import android.text.Editable;
+import android.text.Selection;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -11,6 +15,8 @@ import android.widget.TextView;
 
 public class ViewUtils {
 
+
+    private static String mCountWhat = "0";
 
     /*设置RelativeLayout height width*/
     public static void setRLHightOrWidth(RelativeLayout relativeLayout, int height, int width) {
@@ -70,5 +76,78 @@ public class ViewUtils {
             type = View.VISIBLE;
         }
         linearLayout.setVisibility(type);
+    }
+
+    /*剩下多少字可填*/
+    public static String showHowManyCountEdit(final EditText editText, final int maxLength) {
+        try {
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    Editable editable = editText.getText();
+                    int length = editable.length();
+                    if (length > 0) {
+                        if (length > maxLength) {
+                            int selEndIndex = Selection.getSelectionEnd(editable);
+                            String str = editable.toString();
+                            //截取新字符串
+                            String newStr = str.substring(0, maxLength);
+                            editText.setText(newStr);
+                            editable = editText.getText();
+                            //新字符串的长度
+                            int newLen = editable.length();
+                            //旧光标位置超过字符串长度
+                            if (selEndIndex > newLen) {
+                                selEndIndex = editable.length();
+                            }
+                            //设置新光标所在的位置
+                            Selection.setSelection(editable, selEndIndex);
+                        }
+
+                        mCountWhat = String.valueOf(maxLength - length);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return mCountWhat;
+    }
+
+    public static String showHowManyCountTIEdit(TextInputEditText editText, final int countTotal) {
+        try {
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    int length = s.length();
+                    if (length > 0) {
+                        mCountWhat = String.valueOf(countTotal - length);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return mCountWhat;
     }
 }

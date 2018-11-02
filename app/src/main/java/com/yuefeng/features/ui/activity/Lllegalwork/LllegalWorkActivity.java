@@ -7,7 +7,6 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -23,7 +22,6 @@ import com.common.view.popuwindow.PersonalListPopupWindow;
 import com.common.view.popuwindow.TreesListsPopupWindow;
 import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
-import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.MyLllegalPageAdapter;
 import com.yuefeng.features.contract.LllegalWorkContract;
@@ -54,8 +52,6 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
     private static final String TAG = "tag";
     @BindView(R.id.tv_back)
     TextView tv_back;
-    @BindView(R.id.tv_title)
-    TextView tv_title_setting;
     @BindView(R.id.ll_problem)
     LinearLayout ll_problem;
     @BindView(R.id.tablayout)
@@ -207,20 +203,18 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
     /*车辆列表*/
     private void initCarlistPopupView() {
         if (carDatas.size() > 0) {
-            carListPopupWindow = new TreesListsPopupWindow(this, carDatas);
+            carListPopupWindow = new TreesListsPopupWindow(this, carDatas,true);
             carListPopupWindow.setTitleText("车辆列表");
             carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
-            showTreesCarListData(carDatas);
             carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
                 @Override
                 public void onGoBack(String name, String terminal) {
-                    carListPopupWindow.dismiss();
+                    showSuccessToast(name);
                 }
 
                 @Override
                 public void onSure(String name, String terminal) {
-                    carListPopupWindow.dismiss();
-                    showSelectItemDatas();
+                    showSuccessToast(name);
                 }
 
                 @Override
@@ -229,51 +223,6 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
                 }
             });
             carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
-        }
-    }
-
-
-    private void showTreesCarListData(List<Node> carDatas) {
-        if (carDatas.size() > 0) {
-            carListPopupWindow.recyclerview.setLayoutManager(new LinearLayoutManager(this));
-//            if (carlistAdapter == null) {
-            carlistAdapter = new SimpleTreeRecyclerAdapter(carListPopupWindow.recyclerview, this,
-                    carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, true);
-//            } else {
-//                carlistAdapter.notifyDataSetChanged();
-//            }
-            carListPopupWindow.recyclerview.setAdapter(carlistAdapter);
-
-//        carlistAdapter.notifyDataSetChanged();
-            carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
-                @Override
-                public void onClick(Node node, int position) {
-                    showSelectItemDatas();
-                }
-
-            });
-        }
-    }
-
-
-    /*点击车*/
-    @SuppressLint("SetTextI18n")
-    private void showSelectItemDatas() {
-        if (carlistAdapter == null) {
-            return;
-        }
-        final List<Node> allNodes = carlistAdapter.getAllNodes();
-        for (int i = 0; i < allNodes.size(); i++) {
-            if (allNodes.get(i).isChecked()) {
-                carNumber = allNodes.get(i).getName();
-                terminal = allNodes.get(i).getTerminalNO();
-            }
-        }
-        if (!TextUtils.isEmpty(terminal)) {
-            if (carListPopupWindow != null) {
-                carListPopupWindow.dismiss();
-            }
-            showSuccessToast(carNumber);
         }
     }
 
