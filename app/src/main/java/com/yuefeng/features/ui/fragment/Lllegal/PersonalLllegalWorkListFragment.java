@@ -13,13 +13,19 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
+import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
+import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.adapter.CarLllegalWorkListAdapter;
+import com.yuefeng.features.adapter.PersonalLllegalWorkListAdapter;
+import com.yuefeng.features.contract.LllegalWorkContract;
 import com.yuefeng.features.event.LllegalWorkEvent;
+import com.yuefeng.features.modle.LllegalworMsgBean;
+import com.yuefeng.features.presenter.LllegalWorkPresenter;
+import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity;
 import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkDetailActivity;
-import com.yuefeng.home.ui.modle.MsgDataBean;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -27,6 +33,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +41,7 @@ import butterknife.Unbinder;
 
 
 /*人员*/
-public class PersonalLllegalWorkListFragment extends BaseFragment {
+public class PersonalLllegalWorkListFragment extends BaseFragment implements LllegalWorkContract.View {
 
     private static final String TAG = "tag";
     @BindView(R.id.rl_nodata)
@@ -46,8 +53,9 @@ public class PersonalLllegalWorkListFragment extends BaseFragment {
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     Unbinder unbinder;
-    private List<MsgDataBean> listData = new ArrayList<>();
-    private CarLllegalWorkListAdapter adapter;
+    private List<LllegalworMsgBean> listData = new ArrayList<>();
+    private PersonalLllegalWorkListAdapter adapter;
+    private LllegalWorkPresenter presenter;
 
     @Override
     protected int getLayoutId() {
@@ -60,19 +68,21 @@ public class PersonalLllegalWorkListFragment extends BaseFragment {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+        tvLllegalCount.setVisibility(View.INVISIBLE);
+        presenter = new LllegalWorkPresenter(this, (LllegalWorkActivity) getActivity());
         tvLllegalCount.setTextSize(13);
         recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
         initRecycler();
     }
 
     private void initRecycler() {
-        adapter = new CarLllegalWorkListAdapter(R.layout.recyclerview_item_lllegals, listData);
+        adapter = new PersonalLllegalWorkListAdapter(R.layout.recyclerview_item_lllegals, listData);
         recyclerview.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                MsgDataBean msgDataBean = listData.get(position);
+                LllegalworMsgBean msgDataBean = listData.get(position);
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), LllegalWorkDetailActivity.class);
                 intent.putExtra("DetailInfos", msgDataBean);
@@ -107,47 +117,56 @@ public class PersonalLllegalWorkListFragment extends BaseFragment {
     public void disposeLllegalWorkEvent(LllegalWorkEvent event) {
         switch (event.getWhat()) {
             case Constans.PERSONALLLEGAL_SSUCESS://展示
-//                bean = (GetJobMonitotingMsgBean) event.getData();
-//                if (bean != null) {
-//                    showAdapterDatasList(bean);
-//                }
+                rlNodata.setVisibility(View.INVISIBLE);
+                llData.setVisibility(View.VISIBLE);
+                List<LllegalworMsgBean> beanList = (List<LllegalworMsgBean>) event.getData();
+                if (beanList.size() > 0) {
+                    tvLllegalCount.setVisibility(View.VISIBLE);
+                    showAdapterDatasList(beanList);
+                } else {
+                    showNodata();
+                }
                 break;
 
-            case Constans.JOB_ERROR:
-                listData.clear();
-                initRecycler();
+            case Constans.PERSONALLLEGAL_ERROR:
+                showNodata();
                 break;
-
+            case Constans.PERSONAL_ID:
+                String vid = (String) event.getData();
+                initWeiguiData(vid, Constans.PERSONAL_ID);
+                break;
         }
+    }
+
+    private void showNodata() {
+        llData.setVisibility(View.INVISIBLE);
+        rlNodata.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void fetchData() {
-        showAdapterDatasList();
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void initWeiguiData(String vid, int typeWhat) {
+        if (presenter != null) {
+            String pid = PreferencesUtils.getString(Objects.requireNonNull(getContext()), Constans.ORGID, "");
+            String startTime = TimeUtils.getYesterdayStartTime();
+            String endTime = TimeUtils.getCurrentTime();
+            startTime = "2018-10-30 10:00:00";
+            LogUtils.d(" ++++ " + vid + "+++ " + startTime);
+            presenter.getWeigui(ApiService.GETWEIGUI, pid, startTime, endTime, vid, Constans.TYPE_ONE, typeWhat);
+        }
     }
 
     /*展示数据*/
     @SuppressLint("SetTextI18n")
-    private void showAdapterDatasList() {
-        List<MsgDataBean> bean = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            MsgDataBean msgDataBean = new MsgDataBean();
-            msgDataBean.setImageUrl(R.drawable.staff);
-            msgDataBean.setTitle(i + "张三");
-            msgDataBean.setTime(TimeUtils.getHourMinute());
-            if (i == 0) {
-                msgDataBean.setDetail("路线偏移");
-            } else {
-                msgDataBean.setDetail("偏移");
-            }
-            msgDataBean.setCount("广州市天河区新塘大街28号祺禾商贸园");
-            bean.add(msgDataBean);
-        }
+    private void showAdapterDatasList(List<LllegalworMsgBean> beanList) {
         listData.clear();
-        listData.addAll(bean);
+        listData.addAll(beanList);
         adapter.setNewData(listData);
-        tvLllegalCount.setText("截止到" + TimeUtils.getHourMinute() +
-                " 已有" + listData.size() + "人违规作业");
+        tvLllegalCount.setText("昨天有" + beanList.get(0).getRenshu() + "人违规作业");
     }
 
 

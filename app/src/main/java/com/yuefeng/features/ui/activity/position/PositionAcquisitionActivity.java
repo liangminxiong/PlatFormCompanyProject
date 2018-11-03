@@ -50,7 +50,6 @@ import com.common.utils.PreferencesUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
-import com.common.view.timeview.OptionsPickerView;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -174,9 +173,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     /*距离*/
     private double distance = 0;
     /*条件选择框*/
-    private OptionsPickerView pvOptions;
-    private ArrayList<String> options1Items = new ArrayList<>();
-    private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
     List<LatLng> points = new ArrayList<>();
     private Polyline mPolyline;
     private String timeLong;
@@ -280,7 +276,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             showSuccessToast("GPS未开启，定位有偏差");
         }
         useBdGpsLocation();
-        initLocation();
     }
 
 
@@ -298,7 +293,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                     requestPermissions();
                     return;
                 }
-//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 address = location.getAddrStr();
@@ -307,12 +301,9 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                     address = address.substring(2, length);
                 }
                 firstLocation(latitude, longitude, address);
-//                } else {
-//                    requestPermissions();
-//                }
-
             }
         }, Constans.BDLOCATION_TIME);
+        initLocation();
     }
 
     private void firstLocation(double latitude, double longitude, String address) {
@@ -350,6 +341,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
                 latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+                latitude = latLng.latitude;
                 longitude = latLng.longitude;
             }
 
@@ -428,7 +420,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 }
                 break;
             case Constans.GETCAIJI_ERROR://获采集类型失败
-
+                showSuccessToast("发布失败");
                 break;
             default:
 

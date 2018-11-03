@@ -19,12 +19,12 @@ import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.FeaturesMsgAdapter;
 import com.yuefeng.features.event.CarListEvent;
-import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 import com.yuefeng.features.ui.activity.JobMonitoringActivity;
 import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity;
-import com.yuefeng.features.ui.activity.ProblemUpdateActivity;
 import com.yuefeng.features.ui.activity.QualityInspectionActivity;
+import com.yuefeng.features.ui.activity.monitoring.MonitoringSngnInActivity;
 import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
+import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
 import com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy;
@@ -243,7 +243,9 @@ public class FeaturesFragment extends BaseMvpFragment {
 
     /*作业监察*/
     private void problemUpload() {
-        startActivity(new Intent(getActivity(), ProblemUpdateActivity.class));
+        startActivity(new Intent(getActivity(), MonitoringSngnInActivity.class));
+//        startActivity(new Intent(getActivity(), MonitoringActivity.class));
+//        startActivity(new Intent(getActivity(), ProblemUpdateActivity.class));
     }
 
     /*质量巡查*/

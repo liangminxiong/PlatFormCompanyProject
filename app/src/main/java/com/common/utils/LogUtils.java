@@ -37,7 +37,7 @@ public class LogUtils {
         if (!allowD) {
             return;
         }
-        Log.d(TAG, TAG + " ++ " + content);
+        Log.d(TAG, TAG + " +++ " + content);
     }
 
     public static void e(String content) {

@@ -183,19 +183,19 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
 
             carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
                 @Override
-                public void onGoBack(String name, String terminal) {
+                public void onGoBack(String name, String terminal,String id) {
                     tv_title.setText(name);
                     showVideoList(terminal);
                 }
 
                 @Override
-                public void onSure(String name, String terminal) {
+                public void onSure(String name, String terminal,String id) {
                     tv_title.setText(name);
                     showVideoList(terminal);
                 }
 
                 @Override
-                public void onSelectCar(String carNumber, String terminal) {
+                public void onSelectCar(String carNumber, String terminal,String id) {
 //                    showVideoList(terminal);
                 }
             });

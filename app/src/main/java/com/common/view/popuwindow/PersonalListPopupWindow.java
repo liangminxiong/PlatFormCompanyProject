@@ -7,8 +7,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.common.utils.LogUtils;
 import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
@@ -115,7 +112,7 @@ public class PersonalListPopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 dismiss();
-                showSelectItemDatas();
+                showSelectItemDatas("1");
             }
         });
 
@@ -130,7 +127,7 @@ public class PersonalListPopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 dismiss();
-                showSelectItemDatas();
+                showSelectItemDatas("2");
             }
         });
 
@@ -174,7 +171,7 @@ public class PersonalListPopupWindow extends PopupWindow {
         treeListAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
             @Override
             public void onClick(Node node, int position) {
-                showSelectItemDatas();
+                showSelectItemDatas("3");
             }
 
         });
@@ -182,32 +179,43 @@ public class PersonalListPopupWindow extends PopupWindow {
 
     /*点击车*/
     @SuppressLint("SetTextI18n")
-    private void showSelectItemDatas() {
+    private void showSelectItemDatas(String type) {
         if (treeListAdapter == null) {
             return;
         }
         if (stringBuffer == null) {
             stringBuffer = new StringBuffer();
-            stringBuffer.setLength(0);
         }
+
         if (stringBufferFlag == null) {
             stringBufferFlag = new StringBuffer();
-            stringBufferFlag.setLength(0);
-        }if (stringBufferTerflag == null) {
-            stringBufferTerflag = new StringBuffer();
-            stringBufferTerflag.setLength(0);
+
         }
+        if (stringBufferTerflag == null) {
+            stringBufferTerflag = new StringBuffer();
+
+        }
+
         final List<Node> allNodes = treeListAdapter.getAllNodes();
         for (int i = 0; i < allNodes.size(); i++) {
             if (allNodes.get(i).isChecked()) {
                 personalName = allNodes.get(i).getName();
                 userId = (String) allNodes.get(i).getId();
                 terminal = (String) allNodes.get(i).getTerminalNO();
-                LogUtils.d("shwoSelectItemName == " + personalName + " ++ " + userId);
-                if (!TextUtils.isEmpty(personalName) && !TextUtils.isEmpty(userId)) {
-                    stringBuffer.append(personalName).append(",");
-                    stringBufferFlag.append(userId).append(",");
-                    stringBufferTerflag.append(terminal).append(",");
+                String count = (String) allNodes.get(i).getCount();
+                if (!TextUtils.isEmpty(personalName) && !TextUtils.isEmpty(userId) && !TextUtils.isEmpty(terminal)) {
+                    if (isSingle) {
+                        stringBufferTerflag.setLength(0);
+                        stringBufferFlag.setLength(0);
+                        stringBuffer.setLength(0);
+                        stringBuffer.append(personalName);
+                        stringBufferFlag.append(userId);
+                        stringBufferTerflag.append(terminal);
+                    } else {
+                        stringBuffer.append(personalName).append(",");
+                        stringBufferFlag.append(userId).append(",");
+                        stringBufferTerflag.append(terminal).append(",");
+                    }
                 }
             }
         }
@@ -220,9 +228,24 @@ public class PersonalListPopupWindow extends PopupWindow {
         }
         if (!TextUtils.isEmpty(userId)) {
             if (mOnItemClickListener != null) {
-                mOnItemClickListener.onSure(selectTreeName, useridFlag,terminal);
-                mOnItemClickListener.onGoBack(selectTreeName, useridFlag,terminal);
+                if (type.equals("1")) {
+                    mOnItemClickListener.onGoBack(selectTreeName, useridFlag, terminal);
+                } else if (type.equals("2")) {
+                    mOnItemClickListener.onSure(selectTreeName, useridFlag, terminal);
+                } else {
+                    mOnItemClickListener.onSure(selectTreeName, useridFlag, terminal);
+                    mOnItemClickListener.onGoBack(selectTreeName, useridFlag, terminal);
+                }
             }
+        }
+        if (stringBuffer != null) {
+            stringBuffer.setLength(0);
+        }
+        if (stringBufferFlag != null) {
+            stringBufferFlag.setLength(0);
+        }
+        if (stringBufferTerflag != null) {
+            stringBufferTerflag.setLength(0);
         }
     }
 
@@ -230,21 +253,22 @@ public class PersonalListPopupWindow extends PopupWindow {
     private void initSelectRecycleView() {
         adapterSelect = new CarListSelectAdapter(R.layout.list_item, listData);
         recyclerview_after.setAdapter(adapterSelect);
-        adapterSelect.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                name = listData.get(position).getName();
-                userId = listData.get(position).getTerminal();
-                terminal = listData.get(position).getTerminal();
-                if (!TextUtils.isEmpty(userId)) {
-//                    if (isShowing())
-//                        dismiss();
-                    if (mOnItemClickListener != null)
-                        mOnItemClickListener.onSelectCar(name, userId,terminal);
-                }
-            }
-        });
+//        adapterSelect.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//            @Override
+//            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                name = listData.get(position).getName();
+//                userId = listData.get(position).getTerminal();
+//                terminal = listData.get(position).getTerminal();
+//                if (!TextUtils.isEmpty(userId)) {
+////                    if (isShowing())
+////                        dismiss();
+//                    if (mOnItemClickListener != null)
+//                        mOnItemClickListener.onSelectCar(name, userId, terminal);
+//                    mOnItemClickListener.onGoBack(name, userId, terminal);
+//                }
+//            }
+//        });
         adapterSelect.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -256,25 +280,27 @@ public class PersonalListPopupWindow extends PopupWindow {
                     stringBufferFlag = new StringBuffer();
                     stringBufferFlag.setLength(0);
                 }
-                personalName = listData.get(position).getName();
+                name = listData.get(position).getName();
                 userId = listData.get(position).getId();
                 terminal = listData.get(position).getTerminal();
-                if (!TextUtils.isEmpty(personalName) && !TextUtils.isEmpty(userId)) {
-                    stringBuffer.append(personalName).append(",");
+                if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(userId) && !TextUtils.isEmpty(terminal)) {
+                    stringBuffer.append(name).append(",");
                     stringBufferFlag.append(userId).append(",");
-                }
-                if (!TextUtils.isEmpty(name)) {
-                    selectTreeName = name;
-                } else {
-                    selectTreeName = stringBuffer.toString();
-                    useridFlag = stringBufferFlag.toString();
-                    terminal = stringBufferTerflag.toString();
                 }
                 if (!TextUtils.isEmpty(userId)) {
                     if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onSure(selectTreeName, useridFlag,terminal);
-                        mOnItemClickListener.onGoBack(selectTreeName, useridFlag,terminal);
+                        mOnItemClickListener.onSure(name, userId, terminal);
+                        mOnItemClickListener.onGoBack(name, userId, terminal);
                     }
+                }
+                if (stringBuffer != null) {
+                    stringBuffer.setLength(0);
+                }
+                if (stringBufferFlag != null) {
+                    stringBufferFlag.setLength(0);
+                }
+                if (stringBufferTerflag != null) {
+                    stringBufferTerflag.setLength(0);
                 }
             }
         });

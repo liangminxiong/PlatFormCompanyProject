@@ -5,6 +5,7 @@ import com.yuefeng.features.modle.GetAllPersonalBean;
 import com.yuefeng.features.modle.GetEventdetailBean;
 import com.yuefeng.features.modle.GetJobMonitotingBean;
 import com.yuefeng.features.modle.GetQuestionCountBean;
+import com.yuefeng.features.modle.LllegalworkBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.features.modle.WheelPathBean;
 import com.yuefeng.features.modle.carlist.CarListInfosBean;
@@ -74,6 +75,8 @@ public interface ApiService {
     String GETCAIJITYPE = "getcaijitype";
     /*上传采集数据*/
     String UPLOADMAPINFO = "Uploadmapinfo";
+    /*车辆，人员违规*/
+    String GETWEIGUI = "getweigui";
 
 
     /*登录用户*/
@@ -233,4 +236,14 @@ public interface ApiService {
             @Query("lnglat") String lnglat,//经纬集合字符串
             @Query("area") String area,
             @Query("imageArrays") String imageArrays);
+
+    /*获取违规*/
+    @POST(MIA_HW)
+    Observable<LllegalworkBean> getWeigui(
+            @Query("function") String function,
+            @Query("pid") String pid,
+            @Query("timestatr") String timestatr,
+            @Query("timeend") String timeend,
+            @Query("vid") String vid,
+            @Query("type") String type);
 }

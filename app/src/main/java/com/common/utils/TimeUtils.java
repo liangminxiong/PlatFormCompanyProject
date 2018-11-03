@@ -667,6 +667,7 @@ public class TimeUtils {
      * @return
      */
     public static String getCurrentTime() {
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date curDate = new Date(System.currentTimeMillis());
         String curD = formatter.format(curDate);
@@ -679,6 +680,7 @@ public class TimeUtils {
      * @return
      */
     public static String getLastHoursTime() {
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date hourDate = new Date(System.currentTimeMillis() - 3600000);
         String hDate = formatter.format(hourDate);
@@ -686,11 +688,25 @@ public class TimeUtils {
     }
 
     /**
-     * 获取一个小时之前的时间
+     * 昨天开始时间
+     *
+     * @return
+     */
+    public static String getYesterdayStartTime() {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+        Date hourDate = new Date(System.currentTimeMillis() - (24 * 3600000));
+        String hDate = formatter.format(hourDate);
+        return hDate;
+    }
+
+    /**
+     * 获取3个小时之前的时间
      *
      * @return
      */
     public static String getThreeHoursTime() {
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date hourDate = new Date(System.currentTimeMillis() - 10800000);
         String hDate = formatter.format(hourDate);
@@ -754,7 +770,7 @@ public class TimeUtils {
                     }
                 }
             } catch (Exception e) {
-                continue;
+                e.printStackTrace();
             }
         }
         return result;

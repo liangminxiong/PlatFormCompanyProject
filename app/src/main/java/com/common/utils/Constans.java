@@ -128,9 +128,11 @@ public class Constans {
     public static final int CARLIST_ERROR = 83;//车辆列表失败
 
     public static final int CARLLEGAL_SSUCESS = 84;//车辆违规成功
+    public static final int PERSONALLLEGAL_SSUCESS = 841;//车辆，人员违规成功
+    public static final int PERSONALLLEGAL_ERROR = 851;//人员违规失败
     public static final int CARLLEGAL_ERROR = 85;//车辆违规失败
-    public static final int PERSONALLLEGAL_SSUCESS = 86;//人员违规成功
-    public static final int PERSONALLLEGAL_ERROR = 87;//人员违规失败
+    public static final int PERSONAL_ID = 86;//人员id
+    public static final int VECHIL_ID = 87;//车辆ID
     public static final int PERSONALLIST_SSUCESS = 88;//人员列表成功
     public static final int PERSONALLIST_ERROR = 89;//人员列表失败
 
@@ -158,8 +160,8 @@ public class Constans {
     public static final String BAIDU_APPID = "14268406";
 
 
-    public static final String TYPE_ZERO = "0";//个人代签到
-    public static final String TYPE_ONE = "1";//H5 主管代签到
+    public static final String TYPE_ZERO = "0";//个人代签到/车辆违规查询
+    public static final String TYPE_ONE = "1";//H5 主管代签到/人员违规查询
     public static final String TYPE_TWO = "2";//手机主管代签到
 
 }

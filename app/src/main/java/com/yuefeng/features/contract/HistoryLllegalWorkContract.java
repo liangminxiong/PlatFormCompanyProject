@@ -10,6 +10,7 @@ public interface HistoryLllegalWorkContract {
 
     interface Presenter {
         /*违章列表*/
-        void getHistoryLllegal(String function, String organid, String userid, String isreg);
+        void getWeigui(String function, String pid, String timestatr,
+                       String timeend, String vid, String type,int typeWhat);
     }
 }

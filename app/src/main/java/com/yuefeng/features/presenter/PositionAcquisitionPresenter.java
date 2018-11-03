@@ -86,7 +86,7 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
                 });
     }
 
-    /*获取采集类型*/
+    /*上传获取采集类型*/
     @Override
     public void getCaijiType(String function) {
         HttpObservable.getObservable(apiRetrofit.getCaijiType(function))
@@ -183,11 +183,16 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
             secondStr = StringUtils.getTimeNoZero(secondStr);
             miniteSecond = minuteStr + "分" + secondStr + "秒,";
             if (type == 0) {
-                typeWhat = "平方米";
+                if (distance.equals("NaN")) {
+                    typeWhat = "无效采集数据";
+                } else {
+                    typeWhat = "面积约" + distance + "平方米";
+                }
             } else {
-                typeWhat = "公里";
+                typeWhat = "距离" + distance + "公里";
             }
-            time = "本次采集持续" + hour + miniteSecond + "距离" + distance + typeWhat;
+
+            time = "本次采集持续" + hour + miniteSecond + typeWhat;
         }
         return time;
     }

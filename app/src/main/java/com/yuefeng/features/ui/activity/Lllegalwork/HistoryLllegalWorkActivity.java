@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseActivity;
+import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
@@ -21,9 +23,8 @@ import com.common.view.timeview.TimePickerView;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.CarHistoryLllegalWorkListAdapter;
 import com.yuefeng.features.contract.HistoryLllegalWorkContract;
-import com.yuefeng.features.event.LllegalWorkEvent;
+import com.yuefeng.features.modle.LllegalworMsgBean;
 import com.yuefeng.features.presenter.HistoryLllegalWorkPresenter;
-import com.yuefeng.home.ui.modle.MsgDataBean;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -57,10 +58,12 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
 
     private HistoryLllegalWorkPresenter presenter;
 
-    private List<MsgDataBean> listData = new ArrayList<>();
+    private List<LllegalworMsgBean> listData = new ArrayList<>();
     private CarHistoryLllegalWorkListAdapter adapter;
     private String startTime;
     private String endTime;
+    private String type;
+    private String id;
 
     @Override
     protected int getContentViewResId() {
@@ -76,47 +79,57 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
         ButterKnife.bind(this);
         tvTitle.setText(R.string.history_lllegal);
         presenter = new HistoryLllegalWorkPresenter(this, this);
-//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
-        initRecycler();
-        getCarList();
-        initTime();
+        initIntent();
     }
 
-    private void initTime() {
-        startTime = TimeUtils.getStartTimeofDay();
+    private void initIntent() {
+        Bundle bundle = getIntent().getExtras();
+        type = (String) bundle.get("type");
+        id = (String) bundle.get("id");
+        initRecycler(type);
+        initTime(type, id);
+
+    }
+
+    private void initTime(String type, String vid) {
+        startTime = TimeUtils.getYesterdayStartTime();
+        startTime = "2018-10-30 10:00:00";
         endTime = TimeUtils.getCurrentTime();
         tvStartTime.setText(startTime);
         tvEndTime.setText(endTime);
+        getCarList(type, id, startTime, endTime);
     }
 
-    private void initRecycler() {
-        adapter = new CarHistoryLllegalWorkListAdapter(R.layout.recyclerview_item_historylllegals, listData);
+    private void initRecycler(final String type) {
+        adapter = new CarHistoryLllegalWorkListAdapter(R.layout.recyclerview_item_historylllegals, listData, type);
         recyclerview.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                MsgDataBean msgDataBean = listData.get(position);
+                LllegalworMsgBean msgDataBean = listData.get(position);
                 Intent intent = new Intent();
                 intent.setClass(HistoryLllegalWorkActivity.this, LllegalWorkDetailActivity.class);
                 intent.putExtra("DetailInfos", msgDataBean);
-                intent.putExtra("type", "car");
+                intent.putExtra("type", type);
                 intent.putExtra("isVisible", "0");
                 intent.putExtra("position", position);
                 startActivity(intent);
             }
         });
-
     }
 
-    /*车辆列表*/
-    private void getCarList() {
+    /*违规获取*/
+    private void getCarList(String type, String vid, String startTime, String endTime) {
         if (presenter != null) {
             String pid = PreferencesUtils.getString(this, "orgId", "");
-            String userid = PreferencesUtils.getString(this, "id", "");
-            presenter.getHistoryLllegal(ApiService.LOADVEHICLELIST, pid, userid, "0");
+            if (type.equals("car")) {
+                type = Constans.TYPE_ZERO;
+            } else {
+                type = Constans.TYPE_ONE;
+            }
+            presenter.getWeigui(ApiService.GETWEIGUI, pid, startTime, endTime, vid, type, 3);
         }
     }
 
@@ -136,17 +149,17 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void disposeLllegalWorkEvent(LllegalWorkEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void disposeCommonEvent(CommonEvent event) {
         switch (event.getWhat()) {
             case Constans.CARLIST_SSUCESS:
-//                carListData = (List<CarListInfosMsgBean>) event.getData();
-//                if (carListData.size() > 0) {
-//                } else {
-//                    showSuccessToast("旗下无车辆");
-//                }
+                List<LllegalworMsgBean> beanList = (List<LllegalworMsgBean>) event.getData();
+                if (beanList.size() > 0) {
+                    showAdapterDatasList(beanList);
+                }
                 break;
             default:
+                showSuccessToast("查询失败，请重试");
                 break;
 
         }
@@ -169,13 +182,23 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
                 chooseEndTime();
                 break;
             case R.id.tv_search:
-                showAdapterDatasList();
+                search();
                 break;
             case R.id.tv_back:
                 finish();
                 break;
         }
 
+    }
+
+    private void search() {
+        startTime = tvStartTime.getText().toString().trim();
+        endTime = tvEndTime.getText().toString().trim();
+        if (!TextUtils.isEmpty(startTime) && !TextUtils.isEmpty(endTime)) {
+            getCarList(type, id, startTime, endTime);
+        } else {
+            showSuccessToast("请选择时间");
+        }
     }
 
     /*选择结束时间*/
@@ -206,23 +229,9 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
 
     /*展示数据*/
     @SuppressLint("SetTextI18n")
-    private void showAdapterDatasList() {
-        List<MsgDataBean> bean = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            MsgDataBean msgDataBean = new MsgDataBean();
-            msgDataBean.setImageUrl(R.mipmap.icon_app);
-            msgDataBean.setTitle("粤A4565" + (i + 1));
-            msgDataBean.setTime(TimeUtils.getHourMinute());
-            if (i == 0) {
-                msgDataBean.setDetail("路线偏移");
-            } else {
-                msgDataBean.setDetail("作业超速");
-            }
-            msgDataBean.setCount("广州市天河区新塘大街28号祺和商贸园");
-            bean.add(msgDataBean);
-        }
+    private void showAdapterDatasList(List<LllegalworMsgBean> beanList) {
         listData.clear();
-        listData.addAll(bean);
+        listData.addAll(beanList);
         adapter.setNewData(listData);
     }
 }

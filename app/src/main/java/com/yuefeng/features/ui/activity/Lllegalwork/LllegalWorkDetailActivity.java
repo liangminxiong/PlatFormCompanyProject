@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,9 +19,7 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
-import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
@@ -33,11 +30,8 @@ import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.home.ui.modle.MsgDataBean;
+import com.yuefeng.features.modle.LllegalworMsgBean;
 import com.yuefeng.utils.BdLocationUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,6 +78,8 @@ public class LllegalWorkDetailActivity extends BaseActivity {
     private Polyline mPolyline;
 
     private int position;
+    private String id;
+    private String type;
 
 
     @Override
@@ -111,8 +107,8 @@ public class LllegalWorkDetailActivity extends BaseActivity {
     private void getCarListInfos() {
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
-        MsgDataBean msgDataBean = (MsgDataBean) bundle.getSerializable("DetailInfos");
-        String type = (String) bundle.get("type");
+        LllegalworMsgBean msgDataBean = (LllegalworMsgBean) bundle.getSerializable("DetailInfos");
+        type = (String) bundle.get("type");
         String isVisible = (String) bundle.get("isVisible");
         position = (int) bundle.get("position");
         assert isVisible != null;
@@ -126,18 +122,26 @@ public class LllegalWorkDetailActivity extends BaseActivity {
             location_icon = BitmapDescriptorFactory.fromResource(R.drawable.worker);
         }
         assert msgDataBean != null;
-        String title = msgDataBean.getTitle();
+        id = msgDataBean.getId();
+        String title = msgDataBean.getName();
         title = TextUtils.isEmpty(title) ? "" : title;
         tv_title.setText(title);
-        tvAddress.setText(msgDataBean.getCount());
+        tvAddress.setText(msgDataBean.getAddress());
         if (position == 0) {
             tvDistance.setText("已偏移" + "米");
         } else {
             tvDistance.setText("已偏移" + "0米");
         }
-        tvType.setText("违规类型:" + msgDataBean.getDetail());
-        tvClass.setText("所属班组:八路一班");
+        tvType.setText("违规类型:" + msgDataBean.getContents());
+        tvClass.setText("所属班组:" + msgDataBean.getTeam());
         requestPermissions();
+        String lat = msgDataBean.getLat();
+        String lon = msgDataBean.getLon();
+        if (!TextUtils.isEmpty(lat) && !TextUtils.isEmpty(lon)) {
+            Double latitude = Double.valueOf(lat);
+            Double longitude = Double.valueOf(lon);
+            showCarDetailInfos(latitude, longitude);
+        }
     }
 
     @Override
@@ -180,27 +184,28 @@ public class LllegalWorkDetailActivity extends BaseActivity {
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
             public void myLocation(BDLocation location) {
-                if (location == null) {requestPermissions();
+                if (location == null) {
+                    requestPermissions();
                     return;
                 }
 //                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    latLng = new LatLng(latitude, longitude);
-                    if (isFirstLoc) {
-                        isFirstLoc = false;
-                        MapStatus ms = new MapStatus.Builder().target(latLng)
-                                .overlook(-20).zoom(14).build();
-                        oA = new MarkerOptions().icon(location_icon).zIndex(10);
-                        oA.position(latLng);
-                        mMarker = null;
-                        mMarker = (Marker) (baiduMap.addOverlay(oA));
-                        baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
-                        BdLocationUtil.MoveMapToCenter(baiduMap, latLng, 14);
-                        if (position == 0) {
-                            showCarDetailInfos(latitude, longitude);
-                        }
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                latLng = new LatLng(latitude, longitude);
+                if (isFirstLoc) {
+                    isFirstLoc = false;
+                    MapStatus ms = new MapStatus.Builder().target(latLng)
+                            .overlook(-20).zoom(14).build();
+                    oA = new MarkerOptions().icon(location_icon).zIndex(10);
+                    oA.position(latLng);
+                    mMarker = null;
+                    mMarker = (Marker) (baiduMap.addOverlay(oA));
+                    baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
+                    BdLocationUtil.MoveMapToCenter(baiduMap, latLng, 14);
+                    if (position == 0) {
+                        showCarDetailInfos(latitude, longitude);
                     }
+                }
 //                } else {
 //                    requestPermissions();
 //                }
@@ -224,30 +229,22 @@ public class LllegalWorkDetailActivity extends BaseActivity {
             if (mPolyline != null) {
                 mPolyline.remove();
             }
-            List<LatLng> lls = new ArrayList<LatLng>();
-            lls.clear();
 
-            for (int i = 0; i < 15; i++) {
-                latitude = latitude + 0.002;
-                longitude = longitude + 0.002;
-                LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));// 转经纬度;
-                lls.add(p1);
-            }
-            if (lls.size() > 1) {
-                OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.BLUE).points(lls);
-                mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
+//            if (lls.size() > 1) {
+//                OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.BLUE).points(lls);
+//                mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
 //                BdLocationUtil.MoveMapToCenter(baiduMap, lls.get(lls.size() - 1), 14);
-                double distance = DistanceUtil.getDistance(latLng, lls.get(lls.size() - 1));
-                String mile = "米";
-                if (distance > 1000) {
-                    distance = distance / 1000;
-                    mile = "km";
-                }
-                String stringDouble = StringUtils.getStringDouble(distance);
-                if (position == 0) {
-                    tvDistance.setText("已偏移" + stringDouble + mile);
-                }
+            double distance = DistanceUtil.getDistance(latLng, BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude)));
+            String mile = "米";
+            if (distance > 1000) {
+                distance = distance / 1000;
+                mile = "km";
             }
+            String stringDouble = StringUtils.getStringDouble(distance);
+            if (position == 0) {
+                tvDistance.setText("已偏移" + stringDouble + mile);
+            }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -270,7 +267,7 @@ public class LllegalWorkDetailActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.view_line_gray, R.id.tv_native, R.id.search_history_lllegal,R.id.tv_back})
+    @OnClick({R.id.view_line_gray, R.id.tv_native, R.id.search_history_lllegal, R.id.tv_back})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.view_line_gray:
@@ -292,7 +289,10 @@ public class LllegalWorkDetailActivity extends BaseActivity {
                 showSuccessToast("导航");
                 break;
             case R.id.search_history_lllegal:
-                startActivity(new Intent(LllegalWorkDetailActivity.this, HistoryLllegalWorkActivity.class));
+                Intent intent = new Intent(LllegalWorkDetailActivity.this, HistoryLllegalWorkActivity.class);
+                intent.putExtra("type", type);
+                intent.putExtra("id", id);
+                startActivity(intent);
                 break;
 
             case R.id.tv_back:

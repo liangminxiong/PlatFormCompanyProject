@@ -120,6 +120,12 @@
 
         <activity android:name="com.yuefeng.login_splash.ui.LoginActivity"/>
 
+        <!--作业监察-->
+        <activity android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringActivity"/>
+        <!--作业监察签到-->
+        <activity
+            android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringSngnInActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--问题上报-->
         <activity
             android:name="com.yuefeng.features.ui.activity.ProblemUpdateActivity"

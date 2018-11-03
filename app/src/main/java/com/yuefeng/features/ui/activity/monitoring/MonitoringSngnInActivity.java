@@ -1,10 +1,9 @@
-package com.yuefeng.features.ui.activity;
+package com.yuefeng.features.ui.activity.monitoring;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,19 +13,15 @@ import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
 import com.baidu.mapapi.model.LatLng;
 import com.common.base.codereview.BaseActivity;
-import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
-import com.common.utils.LocationGpsUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ViewUtils;
 import com.common.view.dialog.SucessCacheSureDialog;
@@ -38,14 +33,13 @@ import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.contract.ProblemUploadContract;
+import com.yuefeng.features.contract.MonitoringContract;
 import com.yuefeng.features.event.ProblemEvent;
-import com.yuefeng.features.presenter.ProblemUploadPresenter;
+import com.yuefeng.features.presenter.monitoring.MonitoringSngnInPresenter;
 import com.yuefeng.photo.adapter.GridImageAdapter;
 import com.yuefeng.photo.other.FullyGridLayoutManager;
 import com.yuefeng.photo.utils.PictureSelectorUtils;
 import com.yuefeng.utils.BdLocationUtil;
-import com.yuefeng.utils.LocationUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -53,9 +47,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -65,18 +57,13 @@ import io.reactivex.functions.Consumer;
 
 
 /*问题上报*/
-public class ProblemUpdateActivity extends BaseActivity implements
-        ProblemUploadContract.View, LocationUtils.OnResultMapListener {
+public class MonitoringSngnInActivity extends BaseActivity implements MonitoringContract.View {
 
     private static final String TAG = "tag";
-    @BindView(R.id.iv_back)
-    RelativeLayout iv_back;
     @BindView(R.id.tv_title)
     TextView tv_title;
-    @BindColor(R.color.titel_color)
-    int coloeWhite;
-    @BindColor(R.color.titel_color)
-    int coloeGray;
+    @BindView(R.id.tv_title_setting)
+    TextView tv_title_setting;
     @BindView(R.id.tv_problem_address)
     TextView tv_problem_address;
     @BindView(R.id.ll_problem)
@@ -87,12 +74,10 @@ public class ProblemUpdateActivity extends BaseActivity implements
     EditText edt_problem_txt;
     @BindView(R.id.tv_txt_count)
     TextView tv_txt_count;
-    @BindView(R.id.tv_upload)
-    TextView tv_upload;
     @BindView(R.id.tv_photo_big)
     TextView tv_photo_big;
-    @BindView(R.id.tv_type_jinji)
-    ImageView tv_type_jinji;
+    @BindView(R.id.tv_personal)
+    TextView tv_personal;
 
 
     private CameraPhotoPopupWindow popupWindow;
@@ -106,15 +91,13 @@ public class ProblemUpdateActivity extends BaseActivity implements
     //    private SysUser sysUser;
     private boolean isOnclick = true;
     private boolean isFirstLocation = true;
-    private ProblemUploadPresenter presenter;
+    private MonitoringSngnInPresenter presenter;
     private String mImagesArrays;
     private SucessCacheSureDialog sureDialog;
 
-    private com.yuefeng.utils.LocationUtils mLocationUtils;
-
     @Override
     protected int getContentViewResId() {
-        return R.layout.activity_problemupload;
+        return R.layout.activity_monitoringsngnin;
     }
 
     @Override
@@ -122,15 +105,11 @@ public class ProblemUpdateActivity extends BaseActivity implements
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         ButterKnife.bind(this);
-        presenter = new ProblemUploadPresenter(this, this);
+        presenter = new MonitoringSngnInPresenter(this, this);
         ViewUtils.setEditHightOrWidth(edt_problem_txt, (int) AppUtils.mScreenHeight / 5, ActionBar.LayoutParams.MATCH_PARENT);
-//        View view = findViewById(R.id.space);
-//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-        tv_title.setText("问题上报");
-        tv_type_jinji.setBackgroundResource(R.drawable.yiban3);
+        tv_title.setText(getString(R.string.problem_updata));
+        tv_title_setting.setText(R.string.submit);
         selectPhoto();
         tv_problem_address.setText(R.string.locationing);
     }
@@ -175,12 +154,25 @@ public class ProblemUpdateActivity extends BaseActivity implements
 
     private void getLocation() {
 
-        boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
-        if (gpsOPen) {
-            useBdGpsLocation();
-        } else {
-//            useGpsLocation();
-        }
+        BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
+            @Override
+            public void myLocation(BDLocation location) {
+                if (location == null) {
+                    requestPermissions();
+                    return;
+                }
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                address = location.getAddrStr();
+                if (!TextUtils.isEmpty(address)) {
+                    int length = address.length();
+                    address = address.substring(2, length);
+                    tv_problem_address.setText(address);
+                }else {
+                    tv_problem_address.setText(R.string.locationing);
+                }
+            }
+        }, Constans.BDLOCATION_TIME);
     }
 
 
@@ -208,8 +200,8 @@ public class ProblemUpdateActivity extends BaseActivity implements
                 }
                 if (isFirstLocation) {
                     isFirstLocation = false;
-                    PreferencesUtils.putString(ProblemUpdateActivity.this, "Fengrun", "");
-                    PreferencesUtils.putString(ProblemUpdateActivity.this, "mAddress", address);
+                    PreferencesUtils.putString(MonitoringSngnInActivity.this, "Fengrun", "");
+                    PreferencesUtils.putString(MonitoringSngnInActivity.this, "mAddress", address);
                     if (!TextUtils.isEmpty(address)) {
                         tv_problem_address.setText(address);
                     } else {
@@ -219,28 +211,6 @@ public class ProblemUpdateActivity extends BaseActivity implements
 //                }
             }
         }, BDLOCATION_TIME);
-    }
-
-    private void useGpsLocation() {
-
-        // 创建定位管理信息对象
-        mLocationUtils = new com.yuefeng.utils.LocationUtils(this);
-//         开启定位
-        mLocationUtils.startLocation();
-        mLocationUtils.registerOnResult(this);
-
-        Location location = BdLocationUtil.getInstance().startLocationServise(ProblemUpdateActivity.this);
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        latitude = latLng.latitude;
-        longitude = latLng.longitude;
-        if (mLocationUtils == null) {
-//         开启定位
-            mLocationUtils = new LocationUtils(this);
-            mLocationUtils.startLocation();
-            mLocationUtils.registerOnResult(this);
-        }
-        mLocationUtils.getAddress(latitude, longitude);
-        mLocationUtils.getAddress(latitude, longitude);
     }
 
     private void initEditText() {
@@ -298,9 +268,9 @@ public class ProblemUpdateActivity extends BaseActivity implements
 
     /*图片选择*/
     private void selectPhoto() {
-        FullyGridLayoutManager manager = new FullyGridLayoutManager(ProblemUpdateActivity.this, Constans.FOUR, GridLayoutManager.VERTICAL, false);
+        FullyGridLayoutManager manager = new FullyGridLayoutManager(MonitoringSngnInActivity.this, Constans.FOUR, GridLayoutManager.VERTICAL, false);
         recyclerview.setLayoutManager(manager);
-        adapter = new GridImageAdapter(ProblemUpdateActivity.this, onAddPicClickListener);
+        adapter = new GridImageAdapter(MonitoringSngnInActivity.this, onAddPicClickListener);
         adapter.setList(selectList);
         adapter.setSelectMax(Constans.FOUR);
         recyclerview.setAdapter(adapter);
@@ -315,7 +285,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
                         case 1:
                             // 预览图片 可自定长按保存路径
                             //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
-                            PictureSelector.create(ProblemUpdateActivity.this).externalPicturePreview(position, selectList);
+                            PictureSelector.create(MonitoringSngnInActivity.this).externalPicturePreview(position, selectList);
                             break;
                     }
                 }
@@ -343,7 +313,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
                     popupWindow.dismiss();
                 }
 //                onCarema();
-                PictureSelectorUtils.getInstance().onAcCamera(ProblemUpdateActivity.this,
+                PictureSelectorUtils.getInstance().onAcCamera(MonitoringSngnInActivity.this,
                         PictureSelectorUtils.getInstance().type, Constans.FOUR, selectList);
             }
 
@@ -353,7 +323,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
                     popupWindow.dismiss();
                 }
 //                onPhoto();
-                PictureSelectorUtils.getInstance().onAcAlbum(ProblemUpdateActivity.this,
+                PictureSelectorUtils.getInstance().onAcAlbum(MonitoringSngnInActivity.this,
                         PictureSelectorUtils.getInstance().type, Constans.FOUR, Constans.FOUR,
                         true, ImageUtils.getPath(), selectList);
             }
@@ -380,7 +350,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
             @Override
             public void onNext(Boolean aBoolean) {
                 if (aBoolean) {
-                    PictureFileUtils.deleteCacheDirFile(ProblemUpdateActivity.this);
+                    PictureFileUtils.deleteCacheDirFile(MonitoringSngnInActivity.this);
                 } else {
                     showSuccessToast(getString(R.string.picture_jurisdiction));
                 }
@@ -398,39 +368,28 @@ public class ProblemUpdateActivity extends BaseActivity implements
 
 
     /*紧急*/
-    @OnClick({R.id.tv_type_jinji, R.id.tv_problem_address, R.id.tv_upload})
+    @OnClick({R.id.tv_personal, R.id.tv_problem_address, R.id.tv_title_setting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_problem_address:
                 tv_problem_address.setText(R.string.locationing);
                 requestPermissions();/*重新定位*/
                 break;
-            case R.id.tv_type_jinji:
-                whatTypeSelect();
+            case R.id.tv_title_setting:
+                showSuccessToast(getString(R.string.submit));
+//                uploadProblem();
                 break;
-            case R.id.tv_upload:
-                uploadProblem();
+            case R.id.tv_personal:
+                showSuccessToast(getString(R.string.personal));
+//                uploadProblem();
                 break;
-        }
-    }
-
-
-    /*类型*/
-    private void whatTypeSelect() {
-        if (isOnclick) {
-            isOnclick = false;
-            tv_type_jinji.setBackgroundResource(R.drawable.jinji3);
-            type = "1";
-        } else {
-            isOnclick = true;
-            tv_type_jinji.setBackgroundResource(R.drawable.yiban3);
-            type = "0";
         }
     }
 
 
     /*提交问题*/
     private void uploadProblem() {
+
         String problem = edt_problem_txt.getText().toString().trim();
         if (TextUtils.isEmpty(problem)) {
             showSuccessToast("请填写问题描述");
@@ -451,8 +410,8 @@ public class ProblemUpdateActivity extends BaseActivity implements
 
         String pid = PreferencesUtils.getString(this, "orgId", "");
         String userid = PreferencesUtils.getString(this, "id", "");
-        presenter.uploadRubbishEvent(ApiService.UPLOADRUBBISHEVENT, userid, pid, problem, address,
-                String.valueOf(longitude), String.valueOf(latitude), type, mImagesArrays);
+//        presenter.uploadRubbishEvent(ApiService.UPLOADRUBBISHEVENT, userid, pid, problem, address,
+//                String.valueOf(longitude), String.valueOf(latitude), type, mImagesArrays);
 
     }
 
@@ -496,7 +455,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mImagesArrays = PictureSelectorUtils.compressionPhotos(ProblemUpdateActivity.this, selectList, address);
+                mImagesArrays = PictureSelectorUtils.compressionPhotos(MonitoringSngnInActivity.this, selectList, address);
             }
         }).start();
         runOnUiThread(new Runnable() {
@@ -517,21 +476,4 @@ public class ProblemUpdateActivity extends BaseActivity implements
         BdLocationUtil.getInstance().stopLocation();//停止定位
     }
 
-    @Override
-    public void onReverseGeoCodeResult(Map<String, Object> map) {
-        address = (String) map.get("address");
-        if (!TextUtils.isEmpty(address)) {
-            PreferencesUtils.putString(ProblemUpdateActivity.this, "Fengrun", "");
-            PreferencesUtils.putString(ProblemUpdateActivity.this, "mAddress", address);
-            tv_problem_address.setText(address);
-        } else {
-            useBdGpsLocation();
-        }
-
-    }
-
-    @Override
-    public void onGeoCodeResult(Map<String, Object> map) {
-
-    }
 }

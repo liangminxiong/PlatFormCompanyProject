@@ -503,19 +503,19 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
             popupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
                 @Override
-                public void onGoBack(String name, String terminal) {
+                public void onGoBack(String name, String terminal,String id) {
                     popupWindow.dismiss();
                 }
 
                 @Override
-                public void onSure(String name, String terminal) {
+                public void onSure(String name, String terminal,String id) {
                     popupWindow.dismiss();
                     getSelectCarInfos(name, terminal);
                     showSelectItemDatas();
                 }
 
                 @Override
-                public void onSelectCar(String carNumber, String terminal) {//选中车
+                public void onSelectCar(String carNumber, String terminal,String id) {//选中车
                     getSelectCarInfos(carNumber, terminal);
                 }
             });

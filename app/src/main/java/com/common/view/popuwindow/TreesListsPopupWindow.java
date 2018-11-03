@@ -65,6 +65,7 @@ public class TreesListsPopupWindow extends PopupWindow {
     private SimpleTreeRecyclerAdapter carlistAdapter;
     private String carNumber;
     private boolean isSingle;
+    private String id;
 
     public TreesListsPopupWindow(Context context, List<Node> carDatas, boolean isSingle) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
@@ -107,7 +108,7 @@ public class TreesListsPopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 dismiss();
-                showSelectItemDatas();
+                showSelectItemDatas("1");
             }
         });
 
@@ -122,7 +123,7 @@ public class TreesListsPopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 dismiss();
-                showSelectItemDatas();
+                showSelectItemDatas("2");
             }
         });
 
@@ -144,7 +145,7 @@ public class TreesListsPopupWindow extends PopupWindow {
         carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
             @Override
             public void onClick(Node node, int position) {
-                showSelectItemDatas();
+                showSelectItemDatas("3");
             }
 
         });
@@ -152,7 +153,7 @@ public class TreesListsPopupWindow extends PopupWindow {
 
     /*点击车*/
     @SuppressLint("SetTextI18n")
-    private void showSelectItemDatas() {
+    private void showSelectItemDatas(String type) {
         if (carlistAdapter == null) {
             return;
         }
@@ -160,6 +161,7 @@ public class TreesListsPopupWindow extends PopupWindow {
             final List<Node> allNodes = carlistAdapter.getAllNodes();
             for (int i = 0; i < allNodes.size(); i++) {
                 if (allNodes.get(i).isChecked()) {
+                    id = (String) allNodes.get(i).getId();
                     carNumber = allNodes.get(i).getName();
                     terminal = allNodes.get(i).getTerminalNO();
                 }
@@ -169,10 +171,15 @@ public class TreesListsPopupWindow extends PopupWindow {
         }
         if (!TextUtils.isEmpty(terminal)) {
             if (mOnItemClickListener != null) {
-                mOnItemClickListener.onSure(carNumber, terminal);
+                if (type.equals("1")) {
+                    mOnItemClickListener.onGoBack(carNumber, terminal, id);
+                } else if (type.equals("2")) {
+                    mOnItemClickListener.onSure(carNumber, terminal, id);
+                } else {
+                    mOnItemClickListener.onSure(carNumber, terminal, id);
+                    mOnItemClickListener.onGoBack(carNumber, terminal, id);
+                }
             }
-            assert mOnItemClickListener != null;
-            mOnItemClickListener.onGoBack(carNumber, terminal);
         }
     }
 
@@ -216,27 +223,28 @@ public class TreesListsPopupWindow extends PopupWindow {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
+                id = listData.get(position).getId();
                 name = listData.get(position).getName();
                 terminal = listData.get(position).getTerminal();
 
                 if (!TextUtils.isEmpty(terminal)) {
                     if (mOnItemClickListener != null)
-                        mOnItemClickListener.onSure(name, terminal);
+                        mOnItemClickListener.onSure(name, terminal, id);
                     assert mOnItemClickListener != null;
-                    mOnItemClickListener.onGoBack(name, terminal);
+                    mOnItemClickListener.onGoBack(name, terminal, id);
                 }
             }
         });
         adapterSelect.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                id = listData.get(position).getId();
                 name = listData.get(position).getName();
                 terminal = listData.get(position).getTerminal();
                 if (mOnItemClickListener != null)
-                    mOnItemClickListener.onSure(name, terminal);
+                    mOnItemClickListener.onSure(name, terminal, id);
                 assert mOnItemClickListener != null;
-                mOnItemClickListener.onGoBack(name, terminal);
+                mOnItemClickListener.onGoBack(name, terminal, id);
             }
         });
 
@@ -292,13 +300,13 @@ public class TreesListsPopupWindow extends PopupWindow {
     }
 
     public interface OnItemClickListener {
-        void onGoBack(String name, String terminal);
+        void onGoBack(String name, String terminal, String id);
 
 //        void onSearch(String key);
 
-        void onSure(String name, String terminal);
+        void onSure(String name, String terminal, String id);
 
-        void onSelectCar(String carNumber, String terminal);
+        void onSelectCar(String carNumber, String terminal, String id);
     }
 
     /**

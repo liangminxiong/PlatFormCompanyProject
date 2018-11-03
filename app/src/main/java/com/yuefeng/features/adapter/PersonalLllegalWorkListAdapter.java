@@ -11,14 +11,14 @@ import com.yuefeng.features.modle.LllegalworMsgBean;
 
 import java.util.List;
 
-public class CarLllegalWorkListAdapter extends BaseItemDraggableAdapter<LllegalworMsgBean, BaseViewHolder> {
+public class PersonalLllegalWorkListAdapter extends BaseItemDraggableAdapter<LllegalworMsgBean, BaseViewHolder> {
 
     private String name;
     private String time;
     private String detail;
     private String address;
 
-    public CarLllegalWorkListAdapter(int layoutResId, @Nullable List<LllegalworMsgBean> data) {
+    public PersonalLllegalWorkListAdapter(int layoutResId, @Nullable List<LllegalworMsgBean> data) {
         super(layoutResId, data);
     }
 
@@ -53,7 +53,7 @@ public class CarLllegalWorkListAdapter extends BaseItemDraggableAdapter<Lllegalw
 //                GlideUtils.loadImageViewCircle(iv_item_image, imageUrl, R.drawable.picture, R.drawable.picture);
 //            } else {
 //            }
-            helper.setImageResource(R.id.iv_item_image, R.drawable.truck);
+            helper.setImageResource(R.id.iv_item_image, R.drawable.staff);
         }
     }
 }

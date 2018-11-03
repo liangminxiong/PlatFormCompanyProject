@@ -15,10 +15,9 @@ public interface LllegalWorkContract {
         /*人员列表*/
         void getPersontree(String function, String userid, String pid);
 
-        /*车辆违章列表*/
-        void getCarLllegalListInfos(String function, String organid, String userid, String isreg);
+        /*违章列表*/
+        void getWeigui(String function, String pid, String timestatr,
+                       String timeend, String vid, String type,int typeWhat);
 
-        /*人员违章列表*/
-        void getPersonalLllegalListInfos(String function, String organid, String userid, String isreg);
     }
 }
