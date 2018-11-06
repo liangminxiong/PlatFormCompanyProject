@@ -114,7 +114,6 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
         viewPagerAdapter = new MyLllegalPageAdapter(getSupportFragmentManager(), titles, fragments);
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-        EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, ""));
     }
 
     /*车辆列表*/
@@ -122,7 +121,9 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
         if (presenter != null) {
             String pid = PreferencesUtils.getString(this, "orgId", "");
             String userid = PreferencesUtils.getString(this, "id", "");
-//            presenter.getCarListInfos(ApiService.LOADVEHICLELIST, pid, userid, "0");
+            pid = "ea9b4033ffffee0101ed1860a1febcfb";
+            userid = "eab2ffacffffffc976ce7286d4054823";
+            presenter.getCarListInfosNew(ApiService.GETVEHICLETREE, pid, userid, "0");
             getTreeListData();
         }
     }
@@ -154,7 +155,7 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void disposeLllegalWorkEvent(LllegalWorkEvent event) {
         switch (event.getWhat()) {
             case Constans.CARLIST_SSUCESS:
@@ -302,9 +303,9 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 
                     @Override
                     public void onSelectCar(String carNumber, String userId, String terminal) {
-                        if (!TextUtils.isEmpty(userId)) {
-                            EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.PERSONAL_ID, userId));
-                        }
+//                        if (!TextUtils.isEmpty(userId)) {
+//                            EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.PERSONAL_ID, userId));
+//                        }
 
                     }
                 });

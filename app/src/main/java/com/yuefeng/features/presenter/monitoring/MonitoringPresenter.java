@@ -2,15 +2,15 @@ package com.yuefeng.features.presenter.monitoring;
 
 import com.common.base.codereview.BasePresenterImpl;
 import com.yuefeng.features.contract.MonitoringContract;
-import com.yuefeng.features.ui.activity.monitoring.MonitoringActivity;
+import com.yuefeng.features.ui.activity.monitoring.MonitoringHistoryOfJobActivity;
 
 /**
  * 作业监察
  */
 
 public class MonitoringPresenter extends BasePresenterImpl<MonitoringContract.View,
-        MonitoringActivity> implements MonitoringContract.Presenter {
-    public MonitoringPresenter(MonitoringContract.View view, MonitoringActivity activity) {
+        MonitoringHistoryOfJobActivity> implements MonitoringContract.Presenter {
+    public MonitoringPresenter(MonitoringContract.View view, MonitoringHistoryOfJobActivity activity) {
         super(view, activity);
     }
 

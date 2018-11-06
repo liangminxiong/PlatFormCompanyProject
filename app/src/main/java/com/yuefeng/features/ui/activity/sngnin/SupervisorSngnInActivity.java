@@ -411,7 +411,6 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
             popupWindowTree.setOnItemClickListener(new PersonalListPopupWindow.OnItemClickListener() {
                 @Override
                 public void onGoBack(String listName, String userId, String terminal) {
-                    popupWindowTree.dismiss();
                     if (!TextUtils.isEmpty(listName)) {
                         tvPersonal.setText(listName);
                         useridflag = userId;
@@ -422,7 +421,6 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
 
                 @Override
                 public void onSure(String listName, String userId, String terminal) {
-                    popupWindowTree.dismiss();
                     if (!TextUtils.isEmpty(listName)) {
                         tvPersonal.setText(listName);
                         useridflag = userId;

@@ -100,7 +100,7 @@
                 android:layout_height="@dimen/dp_60"
                 android:background="@drawable/shape_cricle_gray"
                 android:gravity="center"
-                android:text="1"
+                android:text="0"
                 android:textColor="@color/white_ed"
                 android:textSize="@dimen/sp_18"
                 tools:ignore="HardcodedText"/>
@@ -116,7 +116,7 @@
                 android:layout_height="@dimen/dp_60"
                 android:background="@drawable/shape_cricle_gray"
                 android:gravity="center"
-                android:text="2"
+                android:text="0"
                 android:textColor="@color/white_ed"
                 android:textSize="@dimen/sp_18"
                 tools:ignore="HardcodedText"/>
@@ -148,7 +148,7 @@
                 android:layout_height="@dimen/dp_60"
                 android:background="@drawable/shape_cricle_gray"
                 android:gravity="center"
-                android:text="1"
+                android:text="0"
                 android:textColor="@color/white_ed"
                 android:textSize="@dimen/sp_18"
                 tools:ignore="HardcodedText"/>
@@ -269,6 +269,7 @@
             android:layout_below="@id/tv_time"
             android:layout_toEndOf="@id/tv_temp1"
             android:gravity="center_vertical"
+            android:text="0"
             android:textColor="@color/red_color_4a"
             android:textSize="@dimen/sp_15"
             tools:ignore="HardcodedText"/>
@@ -292,6 +293,7 @@
             android:layout_below="@id/tv_time"
             android:layout_toEndOf="@id/tv_temp2"
             android:gravity="center_vertical"
+            android:text="0"
             android:textColor="@color/red_color_4a"
             android:textSize="@dimen/sp_15"
             tools:ignore="HardcodedText"/>
@@ -315,6 +317,7 @@
             android:layout_below="@id/tv_time"
             android:layout_toEndOf="@id/tv_temp3"
             android:gravity="center_vertical"
+            android:text="0"
             android:textColor="@color/red_color_4a"
             android:textSize="@dimen/sp_15"
             tools:ignore="HardcodedText"/>
@@ -349,8 +352,8 @@
         android:layout_height="@dimen/dp_40"
         android:background="@color/white"
         android:drawableEnd="@drawable/fold_right"
-        android:drawableStart="@drawable/location"
         android:drawablePadding="@dimen/dp_3"
+        android:drawableStart="@drawable/location"
         android:gravity="center_vertical"
         android:paddingEnd="@dimen/dp_15"
         android:paddingStart="@dimen/dp_15"

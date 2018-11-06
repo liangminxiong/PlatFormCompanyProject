@@ -16,6 +16,7 @@ import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
@@ -23,6 +24,7 @@ import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.JobAttendanceContract;
 import com.yuefeng.features.event.JobAttendanceEvent;
+import com.yuefeng.features.modle.GetKaoqinSumMsgBean;
 import com.yuefeng.features.presenter.JobAttendancePresenter;
 import com.yuefeng.utils.BdLocationUtil;
 
@@ -70,6 +72,14 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
     private String address;
     private boolean isFirstLocation = true;
     private JobAttendancePresenter presenter;
+    private GetKaoqinSumMsgBean dataBean;
+    private String kaoqinsum;
+    private String late;
+    private String early;
+    private String daiqian;
+    private String qiaodao;
+    private String kuanggong;
+    private String signback;
 
     @Override
     protected int getContentViewResId() {
@@ -91,14 +101,6 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
     private void initUI() {
         ViewUtils.setLLHightOrWidth(llBg, (int) AppUtils.mScreenHeight * 2 / 5, ActionBar.LayoutParams.MATCH_PARENT);
         tvTitle.setText("作业考勤");
-        tvChidao.setText("4");
-        tvZaotui.setText("2");
-        tvNosignin.setText("1");
-        tvNosignoff.setText("0");
-
-        tvSngninCount.setText("4");
-        tvPersonlCount.setText("2");
-        tvSpCount.setText("2");
     }
 
     /**
@@ -169,7 +171,13 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
 
     @SuppressLint("SetTextI18n")
     private void initTime() {
-        tvTime.setText("今天：" + TimeUtils.getCurrentTime2());
+        String startTime = TimeUtils.getMonthStartTime();
+        String currentTime = TimeUtils.getCurrentTime2();
+        tvTime.setText("今天：" + currentTime);
+        if (presenter != null) {
+            String userid = PreferencesUtils.getString(JobAttendanceActivity.this, Constans.ID, "");
+            presenter.getKaoqinSum(ApiService.GETKAOQINSUM, userid, startTime, currentTime);
+        }
     }
 
     @Override
@@ -185,7 +193,11 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposeJobAttendanceEvent(JobAttendanceEvent event) {
         switch (event.getWhat()) {
-            case Constans.SNGNIN_SSUCESS://成功
+            case Constans.SNGNIN_SSUCESS://获取信息成功
+                dataBean = (GetKaoqinSumMsgBean) event.getData();
+                if (dataBean != null) {
+                    showKaoqinSumMsg(dataBean);
+                }
                 break;
             case Constans.LOGIN://个人签到成功
                 showSuccessDialog("签到成功,是否退出当前界面?");
@@ -199,6 +211,37 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
                 break;
 
         }
+    }
+
+    /*展示本月签到信息*/
+    private void showKaoqinSumMsg(GetKaoqinSumMsgBean dataBean) {
+        kaoqinsum = dataBean.getKaoqinsum() + "";
+        late = dataBean.getLate() + "";
+        early = dataBean.getEarly() + "";
+        daiqian = dataBean.getDaiqian() + "";
+        qiaodao = dataBean.getQiaodao() + "";
+        kuanggong = dataBean.getKuanggong() + "";
+        signback = dataBean.getSignback() + "";
+        LogUtils.d("showKaoqinSum 00 = " + kaoqinsum + " ++ " + late + " ++ " + early +
+                " ++ " + daiqian + " ++ " + qiaodao + " ++ " + kuanggong + " ++ " + signback + " ++ ");
+        kaoqinsum = TextUtils.isEmpty(kaoqinsum) ? "0" : kaoqinsum;
+        late = TextUtils.isEmpty(late) ? "0" : late;
+        early = TextUtils.isEmpty(early) ? "0" : early;
+        daiqian = TextUtils.isEmpty(daiqian) ? "0" : daiqian;
+        qiaodao = TextUtils.isEmpty(qiaodao) ? "0" : qiaodao;
+        kuanggong = TextUtils.isEmpty(kuanggong) ? "0" : kuanggong;
+        signback = TextUtils.isEmpty(signback) ? "0" : signback;
+
+        LogUtils.d("showKaoqinSum 22 = " + kaoqinsum + " ++ " + late + " ++ " + early +
+                " ++ " + daiqian + " ++ " + qiaodao + " ++ " + kuanggong + " ++ " + signback + " ++ ");
+        tvChidao.setText(late);
+        tvZaotui.setText(early);
+        tvNosignin.setText(kuanggong);
+        tvNosignoff.setText(signback);
+
+        tvSngninCount.setText(kaoqinsum);
+        tvPersonlCount.setText(qiaodao);
+        tvSpCount.setText(daiqian);
     }
 
 

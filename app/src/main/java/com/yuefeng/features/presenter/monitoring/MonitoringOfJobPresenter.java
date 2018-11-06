@@ -1,4 +1,4 @@
-package com.yuefeng.features.presenter;
+package com.yuefeng.features.presenter.monitoring;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
@@ -10,11 +10,12 @@ import com.common.network.HttpObservable;
 import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.common.utils.StringUtils;
+import com.yuefeng.features.contract.MonitoringOfJobContract;
 import com.yuefeng.features.contract.PositionAcquisitionContract;
 import com.yuefeng.features.event.PositionAcquisitionEvent;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.features.modle.video.GetCaijiTypeBean;
-import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
+import com.yuefeng.features.ui.activity.monitoring.MonitoringofJobActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -23,18 +24,18 @@ import java.util.List;
 import io.reactivex.disposables.Disposable;
 
 /**
- * 信息采集
+ * 作业监察
  */
 
-public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcquisitionContract.View,
-        PositionAcquisitionActivity> implements PositionAcquisitionContract.Presenter {
+public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobContract.View,
+        MonitoringofJobActivity> implements PositionAcquisitionContract.Presenter {
 
     private String hourStr;
     private String minuteStr;
     private String secondStr;
     private String lnglat;
 
-    public PositionAcquisitionPresenter(PositionAcquisitionContract.View view, PositionAcquisitionActivity activity) {
+    public MonitoringOfJobPresenter(MonitoringOfJobContract.View view, MonitoringofJobActivity activity) {
         super(view, activity);
     }
 

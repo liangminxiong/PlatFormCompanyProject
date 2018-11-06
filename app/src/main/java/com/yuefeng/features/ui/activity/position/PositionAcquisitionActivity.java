@@ -420,7 +420,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 }
                 break;
             case Constans.GETCAIJI_ERROR://获采集类型失败
-                showSuccessToast("发布失败");
+//                showSuccessToast("发布失败");
                 break;
             default:
 

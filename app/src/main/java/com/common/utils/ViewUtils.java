@@ -6,6 +6,7 @@ import android.text.Selection;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -68,7 +69,7 @@ public class ViewUtils {
     }
 
     /*LinearLayout 显示隐藏*/
-    public static void setLlVisible(LinearLayout linearLayout, boolean visible) {
+    public static void setLlInVisible(LinearLayout linearLayout, boolean visible) {
         int type = 0;
         if (visible) {
             type = View.INVISIBLE;
@@ -76,6 +77,40 @@ public class ViewUtils {
             type = View.VISIBLE;
         }
         linearLayout.setVisibility(type);
+    }
+
+    /*RelativeLayout 显示隐藏*/
+    public static void setRlInVisible(RelativeLayout relativeLayout, boolean visible) {
+        int type;
+        if (visible) {
+            type = View.INVISIBLE;
+        } else {
+            type = View.VISIBLE;
+        }
+        relativeLayout.setVisibility(type);
+    }
+
+
+    /*Butto 显示隐藏*/
+    public static void setBtnInVisible(Button view, boolean visible) {
+        int type;
+        if (visible) {
+            type = View.INVISIBLE;
+        } else {
+            type = View.VISIBLE;
+        }
+        view.setVisibility(type);
+    }
+
+    /*TextView 显示隐藏*/
+    public static void setTvInVisible(TextView view, boolean visible) {
+        int type;
+        if (visible) {
+            type = View.INVISIBLE;
+        } else {
+            type = View.VISIBLE;
+        }
+        view.setVisibility(type);
     }
 
     /*剩下多少字可填*/

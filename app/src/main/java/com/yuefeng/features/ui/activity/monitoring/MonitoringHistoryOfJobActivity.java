@@ -63,8 +63,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 
-/*作业监察*/
-public class MonitoringActivity extends BaseActivity implements
+/*作业历史监察*/
+public class MonitoringHistoryOfJobActivity extends BaseActivity implements
         MonitoringContract.View, LocationUtils.OnResultMapListener {
 
     private static final String TAG = "tag";
@@ -206,8 +206,8 @@ public class MonitoringActivity extends BaseActivity implements
                     }
                     if (isFirstLocation) {
                         isFirstLocation = false;
-                        PreferencesUtils.putString(MonitoringActivity.this, "Fengrun", "");
-                        PreferencesUtils.putString(MonitoringActivity.this, "mAddress", address);
+                        PreferencesUtils.putString(MonitoringHistoryOfJobActivity.this, "Fengrun", "");
+                        PreferencesUtils.putString(MonitoringHistoryOfJobActivity.this, "mAddress", address);
                         if (!TextUtils.isEmpty(address)) {
                             tv_problem_address.setText(address);
                         } else {
@@ -227,7 +227,7 @@ public class MonitoringActivity extends BaseActivity implements
         mLocationUtils.startLocation();
         mLocationUtils.registerOnResult(this);
 
-        Location location = BdLocationUtil.getInstance().startLocationServise(MonitoringActivity.this);
+        Location location = BdLocationUtil.getInstance().startLocationServise(MonitoringHistoryOfJobActivity.this);
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         latitude = latLng.latitude;
         longitude = latLng.longitude;
@@ -296,9 +296,9 @@ public class MonitoringActivity extends BaseActivity implements
 
    /*图片选择*/
     private void selectPhoto() {
-        FullyGridLayoutManager manager = new FullyGridLayoutManager(MonitoringActivity.this, Constans.FOUR, GridLayoutManager.VERTICAL, false);
+        FullyGridLayoutManager manager = new FullyGridLayoutManager(MonitoringHistoryOfJobActivity.this, Constans.FOUR, GridLayoutManager.VERTICAL, false);
         recyclerview.setLayoutManager(manager);
-        adapter = new GridImageAdapter(MonitoringActivity.this, onAddPicClickListener);
+        adapter = new GridImageAdapter(MonitoringHistoryOfJobActivity.this, onAddPicClickListener);
         adapter.setList(selectList);
         adapter.setSelectMax(Constans.FOUR);
         recyclerview.setAdapter(adapter);
@@ -313,7 +313,7 @@ public class MonitoringActivity extends BaseActivity implements
                         case 1:
                             // 预览图片 可自定长按保存路径
                             //PictureSelector.create(MainActivity.this).externalPicturePreview(position, "/custom_file", selectList);
-                            PictureSelector.create(MonitoringActivity.this).externalPicturePreview(position, selectList);
+                            PictureSelector.create(MonitoringHistoryOfJobActivity.this).externalPicturePreview(position, selectList);
                             break;
                     }
                 }
@@ -341,7 +341,7 @@ public class MonitoringActivity extends BaseActivity implements
                     popupWindow.dismiss();
                 }
 //                onCarema();
-                PictureSelectorUtils.getInstance().onAcCamera(MonitoringActivity.this,
+                PictureSelectorUtils.getInstance().onAcCamera(MonitoringHistoryOfJobActivity.this,
                         PictureSelectorUtils.getInstance().type, Constans.FOUR, selectList);
             }
 
@@ -351,7 +351,7 @@ public class MonitoringActivity extends BaseActivity implements
                     popupWindow.dismiss();
                 }
 //                onPhoto();
-                PictureSelectorUtils.getInstance().onAcAlbum(MonitoringActivity.this,
+                PictureSelectorUtils.getInstance().onAcAlbum(MonitoringHistoryOfJobActivity.this,
                         PictureSelectorUtils.getInstance().type, Constans.FOUR, Constans.FOUR,
                         true, ImageUtils.getPath(), selectList);
             }
@@ -378,7 +378,7 @@ public class MonitoringActivity extends BaseActivity implements
             @Override
             public void onNext(Boolean aBoolean) {
                 if (aBoolean) {
-                    PictureFileUtils.deleteCacheDirFile(MonitoringActivity.this);
+                    PictureFileUtils.deleteCacheDirFile(MonitoringHistoryOfJobActivity.this);
                 } else {
                     showSuccessToast(getString(R.string.picture_jurisdiction));
                 }
@@ -494,7 +494,7 @@ public class MonitoringActivity extends BaseActivity implements
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mImagesArrays = PictureSelectorUtils.compressionPhotos(MonitoringActivity.this, selectList, address);
+                mImagesArrays = PictureSelectorUtils.compressionPhotos(MonitoringHistoryOfJobActivity.this, selectList, address);
             }
         }).start();
         runOnUiThread(new Runnable() {
@@ -519,8 +519,8 @@ public class MonitoringActivity extends BaseActivity implements
     public void onReverseGeoCodeResult(Map<String, Object> map) {
         address = (String) map.get("address");
         if (!TextUtils.isEmpty(address)) {
-            PreferencesUtils.putString(MonitoringActivity.this, "Fengrun", "");
-            PreferencesUtils.putString(MonitoringActivity.this, "mAddress", address);
+            PreferencesUtils.putString(MonitoringHistoryOfJobActivity.this, "Fengrun", "");
+            PreferencesUtils.putString(MonitoringHistoryOfJobActivity.this, "mAddress", address);
             tv_problem_address.setText(address);
         } else {
             useBdGpsLocation();

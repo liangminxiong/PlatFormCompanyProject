@@ -121,7 +121,8 @@
         <activity android:name="com.yuefeng.login_splash.ui.LoginActivity"/>
 
         <!--作业监察-->
-        <activity android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringActivity"/>
+        <activity android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringofJobActivity"/>
+        <activity android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringHistoryOfJobActivity"/>
         <!--作业监察签到-->
         <activity
             android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringSngnInActivity"
@@ -142,7 +143,7 @@
         <activity
             android:name="com.yuefeng.features.ui.activity.SuccessProblemActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <!--作业监控-->
+        <!--定位信息-->
         <activity android:name="com.yuefeng.features.ui.activity.JobMonitoringActivity"/>
         <!--转发问题-->
         <activity android:name="com.yuefeng.features.ui.activity.ForwardProblemActivity"/>

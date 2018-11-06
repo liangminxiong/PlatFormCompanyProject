@@ -77,9 +77,9 @@ public class LllegalWorkDetailActivity extends BaseActivity {
     private BaiduMap baiduMap;
     private Polyline mPolyline;
 
-    private int position;
     private String id;
     private String type;
+    private LatLng latLngSecond;
 
 
     @Override
@@ -105,42 +105,45 @@ public class LllegalWorkDetailActivity extends BaseActivity {
     /*车辆列表*/
     @SuppressLint("SetTextI18n")
     private void getCarListInfos() {
-        Bundle bundle = getIntent().getExtras();
-        assert bundle != null;
-        LllegalworMsgBean msgDataBean = (LllegalworMsgBean) bundle.getSerializable("DetailInfos");
-        type = (String) bundle.get("type");
-        String isVisible = (String) bundle.get("isVisible");
-        position = (int) bundle.get("position");
-        assert isVisible != null;
-        if (isVisible.equals("0")) {
-            searchHistoryLllegal.setVisibility(View.INVISIBLE);
-        }
-        assert type != null;
-        if (type.equals("car")) {
-            location_icon = BitmapDescriptorFactory.fromResource(R.drawable.vehicle);
-        } else {
-            location_icon = BitmapDescriptorFactory.fromResource(R.drawable.worker);
-        }
-        assert msgDataBean != null;
-        id = msgDataBean.getId();
-        String title = msgDataBean.getName();
-        title = TextUtils.isEmpty(title) ? "" : title;
-        tv_title.setText(title);
-        tvAddress.setText(msgDataBean.getAddress());
-        if (position == 0) {
-            tvDistance.setText("已偏移" + "米");
-        } else {
-            tvDistance.setText("已偏移" + "0米");
-        }
-        tvType.setText("违规类型:" + msgDataBean.getContents());
-        tvClass.setText("所属班组:" + msgDataBean.getTeam());
-        requestPermissions();
-        String lat = msgDataBean.getLat();
-        String lon = msgDataBean.getLon();
-        if (!TextUtils.isEmpty(lat) && !TextUtils.isEmpty(lon)) {
-            Double latitude = Double.valueOf(lat);
-            Double longitude = Double.valueOf(lon);
-            showCarDetailInfos(latitude, longitude);
+        try {
+            Bundle bundle = getIntent().getExtras();
+            assert bundle != null;
+            LllegalworMsgBean msgDataBean = (LllegalworMsgBean) bundle.getSerializable("DetailInfos");
+            type = (String) bundle.get("type");
+            String isVisible = (String) bundle.get("isVisible");
+            id = (String) bundle.get("id");
+            assert isVisible != null;
+            if (isVisible.equals("0")) {
+                searchHistoryLllegal.setVisibility(View.INVISIBLE);
+            }
+            assert type != null;
+            if (type.equals("car")) {
+                location_icon = BitmapDescriptorFactory.fromResource(R.drawable.vehicle);
+            } else {
+                location_icon = BitmapDescriptorFactory.fromResource(R.drawable.worker);
+            }
+            assert msgDataBean != null;
+            String title = msgDataBean.getName();
+            title = TextUtils.isEmpty(title) ? "" : title;
+            tv_title.setText(title);
+            tvAddress.setText(msgDataBean.getAddress());
+            id = msgDataBean.getPersonalid();
+            String team = msgDataBean.getTeam();
+            String contents = msgDataBean.getContents();
+            contents = TextUtils.isEmpty(contents) ? "无" : contents;
+            team = TextUtils.isEmpty(team) ? "无" : team;
+            tvType.setText("违规类型:" + contents);
+            tvClass.setText("所属班组:" + team);
+            String lat = msgDataBean.getLat();
+            String lon = msgDataBean.getLon();
+            if (!TextUtils.isEmpty(lat) && !TextUtils.isEmpty(lon)) {
+                Double latitude = Double.valueOf(lat);
+                Double longitude = Double.valueOf(lon);
+                latLngSecond = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+            }
+            requestPermissions();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -202,13 +205,8 @@ public class LllegalWorkDetailActivity extends BaseActivity {
                     mMarker = (Marker) (baiduMap.addOverlay(oA));
                     baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
                     BdLocationUtil.MoveMapToCenter(baiduMap, latLng, 14);
-                    if (position == 0) {
-                        showCarDetailInfos(latitude, longitude);
-                    }
+                    showCarDetailInfos(latLng, latLngSecond);
                 }
-//                } else {
-//                    requestPermissions();
-//                }
 
             }
         }, Constans.BDLOCATION_TIME);
@@ -223,28 +221,19 @@ public class LllegalWorkDetailActivity extends BaseActivity {
 
     /*show轨迹  划线*/
     @SuppressLint("SetTextI18n")
-    private void showCarDetailInfos(double latitude, double longitude) {
-
+    private void showCarDetailInfos(LatLng latLng, LatLng latLngSecond) {
         try {
-            if (mPolyline != null) {
-                mPolyline.remove();
-            }
-
-//            if (lls.size() > 1) {
-//                OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.BLUE).points(lls);
-//                mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
-//                BdLocationUtil.MoveMapToCenter(baiduMap, lls.get(lls.size() - 1), 14);
-            double distance = DistanceUtil.getDistance(latLng, BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude)));
-            String mile = "米";
-            if (distance > 1000) {
-                distance = distance / 1000;
-                mile = "km";
-            }
-            String stringDouble = StringUtils.getStringDouble(distance);
-            if (position == 0) {
+            if (latLng != null && latLngSecond != null) {
+                double distance = DistanceUtil.getDistance(latLng, latLngSecond);
+                distance = Math.abs(distance);
+                String mile = "米";
+                if (distance > 1000) {
+                    distance = distance / 1000;
+                    mile = "km";
+                }
+                String stringDouble = StringUtils.getStringDouble(distance);
                 tvDistance.setText("已偏移" + stringDouble + mile);
             }
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         }

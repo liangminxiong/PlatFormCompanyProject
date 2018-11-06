@@ -53,12 +53,14 @@ public class CarLllegalWorkListFragment extends BaseFragment implements LllegalW
     private List<LllegalworMsgBean> listData = new ArrayList<>();
     private CarLllegalWorkListAdapter adapter;
     private LllegalWorkPresenter presenter;
+    private String id;
 
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_carlllegalworklist;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void initView() {
         ButterKnife.bind(this, rootView);
@@ -70,6 +72,7 @@ public class CarLllegalWorkListFragment extends BaseFragment implements LllegalW
         tvLllegalCount.setTextSize(13);
         recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
         initRecycler();
+        initWeiguiData(id, Constans.VECHIL_ID);
     }
 
     private void initRecycler() {
@@ -81,11 +84,13 @@ public class CarLllegalWorkListFragment extends BaseFragment implements LllegalW
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 LllegalworMsgBean msgDataBean = listData.get(position);
                 Intent intent = new Intent();
+                String personalId = msgDataBean.getPersonalid();
                 intent.setClass(getActivity(), LllegalWorkDetailActivity.class);
                 intent.putExtra("DetailInfos", msgDataBean);
                 intent.putExtra("type", "car");
                 intent.putExtra("isVisible", "1");
                 intent.putExtra("position", position);
+                intent.putExtra("id", personalId);
                 startActivity(intent);
             }
         });
@@ -130,8 +135,8 @@ public class CarLllegalWorkListFragment extends BaseFragment implements LllegalW
                 break;
 
             case Constans.VECHIL_ID:
-                String vid = (String) event.getData();
-                initWeiguiData(vid,Constans.VECHIL_ID);
+                id = (String) event.getData();
+                initWeiguiData(id, Constans.VECHIL_ID);
                 break;
 
         }
@@ -149,13 +154,14 @@ public class CarLllegalWorkListFragment extends BaseFragment implements LllegalW
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void initWeiguiData(String vid,int typeWhat) {
+    private void initWeiguiData(String vid, int typeWhat) {
         if (presenter != null) {
             String pid = PreferencesUtils.getString(Objects.requireNonNull(getContext()), Constans.ORGID, "");
             String startTime = TimeUtils.getYesterdayStartTime();
             String endTime = TimeUtils.getCurrentTime();
             startTime = "2018-10-30 10:00:00";
-            presenter.getWeigui(ApiService.GETWEIGUI, pid, startTime, endTime, vid, Constans.TYPE_ZERO,typeWhat);
+            endTime = "2018-11-01 15:00:00";
+            presenter.getWeigui(ApiService.GETWEIGUI, pid, startTime, endTime, vid, Constans.TYPE_ZERO, typeWhat);
         }
     }
 

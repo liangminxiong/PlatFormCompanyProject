@@ -26,20 +26,24 @@ import com.common.utils.PreferencesUtils;
 import com.common.utils.ViewUtils;
 import com.common.view.dialog.SucessCacheSureDialog;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
+import com.common.view.popuwindow.PersonalListPopupWindow;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.luck.picture.lib.tools.PictureFileUtils;
+import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.MonitoringContract;
 import com.yuefeng.features.event.ProblemEvent;
 import com.yuefeng.features.presenter.monitoring.MonitoringSngnInPresenter;
+import com.yuefeng.personaltree.model.PersonalParentBean;
 import com.yuefeng.photo.adapter.GridImageAdapter;
 import com.yuefeng.photo.other.FullyGridLayoutManager;
 import com.yuefeng.photo.utils.PictureSelectorUtils;
 import com.yuefeng.utils.BdLocationUtil;
+import com.yuefeng.utils.PersonalDatasUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -87,13 +91,13 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
     private double longitude;
     private String address;
     private String type = "0";
-    private static final int BDLOCATION_TIME = 10000;
-    //    private SysUser sysUser;
-    private boolean isOnclick = true;
-    private boolean isFirstLocation = true;
     private MonitoringSngnInPresenter presenter;
     private String mImagesArrays;
     private SucessCacheSureDialog sureDialog;
+
+    private List<PersonalParentBean> treeListData = new ArrayList<>();
+    private List<Node> nodeList = new ArrayList<>();
+    private PersonalListPopupWindow popupWindowTree;
 
     @Override
     protected int getContentViewResId() {
@@ -168,7 +172,7 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                     int length = address.length();
                     address = address.substring(2, length);
                     tv_problem_address.setText(address);
-                }else {
+                } else {
                     tv_problem_address.setText(R.string.locationing);
                 }
             }
@@ -180,37 +184,6 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
     protected void onStop() {
         super.onStop();
         BdLocationUtil.getInstance().stopLocation();
-    }
-
-    private void useBdGpsLocation() {
-
-        BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
-            @Override
-            public void myLocation(BDLocation location) {
-                if (location == null) {
-                    return;
-                }
-//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                address = location.getAddrStr();
-                if (!TextUtils.isEmpty(address)) {
-                    int length = address.length();
-                    address = address.substring(2, length);
-                }
-                if (isFirstLocation) {
-                    isFirstLocation = false;
-                    PreferencesUtils.putString(MonitoringSngnInActivity.this, "Fengrun", "");
-                    PreferencesUtils.putString(MonitoringSngnInActivity.this, "mAddress", address);
-                    if (!TextUtils.isEmpty(address)) {
-                        tv_problem_address.setText(address);
-                    } else {
-                        isFirstLocation = true;
-                    }
-                }
-//                }
-            }
-        }, BDLOCATION_TIME);
     }
 
     private void initEditText() {
@@ -258,6 +231,16 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                 }
                 break;
 
+        }
+    }
+
+    /*人员列表展示数据*/
+    private void showPersonallistDatas(List<PersonalParentBean> organs) {
+        try {
+            nodeList.clear();
+            nodeList = PersonalDatasUtils.ReturnPersonalTreesDatas(organs);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -381,7 +364,7 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                 break;
             case R.id.tv_personal:
                 showSuccessToast(getString(R.string.personal));
-//                uploadProblem();
+                initTreeListPopupView();
                 break;
         }
     }
@@ -474,6 +457,46 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         BdLocationUtil.getInstance().stopLocation();//停止定位
+    }
+
+
+    /*人员列表*/
+    private void initTreeListPopupView() {
+        try {
+            popupWindowTree = new PersonalListPopupWindow(this, nodeList, false);
+            popupWindowTree.setTitleText("选择人员");
+            popupWindowTree.setSettingText("确定");
+
+            popupWindowTree.setOnItemClickListener(new PersonalListPopupWindow.OnItemClickListener() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onGoBack(String name, String userId, String terminal) {
+                    if (!TextUtils.isEmpty(name)) {
+                        tv_personal.setText("合照人" + name);
+                    }
+                }
+
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onSure(String name, String userId, String terminal) {
+                    if (!TextUtils.isEmpty(name)) {
+                        tv_personal.setText("合照人" + name);
+                    }
+                }
+
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onSelectCar(String name, String userId, String terminal) {
+                    if (!TextUtils.isEmpty(name)) {
+                        tv_personal.setText("合照人" + name);
+                    }
+                }
+            });
+
+            popupWindowTree.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

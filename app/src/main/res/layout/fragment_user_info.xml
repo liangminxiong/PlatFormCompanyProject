@@ -44,7 +44,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/sp_15"
             android:scaleType="centerCrop"
-            android:src="@drawable/upgrade"
+            android:src="@drawable/staff"
             tools:ignore="ContentDescription"/>
 
         <TextView

@@ -15,7 +15,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
@@ -56,6 +55,7 @@ public class PersonalLllegalWorkListFragment extends BaseFragment implements Lll
     private List<LllegalworMsgBean> listData = new ArrayList<>();
     private PersonalLllegalWorkListAdapter adapter;
     private LllegalWorkPresenter presenter;
+    private String id;
 
     @Override
     protected int getLayoutId() {
@@ -83,12 +83,14 @@ public class PersonalLllegalWorkListFragment extends BaseFragment implements Lll
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 LllegalworMsgBean msgDataBean = listData.get(position);
+                String personalId = msgDataBean.getPersonalid();
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), LllegalWorkDetailActivity.class);
                 intent.putExtra("DetailInfos", msgDataBean);
                 intent.putExtra("type", "personal");
                 intent.putExtra("isVisible", "1");
                 intent.putExtra("position", position);
+                intent.putExtra("id", personalId);
                 startActivity(intent);
             }
         });
@@ -132,8 +134,8 @@ public class PersonalLllegalWorkListFragment extends BaseFragment implements Lll
                 showNodata();
                 break;
             case Constans.PERSONAL_ID:
-                String vid = (String) event.getData();
-                initWeiguiData(vid, Constans.PERSONAL_ID);
+                id = (String) event.getData();
+                initWeiguiData(id, Constans.PERSONAL_ID);
                 break;
         }
     }
@@ -155,7 +157,7 @@ public class PersonalLllegalWorkListFragment extends BaseFragment implements Lll
             String startTime = TimeUtils.getYesterdayStartTime();
             String endTime = TimeUtils.getCurrentTime();
             startTime = "2018-10-30 10:00:00";
-            LogUtils.d(" ++++ " + vid + "+++ " + startTime);
+            endTime = "2018-11-01 15:00:00";
             presenter.getWeigui(ApiService.GETWEIGUI, pid, startTime, endTime, vid, Constans.TYPE_ONE, typeWhat);
         }
     }

@@ -7,8 +7,8 @@ import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.yuefeng.features.contract.JobAttendanceContract;
 import com.yuefeng.features.event.JobAttendanceEvent;
+import com.yuefeng.features.modle.GetKaoqinSumBean;
 import com.yuefeng.features.modle.SubmitBean;
-import com.yuefeng.features.modle.carlist.CarListInfosBean;
 import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,18 +27,18 @@ public class JobAttendancePresenter extends BasePresenterImpl<JobAttendanceContr
 
     /*签到信息*/
     @Override
-    public void getAttendanceInfos(String function, String organid, String userid, String isreg) {
+    public void getKaoqinSum(String function, String userid, String timestart, String timeend) {
 
-        HttpObservable.getObservable(apiRetrofit.getCarListInfos(function, organid, userid, isreg))
+        HttpObservable.getObservable(apiRetrofit.getKaoqinSum(function, userid, timestart, timeend))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
-                .subscribe(new HttpResultObserver<CarListInfosBean>() {
+                .subscribe(new HttpResultObserver<GetKaoqinSumBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
                         showLoadingDialog("加载中...");
                     }
 
                     @Override
-                    protected void onSuccess(CarListInfosBean o) {
+                    protected void onSuccess(GetKaoqinSumBean o) {
                         dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
@@ -56,7 +56,7 @@ public class JobAttendancePresenter extends BasePresenterImpl<JobAttendanceContr
                     }
 
                     @Override
-                    public void onNext(CarListInfosBean carListInfosBean) {
+                    public void onNext(GetKaoqinSumBean carListInfosBean) {
                         super.onNext(carListInfosBean);
                     }
                 });

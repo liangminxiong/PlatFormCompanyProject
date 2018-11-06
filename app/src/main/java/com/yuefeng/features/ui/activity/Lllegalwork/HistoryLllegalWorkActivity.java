@@ -114,7 +114,7 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
                 intent.putExtra("DetailInfos", msgDataBean);
                 intent.putExtra("type", type);
                 intent.putExtra("isVisible", "0");
-                intent.putExtra("position", position);
+                intent.putExtra("position", id);
                 startActivity(intent);
             }
         });
@@ -156,6 +156,8 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
                 List<LllegalworMsgBean> beanList = (List<LllegalworMsgBean>) event.getData();
                 if (beanList.size() > 0) {
                     showAdapterDatasList(beanList);
+                } else {
+                    showSuccessToast("无违规作业信息");
                 }
                 break;
             default:

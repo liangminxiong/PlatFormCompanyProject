@@ -94,7 +94,7 @@ public class UserInfoFragment extends BaseMvpFragment {
         EventBus.getDefault().register(this);
 //        userInfoPresenter = new UserInfoPresenter(this, (MainActivity) getActivity());
         unbinder = ButterKnife.bind(this, rootView);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_app);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.staff);
         userView.setImageBitmap(bitmap);
         tv_tab_name.setText(my_name);
         initUI();

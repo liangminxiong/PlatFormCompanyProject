@@ -16,6 +16,7 @@ public class LllegalworMsgBean implements Serializable {
      */
 
     private String id;
+    private String personalid;
     private String name;
     private String time;
     private String contents;
@@ -95,5 +96,13 @@ public class LllegalworMsgBean implements Serializable {
 
     public void setRenshu(String renshu) {
         this.renshu = renshu;
+    }
+
+    public String getPersonalid() {
+        return personalid;
+    }
+
+    public void setPersonalid(String personalid) {
+        this.personalid = personalid;
     }
 }

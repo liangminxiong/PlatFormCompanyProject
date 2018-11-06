@@ -140,6 +140,20 @@ public class TimeUtils {
         return time;
     }
 
+    public static String getMonthStartTime() {
+        String time = "";
+        Calendar calendar = Calendar.getInstance();
+//获取系统的日期
+//年月日
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+//        int day = calendar.get(Calendar.DAY_OF_MONTH);
+//获取系统时间
+//小时
+        time = year + "-" + month + "-01 00:00:00";
+        return time;
+    }
+
 
     /*
      * time:时间毫秒值
@@ -233,6 +247,7 @@ public class TimeUtils {
     }
 
     private final static ThreadLocal<SimpleDateFormat> dateFormater = new ThreadLocal<SimpleDateFormat>() {
+        @SuppressLint("SimpleDateFormat")
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -240,6 +255,7 @@ public class TimeUtils {
     };
 
     public final static ThreadLocal<SimpleDateFormat> dateFormater2 = new ThreadLocal<SimpleDateFormat>() {
+        @SuppressLint("SimpleDateFormat")
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-dd");
@@ -247,6 +263,7 @@ public class TimeUtils {
     };
 
     private final static ThreadLocal<SimpleDateFormat> dateFormater3 = new ThreadLocal<SimpleDateFormat>() {
+        @SuppressLint("SimpleDateFormat")
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -254,6 +271,7 @@ public class TimeUtils {
     };
 
     private final static ThreadLocal<SimpleDateFormat> dateFormaterMonth = new ThreadLocal<SimpleDateFormat>() {
+        @SuppressLint("SimpleDateFormat")
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-01 00:00:00");
@@ -261,6 +279,7 @@ public class TimeUtils {
     };
 
     private final static ThreadLocal<SimpleDateFormat> dateFormaterWeek = new ThreadLocal<SimpleDateFormat>() {
+        @SuppressLint("SimpleDateFormat")
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-dd 00:00:00");
@@ -268,6 +287,7 @@ public class TimeUtils {
     };
 
     private final static ThreadLocal<SimpleDateFormat> dateFormaterMonthWithOutTime = new ThreadLocal<SimpleDateFormat>() {
+        @SuppressLint("SimpleDateFormat")
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-01");
@@ -357,6 +377,7 @@ public class TimeUtils {
     }
 
     private final static ThreadLocal<SimpleDateFormat> dateFormaterChinese = new ThreadLocal<SimpleDateFormat>() {
+        @SuppressLint("SimpleDateFormat")
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("HH:mm:ss");
@@ -391,11 +412,13 @@ public class TimeUtils {
      * @return
      */
     public static String getTimeHourMin(Date date) {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return format.format(date);
     }
 
     public static String getTimeOnlyHourMin(Date date) {
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         return format.format(date);
     }

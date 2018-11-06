@@ -4,6 +4,7 @@ import com.yuefeng.features.modle.EventQuestionBean;
 import com.yuefeng.features.modle.GetAllPersonalBean;
 import com.yuefeng.features.modle.GetEventdetailBean;
 import com.yuefeng.features.modle.GetJobMonitotingBean;
+import com.yuefeng.features.modle.GetKaoqinSumBean;
 import com.yuefeng.features.modle.GetQuestionCountBean;
 import com.yuefeng.features.modle.LllegalworkBean;
 import com.yuefeng.features.modle.SubmitBean;
@@ -59,6 +60,7 @@ public interface ApiService {
     String QIANDAO = "qiandao";
     /*车辆列表*/
     String LOADVEHICLELIST = "LoadVehicleList3";
+    String GETVEHICLETREE = "getvehicletree";
     /*人员列表*/
     String GETPERSONTREE = "getpersontree";
 
@@ -77,6 +79,8 @@ public interface ApiService {
     String UPLOADMAPINFO = "Uploadmapinfo";
     /*车辆，人员违规*/
     String GETWEIGUI = "getweigui";
+    /*签到信息数量*/
+    String GETKAOQINSUM = "getkaoqinsum";
 
 
     /*登录用户*/
@@ -218,6 +222,14 @@ public interface ApiService {
             @Query("function") String function,
             @Query("userid") String userid,
             @Query("pid") String pid);
+
+    /*签到总信息*/
+    @POST(MIA_HW)
+    Observable<GetKaoqinSumBean> getKaoqinSum(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Query("timestart") String timestart,
+            @Query("timeend") String timeend);
 
     /*获取信息采集类型*/
     @POST(MIA_HW)

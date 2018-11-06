@@ -47,4 +47,19 @@ public class StringUtils {
         }
         return time;
     }
+
+    /*空字符串返回无*/
+    public static String isEntryStrWu(String string) {
+        return TextUtils.isEmpty(string) ? "无" : string;
+    }
+
+    /*空字符串返回空*/
+    public static String isEntryStrNull(String string) {
+        return TextUtils.isEmpty(string) ? "" : string;
+    }
+
+    /*空字符串返回0*/
+    public static String isEntryStrZero(String string) {
+        return TextUtils.isEmpty(string) ? "0" : string;
+    }
 }

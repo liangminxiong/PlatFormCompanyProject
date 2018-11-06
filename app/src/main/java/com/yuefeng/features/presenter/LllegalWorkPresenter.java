@@ -59,6 +59,39 @@ public class LllegalWorkPresenter extends BasePresenterImpl<LllegalWorkContract.
 
     }
 
+    /*车辆列表*/
+    @Override
+    public void getCarListInfosNew(String function, String organid, String userid, String isreg) {
+
+        HttpObservable.getObservable(apiRetrofit.getCarListInfos(function, organid, userid, isreg))
+//                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
+                .subscribe(new HttpResultObserver<CarListInfosBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(CarListInfosBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_SSUCESS, o.getMsg()));
+                            } else {
+                                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_ERROR, e.getMsg()));
+                    }
+                });
+
+    }
+
     /*获取人员*/
     @Override
     public void getPersontree(String function, String userid, String pid) {

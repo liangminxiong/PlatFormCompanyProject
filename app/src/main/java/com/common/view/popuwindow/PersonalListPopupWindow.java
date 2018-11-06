@@ -70,6 +70,7 @@ public class PersonalListPopupWindow extends PopupWindow {
     private String useridFlag;
     private String terflag;
     private String terminal;
+    private int positionTemp;
 
     public PersonalListPopupWindow(Context context, List<Node> carDatas, boolean isSingle) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
@@ -113,6 +114,7 @@ public class PersonalListPopupWindow extends PopupWindow {
             public void onClick(View v) {
                 dismiss();
                 showSelectItemDatas("1");
+                selectSingle(positionTemp, "1");
             }
         });
 
@@ -128,6 +130,7 @@ public class PersonalListPopupWindow extends PopupWindow {
             public void onClick(View v) {
                 dismiss();
                 showSelectItemDatas("2");
+                selectSingle(positionTemp, "2");
             }
         });
 
@@ -272,38 +275,44 @@ public class PersonalListPopupWindow extends PopupWindow {
         adapterSelect.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                if (stringBuffer == null) {
-                    stringBuffer = new StringBuffer();
-                    stringBuffer.setLength(0);
-                }
-                if (stringBufferFlag == null) {
-                    stringBufferFlag = new StringBuffer();
-                    stringBufferFlag.setLength(0);
-                }
-                name = listData.get(position).getName();
-                userId = listData.get(position).getId();
-                terminal = listData.get(position).getTerminal();
-                if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(userId) && !TextUtils.isEmpty(terminal)) {
-                    stringBuffer.append(name).append(",");
-                    stringBufferFlag.append(userId).append(",");
-                }
-                if (!TextUtils.isEmpty(userId)) {
-                    if (mOnItemClickListener != null) {
+                positionTemp = position;
+                selectSingle(position, "3");
+
+            }
+        });
+    }
+
+    private void selectSingle(int position, String type) {
+        if (stringBuffer != null) {
+            stringBuffer.setLength(0);
+        }
+        if (stringBufferFlag != null) {
+            stringBufferFlag.setLength(0);
+        }
+        if (stringBufferTerflag != null) {
+            stringBufferTerflag.setLength(0);
+        }
+        if (listData.size() > 0) {
+            name = listData.get(position).getName();
+            userId = listData.get(position).getId();
+            terminal = listData.get(position).getTerminal();
+            if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(userId) && !TextUtils.isEmpty(terminal)) {
+                stringBuffer.append(name).append(",");
+                stringBufferFlag.append(userId).append(",");
+            }
+            if (!TextUtils.isEmpty(userId)) {
+                if (mOnItemClickListener != null) {
+                    if (type.equals("1")) {
+                        mOnItemClickListener.onGoBack(name, userId, terminal);
+                    } else if (type.equals("2")) {
+                        mOnItemClickListener.onSure(name, userId, terminal);
+                    } else {
                         mOnItemClickListener.onSure(name, userId, terminal);
                         mOnItemClickListener.onGoBack(name, userId, terminal);
                     }
                 }
-                if (stringBuffer != null) {
-                    stringBuffer.setLength(0);
-                }
-                if (stringBufferFlag != null) {
-                    stringBufferFlag.setLength(0);
-                }
-                if (stringBufferTerflag != null) {
-                    stringBufferTerflag.setLength(0);
-                }
             }
-        });
+        }
     }
 
 

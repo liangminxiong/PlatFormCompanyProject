@@ -777,10 +777,10 @@ public class JobMonitoringActivity extends BaseActivity implements
         phototpop.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
-                ViewUtils.setLlVisible(ll_tab_visible, false);
+                ViewUtils.setLlInVisible(ll_tab_visible, false);
             }
         });
-        ViewUtils.setLlVisible(ll_tab_visible, ViewUtils.isPopuwindowShowing(phototpop));
+        ViewUtils.setLlInVisible(ll_tab_visible, ViewUtils.isPopuwindowShowing(phototpop));
     }
 
     /*弹底车辆部框*/
@@ -853,10 +853,10 @@ public class JobMonitoringActivity extends BaseActivity implements
         phototpop.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
-                ViewUtils.setLlVisible(ll_tab_visible, false);
+                ViewUtils.setLlInVisible(ll_tab_visible, false);
             }
         });
-        ViewUtils.setLlVisible(ll_tab_visible, ViewUtils.isPopuwindowShowing(phototpop));
+        ViewUtils.setLlInVisible(ll_tab_visible, ViewUtils.isPopuwindowShowing(phototpop));
     }
 
     /*视频监控*/
@@ -907,7 +907,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         phototpop.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
-                ViewUtils.setLlVisible(ll_tab_visible, false);
+                ViewUtils.setLlInVisible(ll_tab_visible, false);
             }
         });
         phototpop.setTakePhotoTouch(new ShowPersonalpop.TakePhotoTouch() {
@@ -937,7 +937,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         });
         phototpop.showTakePop(ll_root);
 
-        ViewUtils.setLlVisible(ll_tab_visible, ViewUtils.isPopuwindowShowing(phototpop));
+        ViewUtils.setLlInVisible(ll_tab_visible, ViewUtils.isPopuwindowShowing(phototpop));
     }
 
 
