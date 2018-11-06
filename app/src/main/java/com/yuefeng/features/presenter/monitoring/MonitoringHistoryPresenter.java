@@ -5,12 +5,12 @@ import com.yuefeng.features.contract.MonitoringContract;
 import com.yuefeng.features.ui.activity.monitoring.MonitoringHistoryOfJobActivity;
 
 /**
- * 作业监察
+ * 历史作业监察
  */
 
-public class MonitoringPresenter extends BasePresenterImpl<MonitoringContract.View,
+public class MonitoringHistoryPresenter extends BasePresenterImpl<MonitoringContract.View,
         MonitoringHistoryOfJobActivity> implements MonitoringContract.Presenter {
-    public MonitoringPresenter(MonitoringContract.View view, MonitoringHistoryOfJobActivity activity) {
+    public MonitoringHistoryPresenter(MonitoringContract.View view, MonitoringHistoryOfJobActivity activity) {
         super(view, activity);
     }
 

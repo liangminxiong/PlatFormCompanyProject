@@ -52,6 +52,18 @@ public class TimeUtils {
         return time;
     }
 
+    /*开始时间*/
+    public static String getDayStartTime() {
+        String time = "";
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        time = year + "-" + month + "-" + day + " " + "00:00:00";
+        return time;
+    }
+
     public static String getYear() {
         String time = "";
         Calendar calendar = Calendar.getInstance();

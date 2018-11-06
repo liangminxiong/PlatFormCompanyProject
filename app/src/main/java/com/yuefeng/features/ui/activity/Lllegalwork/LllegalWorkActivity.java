@@ -121,8 +121,9 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
         if (presenter != null) {
             String pid = PreferencesUtils.getString(this, "orgId", "");
             String userid = PreferencesUtils.getString(this, "id", "");
-            pid = "ea9b4033ffffee0101ed1860a1febcfb";
-            userid = "eab2ffacffffffc976ce7286d4054823";
+//            pid = "ea9b4033ffffee0101ed1860a1febcfb";
+//            userid = "eab2ffacffffffc976ce7286d4054823";
+//            presenter.getCarListInfos(ApiService.GETVEHICLETREE, pid, userid, "0");
             presenter.getCarListInfosNew(ApiService.GETVEHICLETREE, pid, userid, "0");
             getTreeListData();
         }
@@ -209,15 +210,22 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
         EventBus.getDefault().unregister(this);
     }
 
+    private int count = 0;
+
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         int position = tab.getPosition();
         isCarOrPersonalList = position == 0;
         viewPager.setCurrentItem(position);
-        if (isCarOrPersonalList) {
-            EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, ""));
-        } else {
-            EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.PERSONAL_ID, ""));
+        if (count < 10) {
+            count++;
+        }
+        if (count < 3) {
+            if (isCarOrPersonalList) {
+                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, ""));
+            } else {
+                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.PERSONAL_ID, ""));
+            }
         }
     }
 
@@ -270,9 +278,9 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 
                 @Override
                 public void onSelectCar(String carNumber, String terminal, String id) {
-                    if (!TextUtils.isEmpty(id)) {
-                        EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, id));
-                    }
+//                    if (!TextUtils.isEmpty(id)) {
+//                        EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, id));
+//                    }
                 }
             });
             carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);

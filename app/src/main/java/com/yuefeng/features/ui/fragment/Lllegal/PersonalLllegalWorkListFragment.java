@@ -131,7 +131,8 @@ public class PersonalLllegalWorkListFragment extends BaseFragment implements Lll
                 break;
 
             case Constans.PERSONALLLEGAL_ERROR:
-                showNodata();
+//                showNodata();
+                showSuccessToast("加载失败,请重试");
                 break;
             case Constans.PERSONAL_ID:
                 id = (String) event.getData();

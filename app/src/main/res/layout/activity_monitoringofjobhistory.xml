@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/ll_problem"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
+
+    <include layout="@layout/title_bar_mvp"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="UselessLeaf">
+
+        <com.baidu.mapapi.map.TextureMapView
+            android:id="@+id/mapview"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/mapview"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_90"
+            android:layout_marginEnd="@dimen/dp_15"
+            android:layout_marginStart="@dimen/dp_15"
+            android:layout_marginTop="@dimen/dp_200"
+            android:background="@drawable/bg03_white">
+
+            <LinearLayout
+                android:id="@+id/ll_usetime"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:layout_marginTop="@dimen/dp_5"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/dp_30"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/shijian"
+                    android:gravity="center"
+                    android:text="用时"
+                    android:textColor="@color/gray_70"
+                    android:textSize="@dimen/sp_14"
+                    tools:ignore="HardcodedText"/>
+
+                <TextView
+                    android:id="@+id/tv_use_time"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="00:00"
+                    android:textColor="@color/titel_color"
+                    android:textSize="@dimen/sp_14"
+                    tools:ignore="HardcodedText"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/dp_10"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/shijian"
+                    android:gravity="center"
+                    android:text="上报"
+                    android:textColor="@color/gray_70"
+                    android:textSize="@dimen/sp_14"
+                    tools:ignore="HardcodedText"/>
+
+                <TextView
+                    android:id="@+id/tv_upload_count"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="0"
+                    android:textColor="@color/red_des"
+                    android:textSize="@dimen/sp_14"
+                    tools:ignore="HardcodedText"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/shijian"
+                    android:gravity="center"
+                    android:text="签到"
+                    android:textColor="@color/gray_70"
+                    android:textSize="@dimen/sp_14"
+                    tools:ignore="HardcodedText"/>
+
+                <TextView
+                    android:id="@+id/tv_sngnin_count"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/dp_10"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="0"
+                    android:textColor="@color/member_blue"
+                    android:textSize="@dimen/sp_14"
+                    tools:ignore="HardcodedText"/>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_30"
+                android:layout_below="@id/ll_usetime"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/bg_time_confirm"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_start_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingStart="@dimen/dp_15"
+                    android:text="2018-01-01 00:00:00"
+                    android:textSize="@dimen/sp_13"
+                    tools:ignore="HardcodedText,RtlSymmetry"/>
+
+                <TextView
+                    android:id="@+id/tv_end_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/dp_10"
+                    android:gravity="center_vertical"
+                    android:paddingEnd="@dimen/dp_15"
+                    android:text="2018-01-01 23:59:59"
+                    android:textSize="@dimen/sp_13"
+                    tools:ignore="HardcodedText,RtlSymmetry"/>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

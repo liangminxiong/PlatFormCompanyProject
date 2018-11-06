@@ -36,6 +36,7 @@ import com.common.location.LocationHelper;
 import com.common.location.MyLocationListener;
 import com.common.utils.Constans;
 import com.common.utils.LocationGpsUtils;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
@@ -122,6 +123,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
 
     /*是否采集*/
     private boolean isPositionAcquisition = false;
+    private boolean isSngnInOrUpload = false;
     private boolean isStartTime = true;
     /*选择网格还是路段*/
     private int typePosition = 0;
@@ -142,6 +144,15 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         tvTitleSetting.setText("历史");
         presenter = new MonitoringOfJobPresenter(this, this);
         isPositionAcquisition = false;
+        initUI();
+    }
+
+    private void initUI() {
+        isSngnInOrUpload = false;
+        String userName = PreferencesUtils.getString(MonitoringofJobActivity.this, Constans.USERNAME);
+        if (!TextUtils.isEmpty(userName)) {
+            tvUserName.setText(userName);
+        }
     }
 
     private void initChronometer() {
@@ -268,9 +279,10 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
             public void updateLocation(Location location) {
                 longitude = location.getLongitude();
                 latitude = location.getLatitude();
-                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+                LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
                 longitude = latLng.longitude;
                 latitude = latLng.latitude;
+                LogUtils.d("===========" + latLng);
                 starDrawTrackLine(latLng);
             }
 
@@ -292,6 +304,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
             return;
         }
         double distance = DistanceUtil.getDistance(latLngTemp, latLng);
+        distance = Math.abs(distance);
         if (distance > 0) {
             latLngTemp = latLng;
             drawTrackLine(latLngTemp);
@@ -425,7 +438,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     /*开始监察*/
     private void beginOrStop() {
         points.add(new LatLng(latitude, longitude));
-        initCtStart();
+//        startCtimer();
         ViewUtils.setRlInVisible(rlSelectType, true);
         ViewUtils.setBtnInVisible(btnBeginorstop, true);
         ViewUtils.setRlInVisible(rlupload, false);
@@ -457,31 +470,39 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_upload:
-                initCtStop();
+                isSngnInOrUpload = true;
                 startActivity(new Intent(MonitoringofJobActivity.this, ProblemUpdateActivity.class));
                 break;
             case R.id.tv_signin:
-                initCtStop();
+                isSngnInOrUpload = true;
                 startActivity(new Intent(MonitoringofJobActivity.this, MonitoringSngnInActivity.class));
                 break;
             case R.id.iv_stop:
-                if (isStartTime) {
-                    initCtStart();
-                    isStartTime = false;
-                    isPositionAcquisition = true;
-                } else {
-                    initCtStop();
-                    isStartTime = true;
-                    isPositionAcquisition = false;
-                }
+                startCtimer();
                 break;
             case R.id.btn_beginorstop:
                 beginOrStop();
                 break;
             case R.id.tv_title_setting:
-                showSuccessToast("历史");
+                startActivity(new Intent(MonitoringofJobActivity.this, MonitoringHistoryOfJobActivity.class));
                 break;
         }
 
+    }
+
+    private void startCtimer() {
+        if (isSngnInOrUpload) {
+            if (isStartTime) {
+                initCtStart();
+                isStartTime = false;
+                isPositionAcquisition = true;
+            } else {
+                initCtStop();
+                isStartTime = true;
+                isPositionAcquisition = false;
+            }
+        } else {
+            showSuccessToast("上报或者签到后才可开始监察");
+        }
     }
 }

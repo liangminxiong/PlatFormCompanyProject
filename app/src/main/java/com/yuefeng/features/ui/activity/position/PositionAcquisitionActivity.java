@@ -635,10 +635,12 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             }
 
         }
-
         if (presenter != null) {
             String time = presenter.showHowLongTime(timeLong, area, typePosition);
             tvTimeDistance.setText(time);
+        }
+        if (area.equals("NaN")) {
+            area = "0";
         }
         //起始点图层也会被清除，重新绘画
         if (points.size() > 1) {

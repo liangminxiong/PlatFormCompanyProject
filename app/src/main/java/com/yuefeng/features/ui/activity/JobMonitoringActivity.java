@@ -822,6 +822,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 //        }
         endAddress = address;
         distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
+        distance = Math.abs(distance);
         terminalNO = vehicleList.getTerminalNO();
         final String registrationNO = vehicleList.getRegistrationNO();
         terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
@@ -982,6 +983,7 @@ public class JobMonitoringActivity extends BaseActivity implements
             showSuccessToast("暂无轨迹");
         }
     }
+
 
 
     /*=====================begin 导航 =======================*/

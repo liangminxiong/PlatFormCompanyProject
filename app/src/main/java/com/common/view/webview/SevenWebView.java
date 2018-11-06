@@ -19,7 +19,6 @@ import android.widget.ProgressBar;
 import com.common.event.CommonEvent;
 import com.common.utils.Constans;
 import com.common.utils.DensityUtil;
-import com.common.utils.LogUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.ui.MyApplication;
 
@@ -112,14 +111,12 @@ public class SevenWebView extends WebView {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            LogUtils.d("===========url" + url);
             isStart = false;
             super.onPageStarted(view, url, favicon);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            LogUtils.d("===========url====" + url);
             if (url.contains("goback")) {
                 EventBus.getDefault().post(new CommonEvent(Constans.GOBACK, url));
             }
