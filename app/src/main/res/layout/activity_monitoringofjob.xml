@@ -20,99 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <RelativeLayout
-            android:id="@+id/rl_select_type"
-            android:layout_width="match_parent"
+        <ViewStub
+            android:id="@+id/viewstub"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:visibility="visible">
-
-            <TextView
-                android:id="@+id/tv_user_name"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_45"
-                android:layout_marginTop="@dimen/dp_3"
-                android:gravity="center"
-                android:text="监察员张三"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_16"
-                android:textStyle="bold"
-                tools:ignore="HardcodedText"/>
-
-            <ImageView
-                android:id="@+id/iv_user_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_user_name"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/staff"
-                tools:ignore="ContentDescription"/>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp_40"
-                android:layout_below="@id/iv_user_icon"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/dp_15">
-
-
-                <TextView
-                    android:id="@+id/tv_temp1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp_40"
-                    android:layout_marginStart="@dimen/dp_15"
-                    android:gravity="center_vertical"
-                    android:text="本周计划监察"
-                    android:textColor="@color/gray_3f"
-                    android:textSize="@dimen/sp_14"
-                    tools:ignore="HardcodedText"/>
-
-                <TextView
-                    android:id="@+id/tv_plan_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp_40"
-                    android:layout_toEndOf="@id/tv_temp1"
-                    android:gravity="center_vertical"
-                    android:text="0"
-                    android:textColor="@color/red_color_4a"
-                    android:textSize="@dimen/sp_15"
-                    tools:ignore="HardcodedText"/>
-
-                <TextView
-                    android:id="@+id/tv_temp2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp_40"
-                    android:layout_toEndOf="@id/tv_plan_count"
-                    android:gravity="center_vertical"
-                    android:text="次：实际监察"
-                    android:textColor="@color/gray_3f"
-                    android:textSize="@dimen/sp_14"
-                    tools:ignore="HardcodedText"/>
-
-                <TextView
-                    android:id="@+id/tv_actual_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp_40"
-                    android:layout_toEndOf="@id/tv_temp2"
-                    android:gravity="center_vertical"
-                    android:text="0"
-                    android:textColor="@color/red_color_4a"
-                    android:textSize="@dimen/sp_15"
-                    tools:ignore="HardcodedText"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp_40"
-                    android:layout_toEndOf="@id/tv_actual_count"
-                    android:gravity="center_vertical"
-                    android:text="次"
-                    android:textColor="@color/gray_3f"
-                    android:textSize="@dimen/sp_14"
-                    tools:ignore="HardcodedText"/>
-
-            </RelativeLayout>
-        </RelativeLayout>
-
+            android:layout_marginEnd="@dimen/dp_15"
+            android:layout_marginStart="@dimen/dp_15"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout="@layout/monitoring_username_logo"/>
 
         <Button
             android:id="@+id/btn_beginorstop"
@@ -122,80 +37,24 @@
             android:layout_marginBottom="@dimen/dp_30"
             android:layout_marginEnd="@dimen/dp_15"
             android:layout_marginStart="@dimen/dp_15"
-            android:background="@drawable/caiji"
+            android:background="@drawable/jiancha_button_selector"
             android:visibility="visible"/>
 
-
-        <Chronometer
-            android:id="@+id/ct_timer"
+        <ViewStub
+            android:id="@+id/viewstub_ct"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/dp_20"
-            android:padding="@dimen/dp_8"
-            android:background="@color/white"
-            android:gravity="center"
-            android:textColor="@color/black_32"
-            android:textSize="@dimen/sp_28"
-            android:visibility="invisible"/>
+            android:layout="@layout/monitoring_chronometer"/>
 
-        <RelativeLayout
-            android:id="@+id/rl_upload"
-            android:layout_width="match_parent"
+        <ViewStub
+            android:id="@+id/viewstub_upload"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/dp_30"
-            android:visibility="invisible">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp_50"
-                android:layout_centerInParent="true"
-                android:layout_marginEnd="@dimen/dp_50"
-                android:layout_marginStart="@dimen/dp_50"
-                android:background="@color/white"
-                android:orientation="horizontal">
-
-
-                <TextView
-                    android:id="@+id/tv_upload"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="上报"
-                    android:textColor="@color/black_32"
-                    android:textSize="@dimen/sp_15"
-                    tools:ignore="HardcodedText"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <TextView
-                    android:id="@+id/tv_signin"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="签到"
-                    android:textColor="@color/black_32"
-                    android:textSize="@dimen/sp_15"
-                    tools:ignore="HardcodedText"/>
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/iv_stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/pause"
-                tools:ignore="ContentDescription"/>
-
-
-        </RelativeLayout>
+            android:layout="@layout/monitoring_upload_signin"/>
 
 
     </RelativeLayout>

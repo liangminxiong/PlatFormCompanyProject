@@ -106,6 +106,7 @@
         <!---->
         <activity
             android:name="com.yuefeng.login_splash.ui.SplashActivity"
+            android:hardwareAccelerated="false"
             android:theme="@style/FlashTheme">
 
             <intent-filter>
@@ -114,80 +115,163 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.yuefeng.ui.MainActivity"/>
+        <activity
+            android:name="com.yuefeng.ui.MainActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--测试-->
-        <activity android:name="com.yuefeng.ui.TestActivity"/>
+        <activity
+            android:name="com.yuefeng.ui.TestActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
 
-        <activity android:name="com.yuefeng.login_splash.ui.LoginActivity"/>
+        <activity
+            android:name="com.yuefeng.login_splash.ui.LoginActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
 
         <!--作业监察-->
-        <activity android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringofJobActivity"/>
-        <activity android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringHistoryOfJobActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringofJobActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringHistoryOfJobActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--作业监察签到-->
         <activity
             android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringSngnInActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--问题上报-->
         <activity
             android:name="com.yuefeng.features.ui.activity.ProblemUpdateActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--问题巡检-->
-        <activity android:name="com.yuefeng.features.ui.activity.QualityInspectionActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.QualityInspectionActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--问题详情-->
-        <activity android:name="com.yuefeng.features.ui.activity.QualityInspectionDetailActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.QualityInspectionDetailActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--问题关闭-->
         <activity
             android:name="com.yuefeng.features.ui.activity.EvaluationEventActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--完成问题-->
         <activity
             android:name="com.yuefeng.features.ui.activity.SuccessProblemActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--定位信息-->
-        <activity android:name="com.yuefeng.features.ui.activity.JobMonitoringActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.JobMonitoringActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--转发问题-->
-        <activity android:name="com.yuefeng.features.ui.activity.ForwardProblemActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.ForwardProblemActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--作业考勤-->
-        <activity android:name="com.yuefeng.features.ui.activity.WebH5ZuoyeKaoqinActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.WebH5ZuoyeKaoqinActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--轨迹-->
-        <activity android:name="com.yuefeng.features.ui.activity.track.TrackActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.track.TrackActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--历史轨迹-->
-        <activity android:name="com.yuefeng.features.ui.activity.track.HistoryTrackActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.track.HistoryTrackActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--诱导-->
-        <activity android:name="com.yuefeng.features.ui.activity.nativ.DemoGuideActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.nativ.DemoGuideActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--定位采集-->
         <activity
             android:name="com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <!--历史-->
+        <activity
+            android:name="com.yuefeng.features.ui.activity.position.HistoryPositionAcqusitionActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--视频监控-->
-        <activity android:name="com.yuefeng.features.ui.activity.video.VideoSytemListActivity"/>
-        <activity android:name="com.yuefeng.features.ui.activity.video.VideoCameraActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.video.VideoSytemListActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.video.VideoCameraActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--web详情-->
-        <activity android:name="com.yuefeng.home.ui.activity.WebDetailInfosActivtiy"/>
+        <activity
+            android:name="com.yuefeng.home.ui.activity.WebDetailInfosActivtiy"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--消息详情-->
-        <activity android:name="com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy"/>
+        <activity
+            android:name="com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--违规作业-->
         <activity
             android:name="com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
             tools:ignore="InnerclassSeparator"/>
         <!--详情-->
         <activity
             android:name="com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkDetailActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
             tools:ignore="InnerclassSeparator"/>
         <!--查看历史违规-->
         <activity
             android:name="com.yuefeng.features.ui.activity.Lllegalwork.HistoryLllegalWorkActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
             tools:ignore="InnerclassSeparator"/>
         <!--作业考勤-->
-        <activity android:name="com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--主管打卡-->
         <activity
             android:name="com.yuefeng.features.ui.activity.sngnin.SupervisorSngnInActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <!--关于软件-->
-        <activity android:name="com.yuefeng.usercenter.ui.activity.AboutAppInfosActivity"/>
+        <activity
+            android:name="com.yuefeng.usercenter.ui.activity.AboutAppInfosActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
         <!--修改密码-->
-        <activity android:name="com.yuefeng.usercenter.ui.activity.ChangePassWordActivity"/>
+        <activity
+            android:name="com.yuefeng.usercenter.ui.activity.ChangePassWordActivity"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
 
         <!-- 监听网络变化的广播 -->
         <receiver

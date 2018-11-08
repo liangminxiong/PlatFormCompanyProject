@@ -205,7 +205,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
         } else {
             getCarList();
-            imageInt = R.drawable.guiji_ljc_01;
+            imageInt = R.drawable.worker;
             tvTitle.setText("历史轨迹");
             tvTitleSetting.setBackground(list_tree);
         }
@@ -417,6 +417,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                         ooA.icon(BitmapDescriptorFactory.fromResource(imageInt));
                         ooA.zIndex(10);
                         ooA.position(latLngTemp);
+                        ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                         mMarker = null;
                         mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
                         mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
@@ -496,26 +497,26 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private void initPopupView() {
         try {
             selectList.clear();
-            popupWindow = new TreesListsPopupWindow(this, datas,true);
+            popupWindow = new TreesListsPopupWindow(this, datas, true);
             popupWindow.setTitleText("车辆列表");
             popupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
             initTreeListDatas();
 
             popupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
                 @Override
-                public void onGoBack(String name, String terminal,String id) {
+                public void onGoBack(String name, String terminal, String id) {
                     popupWindow.dismiss();
                 }
 
                 @Override
-                public void onSure(String name, String terminal,String id) {
+                public void onSure(String name, String terminal, String id) {
                     popupWindow.dismiss();
                     getSelectCarInfos(name, terminal);
                     showSelectItemDatas();
                 }
 
                 @Override
-                public void onSelectCar(String carNumber, String terminal,String id) {//选中车
+                public void onSelectCar(String carNumber, String terminal, String id) {//选中车
                     getSelectCarInfos(carNumber, terminal);
                 }
             });
@@ -619,7 +620,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             double ang = mTrackDatas.get(index).getAng();
             if (type.equals("worker")) {
 //                imageInt = R.drawable.worker;
-            }else {
+            } else {
                 imageInt = CarStateIconUtils.getImageInt("2", ang);
             }
 //        p1 = new LatLng(23.2313123, 113.43214);

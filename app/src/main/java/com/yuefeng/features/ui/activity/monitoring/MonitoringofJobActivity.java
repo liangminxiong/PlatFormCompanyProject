@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
@@ -73,30 +74,28 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     TextureMapView mapview;
     @BindView(R.id.tv_title_setting)
     TextView tvTitleSetting;
-
-
+    @BindView(R.id.viewstub)
+    ViewStub viewstub;
+    @BindView(R.id.viewstub_ct)
+    ViewStub viewstubCt;
+    @BindView(R.id.viewstub_upload)
+    ViewStub viewstubUpload;
     @BindView(R.id.btn_beginorstop)
     Button btnBeginorstop;
-    @BindView(R.id.rl_upload)
-    RelativeLayout rlupload;
-    @BindView(R.id.tv_user_name)
-    TextView tvUserName;
-    @BindView(R.id.iv_user_icon)
-    ImageView ivUserIcon;
-    @BindView(R.id.tv_plan_count)
-    TextView tvPlanCount;
-    @BindView(R.id.tv_actual_count)
-    TextView tvActualCount;
-    @BindView(R.id.rl_select_type)
-    RelativeLayout rlSelectType;
-    @BindView(R.id.ct_timer)
-    Chronometer ctTimer;
-    @BindView(R.id.tv_upload)
-    TextView tvUpload;
-    @BindView(R.id.tv_signin)
-    TextView tvSignin;
-    @BindView(R.id.iv_stop)
-    ImageView ivStop;
+
+    private RelativeLayout rlSelectType;
+    private TextView tvUserName;
+    private ImageView ivUserIcon;
+    private TextView tvPlanCount;
+    private TextView tvActualCount;
+
+
+    private Chronometer ctTimer;
+
+    private RelativeLayout rlupload;
+    private TextView tvUpload;
+    private TextView tvSignin;
+    private ImageView ivStop;
 
 
     private boolean isFirstLoc = true;
@@ -140,19 +139,50 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
             EventBus.getDefault().register(this);
         }
         ButterKnife.bind(this);
-        tv_title.setText(R.string.problem_updata);
-        tvTitleSetting.setText("历史");
-        presenter = new MonitoringOfJobPresenter(this, this);
+
+//        presenter = new MonitoringOfJobPresenter(this, this);
         isPositionAcquisition = false;
         initUI();
     }
 
     private void initUI() {
+        tv_title.setText(R.string.problem_updata);
+        tvTitleSetting.setText("历史");
+        ll_root_position.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        ininViewStub();
         isSngnInOrUpload = false;
+    }
+
+    private void ininViewStub() {
+        View view = viewstub.inflate();
+
+        rlSelectType = view.findViewById(R.id.rl_select_type);
+        tvUserName = view.findViewById(R.id.tv_user_name);
+        ivUserIcon = view.findViewById(R.id.iv_user_icon);
+        tvPlanCount = view.findViewById(R.id.tv_plan_count);
+        tvActualCount = view.findViewById(R.id.tv_actual_count);
+
         String userName = PreferencesUtils.getString(MonitoringofJobActivity.this, Constans.USERNAME);
         if (!TextUtils.isEmpty(userName)) {
             tvUserName.setText(userName);
         }
+    }
+
+    private void ininViewStubCtTimer() {
+        View view = viewstubCt.inflate();
+        ctTimer = view.findViewById(R.id.ct_timer);
+        initChronometer();
+    }
+
+    private void ininViewStubUpload() {
+        View view = viewstubUpload.inflate();
+        rlupload = view.findViewById(R.id.rl_upload);
+        tvUpload = view.findViewById(R.id.tv_upload);
+        tvSignin = view.findViewById(R.id.tv_signin);
+        ivStop = view.findViewById(R.id.iv_stop);
+        tvUpload.setOnClickListener(this);
+        tvSignin.setOnClickListener(this);
+        ivStop.setOnClickListener(this);
     }
 
     private void initChronometer() {
@@ -164,7 +194,6 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     @Override
     protected void initData() {
         requestPermissions();
-        initChronometer();
     }
 
     /**
@@ -248,6 +277,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
                         .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                 ooA = new MarkerOptions().icon(personalImage).zIndex(10);
                 ooA.position(latLngTemp);
+                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                 mMarker = null;
                 mMarker = (Marker) (baiduMap.addOverlay(ooA));
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
@@ -362,7 +392,19 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
 
     @Override
     protected void widgetClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.tv_upload:
+                isSngnInOrUpload = true;
+                startActivity(new Intent(MonitoringofJobActivity.this, ProblemUpdateActivity.class));
+                break;
+            case R.id.tv_signin:
+                isSngnInOrUpload = true;
+                startActivity(new Intent(MonitoringofJobActivity.this, MonitoringSngnInActivity.class));
+                break;
+            case R.id.iv_stop:
+                startCtimer();
+                break;
+        }
     }
 
     @Override
@@ -437,6 +479,8 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
 
     /*开始监察*/
     private void beginOrStop() {
+        ininViewStubCtTimer();
+        ininViewStubUpload();
         points.add(new LatLng(latitude, longitude));
 //        startCtimer();
         ViewUtils.setRlInVisible(rlSelectType, true);
@@ -466,20 +510,9 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     }
 
 
-    @OnClick({R.id.tv_upload, R.id.tv_signin, R.id.iv_stop, R.id.btn_beginorstop, R.id.tv_title_setting})
+    @OnClick({R.id.btn_beginorstop, R.id.tv_title_setting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.tv_upload:
-                isSngnInOrUpload = true;
-                startActivity(new Intent(MonitoringofJobActivity.this, ProblemUpdateActivity.class));
-                break;
-            case R.id.tv_signin:
-                isSngnInOrUpload = true;
-                startActivity(new Intent(MonitoringofJobActivity.this, MonitoringSngnInActivity.class));
-                break;
-            case R.id.iv_stop:
-                startCtimer();
-                break;
             case R.id.btn_beginorstop:
                 beginOrStop();
                 break;

@@ -1,5 +1,7 @@
 package com.common.base.codereview;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -10,6 +12,7 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -56,10 +59,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         initData();
         setLisenter();
         AppManager.getAppManager().addActivity(this);
-        iv_back = findViewById(R.id.iv_back);
-        tv_title = findViewById(R.id.tv_title);
-        iv_back.setOnClickListener(this);
-        isOnclick = true;
+
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
     }
 
     protected boolean isNeedTranslateBar() {
@@ -68,10 +71,11 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     protected void init(Bundle savedInstanceState) {
         setContentView(getContentViewResId());
+        iv_back = findViewById(R.id.iv_back);
+        tv_title = findViewById(R.id.tv_title);
+        iv_back.setOnClickListener(this);
+        isOnclick = true;
         initView(savedInstanceState);
-
-        loadingDialog = new LoadingDialog(this);
-        sureDialog = new SucessCacheSureDialog(this);
     }
 
     public void showSuccessDialog(String txt) {
@@ -102,7 +106,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     public void showLoadingDialog(String txt) {
-        if (loadingDialog != null && !mActivity.isFinishing()) {
+        if (loadingDialog == null) {
+            loadingDialog = new LoadingDialog(this);
+        }
+        if (!mActivity.isFinishing()) {
             loadingDialog.setMessage(txt);
             loadingDialog.show();
         }
@@ -209,6 +216,47 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         resources.updateConfiguration(config, resources.getDisplayMetrics());
         return resources;
 
+    }
+
+    /**
+     * 跳转到其他Activity
+     *
+     * @param cls 目标Activity的Class
+     */
+    public void startActivity(Class<? extends Activity> cls) {
+        startActivity(new Intent(this, cls));
+    }
+
+    /**
+     * 延迟执行某个任务
+     *
+     * @param action Runnable对象
+     */
+    public boolean post(Runnable action) {
+        return getWindow().getDecorView().post(action);
+    }
+
+    /**
+     * 延迟某个时间执行某个任务
+     *
+     * @param action      Runnable对象
+     * @param delayMillis 延迟的时间
+     */
+    public boolean postDelayed(Runnable action, long delayMillis) {
+        return getWindow().getDecorView().postDelayed(action, delayMillis);
+    }
+
+    /**
+     * 删除某个延迟任务
+     *
+     * @param action Runnable对象
+     */
+    public boolean removeCallbacks(Runnable action) {
+        if (getWindow().getDecorView() != null) {
+            return getWindow().getDecorView().removeCallbacks(action);
+        } else {
+            return true;
+        }
     }
 
 }

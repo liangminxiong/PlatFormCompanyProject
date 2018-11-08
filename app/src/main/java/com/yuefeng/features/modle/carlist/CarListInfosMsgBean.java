@@ -22,9 +22,9 @@ public class CarListInfosMsgBean implements Serializable {
 
     private String id;
     private String pid;
+    private String orgShortName;
     private String orgCode;
     private String orgName;
-    private String orgShortName;
     private String principal;
     private String principalTel;
     private String fax;

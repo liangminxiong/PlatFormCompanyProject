@@ -316,6 +316,7 @@ public class JobMonitoringActivity extends BaseActivity implements
                     MapStatus ms = new MapStatus.Builder().target(mlatLng)
                             .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                     ooA = new MarkerOptions().icon(worker).zIndex(10);
+//                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     ooA.position(mlatLng);
                     mMarker = null;
                     mMarker = (Marker) (baiduMap.addOverlay(ooA));
@@ -451,12 +452,14 @@ public class JobMonitoringActivity extends BaseActivity implements
                     LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
                     // 构建MarkerOption，用于在地图上添加Marker
                     ooA = new MarkerOptions().icon(worker);
+//                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     ooA.position(latLng);
                     mMarker = null;
 //            mMarker = (Marker) (baiduMap.addOverlay(ooA));
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("personalList", (Serializable) (personalinfoListBean));
                     ooA.extraInfo(bundle);
+//                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     if (null == baiduMap) {
                         return;
                     }
@@ -506,6 +509,8 @@ public class JobMonitoringActivity extends BaseActivity implements
                     LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
 
                     ooA = new MarkerOptions().icon(vehicle);
+//                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+
                     ooA.position(latLng);
                     mMarker = null;
 //            mMarker = (Marker) (baiduMap.addOverlay(ooA));
@@ -561,6 +566,7 @@ public class JobMonitoringActivity extends BaseActivity implements
                 if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
                     LatLng latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
                     ooA = new MarkerOptions().icon(problem);
+//                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     ooA.position(latLng);
                     mMarker = null;
 //            mMarker = (Marker) (baiduMap.addOverlay(ooA));

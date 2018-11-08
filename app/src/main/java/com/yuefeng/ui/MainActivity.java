@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -62,6 +63,8 @@ public class MainActivity extends BaseActivity implements
         SignInContract.View, LocationUtils.OnResultMapListener {
     @BindView(R.id.iv_back)
     RelativeLayout iv_back;
+    @BindView(R.id.ll_parent)
+    LinearLayout ll_parent;
     @BindView(R.id.tv_title)
     TextView tv_title;
     @BindColor(R.color.titel_color)
@@ -111,10 +114,7 @@ public class MainActivity extends BaseActivity implements
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-//        View view = findViewById(R.id.space);
-
-//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+        ll_parent.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         presenter = new SignInPresenter(this, this);
         initViewPager();
         viewPager.setOnTouchListener(new View.OnTouchListener() {
@@ -125,9 +125,6 @@ public class MainActivity extends BaseActivity implements
         });
         iv_back.setVisibility(View.INVISIBLE);
         tv_title.setText(msg_name);
-        /*内存泄露检测*/
-//        RefWatcher refWatcher = MyApplication.getRefWatcher(this);//1
-//        refWatcher.watch(this);
 
     }
 

@@ -225,6 +225,7 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
                     MapStatus ms = new MapStatus.Builder().target(latLngTemp)
                             .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                     ooA = new MarkerOptions().icon(personalImage).zIndex(10);
+                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     ooA.position(latLngTemp);
                     mMarker = null;
                     mMarker = (Marker) (baiduMap.addOverlay(ooA));

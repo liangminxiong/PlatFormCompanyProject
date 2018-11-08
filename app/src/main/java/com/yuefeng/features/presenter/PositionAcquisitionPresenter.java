@@ -12,12 +12,14 @@ import com.common.utils.Constans;
 import com.common.utils.StringUtils;
 import com.yuefeng.features.contract.PositionAcquisitionContract;
 import com.yuefeng.features.event.PositionAcquisitionEvent;
+import com.yuefeng.features.modle.GetCaijiTypeMsgBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.features.modle.video.GetCaijiTypeBean;
 import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
@@ -213,5 +215,51 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
             }
         }
         return lnglat;
+    }
+
+    public List<GetCaijiTypeMsgBean> initWorkArea() {
+        List<GetCaijiTypeMsgBean> list = new ArrayList<>();
+        GetCaijiTypeMsgBean bean = new GetCaijiTypeMsgBean();
+        bean.setId("d314c837ffffffc91739d203e8f43948");
+        bean.setTitleid("mao_caiji");
+        bean.setCode("1");
+        bean.setData("线路");
+        bean.setOrderNum("1");
+        list.add(bean);
+
+        GetCaijiTypeMsgBean bean2 = new GetCaijiTypeMsgBean();
+        bean2.setId("d315ba67ffffffc91739d203491c3552");
+        bean2.setTitleid("mao_caiji");
+        bean2.setCode("1");
+        bean2.setData("网格");
+        bean2.setOrderNum("2");
+        list.add(bean2);
+        return list;
+    }
+
+    public List<GetCaijiTypeMsgBean> initInFrast() {
+        List<GetCaijiTypeMsgBean> list = new ArrayList<>();
+        GetCaijiTypeMsgBean bean = new GetCaijiTypeMsgBean();
+        bean.setId("d319c2c0ffffffc91739d203213c3448");
+        bean.setTitleid("mao_caiji");
+        bean.setCode("2");
+        bean.setData("生活垃圾收集点");
+        bean.setOrderNum("3");
+        list.add(bean);
+        GetCaijiTypeMsgBean bean2 = new GetCaijiTypeMsgBean();
+        bean2.setId("d31a0d37ffffffc91739d20355b414b9");
+        bean2.setTitleid("mao_caiji");
+        bean2.setCode("2");
+        bean2.setData("垃圾点");
+        bean2.setOrderNum("4");
+        list.add(bean2);
+        GetCaijiTypeMsgBean bean3 = new GetCaijiTypeMsgBean();
+        bean3.setId("d31a5c8fffffffc91739d20329acb6ff");
+        bean3.setTitleid("mao_caiji");
+        bean3.setCode("2");
+        bean3.setData("公厕");
+        bean3.setOrderNum("5");
+        list.add(bean3);
+        return list;
     }
 }

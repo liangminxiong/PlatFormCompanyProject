@@ -46,9 +46,21 @@ public class TimeUtils {
         int minute = calendar.get(Calendar.MINUTE);
 //秒
         int second = calendar.get(Calendar.SECOND);
+        String tH = "";
+        String tM = "";
+        if (hour < 10) {
+            tH = "0" + hour;
+        } else {
+            tH = String.valueOf(hour);
+        }
+        if (minute < 10) {
+            tM = "0" + minute;
+        } else {
+            tM = String.valueOf(minute);
+        }
 
 //        time2.setText("Calendar获取当前日期"+year+"年"+month+"月"+day+"日"+hour+":"+minute+":"+second);
-        time = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+        time = year + "-" + month + "-" + day + " " + tH + ":" + tM + ":" + second;
         return time;
     }
 
@@ -94,6 +106,7 @@ public class TimeUtils {
 //        int second = calendar.get(Calendar.SECOND);
 
 //        time2.setText("Calendar获取当前日期"+year+"年"+month+"月"+day+"日"+hour+":"+minute+":"+second);
+
         time = year + "-" + month + "-" + day;
         return time;
     }

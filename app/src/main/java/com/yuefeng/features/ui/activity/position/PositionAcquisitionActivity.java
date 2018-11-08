@@ -227,6 +227,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     }
 
     private void initRlType() {
+        tvTitleSetting.setText(R.string.history);
         ViewUtils.setRLHightOrWidth(rlSelectType, (int) AppUtils.mScreenHeight / 4, ActionBar.LayoutParams.MATCH_PARENT);
     }
 
@@ -318,9 +319,11 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 MapStatus ms = new MapStatus.Builder().target(latLngTemp)
                         .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                 ooA = new MarkerOptions().icon(personalImage).zIndex(10);
+                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                 ooA.position(latLngTemp);
                 mMarker = null;
                 mMarker = (Marker) (baiduMap.addOverlay(ooA));
+                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
 //            BdLocationUtil.MoveMapToCenter(baiduMap, latLngTemp, 14);
                 PreferencesUtils.putString(PositionAcquisitionActivity.this, "Fengrun", "");
@@ -469,7 +472,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     }
 
     @OnClick({R.id.tv_carryon, R.id.tv_finish, R.id.btn_beginorstop, R.id.tv_release,
-            R.id.recyclerview_left, R.id.recyclerview_right, R.id.rl_select_start})
+            R.id.recyclerview_left, R.id.recyclerview_right, R.id.rl_select_start, R.id.tv_title_setting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_carryon://继续
@@ -499,7 +502,15 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             case R.id.rl_select_start://点击暂停
                 cvTimerStop();
                 break;
+            case R.id.tv_title_setting://历史
+                history();
+                break;
         }
+    }
+
+    /*历史*/
+    private void history() {
+        startActivity(new Intent(PositionAcquisitionActivity.this, HistoryPositionAcqusitionActivity.class));
     }
 
     /*作业区段数据*/
@@ -508,7 +519,11 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         if (listLine.size() > 0) {
             listData.addAll(listLine);
         } else {
-            showSuccessToast("无作业区段,请联系负责人");
+            if (presenter != null) {
+                List<GetCaijiTypeMsgBean> list = presenter.initWorkArea();
+                listData.addAll(list);
+            }
+
         }
         if (singleAdapter != null) {
             singleAdapter.setNewData(listData);
@@ -522,7 +537,10 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             listData.addAll(listPoint);
 
         } else {
-            showSuccessToast("无设施,请联系负责人");
+            if (presenter != null) {
+                List<GetCaijiTypeMsgBean> list = presenter.initInFrast();
+                listData.addAll(list);
+            }
         }
         if (singleAdapter != null) {
             singleAdapter.setNewData(listData);

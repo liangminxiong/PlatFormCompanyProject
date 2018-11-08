@@ -35,7 +35,7 @@ public class LllegalWorkPresenter extends BasePresenterImpl<LllegalWorkContract.
                 .subscribe(new HttpResultObserver<CarListInfosBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
-                        showLoadingDialog("加载中...");
+//                        showLoadingDialog("加载中...");
                     }
 
                     @Override

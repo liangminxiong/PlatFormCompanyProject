@@ -123,8 +123,8 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
             String userid = PreferencesUtils.getString(this, "id", "");
 //            pid = "ea9b4033ffffee0101ed1860a1febcfb";
 //            userid = "eab2ffacffffffc976ce7286d4054823";
-//            presenter.getCarListInfos(ApiService.GETVEHICLETREE, pid, userid, "0");
-            presenter.getCarListInfosNew(ApiService.GETVEHICLETREE, pid, userid, "0");
+            presenter.getCarListInfos(ApiService.LOADVEHICLELIST, pid, userid, "0");
+//            presenter.getCarListInfosNew(ApiService.GETVEHICLETREE, pid, userid, "0");
             getTreeListData();
         }
     }
