@@ -4,8 +4,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="blue">#499BF7</color>
+    <color name="blue_baidu">#509fff</color>
     <color name="blue_07">#0070C7</color>
     <color name="blue_ten">#2F94D4</color>
+    <color name="blue_4f">#4F9EFF</color>
     <color name="text_blue">#0076FF</color>
     <color name="text_black">#333333</color>
     <color name="gray">#707070</color>
@@ -14,14 +16,17 @@
     <color name="gray_87">#878B8E</color>
     <color name="gray_21">#212121</color>
     <color name="gray_3f">#3F3F3F</color>
+    <color name="gray_5d">#5D5D5D</color>
     <color name="gray_20">#202020</color>
     <color name="gray_1f">#1F1F1F</color>
+    <color name="gray_7a">#7A7A7A</color>
     <color name="red">#FF0000</color>
     <color name="red_fc">#FC4E4E</color>
     <color name="green">#21a56e</color>
     <color name="green_signin">#05AAA9</color>
     <color name="black">#000000</color>
     <color name="black_32">#323232</color>
+    <color name="black_35">#353535</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white_ed">#80FFFFFF</color>
     <color name="white_52">#8CFFFFFF</color>
@@ -52,6 +57,7 @@
     <color name="transparent33">#88000000</color>
     <color name="red_color">#F44848</color>
     <color name="red_color_4a">#FF4A4A</color>
+    <color name="red_color_49">#FE4949</color>
     <color name="red_hand_color">#f7aeae</color>
     <color name="light">#efeeee</color>
     <color name="titel_color">#1fa483</color>

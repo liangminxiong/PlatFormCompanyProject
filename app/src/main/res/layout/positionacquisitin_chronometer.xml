@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_select_start"
+    android:layout_width="@dimen/dp_160"
+    android:layout_height="@dimen/dp_160"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginBottom="@dimen/dp_60"
+    android:background="@drawable/bg_circle"
+    android:visibility="visible"
+    tools:showIn="@layout/activity_positionacquistion">
+
+
+    <ProgressBar
+        style="@style/mProgress_circle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:indeterminateDuration="2500"
+        android:padding="@dimen/dp_8"/>
+
+    <Chronometer
+        android:id="@+id/ct_timer_circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_50"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_28"/>
+
+    <TextView
+        android:id="@+id/tv_temp_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ct_timer_circle"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="@string/caiji_time"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_13"
+        tools:ignore="RtlSymmetry"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_temp_1"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="点击暂停"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_11"
+        tools:ignore="HardcodedText,RtlSymmetry"/>
+
+
+</RelativeLayout>

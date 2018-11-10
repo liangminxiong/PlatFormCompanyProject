@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,10 +29,8 @@ import com.yuefeng.features.event.QualityDetailEvent;
 import com.yuefeng.features.modle.EventdetailMsgBean;
 import com.yuefeng.features.modle.GetEventdetailMsgBean;
 import com.yuefeng.features.presenter.QualityDetailPresenter;
-import com.yuefeng.photo.adapter.GvAdapter;
-import com.yuefeng.photo.bean.ImageInfo;
+import com.yuefeng.photo.utils.ImageHelper;
 import com.yuefeng.photo.view.MyGridView2;
-import com.yuefeng.photo.view.PicShowDialog;
 import com.yuefeng.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -108,8 +105,6 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
     private String problemid;
     private String state;
     private String name;
-    private List<ImageInfo> images;
-    private GvAdapter adapter;
     private int colorInt;
     private QualityDetailPresenter presenter;
     private String type;
@@ -238,7 +233,9 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         tv_problem_usetime.setText(timeUse);
 
         String imgUrl = StringUtils.returnStrTxt(msgBean.getImgurl());
-        showImgUrl(imgUrl);
+        if (!TextUtils.isEmpty(imgUrl)) {
+            ImageHelper.showImageBitmap(gridview, QualityInspectionDetailActivity.this, imgUrl);
+        }
     }
 
     private void showProblemState(String state) {
@@ -257,32 +254,6 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         tv_problem_type.setText(state);
         rl_type.setBackgroundColor(colorInt);
     }
-
-    private void showImgUrl(String imgUrl) {
-
-        images = new ArrayList<>();
-        String[] split = imgUrl.split(",");
-        for (int i = 0; i < split.length; i++) {
-            ImageInfo imageInfo = new ImageInfo(split[i], 200, 200);
-            images.add(imageInfo);
-        }
-        if (adapter == null) {
-            adapter = new GvAdapter(this, images);
-            gridview.setAdapter(adapter);
-        } else {
-            adapter.notifyDataSetChanged();
-        }
-        if (images.size() > 0) {
-            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    PicShowDialog dialog = new PicShowDialog(QualityInspectionDetailActivity.this, images, position);
-                    dialog.show();
-                }
-            });
-        }
-    }
-
 
     @Override
     public void initData() {

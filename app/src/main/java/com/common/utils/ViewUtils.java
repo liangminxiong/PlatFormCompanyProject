@@ -102,11 +102,22 @@ public class ViewUtils {
         view.setVisibility(type);
     }
 
-    /*TextView 显示隐藏*/
+    /*TextView 显示不可见*/
     public static void setTvInVisible(TextView view, boolean visible) {
         int type;
         if (visible) {
             type = View.INVISIBLE;
+        } else {
+            type = View.VISIBLE;
+        }
+        view.setVisibility(type);
+    }
+
+    /*TextView 显示隐藏*/
+    public static void setTvIsGone(TextView view, boolean visible) {
+        int type;
+        if (visible) {
+            type = View.GONE;
         } else {
             type = View.VISIBLE;
         }

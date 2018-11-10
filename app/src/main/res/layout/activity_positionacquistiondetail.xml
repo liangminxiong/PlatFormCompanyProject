@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_root_position"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/title_bar_mvp"/>
+
+    <com.baidu.mapapi.map.TextureMapView
+        android:id="@+id/mapview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/include"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
+        android:background="@drawable/shape_cricle_bg_gray_top"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/iv_line"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_36"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/weiguiline"
+            tools:ignore="ContentDescription"/>
+
+        <TextView
+            android:id="@+id/type"
+            style="@style/position_detail_type"
+            android:layout_below="@id/iv_line"
+            android:text="类型"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_type_name"
+            style="@style/position_detail_name"
+            android:layout_below="@id/iv_line"
+            android:layout_toEndOf="@id/type"
+            android:text="生活垃圾收集点"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_type_area"
+            style="@style/position_detail_type13"
+            android:layout_below="@id/iv_line"
+            android:layout_toEndOf="@id/tv_type_name"
+            android:text="(作业区域)"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/name"
+            style="@style/position_detail_type"
+            android:layout_below="@id/type"
+            android:text="名称"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            style="@style/position_detail_name"
+            android:layout_below="@id/type"
+            android:layout_toEndOf="@id/name"
+            android:text="垃圾清运车队"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_image"
+            style="@style/position_detail_type"
+            android:layout_below="@id/name"
+            android:text="照片"
+            tools:ignore="HardcodedText"/>
+
+        <com.yuefeng.photo.view.MyGridView2
+            android:id="@+id/gridview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name"
+            android:layout_marginEnd="@dimen/dp_15"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_toEndOf="@id/tv_image"
+            android:horizontalSpacing="10dp"
+            android:listSelector="@android:color/white"
+            android:numColumns="3"
+            android:scrollbars="none"
+            android:verticalSpacing="5dp"
+            android:visibility="visible"
+            tools:ignore="RtlHardcoded"/>
+
+        <TextView
+            android:id="@+id/time"
+            style="@style/position_detail_type"
+            android:layout_below="@id/gridview"
+            android:layout_marginTop="@dimen/dp_15"
+            android:text="创建时间"
+            android:layout_marginBottom="@dimen/dp_10"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_time"
+            style="@style/position_detail_name"
+            android:layout_below="@id/gridview"
+            android:layout_marginTop="@dimen/dp_15"
+            android:layout_toEndOf="@id/time"
+            android:text="2018-01-11 12:12:23"
+            android:layout_marginBottom="@dimen/dp_10"
+            tools:ignore="HardcodedText"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

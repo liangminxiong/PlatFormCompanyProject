@@ -15,7 +15,8 @@
     <dimen name="main_action_bar_height">44dp</dimen>
     <dimen name="main_action_bar_title_text_size">16sp</dimen>
 
-    <dimen name="dp_180">260dp</dimen>
+    <dimen name="dp_280">280dp</dimen>
+    <dimen name="dp_260">260dp</dimen>
     <dimen name="dp_200">200dp</dimen>
     <dimen name="dp_190">190dp</dimen>
     <dimen name="dp_180d">180dp</dimen>

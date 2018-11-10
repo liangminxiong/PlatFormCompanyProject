@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Chronometer
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ct_timer"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="@dimen/dp_20"
-    android:background="@color/white"
-    android:gravity="center"
-    android:padding="@dimen/dp_8"
-    android:textColor="@color/black_32"
-    android:textSize="@dimen/sp_28"
-    android:visibility="visible"
-    tools:showIn="@layout/activity_monitoringofjob"/>
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_noexit"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_32"
+        android:background="#F99070"
+        android:drawableEnd="@drawable/jiancha_attention_close"
+        android:drawablePadding="@dimen/dp_2"
+        android:drawableStart="@drawable/jiancha_attention"
+        android:gravity="center"
+        android:paddingEnd="@dimen/dp_5"
+        android:paddingStart="@dimen/dp_8"
+        android:text="请保持当前页面不要退出，否则可能影响监察过程"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText,RtlSymmetry"/>
+
+    <Chronometer
+        android:id="@+id/ct_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_noexit"
+        android:layout_marginStart="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_20"
+        android:background="@drawable/bg_jiancha_confirm"
+        android:gravity="center"
+        android:padding="@dimen/dp_8"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_28"
+        android:visibility="visible"/>
+
+</RelativeLayout>

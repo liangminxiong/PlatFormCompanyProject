@@ -359,9 +359,6 @@ public class LllegalWorkDetailActivity extends BaseActivity {
                 startActivity(intent);
                 break;
 
-            case R.id.tv_back:
-                finish();
-                break;
         }
     }
 

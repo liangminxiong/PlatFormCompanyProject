@@ -3,13 +3,13 @@
        android:shape="rectangle">
 
     <size
-        android:width="@dimen/dp_60"
+        android:width="@dimen/dp_30"
         android:height="@dimen/dp_30"/>
-    <solid android:color="@color/white"/>
+    <solid android:color="@color/color_f6"/>
     <corners android:radius="@dimen/dp_3"/>
-    <stroke
-        android:width="0.7dp"
+<!--    <stroke
+        android:width="0.5dp"
         android:color="@color/titel_color"
-        android:dashGap="0dp"/>
+        android:dashGap="0dp"/>-->
 
 </shape>

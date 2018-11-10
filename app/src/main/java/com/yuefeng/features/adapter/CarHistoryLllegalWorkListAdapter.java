@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.common.utils.LogUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.modle.LllegalworMsgBean;
 
@@ -29,7 +28,6 @@ public class CarHistoryLllegalWorkListAdapter extends BaseItemDraggableAdapter<L
     @Override
     protected void convert(BaseViewHolder helper, LllegalworMsgBean item) {
         int position = helper.getLayoutPosition();
-        LogUtils.d("position == " + position);
         if (position == 0) {
             helper.setBackgroundRes(R.id.ll_layout_item, R.drawable.shape_cricle_bg_gray_top);
         } else {

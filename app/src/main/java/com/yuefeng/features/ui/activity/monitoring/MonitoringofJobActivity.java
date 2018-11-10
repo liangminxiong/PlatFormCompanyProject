@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
+import com.common.view.other.ImitateKeepButton;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.MonitoringOfJobContract;
@@ -57,6 +59,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -82,6 +85,10 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     ViewStub viewstubUpload;
     @BindView(R.id.btn_beginorstop)
     Button btnBeginorstop;
+    @BindDrawable(R.drawable.jiancha_but_broadcast)
+    Drawable icon_stop;
+    @BindDrawable(R.drawable.jiancha_but_pause)
+    Drawable icon_pause;
 
     private RelativeLayout rlSelectType;
     private TextView tvUserName;
@@ -93,9 +100,9 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     private Chronometer ctTimer;
 
     private RelativeLayout rlupload;
-    private TextView tvUpload;
+    private TextView tvUpload, tvNoexit;
     private TextView tvSignin;
-    private ImageView ivStop;
+    private ImitateKeepButton ivStop;
 
 
     private boolean isFirstLoc = true;
@@ -171,6 +178,8 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     private void ininViewStubCtTimer() {
         View view = viewstubCt.inflate();
         ctTimer = view.findViewById(R.id.ct_timer);
+        tvNoexit = view.findViewById(R.id.tv_noexit);
+        tvNoexit.setOnClickListener(this);
         initChronometer();
     }
 
@@ -182,7 +191,23 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         ivStop = view.findViewById(R.id.iv_stop);
         tvUpload.setOnClickListener(this);
         tvSignin.setOnClickListener(this);
-        ivStop.setOnClickListener(this);
+        ivStop.setBackground(icon_stop);
+        ivStop.setOnViewShortClick(new ImitateKeepButton.OnViewShortClick() {
+            @Override
+            public void onShortClick(View view) {
+                startCtimer();
+            }
+        });
+
+        ivStop.setOnViewClick(new PicLongClick());
+    }
+
+    private class PicLongClick implements ImitateKeepButton.OnViewClick {
+
+        @Override
+        public void onFinish(View view) {
+            ivStop.setBackground(icon_pause);
+        }
     }
 
     private void initChronometer() {
@@ -401,8 +426,8 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
                 isSngnInOrUpload = true;
                 startActivity(new Intent(MonitoringofJobActivity.this, MonitoringSngnInActivity.class));
                 break;
-            case R.id.iv_stop:
-                startCtimer();
+            case R.id.tv_noexit:
+                tvNoexit.setVisibility(View.INVISIBLE);
                 break;
         }
     }
@@ -466,7 +491,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
             oStart.icon(beginImage);
             baiduMap.addOverlay(oStart);
 
-            OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
+            OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.BLUE).points(points);
             mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
             BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
             MarkerOptions oEnd = new MarkerOptions();

@@ -51,7 +51,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//竖屏
         mActivity = this;
-
         if (isNeedTranslateBar()) {
             StatusBarUtil.setTranslate(mActivity, true);
         }

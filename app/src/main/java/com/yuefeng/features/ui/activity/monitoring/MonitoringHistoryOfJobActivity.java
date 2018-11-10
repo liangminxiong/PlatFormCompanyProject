@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,10 +30,10 @@ import com.common.utils.TimeUtils;
 import com.common.view.timeview.TimePickerView;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.adapter.StringSingleAdapter;
+import com.yuefeng.features.adapter.HistoryMonitoringAdapter;
 import com.yuefeng.features.contract.MonitoringContract;
 import com.yuefeng.features.event.ProblemEvent;
-import com.yuefeng.features.modle.GetCaijiTypeMsgBean;
+import com.yuefeng.features.modle.HistoryMonitoringBean;
 import com.yuefeng.features.presenter.monitoring.MonitoringHistoryPresenter;
 import com.yuefeng.utils.BdLocationUtil;
 
@@ -62,7 +61,7 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
     TextView tv_title;
 
     @BindView(R.id.ll_problem)
-    LinearLayout ll_problem;
+    RelativeLayout ll_problem;
     @BindView(R.id.mapview)
     TextureMapView mapview;
     @BindView(R.id.recyclerview)
@@ -90,8 +89,8 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
     private MonitoringHistoryPresenter presenter;
     private Marker mMarker;
     private MarkerOptions ooA;
-    private StringSingleAdapter adapter;
-    private List<GetCaijiTypeMsgBean> listData = new ArrayList();
+    private HistoryMonitoringAdapter adapter;
+    private List<HistoryMonitoringBean> listData = new ArrayList();
 
     @Override
     protected int getContentViewResId() {
@@ -125,20 +124,24 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
 
     private void initRecycler() {
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new StringSingleAdapter(R.layout.list_item_string, listData);
+        adapter = new HistoryMonitoringAdapter(R.layout.recyclerview_item_historymonitoring, listData);
         recyclerview.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                showSuccessToast(listData.get(position).getData());
+                showSuccessToast(listData.get(position).getId());
 
             }
         });
 
         for (int i = 0; i < 10; i++) {
-            GetCaijiTypeMsgBean bean = new GetCaijiTypeMsgBean();
-            bean.setData("测试测试 ++ " + i);
+            HistoryMonitoringBean bean = new HistoryMonitoringBean();
+            bean.setId(String.valueOf(i));
+            bean.setStartTime(TimeUtils.getDayStartTime());
+            bean.setEndTime(TimeUtils.getCurrentTime2());
+            bean.setStartAddress("广东省广州市天河区新塘大街28号祺和商贸园B栋");
+            bean.setEndAddress("广州南站" + i);
             listData.add(bean);
         }
 

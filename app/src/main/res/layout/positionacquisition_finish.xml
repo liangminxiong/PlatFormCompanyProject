@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_finish"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="@dimen/dp_20"
+    android:layout_marginEnd="@dimen/dp_20"
+    android:layout_marginStart="@dimen/dp_20"
+    android:background="@color/transition"
+    android:orientation="vertical"
+    android:visibility="visible"
+    tools:showIn="@layout/activity_positionacquistion">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_cricle_bg_gray"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/tv_time_distance"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@color/transition"
+            android:gravity="center"
+            android:visibility="visible"
+            android:layout_marginStart="@dimen/dp_5"
+            android:layout_marginEnd="@dimen/dp_5"
+            android:textColor="@color/red_des_msg"
+            android:textSize="@dimen/sp_14"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:background="@color/transition"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_40"
+                android:gravity="center"
+                android:text="@string/type"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14"/>
+
+            <TextView
+                android:id="@+id/tv_quduan_type"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:background="@color/transition"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_40"
+                android:gravity="center"
+                android:text="@string/name"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14"/>
+
+            <EditText
+                android:id="@+id/edt_msg_name"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:layout_marginEnd="@dimen/dp_40"
+                android:background="@drawable/shape_gray_line"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/dp_5"
+                android:hint="请填写名称"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14"
+                tools:ignore="HardcodedText,LabelFor,RtlSymmetry,TextFields"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_2"
+            android:background="@color/transition"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_40"
+                android:gravity="center"
+                android:text="@string/photo"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_5"
+                android:layout_marginBottom="@dimen/dp_3"
+                android:layout_marginEnd="@dimen/dp_8"
+                tools:ignore="HardcodedText,TextFields"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_release"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_55"
+        android:background="@drawable/publish"/>
+
+</LinearLayout>

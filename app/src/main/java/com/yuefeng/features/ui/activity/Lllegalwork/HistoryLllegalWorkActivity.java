@@ -42,7 +42,6 @@ import butterknife.OnClick;
 /*查看历史违规作业*/
 public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryLllegalWorkContract.View {
 
-    private static final String TAG = "tag";
     @BindView(R.id.tv_title)
     TextView tvTitle;
     @BindView(R.id.ll_problem)

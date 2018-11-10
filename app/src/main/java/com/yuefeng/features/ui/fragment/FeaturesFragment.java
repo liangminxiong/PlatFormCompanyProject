@@ -71,7 +71,9 @@ public class FeaturesFragment extends BaseMvpFragment {
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
         unbinder = ButterKnife.bind(this, rootView);
         recyclerview.setHasFixedSize(true);
         recyclerview.setNestedScrollingEnabled(false);

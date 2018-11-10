@@ -6,20 +6,63 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.common.utils.ImageUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.photo.adapter.GvAdapter;
+import com.yuefeng.photo.bean.ImageInfo;
+import com.yuefeng.photo.view.MyGridView2;
+import com.yuefeng.photo.view.PicShowDialog;
 import com.yuefeng.ui.MyApplication;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/8/10.
  */
 
 public class ImageHelper {
+
+    private static List<ImageInfo> sImages;
+    private static GvAdapter adapter = null;
+
+    public static void showImageBitmap(MyGridView2 gridView, final Context context, String imgUrl) {
+
+        sImages = new ArrayList<>();
+        if (imgUrl.contains(";")) {
+            String[] split = imgUrl.split(";");
+            for (String aSplit : split) {
+                ImageInfo imageInfo = new ImageInfo(aSplit, 200, 200);
+                sImages.add(imageInfo);
+            }
+        } else {
+            ImageInfo imageInfo = new ImageInfo(imgUrl, 200, 200);
+            sImages.add(imageInfo);
+        }
+
+        if (adapter == null) {
+            adapter = new GvAdapter(context, sImages);
+            gridView.setAdapter(adapter);
+        } else {
+            adapter.notifyDataSetChanged();
+        }
+        if (sImages.size() > 0) {
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    PicShowDialog dialog = new PicShowDialog(context, sImages, position);
+                    dialog.show();
+                }
+            });
+        }
+    }
+
     /**
      * 质量压缩方法
      *
@@ -97,7 +140,7 @@ public class ImageHelper {
         bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
         String string = PreferencesUtils.getString(MyApplication.getContext(), "Fengrun");
         if (string.equals(context.getResources().getString(R.string.fengrun))) {
-            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, string, 10, Color.LTGRAY,10,20);
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, string, 10, Color.LTGRAY, 10, 20);
         } else {
             if (!TextUtils.isEmpty(txt)) {
                 bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 10, Color.LTGRAY, 10, 20);

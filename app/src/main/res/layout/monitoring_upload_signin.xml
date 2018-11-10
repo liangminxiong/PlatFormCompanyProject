@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_upload"
     android:layout_width="match_parent"
@@ -11,23 +12,28 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp_50"
+        android:layout_height="@dimen/dp_70"
         android:layout_centerInParent="true"
         android:layout_marginEnd="@dimen/dp_50"
         android:layout_marginStart="@dimen/dp_50"
-        android:background="@color/white"
+        android:background="@drawable/jiancha_but_bg"
         android:orientation="horizontal">
 
 
         <TextView
             android:id="@+id/tv_upload"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_2"
+            android:drawablePadding="@dimen/dp_2"
+            android:drawableTop="@drawable/jiancha_shangbao"
             android:gravity="center"
+            android:padding="@dimen/dp_8"
             android:text="上报"
-            android:textColor="@color/black_32"
-            android:textSize="@dimen/sp_15"
+            android:textColor="@color/black_35"
+            android:textSize="@dimen/sp_14"
             tools:ignore="HardcodedText"/>
 
         <View
@@ -37,23 +43,34 @@
 
         <TextView
             android:id="@+id/tv_signin"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_2"
+            android:drawablePadding="@dimen/dp_2"
+            android:drawableTop="@drawable/jiancha_qiandao"
+            android:padding="@dimen/dp_10"
             android:text="签到"
-            android:textColor="@color/black_32"
-            android:textSize="@dimen/sp_15"
+            android:textColor="@color/black_35"
+            android:textSize="@dimen/sp_14"
             tools:ignore="HardcodedText"/>
 
     </LinearLayout>
 
-    <ImageView
+    <com.common.view.other.ImitateKeepButton
         android:id="@+id/iv_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:src="@drawable/pause"
+        app:circle_color="@color/transition"
+        app:content_text="签到"
+        app:narrow_down="0dp"
+        app:radius="45dp"
+        app:ring_bg_color="@color/white"
+        app:ring_color="@color/titel_color"
+        app:ring_size="@dimen/dp_8"
+        app:space="0dp"
         tools:ignore="ContentDescription"/>
 
 

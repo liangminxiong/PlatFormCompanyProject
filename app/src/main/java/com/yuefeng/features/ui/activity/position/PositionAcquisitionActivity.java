@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
@@ -76,8 +76,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindColor;
-import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -104,50 +102,38 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     TextView recyclerviewLeft;
     @BindView(R.id.recyclerview_right)
     TextView recyclerviewRight;
+
     @BindView(R.id.rl_select_type)
     RelativeLayout rlSelectType;
-    @BindView(R.id.rl_select_start)
-    RelativeLayout rl_select_start;
-    @BindView(R.id.rl_time)
-    RelativeLayout rl_time;
-    @BindView(R.id.tv_timer)
-    TextView tvTimer;
-    @BindView(R.id.ct_timer_circle)
-    Chronometer ctTimerCircle;
-    @BindView(R.id.tv_carryon)
-    TextView tvCarryon;
-    @BindView(R.id.tv_temp)
-    TextView tvTemp;
-    @BindView(R.id.tv_finish)
-    TextView tvFinish;
-    @BindView(R.id.ll_timer)
-    LinearLayout ll_timer;
 
-    @BindView(R.id.ll_finish)
-    LinearLayout ll_finish;
     @BindView(R.id.btn_beginorstop)
     Button btnBeginorstop;
 
+    @BindView(R.id.viewstub_ct)
+    ViewStub viewstubCt;
 
-    @BindView(R.id.tv_time_distance)
-    TextView tvTimeDistance;
-    @BindView(R.id.tv_quduan_type)
-    TextView tvQuduanType;
-    @BindView(R.id.edt_msg_name)
-    EditText edtMsgName;
-    @BindView(R.id.recycler_photo)
-    RecyclerView recyclerPhoto;
+    @BindView(R.id.viewstub_timer)
+    ViewStub viewstubTimer;
+    @BindView(R.id.viewstub_finish)
+    ViewStub viewstubFinish;
 
-    @BindDrawable(R.drawable.shape_bg_transtions)
-    Drawable transt;
-    @BindColor(R.color.white)
-    int white;
-    @BindColor(R.color.black)
-    int black;
-    @BindColor(R.color.titel_color)
-    int titel_color;
-    @BindColor(R.color.gray)
-    int gray;
+    private Chronometer ctTimerCircle;
+
+    private RelativeLayout rl_time;
+    TextView tvTimer;
+    TextView tvCarryon;
+    TextView tvFinish;
+
+    private LinearLayout ll_timer;
+    private RelativeLayout rl_select_start;
+    private LinearLayout ll_finish;
+
+    private TextView tvTimeDistance;
+    private TextView tvQuduanType;
+    private TextView tvRelease;
+    private EditText edtMsgName;
+    private RecyclerView recyclerPhoto;
+
 
     private boolean isFirstLoc = true;
     private BaiduMap baiduMap;
@@ -178,7 +164,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     private String timeLong;
     private String infrastructureStr;//基础设施
     private String workAreaStr;//作业区段
-    private String type;
+    private String type = "";
     private MsgCollectionPopupWindow msgPopupWindow;
     private StringSingleAdapter singleAdapter;
     private List<GetCaijiTypeMsgBean> listData = new ArrayList<>();
@@ -195,6 +181,10 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     private String typeId;
     private String area;
     private String lnglat;
+    private boolean isFirstComeIn = true;
+    private boolean isFirstInit = true;
+    private boolean isFirstInitCt = true;
+    private boolean isFirstInitFinish = true;
 
     @Override
     protected int getContentViewResId() {
@@ -212,7 +202,11 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         infrastructureStr = "";
         workAreaStr = "";
         initRlType();
+        isFirstInit = true;
+        isFirstInitCt = true;
+        isFirstInitFinish = true;
     }
+
 
     /*获取采集类型*/
     private void getCaijiType() {
@@ -232,10 +226,49 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     }
 
 
+    private void ininViewStubTimer() {
+        if (isFirstInit) {
+            View view = viewstubTimer.inflate();
+            rl_time = view.findViewById(R.id.rl_time);
+            ll_timer = view.findViewById(R.id.ll_timer);
+            tvTimer = view.findViewById(R.id.tv_timer);
+            tvCarryon = view.findViewById(R.id.tv_carryon);
+            tvCarryon.setOnClickListener(this);
+            tvFinish = view.findViewById(R.id.tv_finish);
+            tvFinish.setOnClickListener(this);
+            isFirstInit = false;
+        }
+    }
+
+    private void ininViewStubCt() {
+        if (isFirstInitCt) {
+            View view = viewstubCt.inflate();
+            rl_select_start = view.findViewById(R.id.rl_select_start);
+            rl_select_start.setOnClickListener(this);
+            ctTimerCircle = view.findViewById(R.id.ct_timer_circle);
+            initChronometer();
+            isFirstInitCt = false;
+        }
+    }
+
+    private void ininViewStubFinish() {
+        if (isFirstInitFinish) {
+            isFirstInitFinish = false;
+            View view = viewstubFinish.inflate();
+            tvTimeDistance = view.findViewById(R.id.tv_time_distance);
+            tvQuduanType = view.findViewById(R.id.tv_quduan_type);
+            edtMsgName = view.findViewById(R.id.edt_msg_name);
+            recyclerPhoto = view.findViewById(R.id.recycler_photo);
+            ll_finish = view.findViewById(R.id.ll_finish);
+            tvRelease = view.findViewById(R.id.tv_release);
+            tvRelease.setOnClickListener(this);
+        }
+    }
+
+
     @Override
     protected void initData() {
         requestPermissions();
-        initChronometer();
         getCaijiType();
     }
 
@@ -278,7 +311,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         }
         useBdGpsLocation();
     }
-
 
     @Override
     protected void onStop() {
@@ -451,8 +483,23 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     }
 
     @Override
-    protected void widgetClick(View v) {
-
+    protected void widgetClick(View view) {
+        switch (view.getId()) {
+            case R.id.tv_carryon://继续
+                tv_carryon();
+                break;
+            case R.id.tv_finish://结束
+                ininViewStubFinish();
+                tv_finish("1");
+                break;
+            case R.id.rl_select_start://点击暂停
+                ininViewStubTimer();
+                cvTimerStop();
+                break;
+            case R.id.tv_release:
+                tv_release();
+                break;
+        }
     }
 
     @Override
@@ -471,21 +518,11 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         endImage.recycle();
     }
 
-    @OnClick({R.id.tv_carryon, R.id.tv_finish, R.id.btn_beginorstop, R.id.tv_release,
-            R.id.recyclerview_left, R.id.recyclerview_right, R.id.rl_select_start, R.id.tv_title_setting})
+    @OnClick({R.id.btn_beginorstop, R.id.recyclerview_left, R.id.recyclerview_right, R.id.tv_title_setting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.tv_carryon://继续
-                tv_carryon();
-                break;
-            case R.id.tv_finish://结束
-                tv_finish("1");
-                break;
             case R.id.btn_beginorstop://开始采集
                 beginOrStop();
-                break;
-            case R.id.tv_release:
-                tv_release();
                 break;
             case R.id.recyclerview_left://基础设施
                 initInFrastDatas();
@@ -498,9 +535,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 recyclerviewLeft.setText(infrastructureStr);
                 initWorkAreaDatas();
                 initMsgPopuwindow(recyclerviewRight, false);
-                break;
-            case R.id.rl_select_start://点击暂停
-                cvTimerStop();
                 break;
             case R.id.tv_title_setting://历史
                 history();
@@ -585,8 +619,10 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     /*暂停*/
     private void cvTimerStop() {
         timeLong = ctTimerCircle.getText().toString().trim();
-        rl_select_start.setVisibility(View.INVISIBLE);
-        ll_timer.setVisibility(View.VISIBLE);
+        if (rl_select_start != null && ll_timer != null) {
+            rl_select_start.setVisibility(View.INVISIBLE);
+            ll_timer.setVisibility(View.VISIBLE);
+        }
         if (!TextUtils.isEmpty(timeLong)) {
             tvTimer.setText(timeLong);
         }
@@ -616,16 +652,24 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     /*结束*/
     @SuppressLint("SetTextI18n")
     private void tv_finish(String typeDistance) {
-        ll_timer.setVisibility(View.INVISIBLE);
+        if (ll_timer != null) {
+            ll_timer.setVisibility(View.INVISIBLE);
+        }
         if (!TextUtils.isEmpty(infrastructureStr)) {
             type = infrastructureStr;
         }
         if (!TextUtils.isEmpty(workAreaStr)) {
             type = workAreaStr;
         }
-        ll_finish.setVisibility(View.VISIBLE);
-        tvQuduanType.setText(type);
-        selectPhoto();
+        if (ll_finish != null) {
+            ll_finish.setVisibility(View.VISIBLE);
+        }
+        if (tvQuduanType != null) {
+            tvQuduanType.setText(type);
+        }
+        if (recyclerPhoto != null) {
+            selectPhoto();
+        }
         if (typeDistance.equals("2")) {
             tvTimeDistance.setText("本次采集地址:" + address);
         } else {
@@ -655,7 +699,9 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         }
         if (presenter != null) {
             String time = presenter.showHowLongTime(timeLong, area, typePosition);
-            tvTimeDistance.setText(time);
+            if (tvTimeDistance != null) {
+                tvTimeDistance.setText(time);
+            }
         }
         if (area.equals("NaN")) {
             area = "0";
@@ -682,8 +728,10 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
 
     /*继续采集*/
     private void tv_carryon() {
-        ll_timer.setVisibility(View.INVISIBLE);
-        rl_select_start.setVisibility(View.VISIBLE);
+        if (ll_timer != null && rl_select_start != null) {
+            ll_timer.setVisibility(View.INVISIBLE);
+            rl_select_start.setVisibility(View.VISIBLE);
+        }
         isPositionAcquisition = true;
         initCtStart();
     }
@@ -698,12 +746,16 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         }
         points.add(new LatLng(latitude, longitude));
         if (!TextUtils.isEmpty(workAreaStr)) {//选择作业区段
+            ininViewStubCt();
             isPositionAcquisition = true;
             initCtStart();
             rlSelectType.setVisibility(View.INVISIBLE);
             btnBeginorstop.setVisibility(View.INVISIBLE);
-            rl_select_start.setVisibility(View.VISIBLE);
+            if (rl_select_start != null) {
+                rl_select_start.setVisibility(View.VISIBLE);
+            }
         } else {//选择基础设施
+            ininViewStubFinish();
             tv_finish("2");
             btnBeginorstop.setVisibility(View.INVISIBLE);
             isPositionAcquisition = false;
@@ -828,6 +880,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             }
         });
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
