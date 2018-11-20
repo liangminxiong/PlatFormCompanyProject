@@ -40,7 +40,7 @@ public class WebDetailInfosActivtiy extends BaseActivity implements H5Control {
     protected void initView(Bundle savedInstanceState) {
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        tv_title.setText(R.string.detail);
+        tv_title.setText(R.string.reply_msg);
 //        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         initWebview();

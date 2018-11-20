@@ -29,12 +29,11 @@ import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.modle.LllegalworMsgBean;
+import com.yuefeng.features.modle.GetHistoryCaijiInfosMsgBean;
 import com.yuefeng.photo.utils.ImageHelper;
 import com.yuefeng.photo.view.MyGridView2;
 import com.yuefeng.utils.BdLocationUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -82,13 +81,12 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
     private String address;
 
     /*条件选择框*/
-    List<LatLng> points = new ArrayList<>();
     private Polyline mPolyline;
     private String type;
 
     /*是否采集*/
     private boolean isPositionAcquisition = false;
-    private LllegalworMsgBean msgBean;
+    private GetHistoryCaijiInfosMsgBean msgBean;
     private LatLng latLng;
     private String name;
     private String time;
@@ -111,36 +109,90 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
 
     @SuppressLint("SetTextI18n")
     private void initUI() {
-        tvBack.setText("返回");
-        tvTitle.setText("采集信息详情");
-        Bundle bundle = getIntent().getExtras();
-        assert bundle != null;
-        msgBean = (LllegalworMsgBean) bundle.getSerializable("msgBean");
-        name = msgBean.getName();
-        time = msgBean.getTime();
-        contents = msgBean.getContents();
-        typeName = msgBean.getAddress();
+        try {
+            tvBack.setText(R.string.back);
+            tvTitle.setText(R.string.caijiinfos_detail);
+            Bundle bundle = getIntent().getExtras();
+            assert bundle != null;
+            msgBean = (GetHistoryCaijiInfosMsgBean) bundle.getSerializable("msgBean");
+            assert msgBean != null;
+            name = msgBean.getName();
+            time = msgBean.getTime();
+            typeName = msgBean.getTypename();
 
-        name = StringUtils.isEntryStrWu(name);
-        time = StringUtils.isEntryStrWu(time);
-        contents = StringUtils.isEntryStrWu(contents);
-        typeName = StringUtils.isEntryStrWu(typeName);
+            name = StringUtils.isEntryStrWu(name);
+            time = StringUtils.isEntryStrWu(time);
+            contents = StringUtils.isEntryStrWu(contents);
+            typeName = StringUtils.isEntryStrWu(typeName);
 
-        tvTypeName.setText(typeName);
-        tvTypeArea.setText("(" + contents + ")");
-        tvName.setText(name);
-        tvTime.setText(time);
+            tvTypeName.setText(typeName);
+            tvTypeArea.setText("(采集类型)");
+            tvName.setText(name);
+            tvTime.setText(time);
+            imageUrls = msgBean.getImgeurl();
 
-        if (TextUtils.isEmpty(imageUrls)) {
-            imageUrls = "wu;wu;wu";
+            ImageHelper.showImageBitmap(gridview, PositionAcquisitionDetailActivity.this, imageUrls);
+
+            String lnglat = msgBean.getLnglat();
+            if (TextUtils.isEmpty(lnglat)) {
+                requestPermissions();
+            } else {
+                initBaiduMap();
+                showDataImageIntoMap(lnglat);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        ImageHelper.showImageBitmap(gridview, PositionAcquisitionDetailActivity.this, imageUrls);
+    }
+
+    private void showDataImageIntoMap(String lnglat) {
+        List<LatLng> points = com.yuefeng.utils.StringUtils.getLnglat(lnglat);
+        int size = points.size();
+        if (size > 1) {
+            drawLineIntoBaiduMap(points);
+        } else {
+            LatLng latLng = points.get(0);
+            if (baiduMap != null) {
+                //清除上一次轨迹，避免重叠绘画
+                baiduMap.clear();
+                MarkerOptions oStart = new MarkerOptions();
+                oStart.position(latLng);
+                oStart.icon(personalImage);
+                baiduMap.addOverlay(oStart);
+                BdLocationUtil.MoveMapToCenter(baiduMap, latLng, Constans.BAIDU_ZOOM_EIGHTEEN);
+            }
+        }
+    }
+
+    private void drawLineIntoBaiduMap(List<LatLng> points) {
+        try {
+            //起始点图层也会被清除，重新绘画
+            if (points.size() > 1) {
+                //清除上一次轨迹，避免重叠绘画
+                baiduMap.clear();
+                //起始点图层也会被清除，重新绘画
+                MarkerOptions oStart = new MarkerOptions();
+                oStart.position(points.get(0));
+                oStart.icon(beginImage);
+                baiduMap.addOverlay(oStart);
+
+                OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
+                mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
+                BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
+                MarkerOptions oEnd = new MarkerOptions();
+                oEnd.position(points.get(points.size() - 2));
+                oEnd.icon(endImage);
+                baiduMap.addOverlay(oEnd);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
     @Override
     protected void initData() {
-        requestPermissions();
+
     }
 
     /**
@@ -166,6 +218,15 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
 
     /*定位*/
     private void getLocation() {
+        initBaiduMap();
+        boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
+        if (!gpsOPen) {
+            showSuccessToast("GPS未开启，定位有偏差");
+        }
+        useBdGpsLocation();
+    }
+
+    private void initBaiduMap() {
         baiduMap = mapview.getMap();
         // 地图初始化
         mapview.showZoomControls(false);// 缩放控件是否显示
@@ -176,11 +237,6 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
         // 定位初始化
 
         baiduMap.showMapPoi(true);
-        boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
-        if (!gpsOPen) {
-            showSuccessToast("GPS未开启，定位有偏差");
-        }
-        useBdGpsLocation();
     }
 
     @Override
@@ -190,23 +246,27 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
     }
 
     private void useBdGpsLocation() {
-        BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
-            @Override
-            public void myLocation(BDLocation location) {
-                if (location == null) {
-                    requestPermissions();
-                    return;
+        try {
+            BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
+                @Override
+                public void myLocation(BDLocation location) {
+                    if (location == null) {
+                        requestPermissions();
+                        return;
+                    }
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    address = location.getAddrStr();
+                    if (!TextUtils.isEmpty(address)) {
+                        int length = address.length();
+                        address = address.substring(2, length);
+                    }
+                    firstLocation(latitude, longitude, address);
                 }
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                address = location.getAddrStr();
-                if (!TextUtils.isEmpty(address)) {
-                    int length = address.length();
-                    address = address.substring(2, length);
-                }
-                firstLocation(latitude, longitude, address);
-            }
-        }, Constans.BDLOCATION_TIME);
+            }, Constans.BDLOCATION_TIME);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void firstLocation(double latitude, double longitude, String address) {
@@ -221,36 +281,12 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
                 MapStatus ms = new MapStatus.Builder().target(latLng)
                         .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                 ooA = new MarkerOptions().icon(personalImage).zIndex(10);
-                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+//                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                 ooA.position(latLng);
                 mMarker = null;
                 mMarker = (Marker) (baiduMap.addOverlay(ooA));
-                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+//                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*划线*/
-    private void drawTrackLine(LatLng latLng) {
-        try {
-            if (isPositionAcquisition) {
-                points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
-                if (points.size() > 1 && baiduMap != null) {
-                    //清除上一次轨迹，避免重叠绘画
-                    baiduMap.clear();
-                    //起始点图层也会被清除，重新绘画
-                    MarkerOptions oStart = new MarkerOptions();
-                    oStart.position(points.get(0));
-                    oStart.icon(beginImage);
-                    baiduMap.addOverlay(oStart);
-
-                    OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
-                    mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
-                    BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -277,30 +313,6 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
         mapview = null;
         beginImage.recycle();
         endImage.recycle();
-    }
-
-
-    /*距离或者面积*/
-    private void initAreaOrDistance() {
-        LatLng latLngTemp = null;
-        //起始点图层也会被清除，重新绘画
-        if (points.size() > 1) {
-            //清除上一次轨迹，避免重叠绘画
-            baiduMap.clear();
-            //起始点图层也会被清除，重新绘画
-            MarkerOptions oStart = new MarkerOptions();
-            oStart.position(points.get(0));
-            oStart.icon(beginImage);
-            baiduMap.addOverlay(oStart);
-
-            OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
-            mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
-            BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
-            MarkerOptions oEnd = new MarkerOptions();
-            oEnd.position(points.get(points.size() - 2));
-            oEnd.icon(endImage);
-            baiduMap.addOverlay(oEnd);
-        }
     }
 
     @OnClick(R.id.iv_line)

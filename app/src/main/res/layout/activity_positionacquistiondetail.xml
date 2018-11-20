@@ -46,7 +46,6 @@
             style="@style/position_detail_name"
             android:layout_below="@id/iv_line"
             android:layout_toEndOf="@id/type"
-            android:text="生活垃圾收集点"
             tools:ignore="HardcodedText"/>
 
         <TextView
@@ -69,7 +68,6 @@
             style="@style/position_detail_name"
             android:layout_below="@id/type"
             android:layout_toEndOf="@id/name"
-            android:text="垃圾清运车队"
             tools:ignore="HardcodedText"/>
 
         <TextView

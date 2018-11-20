@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
+import com.common.event.CommonEvent;
 import com.common.utils.Constans;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.QuetionListAdapter;
@@ -35,7 +36,8 @@ public class QuestionListFragment extends BaseFragment {
     RecyclerView recyclerview;
     private List<QuestionListBean> listData = new ArrayList<>();
     private QuetionListAdapter adapter;
-    private GetJobMonitotingMsgBean bean=null;
+    private GetJobMonitotingMsgBean bean = null;
+    private List<QuestionListBean> mList = new ArrayList<>();
 
 
     @Override
@@ -45,27 +47,37 @@ public class QuestionListFragment extends BaseFragment {
 
     @Override
     public void initView() {
-        ButterKnife.bind(this, rootView);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
+        try {
+            ButterKnife.bind(this, rootView);
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
+            recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
+            initRecycler();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
-        initRecycler();
     }
 
     private void initRecycler() {
-        adapter = new QuetionListAdapter(R.layout.recycler_item_job, listData);
-        recyclerview.setAdapter(adapter);
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QuestionListBean questionListBean = listData.get(position);
-                EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.PROBLEM_SSUCESS, questionListBean));
+        try {
+            adapter = new QuetionListAdapter(R.layout.recycler_item_job, listData);
+            recyclerview.setAdapter(adapter);
+            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    QuestionListBean questionListBean = listData.get(position);
+                    List<QuestionListBean> questionList = new ArrayList<>();
+                    questionList.clear();
+                    questionList.add(questionListBean);
+                    EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.PROBLEM_SSUCESS, questionList));
 
-            }
-        });
-
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -91,25 +103,46 @@ public class QuestionListFragment extends BaseFragment {
         switch (event.getWhat()) {
             case Constans.JOB_SSUCESS://展示
                 bean = (GetJobMonitotingMsgBean) event.getData();
-//                if (bean != null) {
-//                    showAdapterDatasList(bean);
-//                }
+                if (bean != null) {
+                    showAdapterDatasList(bean);
+                }
                 break;
-
             case Constans.JOB_ERROR:
-                listData.clear();
-                initRecycler();
+                noData();
                 break;
-
         }
+    }
 
+    private void noData() {
+        listData.clear();
+        initRecycler();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void disposeCommonEvent(CommonEvent event) {
+        switch (event.getWhat()) {
+            case Constans.JOB_Q_SSUCESS://展示:
+                mList.clear();
+                mList = (List<QuestionListBean>) event.getData();
+                initAdapterData(mList);
+                break;
+        }
+    }
+
+    private void initAdapterData(List<QuestionListBean> list) {
+        int lenght = list.size();
+        if (lenght != 0 && adapter != null) {
+            listData.clear();
+            listData.addAll(list);
+            adapter.setNewData(listData);
+        } else {
+            noData();
+        }
     }
 
     @Override
     protected void fetchData() {
-        if (bean != null) {
-            showAdapterDatasList(bean);
-        }
     }
 
     /*展示列表数据*/

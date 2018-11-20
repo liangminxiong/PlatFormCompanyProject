@@ -137,7 +137,7 @@ public class ViewUtils {
                     Editable editable = editText.getText();
                     int length = editable.length();
                     if (length > 0) {
-                        if (length > maxLength) {
+                        if (length >= maxLength) {
                             int selEndIndex = Selection.getSelectionEnd(editable);
                             String str = editable.toString();
                             //截取新字符串
@@ -196,4 +196,5 @@ public class ViewUtils {
 
         return mCountWhat;
     }
+
 }

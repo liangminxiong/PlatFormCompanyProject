@@ -153,6 +153,7 @@ public class PersonalLllegalWorkListFragment extends BaseFragment implements Lll
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void initWeiguiData(String vid, int typeWhat) {
+        try {
         if (presenter != null) {
             String pid = PreferencesUtils.getString(Objects.requireNonNull(getContext()), Constans.ORGID, "");
             String startTime = TimeUtils.getYesterdayStartTime();
@@ -161,6 +162,9 @@ public class PersonalLllegalWorkListFragment extends BaseFragment implements Lll
             endTime = "2018-11-01 15:00:00";
             presenter.getWeigui(ApiService.GETWEIGUI, pid, startTime, endTime, vid, Constans.TYPE_ONE, typeWhat);
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
     /*展示数据*/

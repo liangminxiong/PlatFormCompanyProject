@@ -351,7 +351,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 MapStatus ms = new MapStatus.Builder().target(latLngTemp)
                         .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                 ooA = new MarkerOptions().icon(personalImage).zIndex(10);
-                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                 ooA.position(latLngTemp);
                 mMarker = null;
                 mMarker = (Marker) (baiduMap.addOverlay(ooA));
@@ -422,16 +421,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
                 if (points.size() > 1 && baiduMap != null) {
                     //清除上一次轨迹，避免重叠绘画
-                    baiduMap.clear();
-                    //起始点图层也会被清除，重新绘画
-                    MarkerOptions oStart = new MarkerOptions();
-                    oStart.position(points.get(0));
-                    oStart.icon(beginImage);
-                    baiduMap.addOverlay(oStart);
-
-                    OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
-                    mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
-                    BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
+                    drawLineIntoBaiduMap(baiduMap, points);
                 }
             }
         } catch (Exception e) {
@@ -707,23 +697,30 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             area = "0";
         }
         //起始点图层也会被清除，重新绘画
-        if (points.size() > 1) {
-            //清除上一次轨迹，避免重叠绘画
-            baiduMap.clear();
-            //起始点图层也会被清除，重新绘画
-            MarkerOptions oStart = new MarkerOptions();
-            oStart.position(points.get(0));
-            oStart.icon(beginImage);
-            baiduMap.addOverlay(oStart);
+        if (points.size() > 1 && baiduMap != null) {
+            drawLineIntoBaiduMap(baiduMap, points);
 
-            OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
-            mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
-            BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
+
             MarkerOptions oEnd = new MarkerOptions();
             oEnd.position(points.get(points.size() - 2));
             oEnd.icon(endImage);
             baiduMap.addOverlay(oEnd);
         }
+    }
+
+    /*划线*/
+    private void drawLineIntoBaiduMap(BaiduMap baiduMap, List<LatLng> points) {
+        //清除上一次轨迹，避免重叠绘画
+        baiduMap.clear();
+        //起始点图层也会被清除，重新绘画
+        MarkerOptions oStart = new MarkerOptions();
+        oStart.position(points.get(0));
+        oStart.icon(beginImage);
+        baiduMap.addOverlay(oStart);
+
+        OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
+        mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
+        BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
     }
 
     /*继续采集*/

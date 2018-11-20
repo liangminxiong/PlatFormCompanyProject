@@ -42,7 +42,7 @@ public class ShowProblempop extends PopupWindow {
 
     private void initView(Context context) {
         view = LayoutInflater.from(context).inflate(R.layout.pop_show_problem, null);
-        tv_item_name = view.findViewById(R.id.tv_item_name);
+        tv_item_name = view.findViewById(R.id.tv_item_title);
         tv_item_chiwei = view.findViewById(R.id.tv_item_chiwei);
 
 

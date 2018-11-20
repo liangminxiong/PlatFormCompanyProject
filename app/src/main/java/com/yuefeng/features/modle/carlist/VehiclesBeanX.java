@@ -66,6 +66,34 @@ public class VehiclesBeanX implements Serializable {
     private String lat;
     private String lon;
 
+    private String vname;
+    private String vpwd;
+    private String videoip;
+
+    public String getVname() {
+        return vname;
+    }
+
+    public void setVname(String vname) {
+        this.vname = vname;
+    }
+
+    public String getVpwd() {
+        return vpwd;
+    }
+
+    public void setVpwd(String vpwd) {
+        this.vpwd = vpwd;
+    }
+
+    public String getVideoip() {
+        return videoip;
+    }
+
+    public void setVideoip(String videoip) {
+        this.videoip = videoip;
+    }
+
     public String getId() {
         return id;
     }

@@ -26,7 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
+import com.yuefeng.cartreeList.adapter.ChangeSimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
@@ -62,16 +62,20 @@ public class TreesListsPopupWindow extends PopupWindow {
     private List<Node> carDatas;
     private String name;
     private ImageView iv_search;
-    private SimpleTreeRecyclerAdapter carlistAdapter;
+    //    private SimpleTreeRecyclerAdapter carlistAdapter;
+    private ChangeSimpleTreeRecyclerAdapter carlistAdapter;
     private String carNumber;
     private boolean isSingle;
+    private boolean isAddTerminal;
     private String id;
 
-    public TreesListsPopupWindow(Context context, List<Node> carDatas, boolean isSingle) {
-        super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+    public TreesListsPopupWindow(Context context, List<Node> carDatas, boolean isSingle, boolean isAddTerminal) {
+        super(null, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT, true);
         mContext = context;
         this.carDatas = carDatas;
         this.isSingle = isSingle;
+        this.isAddTerminal = isAddTerminal;
         //设置点击空白处消失
         setTouchable(true);
         setOutsideTouchable(false);
@@ -133,15 +137,13 @@ public class TreesListsPopupWindow extends PopupWindow {
     private void showTreesCarListData(List<Node> carDatas) {
         if (carDatas.size() > 0) {
             recyclerview.setLayoutManager(new LinearLayoutManager(mContext));
-//            if (carlistAdapter == null) {
-            carlistAdapter = new SimpleTreeRecyclerAdapter(recyclerview, mContext,
-                    carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, isSingle);
-//            } else {
-//                carlistAdapter.notifyDataSetChanged();
-//            }
+//            carlistAdapter = new SimpleTreeRecyclerAdapter(recyclerview, mContext,
+//                    carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, isSingle);
+
+            carlistAdapter = new ChangeSimpleTreeRecyclerAdapter(recyclerview, mContext,
+                    carDatas, 1, R.drawable.list_fold, R.drawable.list_fold, isSingle, isSingle);
             recyclerview.setAdapter(carlistAdapter);
         }
-//        carlistAdapter.notifyDataSetChanged();
         carlistAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
             @Override
             public void onClick(Node node, int position) {
@@ -163,7 +165,11 @@ public class TreesListsPopupWindow extends PopupWindow {
                 if (allNodes.get(i).isChecked()) {
                     id = (String) allNodes.get(i).getId();
                     carNumber = allNodes.get(i).getName();
-                    terminal = allNodes.get(i).getTerminalNO();
+                    if (isAddTerminal) {
+                        terminal = allNodes.get(i).getAddress() + ":" + allNodes.get(i).getTerminalNO();
+                    } else {
+                        terminal = allNodes.get(i).getTerminalNO();
+                    }
                 }
             }
         } else {
@@ -172,12 +178,12 @@ public class TreesListsPopupWindow extends PopupWindow {
         if (!TextUtils.isEmpty(terminal)) {
             if (mOnItemClickListener != null) {
                 if (type.equals("1")) {
-                    mOnItemClickListener.onGoBack(carNumber, terminal, id);
+                    mOnItemClickListener.onGoBack(carNumber, terminal, id, true);
                 } else if (type.equals("2")) {
-                    mOnItemClickListener.onSure(carNumber, terminal, id);
+                    mOnItemClickListener.onSure(carNumber, terminal, id, true);
                 } else {
-                    mOnItemClickListener.onSure(carNumber, terminal, id);
-                    mOnItemClickListener.onGoBack(carNumber, terminal, id);
+                    mOnItemClickListener.onSure(carNumber, terminal, id, false);
+                    mOnItemClickListener.onGoBack(carNumber, terminal, id, false);
                 }
             }
         }
@@ -217,7 +223,7 @@ public class TreesListsPopupWindow extends PopupWindow {
     }
 
     private void initRecycleView() {
-        adapterSelect = new CarListSelectAdapter(R.layout.list_item, listData);
+        adapterSelect = new CarListSelectAdapter(R.layout.lv_new_list_item, listData);
         recyclerview_after.setAdapter(adapterSelect);
         adapterSelect.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -225,14 +231,20 @@ public class TreesListsPopupWindow extends PopupWindow {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 id = listData.get(position).getId();
                 name = listData.get(position).getName();
-                terminal = listData.get(position).getTerminal();
+                if (isAddTerminal) {
+                    terminal = listData.get(position).getTerminalId() + ":" + listData.get(position).getTerminal();
+                    ;
+                } else {
+                    terminal = listData.get(position).getTerminal();
+                }
 
                 if (!TextUtils.isEmpty(terminal)) {
                     if (mOnItemClickListener != null)
-                        mOnItemClickListener.onSure(name, terminal, id);
+                        mOnItemClickListener.onSure(name, terminal, id, true);
                     assert mOnItemClickListener != null;
-                    mOnItemClickListener.onGoBack(name, terminal, id);
+                    mOnItemClickListener.onGoBack(name, terminal, id, true);
                 }
+                dismiss();
             }
         });
         adapterSelect.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -240,11 +252,18 @@ public class TreesListsPopupWindow extends PopupWindow {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 id = listData.get(position).getId();
                 name = listData.get(position).getName();
-                terminal = listData.get(position).getTerminal();
+                if (isAddTerminal) {
+                    terminal = listData.get(position).getTerminalId() + ":" + listData.get(position).getTerminal();
+                    ;
+                } else {
+                    terminal = listData.get(position).getTerminal();
+                }
+
                 if (mOnItemClickListener != null)
-                    mOnItemClickListener.onSure(name, terminal, id);
+                    mOnItemClickListener.onSure(name, terminal, id, true);
                 assert mOnItemClickListener != null;
-                mOnItemClickListener.onGoBack(name, terminal, id);
+                mOnItemClickListener.onGoBack(name, terminal, id, true);
+                dismiss();
             }
         });
 
@@ -300,13 +319,13 @@ public class TreesListsPopupWindow extends PopupWindow {
     }
 
     public interface OnItemClickListener {
-        void onGoBack(String name, String terminal, String id);
+        void onGoBack(String name, String terminal, String id, boolean isGetDatas);
 
 //        void onSearch(String key);
 
-        void onSure(String name, String terminal, String id);
+        void onSure(String name, String terminal, String id, boolean isGetDatas);
 
-        void onSelectCar(String carNumber, String terminal, String id);
+        void onSelectCar(String carNumber, String terminal, String id, boolean isGetDatas);
     }
 
     /**

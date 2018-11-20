@@ -22,7 +22,7 @@ public class StringSingleAdapter extends BaseItemDraggableAdapter<GetCaijiTypeMs
         if (item != null && helper != null) {
             String data = item.getData();
             data = TextUtils.isEmpty(data) ? "" : data;
-            helper.setText(R.id.tv_item_name, data);
+            helper.setText(R.id.tv_item_title, data);
         }
     }
 }

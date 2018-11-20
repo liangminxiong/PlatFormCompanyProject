@@ -234,7 +234,7 @@ public class TrackActivity extends BaseActivity implements TrackContract.View {
 
     private void getTrackData(String terminal, String startTime, String endTime) {
 
-        boolean twoDayOffset2 = TimeUtils.getTwoDayOffset2(startTime, endTime);
+        boolean twoDayOffset2 = TimeUtils.isTimeLessThan(startTime, endTime);
         if (!twoDayOffset2) {
             showSuccessToast("结束时间不能小于开始时间");
             return;

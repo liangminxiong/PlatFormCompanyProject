@@ -3,13 +3,17 @@ package com.common.network;
 import com.yuefeng.features.modle.EventQuestionBean;
 import com.yuefeng.features.modle.GetAllPersonalBean;
 import com.yuefeng.features.modle.GetEventdetailBean;
+import com.yuefeng.features.modle.GetHistoryCaijiInfosBean;
 import com.yuefeng.features.modle.GetJobMonitotingBean;
 import com.yuefeng.features.modle.GetKaoqinSumBean;
+import com.yuefeng.features.modle.GetMonitoringHistoryBean;
+import com.yuefeng.features.modle.GetMonitoringPlanCountBean;
 import com.yuefeng.features.modle.GetQuestionCountBean;
 import com.yuefeng.features.modle.LllegalworkBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.features.modle.WheelPathBean;
 import com.yuefeng.features.modle.carlist.CarListInfosBean;
+import com.yuefeng.features.modle.carlist.OldCarListInfosBean;
 import com.yuefeng.features.modle.video.GetCaijiTypeBean;
 import com.yuefeng.features.modle.video.VideoEquipmentBean;
 import com.yuefeng.login_splash.model.LoginBean;
@@ -81,6 +85,19 @@ public interface ApiService {
     String GETWEIGUI = "getweigui";
     /*签到信息数量*/
     String GETKAOQINSUM = "getkaoqinsum";
+
+    /*历史采集信息*/
+    String GETMAPINFO = "getmapinfo";
+
+    /*监察签到*/
+    String UPLOADWORKSIGN = "Uploadworksign";
+    /*监察上报*/
+    String UPLOADJIANCHA = "Uploadjiancha";
+    /*监察历史*/
+    String GETWORKJIANCHA = "getworkjiancha";
+
+    /*监察计划*/
+    String GETJIANCHACOUNT = "getjianchacount";
 
 
     /*登录用户*/
@@ -194,7 +211,15 @@ public interface ApiService {
 
     /*车辆列表*/
     @POST(MIA)
-    Observable<CarListInfosBean> getCarListInfos(
+    Observable<OldCarListInfosBean> getCarListInfos(
+            @Query("function") String function,
+            @Query("organid") String organid,
+            @Query("userid") String userid,
+            @Query("isreg") String isreg);
+
+    /*车辆列表*/
+    @POST(MIA)
+    Observable<CarListInfosBean> getCarListInfosNew(
             @Query("function") String function,
             @Query("organid") String organid,
             @Query("userid") String userid,
@@ -236,6 +261,14 @@ public interface ApiService {
     Observable<GetCaijiTypeBean> getCaijiType(
             @Query("function") String function);
 
+    /*历史采集信息*/
+    @POST(MIA_HW)
+    Observable<GetHistoryCaijiInfosBean> getHistoryCaijiInfo(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Query("timestart") String timestart,
+            @Query("timeend") String timeend);
+
     /*上传采集数据*/
     @POST(MIA_HW)
     Observable<SubmitBean> upLoadmapInfo(
@@ -258,4 +291,46 @@ public interface ApiService {
             @Query("timeend") String timeend,
             @Query("vid") String vid,
             @Query("type") String type);
+
+    /*作业监察签到*/
+    @POST(MIA_HW)
+    Observable<SubmitBean> uploadWorkSign(
+            @Query("function") String function,
+            @Query("pid") String pid,
+            @Query("userid") String userid,
+            @Query("address") String address,
+            @Query("lat") String lat,
+            @Query("lon") String lon,
+            @Query("personids") String personids,
+            @Query("imageArrays") String imageArrays,
+            @Query("memo") String memo);
+
+    /*作业监察上报*/
+    @POST(MIA_HW)
+    Observable<SubmitBean> uploadJianCcha(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Query("pid") String pid,
+            @Query("timestart") String timestart,
+            @Query("timeend") String timeend,
+            @Query("timesum") String timesum,
+            @Query("lnglat") String lnglat,
+            @Query("startaddress") String startAddress,
+            @Query("endaddress") String endAddress);
+
+    /*作业监察历史*/
+    @POST(MIA_HW)
+    Observable<GetMonitoringHistoryBean> getWorkJianCha(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Query("timestart") String timestart,
+            @Query("timeend") String timeend);
+
+    /*作业监察历史*/
+    @POST(MIA_HW)
+    Observable<GetMonitoringPlanCountBean> getJianChaCount(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Query("timestart") String timestart,
+            @Query("timeend") String timeend);
 }

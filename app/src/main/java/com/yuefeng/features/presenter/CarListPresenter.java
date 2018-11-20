@@ -28,7 +28,7 @@ public class CarListPresenter extends BasePresenterImpl<CarListContract.View,
     @Override
     public void getCarListInfos(String function, String organid, String userid, String isreg) {
 
-        HttpObservable.getObservable(apiRetrofit.getCarListInfos(function, organid, userid, isreg))
+        HttpObservable.getObservable(apiRetrofit.getCarListInfosNew(function, organid, userid, isreg))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<CarListInfosBean>() {
                     @Override

@@ -16,7 +16,7 @@ import com.common.utils.Constans;
 import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.event.CarListEvent;
-import com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy;
+import com.yuefeng.home.ui.activity.MsgListDetailInfosActivtiy;
 import com.yuefeng.home.ui.adapter.HomeMsgInfosAdapter;
 import com.yuefeng.home.ui.modle.MsgDataBean;
 
@@ -90,7 +90,7 @@ public class HomeFragment extends BaseMvpFragment {
                     tempPosition = 3;
                 }
                 Intent intent = new Intent();
-                intent.setClass(Objects.requireNonNull(getActivity()), MsgDetailInfosActivtiy.class);
+                intent.setClass(Objects.requireNonNull(getActivity()), MsgListDetailInfosActivtiy.class);
                 intent.putExtra("msgList", (Serializable) listData);
                 intent.putExtra("tempPosition", tempPosition);
                 startActivity(intent);

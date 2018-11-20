@@ -50,7 +50,8 @@ public abstract class TreeRecyclerAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     public TreeRecyclerAdapter(RecyclerView mTree, Context context, List<Node> datas,
-                               int defaultExpandLevel, int iconExpand, int iconNoExpand, boolean isAllSelect) {
+                               int defaultExpandLevel, int iconExpand, int iconNoExpand,
+                               boolean isAllSelect) {
 
 
         this.isAllSelect = isAllSelect;

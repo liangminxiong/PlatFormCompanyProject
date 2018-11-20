@@ -8,6 +8,7 @@ public class CarListSelectBean implements Serializable {
     private String name;
     private String type;
     private String terminal;
+    private String terminalId;
 
     @Override
     public String toString() {
@@ -16,6 +17,7 @@ public class CarListSelectBean implements Serializable {
                 "name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", terminal='" + terminal + '\'' +
+                ", terminalId='" + terminalId + '\'' +
                 '}';
     }
 
@@ -49,5 +51,13 @@ public class CarListSelectBean implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getTerminalId() {
+        return terminalId;
+    }
+
+    public void setTerminalId(String terminalId) {
+        this.terminalId = terminalId;
     }
 }

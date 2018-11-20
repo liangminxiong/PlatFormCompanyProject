@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
+import com.common.event.CommonEvent;
 import com.common.utils.Constans;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.PersonalAdapter;
@@ -55,17 +56,21 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
 
     @Override
     public void initView() {
-        ButterKnife.bind(this, rootView);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-        recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
-        initRecycler();
-        // 创建定位管理信息对象
-        mLocationUtils = new LocationUtils(getActivity());
+        try {
+            ButterKnife.bind(this, rootView);
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
+            recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
+            initRecycler();
+            // 创建定位管理信息对象
+            mLocationUtils = new LocationUtils(getActivity());
 //         开启定位
-        mLocationUtils.startLocation();
-        mLocationUtils.registerOnResult(this);
+            mLocationUtils.startLocation();
+            mLocationUtils.registerOnResult(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initRecycler() {
@@ -76,7 +81,10 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 PersonalinfoListBean personalinfoListBean = listData.get(position);
-                EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.PERSONAL_SSUCESS, personalinfoListBean));
+                List<PersonalinfoListBean> personalinfoList = new ArrayList<>();
+                personalinfoList.clear();
+                personalinfoList.add(personalinfoListBean);
+                EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.PERSONAL_SSUCESS, personalinfoList));
 
             }
         });
@@ -106,31 +114,51 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
         switch (event.getWhat()) {
             case Constans.JOB_SSUCESS://展示
                 bean = (GetJobMonitotingMsgBean) event.getData();
-//                if (bean != null) {
-//                    showAdapterDatasList(bean);
-//                }
+                if (bean != null) {
+                    showAdapterDatasList(bean);
+                }
                 break;
 
             case Constans.JOB_ERROR:
-                listData.clear();
-                initRecycler();
+                noData();
                 break;
 
         }
+    }
 
+    private void noData() {
+        listData.clear();
+        initRecycler();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void disposeCommonEvent(CommonEvent event) {
+        switch (event.getWhat()) {
+            case Constans.JOB_P_SSUCESS://展示
+                list.clear();
+                list = (List<PersonalinfoListBean>) event.getData();
+                initAdapterData(list);
+                break;
+        }
     }
 
     @Override
     protected void fetchData() {
-        if (bean != null) {
-            showAdapterDatasList(bean);
-        }
     }
 
     /*展示列表数据*/
     private void showAdapterDatasList(GetJobMonitotingMsgBean beanMsg) {
-        count = 0;
-        list = beanMsg.getPersonalinfoList();
+        try {
+            count = 0;
+            list = beanMsg.getPersonalinfoList();
+            initAdapterData(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initAdapterData(List<PersonalinfoListBean> list) {
         lenght = list.size();
         benginGetAddress(count, true);
         if (list.size() > 0) {
@@ -139,46 +167,56 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
             if (adapter != null) {
                 adapter.setNewData(listData);
             }
+        }else {
+            noData();
         }
     }
 
     private void benginGetAddress(int count, boolean isFirst) {
-        if (count > (lenght - 1)) {
-            return;
-        }
-        if (lenght > 0 || list != null) {
-            latitude = list.get(count).getLatitude();
-            longitude = list.get(count).getLongitude();
-            if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude)) {
-                if (mLocationUtils == null) {
+        try {
+            if (count > (lenght - 1)) {
+                return;
+            }
+            if (lenght > 0 || list != null) {
+                latitude = list.get(count).getLatitude();
+                longitude = list.get(count).getLongitude();
+                if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude)) {
+                    if (mLocationUtils == null) {
 //         开启定位
-                    mLocationUtils = new LocationUtils(getActivity());
-                    mLocationUtils.startLocation();
-                    mLocationUtils.registerOnResult(this);
-                }
-                if (isFirst) {
+                        mLocationUtils = new LocationUtils(getActivity());
+                        mLocationUtils.startLocation();
+                        mLocationUtils.registerOnResult(this);
+                    }
+                    if (isFirst) {
+                        mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
+                    }
                     mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
                 }
-                mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void onReverseGeoCodeResult(Map<String, Object> map) {
-        String address = (String) map.get("address");
-        if (TextUtils.isEmpty(address)) {
-            address = "暂无地址!";
-        }
-        if (!address.contains("广东省")) {
-            if (lenght > 0 || adapter != null) {
-                if (count <= (lenght - 1)) {
-                    list.get(count).setAddress(address);
-                    adapter.notifyDataSetChanged();
-                    count++;
-                    benginGetAddress(count, false);
+        try {
+            String address = (String) map.get("address");
+            if (TextUtils.isEmpty(address)) {
+                address = "暂无地址!";
+            }
+            if (!address.contains("广东省")) {
+                if (lenght > 0 || adapter != null) {
+                    if (count <= (lenght - 1)) {
+                        list.get(count).setAddress(address);
+                        adapter.notifyDataSetChanged();
+                        count++;
+                        benginGetAddress(count, false);
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

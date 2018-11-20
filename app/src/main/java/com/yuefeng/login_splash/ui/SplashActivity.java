@@ -47,26 +47,29 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initView(Bundle savedInstanceState) {
         ButterKnife.bind(this);
-        imageView.setBackgroundResource(R.drawable.bg_login);
-        requestPermissions();
-
+        try {
+            imageView.setBackgroundResource(R.drawable.bg_login);
+            requestPermissions();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initCountDown() {
         try {
-
-        boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
-        if (isHaveDatas) {
-            String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
-            if (!TextUtils.isEmpty(string)) {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
+            if (isHaveDatas) {
+                String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
+                if (!TextUtils.isEmpty(string)) {//主界面
+//                    startActivity(new Intent(SplashActivity.this, DemoTestActivity.class));
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                } else {//登录界面
+                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                }
             } else {
                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             }
-        } else {
-            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-        }
-        finish();
+            finish();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,28 +77,29 @@ public class SplashActivity extends BaseActivity {
 
     @SuppressLint("CheckResult")
     private void requestPermissions() {
-        RxPermissions rxPermission = new RxPermissions(SplashActivity.this);
-        //请求权限全部结果 Manifest.permission.CAMERA,
-        rxPermission.request(
-
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean granted) throws Exception {
-                        if (!granted) {
-                            showSuccessToast("App未能获取全部需要的相关权限，部分功能可能不能正常使用.");
+        try {
+            RxPermissions rxPermission = new RxPermissions(SplashActivity.this);
+            //请求权限全部结果 Manifest.permission.CAMERA,
+            rxPermission.request(
+                    Manifest.permission.SYSTEM_ALERT_WINDOW,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)
+                    .subscribe(new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean granted) throws Exception {
+//                            if (!granted) {
+//                                showSuccessToast("App未能获取全部需要的相关权限，部分功能可能不能正常使用.");
+//                            }
+                            //不管是否获取全部权限，进入主页面
+                            initCountDown();
                         }
-                        //不管是否获取全部权限，进入主页面
-                        initCountDown();
-                    }
-                });
-
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
 
 
     @Override

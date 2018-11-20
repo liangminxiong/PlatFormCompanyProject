@@ -73,68 +73,79 @@ public class QualityInspectionActivity extends BaseActivity implements
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initView(Bundle savedInstanceState) {
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-        ButterKnife.bind(this);
-        presenter = new QualityGetCountPresenter(this, this);
+        try {
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
+            ButterKnife.bind(this);
+            presenter = new QualityGetCountPresenter(this, this);
 
 //        View view = findViewById(R.id.space);
 //
 //        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
 //        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-        tv_title.setText("问题处理");
-        initViewPager();
-        viewPager.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });
+            tv_title.setText("问题处理");
+            initViewPager();
+            viewPager.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return false;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressLint("InflateParams")
     private void initViewPager() {
-        //设置TabLayout点击事件
-        tabLayout.addOnTabSelectedListener(this);
-        tabItemInfos = new ArrayList<>();
-        tabItemInfoA = new TabItemInfo(new AllProblemFragment(), R.drawable.tab_button_selector, R.string.all_txt);
-        tabItemInfos.add(tabItemInfoA);
-        tabItemInfoB = new TabItemInfo(new PendingProblemFragment(), R.drawable.tab_button_selector, R.string.pending_txt);
-        tabItemInfos.add(tabItemInfoB);
-        tabItemInfoC = new TabItemInfo(new ProcessingProblemFragment(), R.drawable.tab_button_selector, R.string.processing_txt);
-        tabItemInfos.add(tabItemInfoC);
-        tabItemInfoD = new TabItemInfo(new ToClosedProblemFragment(), R.drawable.tab_button_selector, R.string.toclosed_txt);
-        tabItemInfos.add(tabItemInfoD);
+        try {
+            //设置TabLayout点击事件
+            tabLayout.addOnTabSelectedListener(this);
+            tabItemInfos = new ArrayList<>();
+            tabItemInfoA = new TabItemInfo(new AllProblemFragment(), R.drawable.tab_button_selector, R.string.all_txt);
+            tabItemInfos.add(tabItemInfoA);
+            tabItemInfoB = new TabItemInfo(new PendingProblemFragment(), R.drawable.tab_button_selector, R.string.pending_txt);
+            tabItemInfos.add(tabItemInfoB);
+            tabItemInfoC = new TabItemInfo(new ProcessingProblemFragment(), R.drawable.tab_button_selector, R.string.processing_txt);
+            tabItemInfos.add(tabItemInfoC);
+            tabItemInfoD = new TabItemInfo(new ToClosedProblemFragment(), R.drawable.tab_button_selector, R.string.toclosed_txt);
+            tabItemInfos.add(tabItemInfoD);
 
-        viewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager(), tabItemInfos, QualityInspectionActivity.this);
-        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+            viewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager(), tabItemInfos, QualityInspectionActivity.this);
+            tabLayout.setTabMode(TabLayout.MODE_FIXED);
 //        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
-        viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(tabItemInfos.size());
-        tabLayout.setupWithViewPager(viewPager);
-
+            tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
+            viewPager.setAdapter(viewPagerAdapter);
+            viewPager.setOffscreenPageLimit(tabItemInfos.size());
+            tabLayout.setupWithViewPager(viewPager);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initTabViewCount(List<String> stringList) {
-        if (stringList.size() < 4) {
-            return;
-        }
-        tabItemInfoA.setTabCount(stringList.get(0));
-        tabItemInfoB.setTabCount(stringList.get(1));
-        tabItemInfoC.setTabCount(stringList.get(2));
-        tabItemInfoD.setTabCount(stringList.get(3));
-        for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            TabLayout.Tab tab = tabLayout.getTabAt(i);
-            if (tab != null) {
-                if (tab.getCustomView() != null) {
-                    TextView countView = (TextView) tab.getCustomView().findViewById(R.id.tab_count);
-                    countView.setText(stringList.get(i));
-                } else {
-                    tab.setCustomView(viewPagerAdapter.getTabView(i));
+        try {
+            if (stringList.size() < 4) {
+                return;
+            }
+            tabItemInfoA.setTabCount(stringList.get(0));
+            tabItemInfoB.setTabCount(stringList.get(1));
+            tabItemInfoC.setTabCount(stringList.get(2));
+            tabItemInfoD.setTabCount(stringList.get(3));
+            for (int i = 0; i < tabLayout.getTabCount(); i++) {
+                TabLayout.Tab tab = tabLayout.getTabAt(i);
+                if (tab != null) {
+                    if (tab.getCustomView() != null) {
+                        TextView countView = (TextView) tab.getCustomView().findViewById(R.id.tab_count);
+                        countView.setText(stringList.get(i));
+                    } else {
+                        tab.setCustomView(viewPagerAdapter.getTabView(i));
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -178,30 +189,42 @@ public class QualityInspectionActivity extends BaseActivity implements
 
     /*获取数量*/
     private void getQuestingCount(boolean isFirst) {
-        String pid = PreferencesUtils.getString(this, "orgId", "");
-        String userid = PreferencesUtils.getString(this, "id", "");
+        try {
+            String pid = PreferencesUtils.getString(this, "orgId", "");
+            String userid = PreferencesUtils.getString(this, "id", "");
 
-        presenter.getQuestionCount(ApiService.GETQUESTIONCOUNT, pid, userid,isFirst);
+            presenter.getQuestionCount(ApiService.GETQUESTIONCOUNT, pid, userid, isFirst);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
     /**/
     private void showCountData(GetQuestionCountMsgBean msg) {
-        String allcount = msg.getAllcount();
-        String waitcount = msg.getWaitcount();
-        String doingcount = msg.getDoingcount();
-        String waitclosecount = msg.getWaitclosecount();
-        initListdatas(allcount, waitcount, doingcount, waitclosecount);
+        try {
+            String allcount = msg.getAllcount();
+            String waitcount = msg.getWaitcount();
+            String doingcount = msg.getDoingcount();
+            String waitclosecount = msg.getWaitclosecount();
+            initListdatas(allcount, waitcount, doingcount, waitclosecount);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initListdatas(String allcount, String waitcount, String doingcount, String waitclosecount) {
-        stringList.clear();
-        stringList.add(allcount);
-        stringList.add(waitcount);
-        stringList.add(doingcount);
-        stringList.add(waitclosecount);
+        try {
+            stringList.clear();
+            stringList.add(allcount);
+            stringList.add(waitcount);
+            stringList.add(doingcount);
+            stringList.add(waitclosecount);
 
-        initTabViewCount(stringList);
+            initTabViewCount(stringList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

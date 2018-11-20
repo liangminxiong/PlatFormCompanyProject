@@ -13,6 +13,9 @@ import com.common.utils.Constans;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
 import com.yuefeng.features.modle.carlist.CarListSelectBean;
+import com.yuefeng.features.modle.carlist.OldCarListInfosMsgBean;
+import com.yuefeng.features.modle.carlist.OldOrgan;
+import com.yuefeng.features.modle.carlist.OldOrgansBean;
 import com.yuefeng.features.modle.carlist.Organ;
 import com.yuefeng.features.modle.carlist.OrgansBean;
 import com.yuefeng.features.modle.carlist.VehiclesBean;
@@ -99,7 +102,7 @@ public class DatasUtils {
     private static String sStrSixth;
 
     /*车辆列表 ================begin===================*/
-    public static List<Node> ReturnTreesDatas(List<CarListInfosMsgBean> msg) {
+    public static List<Node> OldReturnTreesDatas(List<OldCarListInfosMsgBean> msg) {
 
         List<Node> mDatas = new ArrayList<Node>();
 
@@ -108,19 +111,19 @@ public class DatasUtils {
             return new ArrayList<Node>();
         }
 
-        String treeStr = initDatasTreeStr(msg);
+        String treeStr = initDatasTreeStrOld(msg);
 
-        CarListInfosMsgBean msgBean = msg.get(0);
+        OldCarListInfosMsgBean msgBean = msg.get(0);
 
         String orgShortName = msgBean.getOrgShortName();
         String fatherPid = msgBean.getPid();
         String fatherId = msgBean.getId();
 
 
-        List<VehiclesBeanX> firstVehicles = msgBean.getVehicles();
+        List<VehiclesBeanX> firstVehicles = msgBean.getVehicle();
         firstVsize = firstVehicles.size();
 
-        List<OrgansBean> firstOrgans = msgBean.getOrgans();
+        List<OldOrgansBean> firstOrgans = msgBean.getOrgan();
         firstOsize = firstOrgans.size();
         /*第一层*/
         // id , pid , label , 其他属性
@@ -143,17 +146,17 @@ public class DatasUtils {
 
         /*第二层*/
         if (firstOsize > 0) {
-            for (OrgansBean firstOrgan : firstOrgans) {
-                String strSecond = initDatasTreeStrSecond(firstOrgan);
+            for (OldOrgansBean firstOrgan : firstOrgans) {
+                String strSecond = initDatasTreeStrSecondOld(firstOrgan);
 
                 secondId = firstOrgan.getId();
                 secondOrgShortName = firstOrgan.getOrgShortName();
 
 
-                secondVehicles = firstOrgan.getVehicles();
+                secondVehicles = firstOrgan.getVehicle();
                 secondVsize = secondVehicles.size();
 
-                List<Organ> organs = firstOrgan.getOrgans();
+                List<OldOrgan> organs = firstOrgan.getOrgan();
                 secondOsize = organs.size();
 
 
@@ -177,15 +180,14 @@ public class DatasUtils {
 //                第三层
                 if (secondOsize > 0) {
 
-                    for (Organ organ : organs) {
-                        String strThird = initDatasTreeStrThird(organ);
+                    for (OldOrgan organ : organs) {
+                        String strThird = initDatasTreeStrThirdOld(organ);
                         thirdOrgansId = organ.getId();
                         thirdOrgansOrgShortName = organ.getOrgShortName();
 
-                        thirdVehicles = organ.getVehicles();
+                        thirdVehicles = organ.getVehicle();
                         thirdVsize = thirdVehicles.size();
-
-                        thirdOrgans = organ.getOrgans();
+                        List<OldOrgan> thirdOrgans = organ.getOrgan();
                         thirdOsize = thirdOrgans.size();
 
 //                        第三层总数据
@@ -208,17 +210,16 @@ public class DatasUtils {
 
 //                        第四层
                         if (thirdOsize > 0) {
-                            for (Organ thirdOrgan : thirdOrgans) {
+                            for (OldOrgan thirdOrgan : thirdOrgans) {
 
-                                String strFouth = initDatasTreeStrFouth(thirdOrgan);
+                                String strFouth = initDatasTreeStrThirdOld(thirdOrgan);
 
                                 thirdOrganId = thirdOrgan.getId();
                                 thirdOrganOrgShortName = thirdOrgan.getOrgShortName();
 
-                                fourthvehicles = thirdOrgan.getVehicles();
+                                fourthvehicles = thirdOrgan.getVehicle();
                                 fourthVsize = fourthvehicles.size();
-
-                                fourthOrgans = thirdOrgan.getOrgans();
+                                List<OldOrgan> fourthOrgans = thirdOrgan.getOrgan();
                                 fourthOsize = fourthOrgans.size();
 
                                 mDatas.add(new Node(thirdOrganId + "", thirdOrgansId + "", thirdOrganOrgShortName, strFouth, "", "", "", "", "", ""));
@@ -240,16 +241,16 @@ public class DatasUtils {
 
 //                                第五层
                                 if (fourthOsize > 0) {
-                                    for (Organ fourthOrgan : fourthOrgans) {
+                                    for (OldOrgan fourthOrgan : fourthOrgans) {
 
-                                        String strFifth = initDatasTreeStrFouth(fourthOrgan);
+                                        String strFifth = initDatasTreeStrThirdOld(fourthOrgan);
                                         fourthOrganId = fourthOrgan.getId();
                                         fourthOrganOrgShortName = fourthOrgan.getOrgShortName();
 
-                                        fifthVehicles = fourthOrgan.getVehicles();
+                                        fifthVehicles = fourthOrgan.getVehicle();
                                         fifthVsize = fifthVehicles.size();
 
-                                        fifthOrgans = fourthOrgan.getOrgans();
+                                        List<OldOrgan> fifthOrgans = fourthOrgan.getOrgan();
                                         fifthOsize = fifthOrgans.size();
 
 
@@ -273,16 +274,16 @@ public class DatasUtils {
 
 //                                        第六层
                                         if (fifthOsize > 0) {
-                                            for (Organ fifthOrgan : fifthOrgans) {
+                                            for (OldOrgan fifthOrgan : fifthOrgans) {
 
-                                                String strSixth = initDatasTreeStrFouth(fourthOrgan);
+                                                String strSixth = initDatasTreeStrThirdOld(fourthOrgan);
                                                 fifthOrganId = fifthOrgan.getId();
                                                 fifthOrganOrgShortName = fifthOrgan.getOrgShortName();
 
-                                                sixthVehicles = fifthOrgan.getVehicles();
+                                                sixthVehicles = fifthOrgan.getVehicle();
                                                 sixthVsize = sixthVehicles.size();
 
-                                                sixthOrganOrgans = fifthOrgan.getOrgans();
+                                                List<OldOrgan> sixthOrganOrgans = fifthOrgan.getOrgan();
                                                 sixthOsize = sixthOrganOrgans.size();
 
                                                 mDatas.add(new Node(fifthOrganId + "", fourthOrganId + "", fifthOrganOrgShortName, strSixth, "", "", "", "", "", ""));
@@ -316,7 +317,230 @@ public class DatasUtils {
     }
 
 
-    private static String initDatasTreeStr(List<CarListInfosMsgBean> msg) {
+    public static List<Node> ReturnTreesDatas(List<CarListInfosMsgBean> msg) {
+
+        List<Node> mDatas = new ArrayList<Node>();
+
+        int size = msg.size();
+        if (size <= 0) {
+            return new ArrayList<Node>();
+        }
+
+        String treeStr = initDatasTreeStr(msg);
+
+        CarListInfosMsgBean msgBean = msg.get(0);
+
+        String orgShortName = msgBean.getOrgShortName();
+        String fatherPid = msgBean.getPid();
+        String fatherId = msgBean.getId();
+
+
+        List<VehiclesBeanX> firstVehicles = msgBean.getVehicle();
+        firstVsize = firstVehicles.size();
+
+        List<OrgansBean> firstOrgans = msgBean.getOrgan();
+        firstOsize = firstOrgans.size();
+        /*第一层*/
+        // id , pid , label , 其他属性
+        mDatas.add(new Node(fatherId, "first", orgShortName, treeStr, "", "", "", "", "", ""));
+
+        if (firstVsize > 0) {
+            for (VehiclesBeanX firstVehicle : firstVehicles) {
+                firstVehicleId = firstVehicle.getId();
+                firstVRegistrationNO = firstVehicle.getRegistrationNO();
+                firstVehicleStateType = firstVehicle.getStateType();
+                firstVehicleTerminalNO = firstVehicle.getTerminalNO();
+                String gt = firstVehicle.getGt();
+                String speed = firstVehicle.getSpeed();
+                String obd = firstVehicle.getObd();
+                address = firstVehicle.getTerminalTypeID();
+                mDatas.add(new Node(firstVehicleId + "", fatherId + "", firstVRegistrationNO,
+                        Constans.COUNT_ZERO, firstVehicleStateType, firstVehicleTerminalNO, gt, speed, obd, address));
+            }
+        }
+
+
+        /*第二层*/
+        if (firstOsize > 0) {
+            for (OrgansBean firstOrgan : firstOrgans) {
+                String strSecond = initDatasTreeStrSecond(firstOrgan);
+
+                secondId = firstOrgan.getId();
+                secondOrgShortName = firstOrgan.getOrgShortName();
+
+
+                secondVehicles = firstOrgan.getVehicle();
+                secondVsize = secondVehicles.size();
+
+                List<Organ> organs = firstOrgan.getOrgan();
+                secondOsize = organs.size();
+
+
+                mDatas.add(new Node(secondId + "", fatherId + "", secondOrgShortName, strSecond, "", "", "", "", "", ""));
+
+
+                if (secondVsize > 0) {
+                    for (VehiclesBean secondVehicle : secondVehicles) {
+                        secondVehicleId = secondVehicle.getId();
+                        secondVehicleRegistrationNO = secondVehicle.getRegistrationNO();
+                        secondVehicleStateType = secondVehicle.getStateType();
+                        secondVehicleTerminalNO = secondVehicle.getTerminalNO();
+                        String gt = secondVehicle.getGt();
+                        String speed = secondVehicle.getSpeed();
+                        String obd = secondVehicle.getObd();
+                        String address = secondVehicle.getTerminalTypeID();
+                        mDatas.add(new Node(secondVehicleId + "", secondId + "", secondVehicleRegistrationNO,
+                                Constans.COUNT_ZERO, secondVehicleStateType, secondVehicleTerminalNO, gt, speed, obd, address));
+                    }
+                }
+
+//                第三层
+                if (secondOsize > 0) {
+
+                    for (Organ organ : organs) {
+                        String strThird = initDatasTreeStrThird(organ);
+                        thirdOrgansId = organ.getId();
+                        thirdOrgansOrgShortName = organ.getOrgShortName();
+
+                        thirdVehicles = organ.getVehicle();
+                        thirdVsize = thirdVehicles.size();
+
+                        thirdOrgans = organ.getOrgan();
+                        thirdOsize = thirdOrgans.size();
+
+//                        第三层总数据
+                        mDatas.add(new Node(thirdOrgansId + "", secondId + "", thirdOrgansOrgShortName, strThird, "", "", "", "", "", ""));
+
+
+                        if (thirdVsize > 0) {
+                            for (VehiclesBean thirdVehicle : thirdVehicles) {
+                                thirdVehicleId = thirdVehicle.getId();
+                                thirdVehicleRegistrationNO = thirdVehicle.getRegistrationNO();
+                                thirdVehicleStateType = thirdVehicle.getStateType();
+                                thirdVehicleTerminalNO = thirdVehicle.getTerminalNO();
+                                String gt = thirdVehicle.getGt();
+                                String speed = thirdVehicle.getSpeed();
+                                String obd = thirdVehicle.getObd();
+                                String address = thirdVehicle.getTerminalTypeID();
+                                mDatas.add(new Node(thirdVehicleId + "", thirdOrgansId + "", thirdVehicleRegistrationNO,
+                                        Constans.COUNT_ZERO, thirdVehicleStateType, thirdVehicleTerminalNO, gt, speed, obd, address));
+                            }
+                        }
+
+//                        第四层
+                        if (thirdOsize > 0) {
+                            for (Organ thirdOrgan : thirdOrgans) {
+
+                                String strFouth = initDatasTreeStrFouth(thirdOrgan);
+
+                                thirdOrganId = thirdOrgan.getId();
+                                thirdOrganOrgShortName = thirdOrgan.getOrgShortName();
+
+                                fourthvehicles = thirdOrgan.getVehicle();
+                                fourthVsize = fourthvehicles.size();
+
+                                fourthOrgans = thirdOrgan.getOrgan();
+                                fourthOsize = fourthOrgans.size();
+
+                                mDatas.add(new Node(thirdOrganId + "", thirdOrgansId + "", thirdOrganOrgShortName, strFouth, "", "", "", "", "", ""));
+
+
+                                if (fourthVsize > 0) {
+                                    for (VehiclesBean fourthvehicle : fourthvehicles) {
+                                        fourthvehicleId = fourthvehicle.getId();
+                                        fourthvehicleRegistrationNO = fourthvehicle.getRegistrationNO();
+                                        fourthvehicleStateType = fourthvehicle.getStateType();
+                                        fourthvehicleTerminalNO = fourthvehicle.getTerminalNO();
+                                        String gt = fourthvehicle.getGt();
+                                        String speed = fourthvehicle.getSpeed();
+                                        String obd = fourthvehicle.getObd();
+                                        String address = fourthvehicle.getTerminalTypeID();
+                                        mDatas.add(new Node(fourthvehicleId + "", thirdOrganId + "", fourthvehicleRegistrationNO,
+                                                Constans.COUNT_ZERO, fourthvehicleStateType, fourthvehicleTerminalNO, gt, speed, obd, address));
+                                    }
+                                }
+
+//                                第五层
+                                if (fourthOsize > 0) {
+                                    for (Organ fourthOrgan : fourthOrgans) {
+
+                                        String strFifth = initDatasTreeStrFouth(fourthOrgan);
+                                        fourthOrganId = fourthOrgan.getId();
+                                        fourthOrganOrgShortName = fourthOrgan.getOrgShortName();
+
+                                        fifthVehicles = fourthOrgan.getVehicle();
+                                        fifthVsize = fifthVehicles.size();
+
+                                        fifthOrgans = fourthOrgan.getOrgan();
+                                        fifthOsize = fifthOrgans.size();
+
+
+                                        mDatas.add(new Node(fourthOrganId + "", thirdOrganId + "", fourthOrganOrgShortName, strFifth, "", "", "", "", "", ""));
+
+
+                                        if (fifthVsize > 0) {
+                                            for (VehiclesBean fifthVehicle : fifthVehicles) {
+                                                fifthVehicleId = fifthVehicle.getId();
+                                                fifthVehicleRegistrationNO = fifthVehicle.getRegistrationNO();
+                                                fifthVehicleStateType = fifthVehicle.getStateType();
+                                                fifthVehicleTerminalNO = fifthVehicle.getTerminalNO();
+                                                String gt = fifthVehicle.getGt();
+                                                String speed = fifthVehicle.getSpeed();
+                                                String obd = fifthVehicle.getObd();
+                                                String address = fifthVehicle.getTerminalTypeID();
+                                                mDatas.add(new Node(fifthVehicleId + "", thirdOrganId + "", fifthVehicleRegistrationNO,
+                                                        Constans.COUNT_ZERO, fifthVehicleStateType, fifthVehicleTerminalNO, gt, speed, obd, address));
+                                            }
+
+                                        }
+
+//                                        第六层
+                                        if (fifthOsize > 0) {
+                                            for (Organ fifthOrgan : fifthOrgans) {
+
+                                                String strSixth = initDatasTreeStrFouth(fourthOrgan);
+                                                fifthOrganId = fifthOrgan.getId();
+                                                fifthOrganOrgShortName = fifthOrgan.getOrgShortName();
+
+                                                sixthVehicles = fifthOrgan.getVehicle();
+                                                sixthVsize = sixthVehicles.size();
+
+                                                sixthOrganOrgans = fifthOrgan.getOrgan();
+                                                sixthOsize = sixthOrganOrgans.size();
+
+                                                mDatas.add(new Node(fifthOrganId + "", fourthOrganId + "", fifthOrganOrgShortName, strSixth, "", "", "", "", "", ""));
+
+
+                                                if (sixthVsize > 0) {
+                                                    for (VehiclesBean sixthVehicle : sixthVehicles) {
+                                                        sixthVehicleId = sixthVehicle.getId();
+                                                        sixthVehicleRegistrationNO = sixthVehicle.getRegistrationNO();
+                                                        sixthVehicleStateType = sixthVehicle.getStateType();
+                                                        sixthVehicleTerminalNO = sixthVehicle.getTerminalNO();
+                                                        String gt = sixthVehicle.getGt();
+                                                        String speed = sixthVehicle.getSpeed();
+                                                        String obd = sixthVehicle.getObd();
+                                                        String address = sixthVehicle.getTerminalTypeID();
+                                                        mDatas.add(new Node(sixthVehicleId + "", fifthOrganId + "",
+                                                                sixthVehicleRegistrationNO, Constans.COUNT_ZERO, sixthVehicleStateType,
+                                                                sixthVehicleTerminalNO, gt, speed, obd, address));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return mDatas;
+    }
+
+
+    private static String initDatasTreeStrOld(List<OldCarListInfosMsgBean> msg) {
 
         String countAllStr = "";
         int count = 0;
@@ -326,13 +550,13 @@ public class DatasUtils {
         if (size <= 0) {
             return "";
         }
-        CarListInfosMsgBean msgBean = msg.get(0);
+        OldCarListInfosMsgBean msgBean = msg.get(0);
 
         /*第二层*/
-        List<VehiclesBeanX> firstVehicles = msgBean.getVehicles();
+        List<VehiclesBeanX> firstVehicles = msgBean.getVehicle();
         firstVsize = firstVehicles.size();
 
-        List<OrgansBean> firstOrgans = msgBean.getOrgans();
+        List<OldOrgansBean> firstOrgans = msgBean.getOrgan();
         firstOsize = firstOrgans.size();
 
         // id , pid , label , 其他属性
@@ -350,12 +574,12 @@ public class DatasUtils {
         }
 
         if (firstOsize > 0) {
-            for (OrgansBean organ : firstOrgans) {
+            for (OldOrgansBean organ : firstOrgans) {
 
-                secondVehicles = organ.getVehicles();
+                secondVehicles = organ.getVehicle();
                 secondVsize = secondVehicles.size();
 
-                List<Organ> organs = organ.getOrgans();
+                List<OldOrgan> organs = organ.getOrgan();
                 secondOsize = organs.size();
                 if (secondVsize > 0) {
                     for (VehiclesBean secondVehicle : secondVehicles) {
@@ -372,12 +596,12 @@ public class DatasUtils {
 
 //                第三层
                 if (secondOsize > 0) {
-                    for (Organ secondOrgans : organs) {
+                    for (OldOrgan secondOrgans : organs) {
 
-                        thirdVehicles = secondOrgans.getVehicles();
+                        thirdVehicles = secondOrgans.getVehicle();
                         thirdVsize = thirdVehicles.size();
 
-                        thirdOrgans = secondOrgans.getOrgans();
+                        List<OldOrgan> thirdOrgans = secondOrgans.getOrgan();
                         thirdOsize = thirdOrgans.size();
 
                         if (thirdVsize > 0) {
@@ -395,12 +619,12 @@ public class DatasUtils {
 
 //                        第四层
                         if (thirdOsize > 0) {
-                            for (Organ thirdOrgan : thirdOrgans) {
+                            for (OldOrgan thirdOrgan : thirdOrgans) {
 
-                                fourthvehicles = thirdOrgan.getVehicles();
+                                fourthvehicles = thirdOrgan.getVehicle();
                                 fourthVsize = fourthvehicles.size();
 
-                                fourthOrgans = thirdOrgan.getOrgans();
+                                List<OldOrgan> fourthOrgans = thirdOrgan.getOrgan();
                                 fourthOsize = fourthOrgans.size();
 
                                 String stateType4 = "";
@@ -418,12 +642,12 @@ public class DatasUtils {
 
 //                                第五层
                                 if (fourthOsize > 0) {
-                                    for (Organ fourthOrgan : fourthOrgans) {
+                                    for (OldOrgan fourthOrgan : fourthOrgans) {
 
-                                        fifthVehicles = fourthOrgan.getVehicles();
+                                        fifthVehicles = fourthOrgan.getVehicle();
                                         fifthVsize = fifthVehicles.size();
 
-                                        fifthOrgans = fourthOrgan.getOrgans();
+                                        List<OldOrgan> fifthOrgans = fourthOrgan.getOrgan();
                                         fifthOsize = fifthOrgans.size();
 
 
@@ -442,11 +666,11 @@ public class DatasUtils {
 
 //                                        第六层
                                         if (fifthOsize > 0) {
-                                            for (Organ fifthOrgan : fifthOrgans) {
-                                                sixthVehicles = fifthOrgan.getVehicles();
+                                            for (OldOrgan fifthOrgan : fifthOrgans) {
+                                                sixthVehicles = fifthOrgan.getVehicle();
                                                 sixthVsize = sixthVehicles.size();
 
-                                                sixthOrganOrgans = fifthOrgan.getOrgans();
+                                                List<OldOrgan> sixthOrganOrgans = fifthOrgan.getOrgan();
                                                 sixthOsize = sixthOrganOrgans.size();
 
                                                 String stateType6 = "";
@@ -476,17 +700,178 @@ public class DatasUtils {
         return countAllStr;
     }
 
-    private static String initDatasTreeStrSecond(OrgansBean firstOrgans) {
+
+    private static String initDatasTreeStr(List<CarListInfosMsgBean> msg) {
+
+        String countAllStr = "";
+        int count = 0;
+        int countAll = 0;
+
+        int size = msg.size();
+        if (size <= 0) {
+            return "";
+        }
+        CarListInfosMsgBean msgBean = msg.get(0);
+
+        /*第二层*/
+        List<VehiclesBeanX> firstVehicles = msgBean.getVehicle();
+        firstVsize = firstVehicles.size();
+
+        List<OrgansBean> firstOrgans = msgBean.getOrgan();
+        firstOsize = firstOrgans.size();
+
+        // id , pid , label , 其他属性
+
+        if (firstVsize > 0) {
+            for (VehiclesBeanX firstVehicle : firstVehicles) {
+                firstVehicleStateType = firstVehicle.getStateType();
+                countAll++;
+                if (firstVehicleStateType.contains("1")) {
+                    count++;
+                } else if (firstVehicleStateType.contains("2")) {
+                    count++;
+                }
+            }
+        }
+
+        if (firstOsize > 0) {
+            for (OrgansBean organ : firstOrgans) {
+
+                secondVehicles = organ.getVehicle();
+                secondVsize = secondVehicles.size();
+
+                List<Organ> organs = organ.getOrgan();
+                secondOsize = organs.size();
+                if (secondVsize > 0) {
+                    for (VehiclesBean secondVehicle : secondVehicles) {
+                        stateType2 = secondVehicle.getStateType();
+                        countAll++;
+                        if (stateType2.contains("1")) {
+                            count++;
+                        } else if (stateType2.contains("2")) {
+                            count++;
+                        }
+                    }
+                }
+
+
+//                第三层
+                if (secondOsize > 0) {
+                    for (Organ secondOrgans : organs) {
+
+                        thirdVehicles = secondOrgans.getVehicle();
+                        thirdVsize = thirdVehicles.size();
+
+                        thirdOrgans = secondOrgans.getOrgan();
+                        thirdOsize = thirdOrgans.size();
+
+                        if (thirdVsize > 0) {
+                            for (VehiclesBean thirdVehicle : thirdVehicles) {
+                                countAll++;
+                                sStateType3 = thirdVehicle.getStateType();
+                                if (sStateType3.contains("1")) {
+                                    count++;
+                                } else if (sStateType3.contains("2")) {
+                                    count++;
+                                }
+                            }
+                        }
+
+
+//                        第四层
+                        if (thirdOsize > 0) {
+                            for (Organ thirdOrgan : thirdOrgans) {
+
+                                fourthvehicles = thirdOrgan.getVehicle();
+                                fourthVsize = fourthvehicles.size();
+
+                                fourthOrgans = thirdOrgan.getOrgan();
+                                fourthOsize = fourthOrgans.size();
+
+                                String stateType4 = "";
+                                if (fourthVsize > 0) {
+                                    for (VehiclesBean fourthvehicle : fourthvehicles) {
+                                        countAll++;
+                                        stateType4 = fourthvehicle.getStateType();
+                                        if (stateType4.contains("1")) {
+                                            count++;
+                                        } else if (stateType4.contains("2")) {
+                                            count++;
+                                        }
+                                    }
+                                }
+
+//                                第五层
+                                if (fourthOsize > 0) {
+                                    for (Organ fourthOrgan : fourthOrgans) {
+
+                                        fifthVehicles = fourthOrgan.getVehicle();
+                                        fifthVsize = fifthVehicles.size();
+
+                                        fifthOrgans = fourthOrgan.getOrgan();
+                                        fifthOsize = fifthOrgans.size();
+
+
+                                        String stateType5 = "";
+                                        if (fifthVsize > 0) {
+                                            for (VehiclesBean fifthVehicle : fifthVehicles) {
+                                                countAll++;
+                                                stateType5 = fifthVehicle.getStateType();
+                                                if (stateType5.equals("1")) {
+                                                    count++;
+                                                } else if (stateType5.equals("2")) {
+                                                    count++;
+                                                }
+                                            }
+                                        }
+
+//                                        第六层
+                                        if (fifthOsize > 0) {
+                                            for (Organ fifthOrgan : fifthOrgans) {
+                                                sixthVehicles = fifthOrgan.getVehicle();
+                                                sixthVsize = sixthVehicles.size();
+
+                                                sixthOrganOrgans = fifthOrgan.getOrgan();
+                                                sixthOsize = sixthOrganOrgans.size();
+
+                                                String stateType6 = "";
+                                                if (sixthVsize > 0) {
+                                                    for (VehiclesBean sixthVehicle : sixthVehicles) {
+                                                        stateType6 = sixthVehicle.getStateType();
+                                                        countAll++;
+                                                        if (stateType6.contains("1")) {
+                                                            count++;
+                                                        } else if (stateType6.contains("2")) {
+                                                            count++;
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        countAllStr = count + "/" + countAll;
+        return countAllStr;
+    }
+
+    private static String initDatasTreeStrSecondOld(OldOrgansBean firstOrgans) {
 
         String countAllStr = "";
         int count = 0;
         int countAll = 0;
 
 
-        secondVehicles = firstOrgans.getVehicles();
+        secondVehicles = firstOrgans.getVehicle();
         secondVsize = secondVehicles.size();
 
-        List<Organ> organs = firstOrgans.getOrgans();
+        List<OldOrgan> organs = firstOrgans.getOrgan();
         secondOsize = organs.size();
         if (secondVsize > 0) {
             for (VehiclesBean secondVehicle : secondVehicles) {
@@ -503,12 +888,12 @@ public class DatasUtils {
 
 //                第三层
         if (secondOsize > 0) {
-            for (Organ secondOrgans : organs) {
+            for (OldOrgan secondOrgans : organs) {
 
-                thirdVehicles = secondOrgans.getVehicles();
+                thirdVehicles = secondOrgans.getVehicle();
                 thirdVsize = thirdVehicles.size();
 
-                thirdOrgans = secondOrgans.getOrgans();
+                List<OldOrgan> thirdOrgans = secondOrgans.getOrgan();
                 thirdOsize = thirdOrgans.size();
 
                 if (thirdVsize > 0) {
@@ -526,12 +911,12 @@ public class DatasUtils {
 
 //                        第四层
                 if (thirdOsize > 0) {
-                    for (Organ thirdOrgan : thirdOrgans) {
+                    for (OldOrgan thirdOrgan : thirdOrgans) {
 
-                        fourthvehicles = thirdOrgan.getVehicles();
+                        fourthvehicles = thirdOrgan.getVehicle();
                         fourthVsize = fourthvehicles.size();
 
-                        fourthOrgans = thirdOrgan.getOrgans();
+                        List<OldOrgan> fourthOrgans = thirdOrgan.getOrgan();
                         fourthOsize = fourthOrgans.size();
 
                         String stateType4 = "";
@@ -549,12 +934,12 @@ public class DatasUtils {
 
 //                                第五层
                         if (fourthOsize > 0) {
-                            for (Organ fourthOrgan : fourthOrgans) {
+                            for (OldOrgan fourthOrgan : fourthOrgans) {
 
-                                fifthVehicles = fourthOrgan.getVehicles();
+                                fifthVehicles = fourthOrgan.getVehicle();
                                 fifthVsize = fifthVehicles.size();
 
-                                fifthOrgans = fourthOrgan.getOrgans();
+                                List<OldOrgan> fifthOrgans = fourthOrgan.getOrgan();
                                 fifthOsize = fifthOrgans.size();
 
 
@@ -573,11 +958,11 @@ public class DatasUtils {
 
 //                                        第六层
                                 if (fifthOsize > 0) {
-                                    for (Organ fifthOrgan : fifthOrgans) {
-                                        sixthVehicles = fifthOrgan.getVehicles();
+                                    for (OldOrgan fifthOrgan : fifthOrgans) {
+                                        sixthVehicles = fifthOrgan.getVehicle();
                                         sixthVsize = sixthVehicles.size();
 
-                                        sixthOrganOrgans = fifthOrgan.getOrgans();
+                                        List<OldOrgan> sixthOrganOrgans = fifthOrgan.getOrgan();
                                         sixthOsize = sixthOrganOrgans.size();
 
                                         String stateType6 = "";
@@ -607,17 +992,17 @@ public class DatasUtils {
     }
 
 
-    private static String initDatasTreeStrThird(Organ organ) {
+    private static String initDatasTreeStrSecond(OrgansBean firstOrgans) {
 
         String countAllStr = "";
         int count = 0;
         int countAll = 0;
 
 
-        secondVehicles = organ.getVehicles();
+        secondVehicles = firstOrgans.getVehicle();
         secondVsize = secondVehicles.size();
 
-        List<Organ> organs = organ.getOrgans();
+        List<Organ> organs = firstOrgans.getOrgan();
         secondOsize = organs.size();
         if (secondVsize > 0) {
             for (VehiclesBean secondVehicle : secondVehicles) {
@@ -636,10 +1021,10 @@ public class DatasUtils {
         if (secondOsize > 0) {
             for (Organ secondOrgans : organs) {
 
-                thirdVehicles = secondOrgans.getVehicles();
+                thirdVehicles = secondOrgans.getVehicle();
                 thirdVsize = thirdVehicles.size();
 
-                thirdOrgans = secondOrgans.getOrgans();
+                thirdOrgans = secondOrgans.getOrgan();
                 thirdOsize = thirdOrgans.size();
 
                 if (thirdVsize > 0) {
@@ -659,10 +1044,10 @@ public class DatasUtils {
                 if (thirdOsize > 0) {
                     for (Organ thirdOrgan : thirdOrgans) {
 
-                        fourthvehicles = thirdOrgan.getVehicles();
+                        fourthvehicles = thirdOrgan.getVehicle();
                         fourthVsize = fourthvehicles.size();
 
-                        fourthOrgans = thirdOrgan.getOrgans();
+                        fourthOrgans = thirdOrgan.getOrgan();
                         fourthOsize = fourthOrgans.size();
 
                         String stateType4 = "";
@@ -682,10 +1067,10 @@ public class DatasUtils {
                         if (fourthOsize > 0) {
                             for (Organ fourthOrgan : fourthOrgans) {
 
-                                fifthVehicles = fourthOrgan.getVehicles();
+                                fifthVehicles = fourthOrgan.getVehicle();
                                 fifthVsize = fifthVehicles.size();
 
-                                fifthOrgans = fourthOrgan.getOrgans();
+                                fifthOrgans = fourthOrgan.getOrgan();
                                 fifthOsize = fifthOrgans.size();
 
 
@@ -705,10 +1090,268 @@ public class DatasUtils {
 //                                        第六层
                                 if (fifthOsize > 0) {
                                     for (Organ fifthOrgan : fifthOrgans) {
-                                        sixthVehicles = fifthOrgan.getVehicles();
+                                        sixthVehicles = fifthOrgan.getVehicle();
                                         sixthVsize = sixthVehicles.size();
 
-                                        sixthOrganOrgans = fifthOrgan.getOrgans();
+                                        sixthOrganOrgans = fifthOrgan.getOrgan();
+                                        sixthOsize = sixthOrganOrgans.size();
+
+                                        String stateType6 = "";
+                                        if (sixthVsize > 0) {
+                                            for (VehiclesBean sixthVehicle : sixthVehicles) {
+                                                stateType6 = sixthVehicle.getStateType();
+                                                countAll++;
+                                                if (stateType6.contains("1")) {
+                                                    count++;
+                                                } else if (stateType6.contains("2")) {
+                                                    count++;
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        countAllStr = count + "/" + countAll;
+        return countAllStr;
+    }
+
+
+    private static String initDatasTreeStrThirdOld(OldOrgan organ) {
+
+        String countAllStr = "";
+        int count = 0;
+        int countAll = 0;
+
+
+        secondVehicles = organ.getVehicle();
+        secondVsize = secondVehicles.size();
+
+        List<OldOrgan> organs = organ.getOrgan();
+        secondOsize = organs.size();
+        if (secondVsize > 0) {
+            for (VehiclesBean secondVehicle : secondVehicles) {
+                stateType2 = secondVehicle.getStateType();
+                countAll++;
+                if (stateType2.contains("1")) {
+                    count++;
+                } else if (stateType2.contains("2")) {
+                    count++;
+                }
+            }
+        }
+
+
+//                第三层
+        if (secondOsize > 0) {
+            for (OldOrgan secondOrgans : organs) {
+
+                thirdVehicles = secondOrgans.getVehicle();
+                thirdVsize = thirdVehicles.size();
+                List<OldOrgan> thirdOrgans = secondOrgans.getOrgan();
+                thirdOsize = thirdOrgans.size();
+
+                if (thirdVsize > 0) {
+                    for (VehiclesBean thirdVehicle : thirdVehicles) {
+                        countAll++;
+                        sStateType3 = thirdVehicle.getStateType();
+                        if (sStateType3.contains("1")) {
+                            count++;
+                        } else if (sStateType3.contains("2")) {
+                            count++;
+                        }
+                    }
+                }
+
+
+//                        第四层
+                if (thirdOsize > 0) {
+                    for (OldOrgan thirdOrgan : thirdOrgans) {
+
+                        fourthvehicles = thirdOrgan.getVehicle();
+                        fourthVsize = fourthvehicles.size();
+                        List<OldOrgan> fourthOrgans = thirdOrgan.getOrgan();
+                        fourthOsize = fourthOrgans.size();
+
+                        String stateType4 = "";
+                        if (fourthVsize > 0) {
+                            for (VehiclesBean fourthvehicle : fourthvehicles) {
+                                countAll++;
+                                stateType4 = fourthvehicle.getStateType();
+                                if (stateType4.contains("1")) {
+                                    count++;
+                                } else if (stateType4.contains("2")) {
+                                    count++;
+                                }
+                            }
+                        }
+
+//                                第五层
+                        if (fourthOsize > 0) {
+                            for (OldOrgan fourthOrgan : fourthOrgans) {
+
+                                fifthVehicles = fourthOrgan.getVehicle();
+                                fifthVsize = fifthVehicles.size();
+
+                                List<OldOrgan> fifthOrgans = fourthOrgan.getOrgan();
+                                fifthOsize = fifthOrgans.size();
+
+
+                                String stateType5 = "";
+                                if (fifthVsize > 0) {
+                                    for (VehiclesBean fifthVehicle : fifthVehicles) {
+                                        countAll++;
+                                        stateType5 = fifthVehicle.getStateType();
+                                        if (stateType5.equals("1")) {
+                                            count++;
+                                        } else if (stateType5.equals("2")) {
+                                            count++;
+                                        }
+                                    }
+                                }
+
+//                                        第六层
+                                if (fifthOsize > 0) {
+                                    for (OldOrgan fifthOrgan : fifthOrgans) {
+                                        sixthVehicles = fifthOrgan.getVehicle();
+                                        sixthVsize = sixthVehicles.size();
+
+                                        List<OldOrgan> sixthOrganOrgans = fifthOrgan.getOrgan();
+                                        sixthOsize = sixthOrganOrgans.size();
+
+                                        String stateType6 = "";
+                                        if (sixthVsize > 0) {
+                                            for (VehiclesBean sixthVehicle : sixthVehicles) {
+                                                stateType6 = sixthVehicle.getStateType();
+                                                countAll++;
+                                                if (stateType6.contains("1")) {
+                                                    count++;
+                                                } else if (stateType6.contains("2")) {
+                                                    count++;
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        countAllStr = count + "/" + countAll;
+        return countAllStr;
+    }
+
+    private static String initDatasTreeStrThird(Organ organ) {
+
+        String countAllStr = "";
+        int count = 0;
+        int countAll = 0;
+
+
+        secondVehicles = organ.getVehicle();
+        secondVsize = secondVehicles.size();
+
+        List<Organ> organs = organ.getOrgan();
+        secondOsize = organs.size();
+        if (secondVsize > 0) {
+            for (VehiclesBean secondVehicle : secondVehicles) {
+                stateType2 = secondVehicle.getStateType();
+                countAll++;
+                if (stateType2.contains("1")) {
+                    count++;
+                } else if (stateType2.contains("2")) {
+                    count++;
+                }
+            }
+        }
+
+
+//                第三层
+        if (secondOsize > 0) {
+            for (Organ secondOrgans : organs) {
+
+                thirdVehicles = secondOrgans.getVehicle();
+                thirdVsize = thirdVehicles.size();
+
+                thirdOrgans = secondOrgans.getOrgan();
+                thirdOsize = thirdOrgans.size();
+
+                if (thirdVsize > 0) {
+                    for (VehiclesBean thirdVehicle : thirdVehicles) {
+                        countAll++;
+                        sStateType3 = thirdVehicle.getStateType();
+                        if (sStateType3.contains("1")) {
+                            count++;
+                        } else if (sStateType3.contains("2")) {
+                            count++;
+                        }
+                    }
+                }
+
+
+//                        第四层
+                if (thirdOsize > 0) {
+                    for (Organ thirdOrgan : thirdOrgans) {
+
+                        fourthvehicles = thirdOrgan.getVehicle();
+                        fourthVsize = fourthvehicles.size();
+
+                        fourthOrgans = thirdOrgan.getOrgan();
+                        fourthOsize = fourthOrgans.size();
+
+                        String stateType4 = "";
+                        if (fourthVsize > 0) {
+                            for (VehiclesBean fourthvehicle : fourthvehicles) {
+                                countAll++;
+                                stateType4 = fourthvehicle.getStateType();
+                                if (stateType4.contains("1")) {
+                                    count++;
+                                } else if (stateType4.contains("2")) {
+                                    count++;
+                                }
+                            }
+                        }
+
+//                                第五层
+                        if (fourthOsize > 0) {
+                            for (Organ fourthOrgan : fourthOrgans) {
+
+                                fifthVehicles = fourthOrgan.getVehicle();
+                                fifthVsize = fifthVehicles.size();
+
+                                fifthOrgans = fourthOrgan.getOrgan();
+                                fifthOsize = fifthOrgans.size();
+
+
+                                String stateType5 = "";
+                                if (fifthVsize > 0) {
+                                    for (VehiclesBean fifthVehicle : fifthVehicles) {
+                                        countAll++;
+                                        stateType5 = fifthVehicle.getStateType();
+                                        if (stateType5.equals("1")) {
+                                            count++;
+                                        } else if (stateType5.equals("2")) {
+                                            count++;
+                                        }
+                                    }
+                                }
+
+//                                        第六层
+                                if (fifthOsize > 0) {
+                                    for (Organ fifthOrgan : fifthOrgans) {
+                                        sixthVehicles = fifthOrgan.getVehicle();
+                                        sixthVsize = sixthVehicles.size();
+
+                                        sixthOrganOrgans = fifthOrgan.getOrgan();
                                         sixthOsize = sixthOrganOrgans.size();
 
                                         String stateType6 = "";
@@ -744,10 +1387,10 @@ public class DatasUtils {
         int countAll = 0;
 
 
-        secondVehicles = organ.getVehicles();
+        secondVehicles = organ.getVehicle();
         secondVsize = secondVehicles.size();
 
-        List<Organ> organs = organ.getOrgans();
+        List<Organ> organs = organ.getOrgan();
         secondOsize = organs.size();
         if (secondVsize > 0) {
             for (VehiclesBean secondVehicle : secondVehicles) {
@@ -766,10 +1409,10 @@ public class DatasUtils {
         if (secondOsize > 0) {
             for (Organ secondOrgans : organs) {
 
-                thirdVehicles = secondOrgans.getVehicles();
+                thirdVehicles = secondOrgans.getVehicle();
                 thirdVsize = thirdVehicles.size();
 
-                thirdOrgans = secondOrgans.getOrgans();
+                thirdOrgans = secondOrgans.getOrgan();
                 thirdOsize = thirdOrgans.size();
 
                 if (thirdVsize > 0) {
@@ -789,10 +1432,10 @@ public class DatasUtils {
                 if (thirdOsize > 0) {
                     for (Organ thirdOrgan : thirdOrgans) {
 
-                        fourthvehicles = thirdOrgan.getVehicles();
+                        fourthvehicles = thirdOrgan.getVehicle();
                         fourthVsize = fourthvehicles.size();
 
-                        fourthOrgans = thirdOrgan.getOrgans();
+                        fourthOrgans = thirdOrgan.getOrgan();
                         fourthOsize = fourthOrgans.size();
 
                         String stateType4 = "";
@@ -812,10 +1455,10 @@ public class DatasUtils {
                         if (fourthOsize > 0) {
                             for (Organ fourthOrgan : fourthOrgans) {
 
-                                fifthVehicles = fourthOrgan.getVehicles();
+                                fifthVehicles = fourthOrgan.getVehicle();
                                 fifthVsize = fifthVehicles.size();
 
-                                fifthOrgans = fourthOrgan.getOrgans();
+                                fifthOrgans = fourthOrgan.getOrgan();
                                 fifthOsize = fifthOrgans.size();
 
 
@@ -835,10 +1478,10 @@ public class DatasUtils {
 //                                        第六层
                                 if (fifthOsize > 0) {
                                     for (Organ fifthOrgan : fifthOrgans) {
-                                        sixthVehicles = fifthOrgan.getVehicles();
+                                        sixthVehicles = fifthOrgan.getVehicle();
                                         sixthVsize = sixthVehicles.size();
 
-                                        sixthOrganOrgans = fifthOrgan.getOrgans();
+                                        sixthOrganOrgans = fifthOrgan.getOrgan();
                                         sixthOsize = sixthOrganOrgans.size();
 
                                         String stateType6 = "";
@@ -919,12 +1562,14 @@ public class DatasUtils {
             String name = carData.getName();
             String stateType = carData.getStateType();
             String terminalNO = carData.getTerminalNO();
+            String terminalNoId = carData.getAddress();
             if (count.equals("0")) {
                 if (name.contains(keyWord)) {
                     CarListSelectBean selectBean = new CarListSelectBean();
                     selectBean.setName(name);
                     selectBean.setType(stateType);
                     selectBean.setTerminal(terminalNO);
+                    selectBean.setTerminalId(terminalNoId);
                     carListSelect.add(selectBean);
                 }
             }

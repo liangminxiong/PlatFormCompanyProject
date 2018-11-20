@@ -6,24 +6,22 @@
                 android:layout_height="match_parent"
                 android:background="@color/white">
 
+    <com.baidu.mapapi.map.TextureMapView
+        android:id="@+id/mapview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <include
         android:id="@+id/il_title"
         layout="@layout/title_bar_mvp"/>
 
-
-    <com.baidu.mapapi.map.TextureMapView
-        android:id="@+id/mapview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/il_title"/>
-
-
     <RelativeLayout
+        android:id="@+id/rl_child"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginEnd="@dimen/dp_10"
         android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginTop="@dimen/dp_280"
         android:background="@drawable/shape_cricle_bg_gray_top">
 
 
@@ -39,20 +37,18 @@
             <TextView
                 android:id="@+id/tv_start_time"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="@dimen/dp_40"
                 android:gravity="center"
-                android:paddingStart="@dimen/dp_10"
                 android:text="2018-01-01 00:00:00"
+                android:paddingStart="@dimen/dp_12"
                 android:textColor="@color/titel_color"
-                android:textSize="@dimen/sp_12"
+                android:textSize="@dimen/sp_13"
                 tools:ignore="HardcodedText,RtlSymmetry"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/dp_30"
+                android:layout_height="@dimen/dp_40"
                 android:gravity="center"
-                android:paddingEnd="@dimen/dp_2"
-                android:paddingStart="@dimen/dp_2"
                 android:text="---"
                 android:textColor="@color/titel_color"
                 tools:ignore="HardcodedText"/>
@@ -62,10 +58,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_30"
                 android:gravity="center"
-                android:paddingEnd="@dimen/dp_10"
+                android:paddingEnd="@dimen/dp_12"
                 android:text="2018-01-01 23:59:59"
                 android:textColor="@color/titel_color"
-                android:textSize="@dimen/sp_12"
+                android:textSize="@dimen/sp_13"
                 tools:ignore="HardcodedText,RtlSymmetry"/>
 
 
@@ -82,11 +78,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/dp_5"
+                android:layout_toStartOf="@id/tv_use_time"
                 android:drawablePadding="@dimen/dp_5"
                 android:drawableStart="@drawable/jiancha_time"
                 android:gravity="center"
-                android:layout_marginEnd="@dimen/dp_10"
-                android:layout_toStartOf="@id/tv_use_time"
                 android:text="用时"
                 android:textColor="@color/gray_70"
                 android:textSize="@dimen/sp_14"
@@ -97,14 +93,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/dp_24"
+                android:layout_marginEnd="@dimen/dp_10"
                 android:layout_toStartOf="@id/tv_midle"
-                android:layout_weight="1"
                 android:background="@drawable/shape_bg_time_confirm"
                 android:gravity="center"
                 android:paddingEnd="@dimen/dp_3"
                 android:paddingStart="@dimen/dp_3"
-                android:text="00:00"
+                android:text="00:00:00"
                 android:textColor="@color/titel_color"
                 android:textSize="@dimen/sp_14"
                 tools:ignore="HardcodedText"/>
@@ -182,9 +177,9 @@
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/dp_10"
-            android:layout_marginEnd="@dimen/dp_10"
             android:layout_below="@id/view"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_10"
             android:visibility="visible"/>
 
         <TextView

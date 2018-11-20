@@ -34,7 +34,7 @@ public class SimpleTreeAdapter extends TreeListViewAdapter {
             convertView = mInflater.inflate(R.layout.list_item, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.cb = (CheckBox) convertView
-                    .findViewById(R.id.cb_select_tree);
+                    .findViewById(R.id.iv_select_tree);
             viewHolder.label = (TextView) convertView
                     .findViewById(R.id.id_treenode_label);
             viewHolder.icon = (ImageView) convertView.findViewById(R.id.icon);

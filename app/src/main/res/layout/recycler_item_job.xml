@@ -7,7 +7,7 @@
                 android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tv_item_name"
+        android:id="@+id/tv_item_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_36"
         android:gravity="center_vertical"
@@ -22,7 +22,7 @@
         android:id="@+id/tv_item_type"
         android:layout_width="@dimen/dp_90"
         android:layout_height="@dimen/dp_32"
-        android:layout_below="@id/tv_item_name"
+        android:layout_below="@id/tv_item_title"
         android:paddingStart="@dimen/dp_30"
 
         android:textSize="@dimen/sp_13"
@@ -33,7 +33,7 @@
         android:id="@+id/tv_item_other"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_32"
-        android:layout_below="@id/tv_item_name"
+        android:layout_below="@id/tv_item_title"
         android:layout_toRightOf="@id/tv_item_type"
         android:paddingEnd="@dimen/dp_15"
         android:paddingStart="@dimen/dp_30"

@@ -11,7 +11,7 @@ public class Node<T, B> {
     /**
      * 传入的实体对象
      */
-    public B bean;
+    public T bean;
     /**
      * 设置开启 关闭的图片
      */
@@ -111,7 +111,7 @@ public class Node<T, B> {
         this.isvisible = isvisible;
     }
 
-    public Node(T id, T pId, String name, B bean) {
+    public Node(T id, T pId, String name, T bean) {
         super();
         this.id = id;
         this.pId = pId;
@@ -134,6 +134,14 @@ public class Node<T, B> {
 
     public void setId(T id) {
         this.id = id;
+    }
+
+    public T getBean() {
+        return bean;
+    }
+
+    public void setBean(T bean) {
+        this.bean = bean;
     }
 
     public T getpId() {

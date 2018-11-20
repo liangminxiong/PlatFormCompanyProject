@@ -28,6 +28,7 @@ import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
 import com.common.utils.LocationGpsUtils;
 import com.common.utils.PreferencesUtils;
+import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
 import com.common.view.dialog.SucessCacheSureDialog;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
@@ -276,6 +277,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
                 break;
 
             case Constans.UPLOADSUCESS:
+                PreferencesUtils.putString(this, Constans.ISSINGIN, TimeUtils.getCurrentTime2());
                 showSuccessDialog(getString(R.string.upload_success));
                 break;
             case Constans.USERERROR:
@@ -431,29 +433,32 @@ public class ProblemUpdateActivity extends BaseActivity implements
 
     /*提交问题*/
     private void uploadProblem() {
-        String problem = edt_problem_txt.getText().toString().trim();
-        if (TextUtils.isEmpty(problem)) {
-            showSuccessToast("请填写问题描述");
-            return;
-        }
-        if (TextUtils.isEmpty(mImagesArrays)) {
-            showSuccessToast("请选择图片上传");
-            return;
-        }
-        if (TextUtils.isEmpty(address)) {
-            showSuccessToast("请确定位置");
-            return;
-        }
+        try {
+            String problem = edt_problem_txt.getText().toString().trim();
+            if (TextUtils.isEmpty(problem)) {
+                showSuccessToast("请填写问题描述");
+                return;
+            }
+            if (TextUtils.isEmpty(mImagesArrays)) {
+                showSuccessToast("请选择图片上传");
+                return;
+            }
+            if (TextUtils.isEmpty(address)) {
+                showSuccessToast("请确定位置");
+                return;
+            }
 
-        LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
-        latitude = latLng.latitude;
-        longitude = latLng.longitude;
+            LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+            latitude = latLng.latitude;
+            longitude = latLng.longitude;
 
-        String pid = PreferencesUtils.getString(this, "orgId", "");
-        String userid = PreferencesUtils.getString(this, "id", "");
-        presenter.uploadRubbishEvent(ApiService.UPLOADRUBBISHEVENT, userid, pid, problem, address,
-                String.valueOf(longitude), String.valueOf(latitude), type, mImagesArrays);
-
+            String pid = PreferencesUtils.getString(this, "orgId", "");
+            String userid = PreferencesUtils.getString(this, "id", "");
+            presenter.uploadRubbishEvent(ApiService.UPLOADRUBBISHEVENT, userid, pid, problem, address,
+                    String.valueOf(longitude), String.valueOf(latitude), type, mImagesArrays);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

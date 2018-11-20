@@ -23,13 +23,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-/*信息详情*/
+/*信息详情List*/
 @SuppressLint("Registered")
-public class MsgDetailInfosActivtiy extends BaseActivity {
+public class MsgListDetailInfosActivtiy extends BaseActivity {
 
     @BindView(R.id.tv_title)
     TextView tv_title;
-//    @BindView(R.id.space)
+    //    @BindView(R.id.space)
 //    View view;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
@@ -46,9 +46,7 @@ public class MsgDetailInfosActivtiy extends BaseActivity {
     protected void initView(Bundle savedInstanceState) {
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        tv_title.setText(R.string.detail);
-//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
+        tv_title.setText(R.string.msg);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         initRecycleView();
 
@@ -105,10 +103,14 @@ public class MsgDetailInfosActivtiy extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                showSuccessToast(listData.get(position).getCount());
+                toOnlyDetailActivity(listData.get(position));
 
             }
         });
+    }
+
+    private void toOnlyDetailActivity(MsgDataBean msgDataBean) {
+        startActivity(new Intent(MsgListDetailInfosActivtiy.this,ReplyMsgDetailInfosActivtiy.class));
     }
 
 

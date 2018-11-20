@@ -9,11 +9,10 @@ public interface MonitoringOfJobContract {
     }
 
     interface Presenter {
-        /*信息采集*/
-        void upLoadmapInfo(String function, String pid, String userid, String typeid,
-                           String typename, String name, String lnglat, String area, String imageArrays);
-
-        /*信息采集类型*/
-        void getCaijiType(String function);
+        /*监察上报*/
+        void uploadJianCcha(String function, String userid, String pid, String timestart,
+                            String timeend, String timesum, String lnglat,String startAddress,String endAddress);
+        /*监察计划*/
+        void getJianChaCount(String function, String userid, String timestart, String timeend);
     }
 }

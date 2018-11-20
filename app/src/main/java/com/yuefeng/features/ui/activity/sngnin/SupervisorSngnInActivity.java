@@ -116,7 +116,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
         presenter = new SupervisorSngnInPresenter(this, this);
         isFirstLocation = true;
         requestPermissions();
-        selectPhoto();
+        initSselectPhoto();
         getTreeListData();
     }
 
@@ -140,7 +140,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     }
 
     /*图片选择*/
-    private void selectPhoto() {
+    private void initSselectPhoto() {
         FullyGridLayoutManager manager = new FullyGridLayoutManager(SupervisorSngnInActivity.this,
                 Constans.FOUR, GridLayoutManager.VERTICAL, false);
         recyclerview.setLayoutManager(manager);

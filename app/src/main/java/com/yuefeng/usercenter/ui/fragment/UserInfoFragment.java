@@ -135,7 +135,7 @@ public class UserInfoFragment extends BaseMvpFragment {
 //                break;
 //            case R.id.ui_clean:
 //                DeleteCacheDialog deleteCacheDialog = new DeleteCacheDialog(getContext());
-//                deleteCacheDialog.setDeletaCacheListener(new DeleteCacheDialog.DeletaCacheListener() {
+//                deleteCacheDialog.setReplyCancelListener(new DeleteCacheDialog.DeletaCacheListener() {
 //                    @Override
 //                    public void sure() {
 //                        DataCleanManager.clearAllCache(getContext());

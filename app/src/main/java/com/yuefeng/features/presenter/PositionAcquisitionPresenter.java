@@ -185,7 +185,8 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
             miniteSecond = minuteStr + "分" + secondStr + "秒,";
             if (type == 0) {
                 if (distance.equals("NaN")) {
-                    typeWhat = "无效采集数据";
+//                    typeWhat = "无效采集数据";
+                    typeWhat = "";
                 } else {
                     typeWhat = "面积约" + distance + "平方米";
                 }

@@ -156,6 +156,7 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
                 if (beanList.size() > 0) {
                     showAdapterDatasList(beanList);
                 } else {
+                    showAdapterDatasList(beanList);
                     showSuccessToast("无违规作业信息");
                 }
                 break;

@@ -29,8 +29,8 @@ public class CarListInfosMsgBean implements Serializable {
     private String principalTel;
     private String fax;
     private String address;
-    private List<OrgansBean> organs;
-    private List<VehiclesBeanX> vehicles;
+    private List<OrgansBean> organ;
+    private List<VehiclesBeanX> vehicle;
 
     public String getId() {
         return id;
@@ -104,19 +104,19 @@ public class CarListInfosMsgBean implements Serializable {
         this.address = address;
     }
 
-    public List<OrgansBean> getOrgans() {
-        return organs;
+    public List<OrgansBean> getOrgan() {
+        return organ;
     }
 
-    public void setOrgans(List<OrgansBean> organs) {
-        this.organs = organs;
+    public void setOrgan(List<OrgansBean> organ) {
+        this.organ = organ;
     }
 
-    public List<VehiclesBeanX> getVehicles() {
-        return vehicles;
+    public List<VehiclesBeanX> getVehicle() {
+        return vehicle;
     }
 
-    public void setVehicles(List<VehiclesBeanX> vehicles) {
-        this.vehicles = vehicles;
+    public void setVehicle(List<VehiclesBeanX> vehicle) {
+        this.vehicle = vehicle;
     }
 }

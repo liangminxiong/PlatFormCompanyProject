@@ -103,7 +103,35 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
-        <!---->
+
+        <!--========================百度地图（begin）============  =================-->
+        <!--开发版  3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c  or发布版 / BIvUidCXbyoqMciDxLVzbRPE6I91hZaN-->
+
+        <!--导航 appid-->
+        <meta-data
+            android:name="BaiduMobAd_STAT_ID"
+            android:value="14268406"/>
+        <!--android:value="11959239"/>-->
+
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
+
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote">
+        </service>
+        <!--========================百度地图（end）=============================-->
+
+
+        <!--测试-->
+        <activity
+            android:name="com.yuefeng.ui.DemoTestActivity"
+            android:hardwareAccelerated="false"/>
+        <!--启动页-->
+
         <activity
             android:name="com.yuefeng.login_splash.ui.SplashActivity"
             android:hardwareAccelerated="false"
@@ -117,10 +145,6 @@
 
         <activity
             android:name="com.yuefeng.ui.MainActivity"
-            android:hardwareAccelerated="false"/>
-        <!--测试-->
-        <activity
-            android:name="com.yuefeng.ui.TestActivity"
             android:hardwareAccelerated="false"/>
 
         <activity
@@ -212,7 +236,11 @@
             android:hardwareAccelerated="false"/>
         <!--消息详情-->
         <activity
-            android:name="com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy"
+            android:name="com.yuefeng.home.ui.activity.MsgListDetailInfosActivtiy"
+            android:hardwareAccelerated="false"/>
+        <!--单一详情-->
+        <activity
+            android:name="com.yuefeng.home.ui.activity.ReplyMsgDetailInfosActivtiy"
             android:hardwareAccelerated="false"/>
         <!--违规作业-->
         <activity
@@ -283,28 +311,6 @@
             </intent-filter>
         </receiver>
         <!-- 极光推送自定义的广播接收器 ym end-->
-
-
-        <!--========================百度地图（begin）============  =================-->
-        <!--开发版  3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c  or发布版 / BIvUidCXbyoqMciDxLVzbRPE6I91hZaN-->
-
-        <!--导航 appid-->
-        <meta-data
-            android:name="BaiduMobAd_STAT_ID"
-            android:value="14268406"/>
-        <!--android:value="11959239"/>-->
-
-
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
-
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote">
-        </service>
-        <!--========================百度地图（end）=============================-->
 
     </application>
 

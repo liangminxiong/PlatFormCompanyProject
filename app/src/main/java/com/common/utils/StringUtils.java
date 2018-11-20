@@ -62,4 +62,13 @@ public class StringUtils {
     public static String isEntryStrZero(String string) {
         return TextUtils.isEmpty(string) ? "0" : string;
     }
+
+    /*去掉时间末尾 .0*/
+    public static String returnStrTime(String string) {
+        if (TextUtils.isEmpty(string)) {
+            return "";
+        }
+        String[] strings = string.split("\\.");
+        return strings[0];
+    }
 }

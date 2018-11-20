@@ -16,7 +16,6 @@ import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
@@ -205,11 +204,9 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
             case Constans.USERERROR://个人签到失败
                 showSuccessToast("签到失败，请重试");
                 break;
-
             default:
 //                showSuccessToast("获取数据失败，请重试");
                 break;
-
         }
     }
 
@@ -222,8 +219,6 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
         qiaodao = dataBean.getQiaodao() + "";
         kuanggong = dataBean.getKuanggong() + "";
         signback = dataBean.getSignback() + "";
-        LogUtils.d("showKaoqinSum 00 = " + kaoqinsum + " ++ " + late + " ++ " + early +
-                " ++ " + daiqian + " ++ " + qiaodao + " ++ " + kuanggong + " ++ " + signback + " ++ ");
         kaoqinsum = TextUtils.isEmpty(kaoqinsum) ? "0" : kaoqinsum;
         late = TextUtils.isEmpty(late) ? "0" : late;
         early = TextUtils.isEmpty(early) ? "0" : early;
@@ -232,8 +227,6 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
         kuanggong = TextUtils.isEmpty(kuanggong) ? "0" : kuanggong;
         signback = TextUtils.isEmpty(signback) ? "0" : signback;
 
-        LogUtils.d("showKaoqinSum 22 = " + kaoqinsum + " ++ " + late + " ++ " + early +
-                " ++ " + daiqian + " ++ " + qiaodao + " ++ " + kuanggong + " ++ " + signback + " ++ ");
         tvChidao.setText(late);
         tvZaotui.setText(early);
         tvNosignin.setText(kuanggong);

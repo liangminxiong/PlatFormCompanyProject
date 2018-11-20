@@ -14,6 +14,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.BaseMvpFragment;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
+import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
@@ -27,7 +28,7 @@ import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
 import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
-import com.yuefeng.home.ui.activity.MsgDetailInfosActivtiy;
+import com.yuefeng.home.ui.activity.MsgListDetailInfosActivtiy;
 import com.yuefeng.home.ui.modle.MsgDataBean;
 
 import org.greenrobot.eventbus.EventBus;
@@ -115,7 +116,7 @@ public class FeaturesFragment extends BaseMvpFragment {
                     tempPosition = 3;
                 }
                 Intent intent = new Intent();
-                intent.setClass(Objects.requireNonNull(getActivity()), MsgDetailInfosActivtiy.class);
+                intent.setClass(Objects.requireNonNull(getActivity()), MsgListDetailInfosActivtiy.class);
                 intent.putExtra("msgList", (Serializable) listData);
                 intent.putExtra("tempPosition", tempPosition);
                 startActivity(intent);
@@ -245,14 +246,32 @@ public class FeaturesFragment extends BaseMvpFragment {
 
     /*作业监察*/
     private void problemUpload() {
+        try {
 //        startActivity(new Intent(getActivity(), MonitoringSngnInActivity.class));
-        startActivity(new Intent(getActivity(), MonitoringofJobActivity.class));
+            String string = PreferencesUtils.getString(getContext(), Constans.EMAIL, "");
+            if (string.equals("true")) {
+                startActivity(new Intent(getActivity(), MonitoringofJobActivity.class));
+            } else {
+                showSuccessToast("您无权限操作此功能");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 //        startActivity(new Intent(getActivity(), ProblemUpdateActivity.class));
     }
 
-    /*质量巡查*/
+    /*问题处理*/
     private void qualityXuncha() {
-        startActivity(new Intent(getActivity(), QualityInspectionActivity.class));
+        try {
+            String string = PreferencesUtils.getString(getContext(), Constans.EMAIL, "");
+            if (string.equals("true")) {
+                startActivity(new Intent(getActivity(), QualityInspectionActivity.class));
+            } else {
+                showSuccessToast("您无权限操作此功能");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*定位信息*/
@@ -263,8 +282,17 @@ public class FeaturesFragment extends BaseMvpFragment {
 
     /*作业考勤*/
     private void jobwebH5() {
+        try {
 //        startActivity(new Intent(getActivity(), WebH5ZuoyeKaoqinActivity.class));
-        startActivity(new Intent(getActivity(), JobAttendanceActivity.class));
+            String string = PreferencesUtils.getString(getContext(), Constans.EMAIL, "");
+            if (string.equals("true")) {
+                startActivity(new Intent(getActivity(), JobAttendanceActivity.class));
+            } else {
+                showSuccessToast("您无权限操作此功能");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

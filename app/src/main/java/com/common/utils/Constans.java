@@ -36,14 +36,23 @@ public class Constans {
     public static final int BAIDU_ZOOM_FOUTTEEN = 14;
     public static final int BAIDU_ZOOM_EIGHTEEN = 18;
     public static final String USERNAME = "user_name";//存储用户名
+    public static final String USERNAME_N = "userName";//存储用户名
     public static final String USERPASSWORD = "user_pwd";//存储用户名密码
     public static final String ANDROID = "android";
     public static final String ORGID = "orgId";
     public static final String ID = "id";
+    public static final String EMAIL = "Email";
     public static final String ISREG = "Isreg";
     public static final String TELNUM = "Telnum";
     public static final int COLLECTSIZE = 41;//获取收藏size
     public static final int COLLECTSIZEERROR = 42;//获取收藏size失败
+    /*是否签到或者上报*/
+    public static final String ISSINGIN = "isSngin";
+    public static final String STARTTIME = "startTime";
+    public static final String ENDTIME = "endTime";
+    public static final String STARTADDRESS = "startAddress";
+    public static final String ENDADDRESS = "endAddress";
+    public static final String ADDRESS = "mAddress";
     /*
      * webview模块 20-40
      * */
@@ -108,8 +117,11 @@ public class Constans {
      * */
     public static final int GETPERSONAL_SSUCESS = 70;//获取主管成功
     public static final int GETPERSONAL_ERROR = 71;//获取主管失败
-    public static final int JOB_SSUCESS = 72;//作业监控成功
-    public static final int JOB_ERROR = 73;//作业监控失败
+    public static final int JOB_SSUCESS = 72;//定位信息成功
+    public static final int JOB_P_SSUCESS = 721;//人员成功
+    public static final int JOB_V_SSUCESS = 722;//车辆成功
+    public static final int JOB_Q_SSUCESS = 723;//问题成功
+    public static final int JOB_ERROR = 73;//定位信息失败
 
     public static final int PERSONAL_SSUCESS = 74;//点击人员
     public static final int VEHICLE_SSUCESS = 75;//点击车辆
@@ -125,6 +137,7 @@ public class Constans {
     public static final int VIDEO_SSUCESS = 80;//轨迹成功
     public static final int VIDEO_ERROR = 81;//轨迹失败
     public static final int CARLIST_SSUCESS = 82;//车辆列表成功
+    public static final int CARLIST_SSUCESS_NEW = 821;//车辆列表成功
     public static final int CARLIST_ERROR = 83;//车辆列表失败
 
     public static final int CARLLEGAL_SSUCESS = 84;//车辆违规成功
@@ -141,11 +154,19 @@ public class Constans {
      * */
     public static final int SNGNIN_SSUCESS = 90;//考勤成功
     public static final int SNGNIN_ERROR = 91;//考勤失败
-    public static final int MSGCOLECTION_SSUCESS = 92;//信息采集成功
+    public static final int MSGCOLECTION_SSUCESS = 92;//上传信息采集成功
     public static final int MSGCOLECTION_ERROR = 93;//失败
 
     public static final int GETCAIJI_SSUCESS = 94;//获取采集类型成功
-    public static final int GETCAIJI_ERROR = 95;//失败
+    public static final int GETCAIJI_ERROR = 95;//
+
+    public static final int GETCAIJIHISTORY_SSUCESS = 96;//获取历史采集成功
+    public static final int GETCAIJIHISTORY_ERROR = 97;//失败
+
+    /*作业监察  100 - 110
+     * */
+    public static final int MONITORINGSIGNIN_SSUCESS = 100;//监察签到成功
+    public static final int MONITORINGSIGNIN_ERROR = 101;//失败
 
     /*修改密码 110 */
     public static final int CHANGEPWD_SSUCESS = 110;//修改密码成功

@@ -9,11 +9,7 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <!--<include layout="@layout/view_1px"/>-->
-
     <include layout="@layout/title_bar_mvp"/>
-
-    <View style="@style/horizontal_line"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

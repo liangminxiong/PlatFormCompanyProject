@@ -1,12 +1,7 @@
 package com.yuefeng.features.ui.activity.monitoring;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.location.GpsStatus;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.TextUtils;
@@ -20,6 +15,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -32,25 +30,23 @@ import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.utils.DistanceUtil;
 import com.common.base.codereview.BaseActivity;
-import com.common.location.LocationHelper;
-import com.common.location.MyLocationListener;
+import com.common.network.ApiService;
 import com.common.utils.Constans;
-import com.common.utils.LocationGpsUtils;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StringUtils;
+import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
+import com.common.view.dialog.SucessCacheSureDialog;
 import com.common.view.other.ImitateKeepButton;
-import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.MonitoringOfJobContract;
 import com.yuefeng.features.event.PositionAcquisitionEvent;
+import com.yuefeng.features.modle.GetMonitoringPlanCountBean;
 import com.yuefeng.features.presenter.monitoring.MonitoringOfJobPresenter;
 import com.yuefeng.features.ui.activity.ProblemUpdateActivity;
+import com.yuefeng.ui.MyApplication;
 import com.yuefeng.utils.BdLocationUtil;
-import com.yuefeng.utils.LocationUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,11 +55,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.functions.Consumer;
 
 
 /*作业监察*/
@@ -85,10 +79,6 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     ViewStub viewstubUpload;
     @BindView(R.id.btn_beginorstop)
     Button btnBeginorstop;
-    @BindDrawable(R.drawable.jiancha_but_broadcast)
-    Drawable icon_stop;
-    @BindDrawable(R.drawable.jiancha_but_pause)
-    Drawable icon_pause;
 
     private RelativeLayout rlSelectType;
     private TextView tvUserName;
@@ -97,6 +87,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     private TextView tvActualCount;
 
 
+    private RelativeLayout rlCttime;
     private Chronometer ctTimer;
 
     private RelativeLayout rlupload;
@@ -118,22 +109,22 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
 
     private long mRecordTime;
     private LatLng latLng;
-    private LocationHelper mLocationHelper;
-    private LatLng latLngTemp = null;
-    /*距离*/
-    private double distance = 0;
-    /*条件选择框*/
     List<LatLng> points = new ArrayList<>();
     private Polyline mPolyline;
     private MonitoringOfJobPresenter presenter;
 
     /*是否采集*/
     private boolean isPositionAcquisition = false;
-    private boolean isSngnInOrUpload = false;
     private boolean isStartTime = true;
-    /*选择网格还是路段*/
-    private int typePosition = 0;
-    private String area;
+    private boolean isPutStartTime = true;
+    private String mTimesum;
+
+    public MoLocationListenner myListener = new MoLocationListenner();
+    private LocationClient mLocClient;
+
+    private boolean isFirst = true;
+    private boolean isSecond = true;
+    private boolean isThird = true;
 
     @Override
     protected int getContentViewResId() {
@@ -146,52 +137,79 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
             EventBus.getDefault().register(this);
         }
         ButterKnife.bind(this);
-
-//        presenter = new MonitoringOfJobPresenter(this, this);
+        presenter = new MonitoringOfJobPresenter(this, this);
         isPositionAcquisition = false;
+        isPutStartTime = true;
+        isFirst = true;
+        isSecond = true;
+        isThird = true;
         initUI();
     }
 
     private void initUI() {
         tv_title.setText(R.string.problem_updata);
-        tvTitleSetting.setText("历史");
+        tvTitleSetting.setText(R.string.history);
         ll_root_position.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         ininViewStub();
-        isSngnInOrUpload = false;
     }
 
     private void ininViewStub() {
-        View view = viewstub.inflate();
-
-        rlSelectType = view.findViewById(R.id.rl_select_type);
-        tvUserName = view.findViewById(R.id.tv_user_name);
-        ivUserIcon = view.findViewById(R.id.iv_user_icon);
-        tvPlanCount = view.findViewById(R.id.tv_plan_count);
-        tvActualCount = view.findViewById(R.id.tv_actual_count);
+        if (isFirst) {
+            isFirst = false;
+            View view = viewstub.inflate();
+            rlSelectType = view.findViewById(R.id.rl_select_type);
+            tvUserName = view.findViewById(R.id.tv_user_name);
+            ivUserIcon = view.findViewById(R.id.iv_user_icon);
+            tvPlanCount = view.findViewById(R.id.tv_plan_count);
+            tvActualCount = view.findViewById(R.id.tv_actual_count);
+        }
 
         String userName = PreferencesUtils.getString(MonitoringofJobActivity.this, Constans.USERNAME);
         if (!TextUtils.isEmpty(userName)) {
             tvUserName.setText(userName);
         }
+        String startTime = TimeUtils.getTimeOfWeekStart();
+        String endTime = TimeUtils.getCurrentTime2();
+        getDatasByNet(startTime, endTime);
+
+    }
+
+    private void getDatasByNet(String startTime, String endTime) {
+        try {
+
+            if (presenter != null) {
+                String userid = PreferencesUtils.getString(MonitoringofJobActivity.this, Constans.ID);
+                presenter.getJianChaCount(ApiService.GETJIANCHACOUNT, userid, startTime, endTime);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void ininViewStubCtTimer() {
-        View view = viewstubCt.inflate();
-        ctTimer = view.findViewById(R.id.ct_timer);
-        tvNoexit = view.findViewById(R.id.tv_noexit);
-        tvNoexit.setOnClickListener(this);
+        if (isSecond) {
+            isSecond = false;
+            View view = viewstubCt.inflate();
+            rlCttime = view.findViewById(R.id.rl_cttime);
+            ctTimer = view.findViewById(R.id.ct_timer);
+            tvNoexit = view.findViewById(R.id.tv_noexit);
+            tvNoexit.setOnClickListener(this);
+        }
         initChronometer();
     }
 
     private void ininViewStubUpload() {
-        View view = viewstubUpload.inflate();
-        rlupload = view.findViewById(R.id.rl_upload);
-        tvUpload = view.findViewById(R.id.tv_upload);
-        tvSignin = view.findViewById(R.id.tv_signin);
-        ivStop = view.findViewById(R.id.iv_stop);
-        tvUpload.setOnClickListener(this);
-        tvSignin.setOnClickListener(this);
-        ivStop.setBackground(icon_stop);
+        if (isThird) {
+            isThird = false;
+            View view = viewstubUpload.inflate();
+            rlupload = view.findViewById(R.id.rl_upload);
+            tvUpload = view.findViewById(R.id.tv_upload);
+            tvSignin = view.findViewById(R.id.tv_signin);
+            ivStop = view.findViewById(R.id.iv_stop);
+            tvUpload.setOnClickListener(this);
+            tvSignin.setOnClickListener(this);
+        }
+        ivStop.setBackgroundResource(R.drawable.jiancha_but_start);
         ivStop.setOnViewShortClick(new ImitateKeepButton.OnViewShortClick() {
             @Override
             public void onShortClick(View view) {
@@ -206,7 +224,13 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
 
         @Override
         public void onFinish(View view) {
-            ivStop.setBackground(icon_pause);
+            ivStop.setBackgroundResource(R.drawable.jiancha_but_pause);
+            initCtStop();
+            tv_release();
+            if (baiduMap != null) {
+                baiduMap.clear();
+            }
+            isFirstLoc = true;
         }
     }
 
@@ -218,28 +242,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
 
     @Override
     protected void initData() {
-        requestPermissions();
-    }
-
-    /**
-     * 百度地图定位的请求方法 拿到国、省、市、区、地址
-     */
-    @SuppressLint("CheckResult")
-    private void requestPermissions() {
-        RxPermissions rxPermission = new RxPermissions(this);
-        rxPermission.request(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean granted) throws Exception {
-                        if (!granted) {
-                            showSuccessToast("App未能获取相关权限，部分功能可能不能正常使用.");
-                        } else {
-                            getLocation();
-                        }
-                    }
-                });
+        getLocation();
     }
 
     /*定位*/
@@ -247,18 +250,22 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         baiduMap = mapview.getMap();
         // 地图初始化
         mapview.showZoomControls(false);// 缩放控件是否显示
-
         // 开启定位图层
         baiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         baiduMap.setMyLocationEnabled(true);
         // 定位初始化
+        mLocClient = new LocationClient(this);
+        mLocClient.registerLocationListener(myListener);
+        LocationClientOption option = new LocationClientOption();
+        option.setOpenGps(true); // 打开gps
+        option.setCoorType("bd09ll"); // 设置坐标类型
+        option.setScanSpan(8000);
+        option.setIsNeedAddress(true);
+        option.setAddrType("all");
+        mLocClient.setLocOption(option);
+        mLocClient.start();
 
         baiduMap.showMapPoi(true);
-        boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
-        if (!gpsOPen) {
-            showSuccessToast("GPS未开启，定位有偏差");
-        }
-        useBdGpsLocation();
     }
 
 
@@ -268,25 +275,22 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         BdLocationUtil.getInstance().stopLocation();
     }
 
-    private void useBdGpsLocation() {
-        BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
-            @Override
-            public void myLocation(BDLocation location) {
-                if (location == null) {
-                    requestPermissions();
-                    return;
-                }
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                address = location.getAddrStr();
-                if (!TextUtils.isEmpty(address)) {
-                    int length = address.length();
-                    address = address.substring(2, length);
-                }
-                firstLocation(latitude, longitude, address);
+    /**
+     * 定位SDK监听函数
+     */
+    public class MoLocationListenner implements BDLocationListener {
+
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            // map view 销毁后不在处理新接收的位置
+            if (location == null || mapview == null) {
+                return;
             }
-        }, Constans.BDLOCATION_TIME);
-        initLocation();
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            address = location.getAddrStr();
+            firstLocation(latitude, longitude, address);
+        }
     }
 
     private void firstLocation(double latitude, double longitude, String address) {
@@ -295,75 +299,37 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
                 int length = address.length();
                 address = address.substring(2, length);
             }
-            latLngTemp = new LatLng(latitude, longitude);
+            latLng = new LatLng(latitude, longitude);
             if (isFirstLoc) {
                 isFirstLoc = false;
-                MapStatus ms = new MapStatus.Builder().target(latLngTemp)
+                MapStatus ms = new MapStatus.Builder().target(latLng)
                         .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                 ooA = new MarkerOptions().icon(personalImage).zIndex(10);
-                ooA.position(latLngTemp);
-                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                ooA.position(latLng);
+//                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                 mMarker = null;
                 mMarker = (Marker) (baiduMap.addOverlay(ooA));
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
 //            BdLocationUtil.MoveMapToCenter(baiduMap, latLngTemp, 14);
-                PreferencesUtils.putString(MonitoringofJobActivity.this, "Fengrun", "");
-                PreferencesUtils.putString(MonitoringofJobActivity.this, "mAddress", address);
+                PreferencesUtils.putString(MyApplication.getContext(), "Fengrun", address);
+                PreferencesUtils.putString(MyApplication.getContext(), "mAddress", address);
+                PreferencesUtils.putString(MonitoringofJobActivity.this, Constans.STARTADDRESS, address);
             }
+            PreferencesUtils.putString(MonitoringofJobActivity.this, Constans.ENDADDRESS, address);
+
+            starDrawTrackLine(latLng);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /*定时刷新*/
-    private void initLocation() {
-        mLocationHelper = new LocationHelper(this, Constans.TEN);
-        mLocationHelper.initLocation(new MyLocationListener() {
-
-            @Override
-            public void updateLastLocation(Location location) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
-                latitude = latLng.latitude;
-                longitude = latLng.longitude;
-            }
-
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void updateLocation(Location location) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-                LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
-                longitude = latLng.longitude;
-                latitude = latLng.latitude;
-                LogUtils.d("===========" + latLng);
-                starDrawTrackLine(latLng);
-            }
-
-            @Override
-            public void updateStatus(String provider, int status, Bundle extras) {
-
-            }
-
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void updateGpsStatus(GpsStatus gpsStatus) {
-
-            }
-        });
-    }
 
     private void starDrawTrackLine(LatLng latLng) {
         if (latLng == null) {
             return;
         }
-        double distance = DistanceUtil.getDistance(latLngTemp, latLng);
-        distance = Math.abs(distance);
-        if (distance > 0) {
-            latLngTemp = latLng;
-            drawTrackLine(latLngTemp);
-        }
+
+        drawTrackLine(latLng);
     }
 
     /*划线*/
@@ -372,17 +338,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
             if (isPositionAcquisition) {
                 points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
                 if (points.size() > 1 && baiduMap != null) {
-                    //清除上一次轨迹，避免重叠绘画
-                    baiduMap.clear();
-                    //起始点图层也会被清除，重新绘画
-                    MarkerOptions oStart = new MarkerOptions();
-                    oStart.position(points.get(0));
-                    oStart.icon(beginImage);
-                    baiduMap.addOverlay(oStart);
-
-                    OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
-                    mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
-                    BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
+                    drawLineIntoBaiduMap(baiduMap, points);
                 }
             }
         } catch (Exception e) {
@@ -390,23 +346,97 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         }
     }
 
+    /*划线*/
+    private void drawLineIntoBaiduMap(BaiduMap baiduMap, List<LatLng> points) {
+        //清除上一次轨迹，避免重叠绘画
+        baiduMap.clear();
+        //起始点图层也会被清除，重新绘画
+        MarkerOptions oStart = new MarkerOptions();
+        oStart.position(points.get(0));
+        oStart.icon(beginImage);
+        this.baiduMap.addOverlay(oStart);
+
+        OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(this.points);
+        mPolyline = (Polyline) this.baiduMap.addOverlay(ooPolyline);
+        BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposePositionAcquisitionEvent(PositionAcquisitionEvent event) {
         switch (event.getWhat()) {
             case Constans.MSGCOLECTION_SSUCESS:
-                showSuccessDialog("上传成功，是否退出当前界面?");
+                PreferencesUtils.putString(MonitoringofJobActivity.this, Constans.ISSINGIN, "");
+                resetTime();
+                showSuccess();
                 break;
             case Constans.MSGCOLECTION_ERROR://上传失败
+                resetTime();
+                break;
+
+            case Constans.CHANGEPWD_SSUCESS:
+                GetMonitoringPlanCountBean.MsgBean bean = (GetMonitoringPlanCountBean.MsgBean) event.getData();
+                if (bean != null) {
+                    showPlanCountUI(bean);
+                }
 
                 break;
-            case Constans.GETCAIJI_SSUCESS://获采集类型成功
-                break;
-            case Constans.GETCAIJI_ERROR://获采集类型失败
-//                showSuccessToast("发布失败");
-                break;
-            default:
+            case Constans.CHANGEPWD_ERROR://上传失败
 
                 break;
+        }
+    }
+
+    /*重置*/
+    private void resetTime() {
+        isStartTime = true;
+        isPositionAcquisition = false;
+        if (ctTimer != null) {
+            ctTimer.stop();
+            ctTimer.setBase(SystemClock.elapsedRealtime());
+            mRecordTime = 0;
+        }
+    }
+
+    private void showSuccess() {
+        SucessCacheSureDialog sureDialog = new SucessCacheSureDialog(MonitoringofJobActivity.this);
+        sureDialog.setTextContent("监察成功，是否退出当前界面?");
+        sureDialog.setDeletaCacheListener(new SucessCacheSureDialog.DeletaCacheListener() {
+            @Override
+            public void sure() {
+                finish();
+            }
+
+            @Override
+            public void cancle() {
+                startMonitoringAgain();
+
+            }
+        });
+        sureDialog.show();
+    }
+
+    /*再次监察*/
+    private void startMonitoringAgain() {
+
+        if (rlSelectType != null && rlupload != null && rlCttime != null) {
+            ViewUtils.setRlInVisible(rlSelectType, false);
+
+            ViewUtils.setBtnInVisible(btnBeginorstop, false);
+            ViewUtils.setRlInVisible(rlCttime, true);
+            ViewUtils.setRlInVisible(rlupload, true);
+        }
+    }
+
+    private void showPlanCountUI(GetMonitoringPlanCountBean.MsgBean bean) {
+        String plan = bean.getPlan();
+        plan = StringUtils.isEntryStrZero(plan);
+        String count = bean.getCount();
+        count = StringUtils.isEntryStrZero(count);
+        if (tvPlanCount != null) {
+            tvPlanCount.setText(plan);
+        }
+        if (tvActualCount != null) {
+            tvActualCount.setText(count);
         }
     }
 
@@ -419,11 +449,9 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     protected void widgetClick(View v) {
         switch (v.getId()) {
             case R.id.tv_upload:
-                isSngnInOrUpload = true;
                 startActivity(new Intent(MonitoringofJobActivity.this, ProblemUpdateActivity.class));
                 break;
             case R.id.tv_signin:
-                isSngnInOrUpload = true;
                 startActivity(new Intent(MonitoringofJobActivity.this, MonitoringSngnInActivity.class));
                 break;
             case R.id.tv_noexit:
@@ -437,9 +465,11 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         BdLocationUtil.getInstance().stopLocation();//停止定位
-        if (mLocationHelper != null) {
-            mLocationHelper.removeLocationUpdatesListener();
+        if (mLocClient != null) {
+            mLocClient.stop();
+            mLocClient = null;
         }
+
         assert mapview != null;
         mapview.getMap().clear();
         mapview.onDestroy();
@@ -448,66 +478,17 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         endImage.recycle();
     }
 
-    /*发布*/
-    private void tv_release() {
-//        if (presenter != null && points.size() > 0) {
-//
-//            String pid = PreferencesUtils.getString(this, Constans.ORGID, "");
-//            String userId = PreferencesUtils.getString(this, Constans.ID, "");
-//            lnglat = presenter.getLnglatStr(points);
-//            presenter.upLoadmapInfo(ApiService.UPLOADMAPINFO, pid, userId, typeId, tyepName, name, lnglat,
-//                    area, mImagesArrays);
-//        }
-    }
-
-
-    /*距离或者面积*/
-    private void initAreaOrDistance() {
-        LatLng latLngTemp = null;
-        area = "";
-        if (points.size() > 2) {
-            if (typePosition == 0) {//网格
-                points.add(new LatLng(points.get(0).latitude, points.get(0).longitude));
-                area = LocationUtils.getArea(points);//面积
-            } else {//路段
-                for (int i = 0; i < points.size(); i++) {
-                    if (latLngTemp != null) {
-                        distance = distance + DistanceUtil.getDistance(latLngTemp, points.get(i));
-                    }
-                    latLngTemp = points.get(i);
-                }
-                distance = distance / 1000.0;
-                area = StringUtils.getStringDistance(distance);
-            }
-        }
-
-        //起始点图层也会被清除，重新绘画
-        if (points.size() > 1) {
-            //清除上一次轨迹，避免重叠绘画
-            baiduMap.clear();
-            //起始点图层也会被清除，重新绘画
-            MarkerOptions oStart = new MarkerOptions();
-            oStart.position(points.get(0));
-            oStart.icon(beginImage);
-            baiduMap.addOverlay(oStart);
-
-            OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.BLUE).points(points);
-            mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
-            BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
-            MarkerOptions oEnd = new MarkerOptions();
-            oEnd.position(points.get(points.size() - 2));
-            oEnd.icon(endImage);
-            baiduMap.addOverlay(oEnd);
-        }
-    }
-
 
     /*开始监察*/
     private void beginOrStop() {
         ininViewStubCtTimer();
         ininViewStubUpload();
         points.add(new LatLng(latitude, longitude));
-//        startCtimer();
+        if (ctTimer != null && tvNoexit != null && rlCttime != null) {
+            ViewUtils.setRlInVisible(rlCttime, false);
+            ctTimer.setVisibility(View.VISIBLE);
+            tvNoexit.setVisibility(View.VISIBLE);
+        }
         ViewUtils.setRlInVisible(rlSelectType, true);
         ViewUtils.setBtnInVisible(btnBeginorstop, true);
         ViewUtils.setRlInVisible(rlupload, false);
@@ -542,22 +523,60 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
                 beginOrStop();
                 break;
             case R.id.tv_title_setting:
+//                tv_release();
                 startActivity(new Intent(MonitoringofJobActivity.this, MonitoringHistoryOfJobActivity.class));
                 break;
         }
+    }
 
+    /*发布*/
+    private void tv_release() {
+        if (presenter != null && points.size() > 0) {
+            try {
+
+                String pid = PreferencesUtils.getString(this, Constans.ORGID, "");
+                String userId = PreferencesUtils.getString(this, Constans.ID, "");
+                String startTime = PreferencesUtils.getString(this, Constans.STARTTIME, "");
+                String endTime = TimeUtils.getCurrentTime2();
+                String lnglat = presenter.getLnglatStr(points);
+                if (ctTimer != null) {
+                    mTimesum = ctTimer.getText().toString().trim();
+                }
+                if (!TextUtils.isEmpty(mTimesum)) {
+                    mTimesum = TimeUtils.formatTurnSecond(mTimesum);
+                }
+                String startAddress = PreferencesUtils.getString(MonitoringofJobActivity.this, Constans.STARTADDRESS, "");
+                String endAddress = PreferencesUtils.getString(MonitoringofJobActivity.this, Constans.ENDADDRESS, "");
+                presenter.uploadJianCcha(ApiService.UPLOADJIANCHA, userId, pid, startTime, endTime, mTimesum, lnglat, startAddress, endAddress);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void startCtimer() {
-        if (isSngnInOrUpload) {
+        String effective = PreferencesUtils.getString(this, Constans.ISSINGIN, "");
+        String startTime = TimeUtils.getDayStartTime();
+        boolean lessThan = TimeUtils.isTimeLessThan(startTime, effective);
+        if (!TimeUtils.isEmpty(effective) && lessThan) {
             if (isStartTime) {
                 initCtStart();
+                if (isPutStartTime) {
+                    PreferencesUtils.putString(this, Constans.STARTTIME, TimeUtils.getCurrentTime2());
+                    isPutStartTime = false;
+                }
                 isStartTime = false;
                 isPositionAcquisition = true;
+                if (ivStop != null) {
+                    ivStop.setBackgroundResource(R.drawable.jiancha_but_pause);
+                }
             } else {
                 initCtStop();
                 isStartTime = true;
                 isPositionAcquisition = false;
+                if (ivStop != null) {
+                    ivStop.setBackgroundResource(R.drawable.jiancha_but_continue);
+                }
             }
         } else {
             showSuccessToast("上报或者签到后才可开始监察");

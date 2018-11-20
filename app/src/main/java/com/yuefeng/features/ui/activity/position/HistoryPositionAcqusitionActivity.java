@@ -14,13 +14,17 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseActivity;
+import com.common.event.CommonEvent;
+import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.view.timeview.TimePickerView;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.HistoryPositionAdapter;
-import com.yuefeng.features.event.PositionAcquisitionEvent;
-import com.yuefeng.features.modle.LllegalworMsgBean;
+import com.yuefeng.features.contract.HistoryPositionAcqusitionContract;
+import com.yuefeng.features.modle.GetHistoryCaijiInfosMsgBean;
+import com.yuefeng.features.presenter.HistoryPositionAcqusitionPresenter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,7 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /*信息采集历史*/
-public class HistoryPositionAcqusitionActivity extends BaseActivity {
+public class HistoryPositionAcqusitionActivity extends BaseActivity implements HistoryPositionAcqusitionContract.View {
 
     @BindView(R.id.tv_back)
     TextView tvBack;
@@ -53,9 +57,11 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity {
     RecyclerView recyclerview;
     private HistoryPositionAdapter adapter;
 
-    private List<LllegalworMsgBean> listData = new ArrayList<>();
+    private List<GetHistoryCaijiInfosMsgBean> listData = new ArrayList<>();
     private String startTime;
     private String endTime;
+    private HistoryPositionAcqusitionPresenter mPresenter;
+    private List<GetHistoryCaijiInfosMsgBean> mBeanList = new ArrayList<>();
 
 
     @Override
@@ -69,13 +75,13 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity {
             EventBus.getDefault().register(this);
         }
         ButterKnife.bind(this);
-
+        mPresenter = new HistoryPositionAcqusitionPresenter(this, this);
         initUI();
     }
 
     private void initUI() {
-        tvTitle.setText("历史采集");
-        tvBack.setText("返回");
+        tvTitle.setText(R.string.history_positon);
+        tvBack.setText(R.string.back);
         initRecycler();
         initTime();
     }
@@ -85,11 +91,18 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity {
         endTime = TimeUtils.getCurrentTime();
         tvStartTime.setText(startTime);
         tvEndTime.setText(endTime);
-//        getCarList(type, id, startTime, endTime);
-        initRecyclerDatas(8);
+        getNetDatas(startTime,endTime);
+    }
+
+    private void getNetDatas(String startTime, String endTime) {
+        if (mPresenter != null) {
+            String userid = PreferencesUtils.getString(this, Constans.ID);
+            mPresenter.getCarListInfos(ApiService.GETMAPINFO, userid, startTime, endTime);
+        }
     }
 
     private void initRecycler() {
+        try {
         listData.clear();
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         adapter = new HistoryPositionAdapter(R.layout.recyclerview_item_historypositon, listData);
@@ -98,32 +111,31 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                LllegalworMsgBean msgBean = listData.get(position);
+                GetHistoryCaijiInfosMsgBean msgBean = listData.get(position);
                 Intent intent = new Intent();
                 intent.setClass(HistoryPositionAcqusitionActivity.this, PositionAcquisitionDetailActivity.class);
                 intent.putExtra("msgBean", msgBean);
                 startActivity(intent);
             }
         });
-
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void disposePositionAcquisitionEvent(PositionAcquisitionEvent event) {
+    public void disposeCommonEvent(CommonEvent event) {
         switch (event.getWhat()) {
-            case Constans.MSGCOLECTION_SSUCESS:
-                showSuccessDialog("上传成功，是否退出当前界面?");
+            case Constans.GETCAIJIHISTORY_SSUCESS://获取数据成功:
+                mBeanList.clear();
+                mBeanList = (List<GetHistoryCaijiInfosMsgBean>) event.getData();
+                if (mBeanList.size() > 0) {
+                    showAdapterDatasList(mBeanList);
+                }else {
+                    showSuccessToast("暂无信息");
+                }
                 break;
-            case Constans.MSGCOLECTION_ERROR://上传失败
-
-                break;
-            case Constans.GETCAIJI_SSUCESS://获采集类型成功
-
-                break;
-            case Constans.GETCAIJI_ERROR://获采集类型失败
-//                showSuccessToast("发布失败");
-                break;
-            default:
+            case Constans.GETCAIJIHISTORY_ERROR://失败
 
                 break;
         }
@@ -131,25 +143,12 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity {
 
     /*展示数据*/
     @SuppressLint("SetTextI18n")
-    private void showAdapterDatasList(List<LllegalworMsgBean> beanList) {
+    private void showAdapterDatasList(List<GetHistoryCaijiInfosMsgBean> beanList) {
         listData.clear();
         listData.addAll(beanList);
         adapter.setNewData(listData);
     }
 
-    private void initRecyclerDatas(int size) {
-        List<LllegalworMsgBean> list = new ArrayList<>();
-        list.clear();
-        for (int i = 0; i < size; i++) {
-            LllegalworMsgBean bean = new LllegalworMsgBean();
-            bean.setName("垃圾点 " + i);
-            bean.setTime(TimeUtils.getCurrentTime2());
-            bean.setContents("作业区域");
-            bean.setAddress("生活垃圾收集点" + i);
-            list.add(bean);
-        }
-        showAdapterDatasList(list);
-    }
 
     @OnClick({R.id.tv_search, R.id.tv_start_time, R.id.tv_end_time, R.id.tv_back})
     public void onViewClicked(View view) {
@@ -171,8 +170,7 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity {
         startTime = tvStartTime.getText().toString().trim();
         endTime = tvEndTime.getText().toString().trim();
         if (!TextUtils.isEmpty(startTime) && !TextUtils.isEmpty(endTime)) {
-//            getCarList(type, id, startTime, endTime);
-            showSuccessToast("待完成");
+            getNetDatas(startTime,endTime);
         } else {
             showSuccessToast("请选择时间");
         }
@@ -180,6 +178,7 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity {
 
     /*选择结束时间*/
     private void chooseEndTime() {
+        try {
         TimePickerView timePickerView = new TimePickerView(this, TimePickerView.Type.ALL);
         timePickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
             @Override
@@ -188,10 +187,14 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity {
             }
         });
         timePickerView.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*选择开始时间*/
     private void chooseStartTime() {
+        try {
         TimePickerView timePickerView = new TimePickerView(this, TimePickerView.Type.ALL);
         timePickerView.setTitle("时间选择");
         timePickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
@@ -202,6 +205,9 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity {
             }
         });
         timePickerView.show();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
 

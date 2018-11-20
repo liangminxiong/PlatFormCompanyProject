@@ -115,14 +115,15 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         RxPermissions rxPermission = new RxPermissions(LoginActivity.this);
         //请求权限全部结果 Manifest.permission.CAMERA,
         rxPermission.request(
+                Manifest.permission.SYSTEM_ALERT_WINDOW,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean granted) throws Exception {
-                        if (!granted) {
-                            showSuccessToast("App未能获取全部需要的相关权限，部分功能可能不能正常使用.");
-                        }
+//                        if (!granted) {
+//                            showSuccessToast("App未能获取全部需要的相关权限，部分功能可能不能正常使用.");
+//                        }
                         //不管是否获取全部权限，进入主页面
                         checkVersion();
                     }
@@ -183,6 +184,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                     loginInfo = (LoginDataBean) loginEvent.getData();
                 }
                 PreferencesUtils.putString(LoginActivity.this, Constans.USERNAME, loginInfo.getLoginid());
+                PreferencesUtils.putString(LoginActivity.this, Constans.USERNAME_N, loginInfo.getUsername());
                 if (cheche_pwd) {
                     PreferencesUtils.putString(LoginActivity.this, Constans.USERPASSWORD, loginInfo.getPassword());
                 }
@@ -190,6 +192,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 PreferencesUtils.putString(LoginActivity.this, Constans.ORGID, loginInfo.getOrgId());
                 PreferencesUtils.putString(LoginActivity.this, Constans.TELNUM, loginInfo.getTelNum());
                 PreferencesUtils.putString(LoginActivity.this, Constans.ID, loginInfo.getId());
+                PreferencesUtils.putString(LoginActivity.this, Constans.EMAIL, loginInfo.getEmail());
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.ISREG, loginInfo.isIsreg());
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
                 String alias = MD5Utils.toString(string);

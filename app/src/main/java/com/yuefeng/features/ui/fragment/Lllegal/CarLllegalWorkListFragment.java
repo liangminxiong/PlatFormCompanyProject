@@ -155,13 +155,15 @@ public class CarLllegalWorkListFragment extends BaseFragment implements LllegalW
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void initWeiguiData(String vid, int typeWhat) {
+        try {
         if (presenter != null) {
             String pid = PreferencesUtils.getString(Objects.requireNonNull(getContext()), Constans.ORGID, "");
             String startTime = TimeUtils.getYesterdayStartTime();
             String endTime = TimeUtils.getCurrentTime();
-            startTime = "2018-10-30 10:00:00";
-            endTime = "2018-11-01 15:00:00";
             presenter.getWeigui(ApiService.GETWEIGUI, pid, startTime, endTime, vid, Constans.TYPE_ZERO, typeWhat);
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

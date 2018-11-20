@@ -44,8 +44,8 @@ public class MsgDetailInfosAdapter extends BaseItemDraggableAdapter<MsgDataBean,
             detail = TextUtils.isEmpty(detail) ? " " : detail;
             name = TextUtils.isEmpty(name) ? " " : name;
             helper.setText(R.id.tv_item_time, time)
-                    .setText(R.id.tv_item_name, name)
                     .setText(R.id.tv_item_title, title)
+                    .setText(R.id.tv_item_name, name)
                     .setText(R.id.tv_item_content, "内容: " + detail);
 //            ImageView iv_item_image = helper.getView(R.id.iv_item_image);
 //            if (!TextUtils.isEmpty(imageUrl)) {

@@ -24,8 +24,8 @@ public class AllPersonalAdapter extends BaseItemDraggableAdapter<GetAllPersonalM
             name = item.getName();
             name = TextUtils.isEmpty(name) ? " " : name;
 
-            helper.setText(R.id.tv_item_name, name)
-                    .setTextColor(R.id.tv_item_name, mContext.getResources().getColor(R.color.black));
+            helper.setText(R.id.tv_item_title, name)
+                    .setTextColor(R.id.tv_item_title, mContext.getResources().getColor(R.color.black));
 //                    .addOnClickListener(R.id.ll_layout_item);
         }
     }

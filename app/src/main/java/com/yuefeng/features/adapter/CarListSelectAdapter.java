@@ -14,7 +14,7 @@ public class CarListSelectAdapter extends BaseItemDraggableAdapter<CarListSelect
 
     private String name;
     private String type;
-    private int icon_car_image;
+    private int icon_type;
 
     public CarListSelectAdapter(int layoutResId, @Nullable List<CarListSelectBean> data) {
         super(layoutResId, data);
@@ -28,17 +28,17 @@ public class CarListSelectAdapter extends BaseItemDraggableAdapter<CarListSelect
             name = TextUtils.isEmpty(name) ? " " : name;
             type = TextUtils.isEmpty(type) ? "2" : type;
             helper.setText(R.id.id_treenode_label, name)
-                    .addOnClickListener(R.id.cb_select_tree);
+                    .addOnClickListener(R.id.iv_select_tree);
             if (type.contains("0")) {
-                icon_car_image = R.drawable.icon_car_offline;
+                icon_type = R.drawable.list_qiche_tingche;
             } else if (type.contains("1")) {
-                icon_car_image = R.drawable.icon_car_online;
+                icon_type = R.drawable.list_qiche_xingshi;
             } else if (type.contains("2")) {
-                icon_car_image = R.drawable.icon_car_green;
+                icon_type = R.drawable.list_qiche_xingshi;
             } else {
-                icon_car_image = R.drawable.icon_car_red;
+                icon_type = R.drawable.list_qiche_ting10;
             }
-            helper.setImageResource(R.id.icon, icon_car_image);
+            helper.setImageResource(R.id.icon, icon_type);
         }
     }
 }

@@ -11,9 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -50,7 +48,6 @@ import com.common.view.timeview.TimePickerView;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
-import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.CarListContract;
 import com.yuefeng.features.event.CarListEvent;
@@ -217,7 +214,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
         if (presenter != null) {
             String pid = PreferencesUtils.getString(this, "orgId", "");
             String userid = PreferencesUtils.getString(this, "id", "");
-            presenter.getCarListInfos(ApiService.LOADVEHICLELIST, pid, userid, "0");
+            presenter.getCarListInfos(ApiService.GETVEHICLETREE, pid, userid, "0");
         }
     }
 
@@ -238,7 +235,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     /*获取轨迹*/
     private void getTrackData(String terminal, String startTime, String endTime) {
 
-//        boolean twoDayOffset2 = TimeUtils.getTwoDayOffset2(startTime, endTime);
+//        boolean twoDayOffset2 = TimeUtils.isTimeLessThan(startTime, endTime);
 //        if (!twoDayOffset2) {
 //            showSuccessToast("结束时间不能小于开始时间");
 //            return;
@@ -417,7 +414,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                         ooA.icon(BitmapDescriptorFactory.fromResource(imageInt));
                         ooA.zIndex(10);
                         ooA.position(latLngTemp);
-                        ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+//                        ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                         mMarker = null;
                         mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
                         mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
@@ -497,27 +494,32 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private void initPopupView() {
         try {
             selectList.clear();
-            popupWindow = new TreesListsPopupWindow(this, datas, true);
+            popupWindow = new TreesListsPopupWindow(this, datas, true,true);
             popupWindow.setTitleText("车辆列表");
             popupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
-            initTreeListDatas();
 
             popupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
                 @Override
-                public void onGoBack(String name, String terminal, String id) {
-                    popupWindow.dismiss();
+                public void onGoBack(String name, String terminala, String id,boolean isGetDatas) {
+                    carNumber =name;
+                    terminal = terminala;
+                    if (isGetDatas) {
+                        getSelectCarInfos(name, terminal);
+                    }
                 }
 
                 @Override
-                public void onSure(String name, String terminal, String id) {
-                    popupWindow.dismiss();
-                    getSelectCarInfos(name, terminal);
-                    showSelectItemDatas();
+                public void onSure(String name, String terminala, String id,boolean isGetDatas) {
+                    carNumber =name;
+                    terminal = terminala;
+                    if (isGetDatas) {
+                        getSelectCarInfos(name, terminal);
+                    }
                 }
 
                 @Override
-                public void onSelectCar(String carNumber, String terminal, String id) {//选中车
-                    getSelectCarInfos(carNumber, terminal);
+                public void onSelectCar(String carNumber, String terminal, String id,boolean isGetDatas) {
+//                    getSelectCarInfos(carNumber, terminal);
                 }
             });
 
@@ -527,56 +529,10 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
         }
     }
 
-    private void initTreeListDatas() {
-        if (datas.size() > 0) {
-            popupWindow.recyclerview.setLayoutManager(new LinearLayoutManager(this));
-            if (adapter == null) {
-                adapter = new SimpleTreeRecyclerAdapter(popupWindow.recyclerview, this,
-                        datas, 1, R.drawable.tree_open, R.drawable.tree_close, true);
-            } else {
-                adapter.notifyDataSetChanged();
-            }
-            popupWindow.recyclerview.setAdapter(adapter);
-        }
-        assert adapter != null;
-        adapter.notifyDataSetChanged();
-        adapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
-            @Override
-            public void onClick(Node node, int position) {
-                showSelectItemDatas();
-            }
-
-        });
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    private void showSelectItemDatas() {
-        if (adapter == null) {
-            return;
-        }
-        final List<Node> allNodes = adapter.getAllNodes();
-        for (int i = 0; i < allNodes.size(); i++) {
-            if (allNodes.get(i).isChecked()) {
-                carNumber = allNodes.get(i).getName();
-                terminal = allNodes.get(i).getTerminalNO();
-//                if (!TextUtils.isEmpty(terminal)) {
-//                    selectList.add(terminal);
-//                }
-            }
-        }
-        if (!TextUtils.isEmpty(terminal)) {
-            getSelectCarInfos(carNumber, terminal);
-        }
-    }
-
 
     /*获取轨迹*/
     private void getSelectCarInfos(String carNumber, String terminal) {
         if (!TextUtils.isEmpty(terminal)) {
-            if (popupWindow != null) {
-                popupWindow.dismiss();
-            }
             tvTitle.setText(carNumber);
             String startTime = tvStartTime.getText().toString().trim();
             String endTime = tvEndTime.getText().toString().trim();
@@ -643,7 +599,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             mSeekBar.setProgress(index);
             tvSpeed.setText(trackData.getSp() + "km/h");
         } catch (Exception e) {
-            Log.v("JJ", "PlayThread =33=:" + e.toString());
+           e.printStackTrace();
         }
     }
 
@@ -685,7 +641,6 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             @Override
             public void onTimeSelect(Date date) {
                 endtime = TimeUtils.getTimeHourMin(date);
-                Log.d("tag", "onTimeSelect  aa: " + endtime);
                 if (!TextUtils.isEmpty(tvStartTime.getText().toString().trim())) {
                     startEndTime = TimeUtils.getBoolenStartEndTime(tvStartTime.getText().toString().trim(),
                             tvEndTime.getText().toString().trim());

@@ -9,8 +9,12 @@ public interface MonitoringContract {
     }
 
     interface Presenter {
-        /*车辆列表*/
-        void getCarListInfos(String function, String organid, String userid, String isreg);
+        /*人员列表*/
+        void getPersontree(String function, String userid, String pid);
+
+        /*签到*/
+        void uploadWorkSign(String function, String pid, String userid, String address,
+                            String lat, String lon, String personids, String imageArrays, String memo);
 
     }
 }

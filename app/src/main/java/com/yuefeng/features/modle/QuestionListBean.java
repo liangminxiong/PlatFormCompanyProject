@@ -10,7 +10,8 @@ public class QuestionListBean implements Serializable {
      * problem : 描述
      * uploadpeople : eab2ffacffffffc976ce7286d4054823
      * uploadtime : 2018-09-18 17:25:50.0
-     * imgurl : http://120.78.217.251:80/webfiles/zgbd_rubbish/wxupload/image/2018091817254736562.png,http://120.78.217.251:80/webfiles/zgbd_rubbish/wxupload/image/2018091817254913919.png
+     * imgurl : http://120.78.217.251:80/webfiles/zgbd_rubbish/wxupload/image/2018091817254736562.png
+     * ,http://120.78.217.251:80/webfiles/zgbd_rubbish/wxupload/image/2018091817254913919.png
      * state : 1
      * longitude : 113.414184
      * latitude : 23.158781

@@ -46,7 +46,7 @@ public class ShowPersonalpop extends PopupWindow {
 
     private void initView(Context context) {
         view = LayoutInflater.from(context).inflate(R.layout.pop_show_personal, null);
-        tv_item_name = view.findViewById(R.id.tv_item_name);
+        tv_item_name = view.findViewById(R.id.tv_item_title);
         tv_item_chiwei = view.findViewById(R.id.tv_item_chiwei);
 
         tv_item_phone = view.findViewById(R.id.tv_item_phone);
@@ -109,24 +109,32 @@ public class ShowPersonalpop extends PopupWindow {
             item_view.setVisibility(View.VISIBLE);
             tv_item_video.setVisibility(View.VISIBLE);
         }
+
         tv_item_name.setText(name);
         phone = TextUtils.isEmpty(phone) ? "" : phone;
         if (phone.equals("null")) {
             phone = "无";
         }
-        tv_item_chiwei.setText(position);
+        String type = "";
+//        0  离线  1 停止 2 行驶 3 等待
         switch (position) {
-            case "在线":
-            case "行驶中":
-                colorInt = context.getResources().getColor(R.color.green);
+            case "0":
+                type = "离线";
+                colorInt = context.getResources().getColor(R.color.gray);
+            case "1":
+                colorInt = context.getResources().getColor(R.color.yellow);
+                type = "停止";
                 break;
-            case "离线":
-                colorInt = context.getResources().getColor(R.color.red);
+            case "2":
+                colorInt = context.getResources().getColor(R.color.green);
+                type = "移动";
                 break;
             default:
-                colorInt = context.getResources().getColor(R.color.gray);
+                colorInt = context.getResources().getColor(R.color.huang_se);
+                type = "等待";
                 break;
         }
+        tv_item_chiwei.setText(type);
         tv_item_chiwei.setTextColor(colorInt);
         tv_item_phonename.setText(phone);
         tv_item_classname.setText(classname);

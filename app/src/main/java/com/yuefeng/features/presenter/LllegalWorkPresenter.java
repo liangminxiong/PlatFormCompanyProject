@@ -63,7 +63,7 @@ public class LllegalWorkPresenter extends BasePresenterImpl<LllegalWorkContract.
     @Override
     public void getCarListInfosNew(String function, String organid, String userid, String isreg) {
 
-        HttpObservable.getObservable(apiRetrofit.getCarListInfos(function, organid, userid, isreg))
+        HttpObservable.getObservable(apiRetrofit.getCarListInfosNew(function, organid, userid, isreg))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<CarListInfosBean>() {
                     @Override
@@ -76,7 +76,7 @@ public class LllegalWorkPresenter extends BasePresenterImpl<LllegalWorkContract.
                         dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
-                                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_SSUCESS, o.getMsg()));
+                                EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_SSUCESS_NEW, o.getMsg()));
                             } else {
                                 EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.CARLIST_ERROR, o.getMsg()));
                             }

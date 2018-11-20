@@ -2,8 +2,10 @@ package com.yuefeng.utils;
 
 import com.baidu.mapapi.model.LatLng;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.features.modle.carlist.CarListSelectBean;
+import com.yuefeng.personaltree.model.Organ;
 import com.yuefeng.personaltree.model.PersonalBean;
 import com.yuefeng.personaltree.model.PersonalParentBean;
 import com.yuefeng.personaltree.model.PersonalXBean;
@@ -130,7 +132,7 @@ public class PersonalDatasUtils {
         firstOsize = firstOrgans.size();
         /*第一层*/
         // id , pid , label , 其他属性
-        mDatas.add(new Node(fatherId, fatherPid, orgShortName, sTreeStr, "", "", "", "", "", "", false));
+        mDatas.add(new Node(fatherId, "first", orgShortName, sTreeStr, "", "", "", "", "", "", false));
 
         if (firstVsize > 0) {
             for (PersonalXBean firstVehicle : firstVehicles) {
@@ -209,7 +211,7 @@ public class PersonalDatasUtils {
 
                                 sStrFouth = initDatasPersonalTreeStrFouth(thirdOrgan);
 
-                                thirdOrganId = thirdOrgan.getId();
+                                String thirdOrganId = thirdOrgan.getId();
                                 thirdOrganOrgShortName = thirdOrgan.getOrgName();
                                 List<PersonalBean> fourthvehicles = thirdOrgan.getVideoes();
                                 fourthVsize = fourthvehicles.size();
@@ -237,7 +239,7 @@ public class PersonalDatasUtils {
 
                                         sStrFifth = initDatasPersonalTreeStrFouth(fourthOrgan);
 
-                                        fourthOrganId = fourthOrgan.getId();
+                                        String fourthOrganId = fourthOrgan.getId();
                                         fourthOrganOrgShortName = fourthOrgan.getOrgName();
 
                                         List<PersonalBean> fifthVehicles = fourthOrgan.getVideoes();
@@ -256,7 +258,7 @@ public class PersonalDatasUtils {
                                                 fifthVehicleRegistrationNO = fifthVehicle.getName();
                                                 fifthVehicleStateType = fifthVehicle.getStateType();
                                                 fifthVehicleTerminalNO = fifthVehicle.getTerminalNO();
-                                                mDatas.add(new Node(fifthVehicleId + "", thirdOrganId + "", fifthVehicleRegistrationNO,
+                                                mDatas.add(new Node(fifthVehicleId + "", fourthOrganId + "", fifthVehicleRegistrationNO,
                                                         Constans.COUNT_ZERO, fifthVehicleStateType, fifthVehicleTerminalNO, sGt, sSpeed, sObd, address, false));
                                             }
 
@@ -266,18 +268,16 @@ public class PersonalDatasUtils {
                                         if (fifthOsize > 0) {
                                             for (com.yuefeng.personaltree.model.Organ fifthOrgan : fifthOrgans) {
 
-                                                sStrSixth = initDatasPersonalTreeStrFouth(fourthOrgan);
+                                                sStrSixth = initDatasPersonalTreeStrFouth(fifthOrgan);
 
-                                                fifthOrganId = fifthOrgan.getId();
+                                            String    fifthOrganId = fifthOrgan.getId();
                                                 fifthOrganOrgShortName = fifthOrgan.getOrgName();
+                                                LogUtils.d("====OrgShortName=111====" + fifthOrganOrgShortName);
                                                 List<PersonalBean> sixthVehicles = fifthOrgan.getVideoes();
                                                 sixthVsize = sixthVehicles.size();
-                                                List<com.yuefeng.personaltree.model.Organ> sixthOrganOrgans = fifthOrgan.getOrgans();
-                                                sixthOsize = sixthOrganOrgans.size();
 
                                                 mDatas.add(new Node(fifthOrganId + "", fourthOrganId + "",
                                                         fifthOrganOrgShortName, sStrSixth, "", "", "", "", "", "", false));
-
 
                                                 if (sixthVsize > 0) {
                                                     for (PersonalBean sixthVehicle : sixthVehicles) {
@@ -288,6 +288,39 @@ public class PersonalDatasUtils {
                                                         mDatas.add(new Node(sixthVehicleId + "", fifthOrganId + "",
                                                                 sixthVehicleRegistrationNO, Constans.COUNT_ZERO, sixthVehicleStateType,
                                                                 sixthVehicleTerminalNO, sGt, sSpeed, sObd, address, false));
+                                                    }
+
+                                                }
+
+                                                List<Organ> seventOrgan = fifthOrgan.getOrgans();
+                                                int sizeSevent = seventOrgan.size();
+                                                if (sizeSevent > 0) {//第七层
+                                                    for (com.yuefeng.personaltree.model.Organ seventorgan : seventOrgan) {
+                                                        String strSevent = initDatasPersonalTreeStrFouth(seventorgan);
+                                                        String seventOrganId = seventorgan.getId();
+                                                        String orgName = seventorgan.getOrgName();
+                                                        LogUtils.d("====OrgShortName=222====" + orgName);
+                                                        List<PersonalBean> seventVehicles = seventorgan.getVideoes();
+                                                        int sixthVsize = seventVehicles.size();
+                                                        List<com.yuefeng.personaltree.model.Organ> seventorganOrgans = seventorgan.getOrgans();
+                                                        int sixthOsize = seventorganOrgans.size();
+
+                                                        mDatas.add(new Node(seventOrganId + "", fifthOrganId + "",
+                                                                orgName, strSevent, "", "", "", "", "", "", false));
+
+                                                        if (sixthVsize > 0) {
+                                                            for (PersonalBean seventVehicle : seventVehicles) {
+                                                                String sixthVehicleId = seventVehicle.getId();
+                                                                String sixthVehicleRegistrationNO = seventVehicle.getName();
+                                                                String sixthVehicleStateType = seventVehicle.getStateType();
+                                                                String sixthVehicleTerminalNO = seventVehicle.getTerminalNO();
+                                                                mDatas.add(new Node(sixthVehicleId + "", fifthOrganId + "",
+                                                                        sixthVehicleRegistrationNO, Constans.COUNT_ZERO, sixthVehicleStateType,
+                                                                        sixthVehicleTerminalNO, sGt, sSpeed, sObd, address, false));
+                                                            }
+
+                                                        }
+
                                                     }
                                                 }
                                             }

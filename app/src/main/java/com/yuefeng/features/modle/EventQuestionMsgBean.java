@@ -33,6 +33,8 @@ public class EventQuestionMsgBean implements Serializable {
     private String type;
     private String uploadpeoplename;
 
+    private boolean isSelected; //自定义列表是否选中的标识
+
     public String getId() {
         return id;
     }
@@ -127,5 +129,13 @@ public class EventQuestionMsgBean implements Serializable {
 
     public void setUploadpeoplename(String uploadpeoplename) {
         this.uploadpeoplename = uploadpeoplename;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

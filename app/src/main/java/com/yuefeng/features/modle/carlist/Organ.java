@@ -12,9 +12,9 @@ import java.util.List;
 public class Organ implements Serializable {
 
     public Organ() {
-        organs = new ArrayList<Organ>();
+        organ = new ArrayList<Organ>();
         organsbeen = new ArrayList<OrgansBean>();
-        vehicles = new ArrayList<VehiclesBean>();
+        vehicle = new ArrayList<VehiclesBean>();
     }
 
     private String id;
@@ -26,9 +26,9 @@ public class Organ implements Serializable {
     private String principalTel;
     private String fax;
     private String address;
-    private List<Organ> organs;
+    private List<Organ> organ;
     private List<OrgansBean> organsbeen;
-    private List<VehiclesBean> vehicles;
+    private List<VehiclesBean> vehicle;
 
     public String getId() {
         return id;
@@ -102,12 +102,12 @@ public class Organ implements Serializable {
         this.address = address;
     }
 
-    public List<VehiclesBean> getVehicles() {
-        return vehicles;
+    public List<VehiclesBean> getVehicle() {
+        return vehicle;
     }
 
-    public void setVehicles(List<VehiclesBean> vehicles) {
-        this.vehicles = vehicles;
+    public void setVehicle(List<VehiclesBean> vehicle) {
+        this.vehicle = vehicle;
     }
 
     public List<OrgansBean> getOrgansBeen() {
@@ -118,12 +118,12 @@ public class Organ implements Serializable {
         this.organsbeen = organs;
     }
 
-    public List<Organ> getOrgans() {
-        return organs;
+    public List<Organ> getOrgan() {
+        return organ;
     }
 
-    public void setOrgans(List<Organ> organs) {
-        this.organs = organs;
+    public void setOrgan(List<Organ> organ) {
+        this.organ = organ;
 
     }
 }

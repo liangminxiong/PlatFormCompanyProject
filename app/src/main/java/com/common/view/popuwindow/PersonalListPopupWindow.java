@@ -24,12 +24,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.CarListSelectAdapter;
 import com.yuefeng.features.modle.carlist.CarListSelectBean;
+import com.yuefeng.personaltree.ChangePersonalTreeRecyclerAdapter;
 import com.yuefeng.utils.PersonalDatasUtils;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class PersonalListPopupWindow extends PopupWindow {
     private String userId;
     private List<Node> carDatas;
     private String name;
-    private SimpleTreeRecyclerAdapter treeListAdapter;
+    private ChangePersonalTreeRecyclerAdapter treeListAdapter;
     private String personalName;
     private StringBuffer stringBuffer;
     private StringBuffer stringBufferFlag;
@@ -167,8 +167,8 @@ public class PersonalListPopupWindow extends PopupWindow {
     }
 
     private void initRecycleView() {
-        treeListAdapter = new SimpleTreeRecyclerAdapter(recyclerview, mContext,
-                carDatas, 1, R.drawable.tree_open, R.drawable.tree_close, isSingle);
+        treeListAdapter = new ChangePersonalTreeRecyclerAdapter(recyclerview, mContext,
+                carDatas, 1, R.drawable.list_fold, R.drawable.list_fold, isSingle,false);
 //
         recyclerview.setAdapter(treeListAdapter);
         treeListAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {

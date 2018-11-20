@@ -35,8 +35,9 @@ public class ImageHelper {
     public static void showImageBitmap(MyGridView2 gridView, final Context context, String imgUrl) {
 
         sImages = new ArrayList<>();
-        if (imgUrl.contains(";")) {
-            String[] split = imgUrl.split(";");
+        sImages.clear();
+        if (imgUrl.contains(",")) {
+            String[] split = imgUrl.split(",");
             for (String aSplit : split) {
                 ImageInfo imageInfo = new ImageInfo(aSplit, 200, 200);
                 sImages.add(imageInfo);
@@ -45,13 +46,9 @@ public class ImageHelper {
             ImageInfo imageInfo = new ImageInfo(imgUrl, 200, 200);
             sImages.add(imageInfo);
         }
+        adapter = new GvAdapter(context, sImages);
+        gridView.setAdapter(adapter);
 
-        if (adapter == null) {
-            adapter = new GvAdapter(context, sImages);
-            gridView.setAdapter(adapter);
-        } else {
-            adapter.notifyDataSetChanged();
-        }
         if (sImages.size() > 0) {
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -61,6 +58,19 @@ public class ImageHelper {
                 }
             });
         }
+    }
+
+    public static String getFirstImageUrl(String imgUrl) {
+
+        String imageUrl = "";
+        if (imgUrl.contains(",")) {
+            String[] split = imgUrl.split(",");
+            imageUrl = split[0];
+        } else {
+            imageUrl = imgUrl;
+        }
+
+        return imageUrl;
     }
 
     /**

@@ -48,7 +48,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-/*单独视频*/
+/*视频监控*/
 public class VideoCameraActivity extends BaseActivity implements VideolistVContract.View {
 
     private static final String TAG = "tag";
@@ -177,25 +177,29 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     /*车辆列表*/
     private void initCarlistPopupView() {
         if (carDatas.size() > 0) {
-            carListPopupWindow = new TreesListsPopupWindow(this, carDatas,true);
+            carListPopupWindow = new TreesListsPopupWindow(this, carDatas, true,false);
             carListPopupWindow.setTitleText("车辆列表");
             carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
 
             carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
                 @Override
-                public void onGoBack(String name, String terminal,String id) {
+                public void onGoBack(String name, String terminal, String id, boolean isGetDatas) {
                     tv_title.setText(name);
-                    showVideoList(terminal);
+                    if (isGetDatas) {
+                        showVideoList(terminal);
+                    }
                 }
 
                 @Override
-                public void onSure(String name, String terminal,String id) {
+                public void onSure(String name, String terminal, String id, boolean isGetDatas) {
                     tv_title.setText(name);
-                    showVideoList(terminal);
+                    if (isGetDatas) {
+                        showVideoList(terminal);
+                    }
                 }
 
                 @Override
-                public void onSelectCar(String carNumber, String terminal,String id) {
+                public void onSelectCar(String carNumber, String terminal, String id, boolean isGetDatas) {
 //                    showVideoList(terminal);
                 }
             });

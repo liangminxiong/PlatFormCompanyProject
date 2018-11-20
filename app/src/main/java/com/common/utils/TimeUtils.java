@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created  on 2018-05-18.
@@ -510,7 +511,7 @@ public class TimeUtils {
      *
      * @return int
      */
-    public static boolean getTwoDayOffset2(String start, String end) {
+    public static boolean isTimeLessThan(String start, String end) {
         if (start.equals("") || end.equals("")) {
             return false;
         }
@@ -759,6 +760,60 @@ public class TimeUtils {
         Date hourDate = new Date(System.currentTimeMillis() - 10800000);
         String hDate = formatter.format(hourDate);
         return hDate;
+    }
+
+
+    /*毫秒转 HH:mm:ss*/
+    public static String dateFormatFromSeconds(int seconds) {
+
+        //初始化format格式
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+
+        //设置时区，跳过此步骤会默认设置为"GMT+08:00" 得到的结果会多出来8个小时
+        format.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
+
+        return format.format(seconds * 1000);
+    }
+
+    /*
+     * 将时分秒转为秒数
+     * */
+    public static String formatTurnSecond(String time) {
+        String second = "";
+        int hour;
+        int min;
+        int sec;
+        String[] my = time.split(":");
+        if (time.length() > 6) {
+            hour = Integer.parseInt(my[0]);
+            min = Integer.parseInt(my[1]);
+            sec = Integer.parseInt(my[2]);
+            long totalSec = hour * 3600 + min * 60 + sec;
+            second = String.valueOf(totalSec);
+        } else {
+            min = Integer.parseInt(my[0]);
+            sec = Integer.parseInt(my[1]);
+            long totalSec = min * 60 + sec;
+            second = String.valueOf(totalSec);
+        }
+
+
+        return second;
+    }
+
+
+    /*
+     * 将时分秒转为秒数
+     * */
+    public static long formatTurnSecond2(String time) {
+        String s = time;
+        int index1 = s.indexOf(":");
+        int index2 = s.indexOf(":", index1 + 1);
+        int hh = Integer.parseInt(s.substring(0, index1));
+        int mi = Integer.parseInt(s.substring(index1 + 1, index2));
+        int ss = Integer.parseInt(s.substring(index2 + 1));
+        return hh * 60 * 60 + mi * 60 + ss;
     }
 
     /**

@@ -15,7 +15,7 @@
         tools:ignore="ContentDescription"/>
 
     <CheckBox
-        android:id="@+id/cb_select_tree"
+        android:id="@+id/iv_select_tree"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="center_vertical"

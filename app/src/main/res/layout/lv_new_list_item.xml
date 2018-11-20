@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_45"
+                android:background="@color/white"
+                android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/dp_26"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/id_treenode_label"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/icon"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/dp_5"
+        android:textColor="@color/gray"
+        android:textSize="15sp"
+        tools:ignore="RtlSymmetry"/>
+
+    <CheckBox
+        android:id="@+id/iv_select_tree"
+        android:layout_width="@dimen/dp_22"
+        android:layout_height="@dimen/dp_22"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:background="@drawable/tree_cb_choose_seletor"
+        android:button="@null"
+        android:focusable="false"
+        android:visibility="visible"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_f6"/>
+
+</RelativeLayout>

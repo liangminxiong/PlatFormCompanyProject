@@ -18,8 +18,8 @@ public class OrgansBean implements Serializable {
      * principalTel :
      * fax :
      * address :
-     * organs : []
-     * vehicles : [{"id":"jst15142","registrationNO":"赣CC6638","terminalNO":"601:13825944356","simNO":"13825944356","pid":"jst1482","terminalTypeID":"10","stateType":"1","gpsTime":"2018-07-20 16:45:51.0","oilMax":"0","oilSum":"0","brandType":"重型自卸货车","carType":"货车","frameNumber":"LJ13R6FK3H3314049","engineNumber":"","masterID":".|13902781817.|.","password":"","driverID1":"13301107622.|.","driverID2":".|.","limitedDate":"2010-09-21 00:00:00.0","memo":"","hasvideo":"0","videoterminalNO":"","gt":"2018-07-20 16:43:21.0","speed":"0","obd":"ACC开","lat":"24.056550","lon":"115.970048"},{"id":"jst10221","registrationNO":"粤MN1656","terminalNO":"601:18814072413","simNO":"18814072413","pid":"jst1482","terminalTypeID":"10","stateType":"0","gpsTime":"2018-07-20 16:43:13.0","oilMax":"0","oilSum":"0","brandType":"重型自卸货车","carType":"变色小车","frameNumber":"","engineNumber":"","masterID":"","password":"123456","driverID1":"","driverID2":"","limitedDate":"2010-09-21 00:00:00.0","memo":"","hasvideo":"","videoterminalNO":"","gt":"2018-07-20 16:43:13.0","speed":"0","obd":"ACC关","lat":"24.311532","lon":"116.075544"},{"id":"jst15143","registrationNO":"赣C5L786","terminalNO":"601:13825944351","simNO":"13825944351","pid":"jst1482","terminalTypeID":"10","stateType":"0","gpsTime":"2018-07-20 02:49:19.0","oilMax":"0","oilSum":"0","brandType":"重型自卸货车","carType":"货车","frameNumber":"LJ13R6FK1J3305274","engineNumber":"","masterID":".|13902781817.|.","password":"","driverID1":"13301107625.|.","driverID2":".|.","limitedDate":"2010-09-21 00:00:00.0","memo":"","hasvideo":"0","videoterminalNO":"","gt":"2018-07-20 02:48:23.0","speed":"0","obd":"ACC开","lat":"24.216900","lon":"116.631568"}]
+     * organ : []
+     * vehicle : [{"id":"jst15142","registrationNO":"赣CC6638","terminalNO":"601:13825944356","simNO":"13825944356","pid":"jst1482","terminalTypeID":"10","stateType":"1","gpsTime":"2018-07-20 16:45:51.0","oilMax":"0","oilSum":"0","brandType":"重型自卸货车","carType":"货车","frameNumber":"LJ13R6FK3H3314049","engineNumber":"","masterID":".|13902781817.|.","password":"","driverID1":"13301107622.|.","driverID2":".|.","limitedDate":"2010-09-21 00:00:00.0","memo":"","hasvideo":"0","videoterminalNO":"","gt":"2018-07-20 16:43:21.0","speed":"0","obd":"ACC开","lat":"24.056550","lon":"115.970048"},{"id":"jst10221","registrationNO":"粤MN1656","terminalNO":"601:18814072413","simNO":"18814072413","pid":"jst1482","terminalTypeID":"10","stateType":"0","gpsTime":"2018-07-20 16:43:13.0","oilMax":"0","oilSum":"0","brandType":"重型自卸货车","carType":"变色小车","frameNumber":"","engineNumber":"","masterID":"","password":"123456","driverID1":"","driverID2":"","limitedDate":"2010-09-21 00:00:00.0","memo":"","hasvideo":"","videoterminalNO":"","gt":"2018-07-20 16:43:13.0","speed":"0","obd":"ACC关","lat":"24.311532","lon":"116.075544"},{"id":"jst15143","registrationNO":"赣C5L786","terminalNO":"601:13825944351","simNO":"13825944351","pid":"jst1482","terminalTypeID":"10","stateType":"0","gpsTime":"2018-07-20 02:49:19.0","oilMax":"0","oilSum":"0","brandType":"重型自卸货车","carType":"货车","frameNumber":"LJ13R6FK1J3305274","engineNumber":"","masterID":".|13902781817.|.","password":"","driverID1":"13301107625.|.","driverID2":".|.","limitedDate":"2010-09-21 00:00:00.0","memo":"","hasvideo":"0","videoterminalNO":"","gt":"2018-07-20 02:48:23.0","speed":"0","obd":"ACC开","lat":"24.216900","lon":"116.631568"}]
      */
 
     private String id;
@@ -31,8 +31,8 @@ public class OrgansBean implements Serializable {
     private String principalTel;
     private String fax;
     private String address;
-    private List<Organ> organs;
-    private List<VehiclesBean> vehicles;
+    private List<Organ> organ;
+    private List<VehiclesBean> vehicle;
 
     public String getId() {
         return id;
@@ -106,20 +106,20 @@ public class OrgansBean implements Serializable {
         this.address = address;
     }
 
-    public List<Organ> getOrgans() {
-        return organs;
+    public List<Organ> getOrgan() {
+        return organ;
     }
 
-    public void setOrgans(List<Organ> organs) {
-        this.organs = organs;
+    public void setOrgan(List<Organ> organ) {
+        this.organ = organ;
     }
 
-    public List<VehiclesBean> getVehicles() {
-        return vehicles;
+    public List<VehiclesBean> getVehicle() {
+        return vehicle;
     }
 
-    public void setVehicles(List<VehiclesBean> vehicles) {
-        this.vehicles = vehicles;
+    public void setVehicle(List<VehiclesBean> vehicle) {
+        this.vehicle = vehicle;
     }
 
 }

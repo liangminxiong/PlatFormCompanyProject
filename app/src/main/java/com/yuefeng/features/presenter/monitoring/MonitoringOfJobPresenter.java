@@ -11,10 +11,9 @@ import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.common.utils.StringUtils;
 import com.yuefeng.features.contract.MonitoringOfJobContract;
-import com.yuefeng.features.contract.PositionAcquisitionContract;
 import com.yuefeng.features.event.PositionAcquisitionEvent;
+import com.yuefeng.features.modle.GetMonitoringPlanCountBean;
 import com.yuefeng.features.modle.SubmitBean;
-import com.yuefeng.features.modle.video.GetCaijiTypeBean;
 import com.yuefeng.features.ui.activity.monitoring.MonitoringofJobActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,7 +27,7 @@ import io.reactivex.disposables.Disposable;
  */
 
 public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobContract.View,
-        MonitoringofJobActivity> implements PositionAcquisitionContract.Presenter {
+        MonitoringofJobActivity> implements MonitoringOfJobContract.Presenter {
 
     private String hourStr;
     private String minuteStr;
@@ -42,10 +41,10 @@ public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobC
 
     /*信息采集*/
     @Override
-    public void upLoadmapInfo(String function, String pid, String userid, String typeid,
-                              String typename, String name, String lnglat, String area, String imageArrays) {
-        HttpObservable.getObservable(apiRetrofit.upLoadmapInfo(function, pid, userid, typeid,
-                typename, name, lnglat, area, imageArrays))
+    public void uploadJianCcha(String function, String userid, String pid, String timestart,
+                               String timeend, String timesum, String lnglat,String startAddress,String endAddress) {
+        HttpObservable.getObservable(apiRetrofit.uploadJianCcha(function, userid, pid, timestart,
+                timeend, timesum, lnglat,startAddress,endAddress))
                 .subscribe(new HttpResultObserver<SubmitBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
@@ -57,9 +56,9 @@ public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobC
                         dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
-                                EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.MSGCOLECTION_SSUCESS, o.getMsg()));
+                                EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.MSGCOLECTION_SSUCESS, o.getMsg()));
                             } else {
-                                EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.MSGCOLECTION_ERROR, o.getMsg()));
+                                EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.MSGCOLECTION_ERROR, o.getMsg()));
                             }
                         }
                     }
@@ -67,7 +66,7 @@ public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobC
                     @Override
                     protected void onFail(ApiException e) {
                         dismissLoadingDialog();
-                        EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.MSGCOLECTION_ERROR, e.getMsg()));
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.MSGCOLECTION_ERROR, e.getMsg()));
                     }
 
 
@@ -75,41 +74,35 @@ public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobC
                     protected void _onError(ApiException error) {
                         dismissLoadingDialog();
                         super._onError(error);
-                        EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.MSGCOLECTION_ERROR, ""));
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.MSGCOLECTION_ERROR, ""));
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);
                         dismissLoadingDialog();
-                        EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.MSGCOLECTION_ERROR, ""));
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.MSGCOLECTION_ERROR, ""));
                     }
                 });
     }
 
-    /*上传获取采集类型*/
     @Override
-    public void getCaijiType(String function) {
-        HttpObservable.getObservable(apiRetrofit.getCaijiType(function))
-                .subscribe(new HttpResultObserver<GetCaijiTypeBean>() {
+    public void getJianChaCount(String function, String userid, String timestart, String timeend) {
+        HttpObservable.getObservable(apiRetrofit.getJianChaCount(function, userid, timestart, timeend))
+                .subscribe(new HttpResultObserver<GetMonitoringPlanCountBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
                         showLoadingDialog("加载中...");
                     }
 
                     @Override
-                    protected void onSuccess(GetCaijiTypeBean o) {
+                    protected void onSuccess(GetMonitoringPlanCountBean o) {
                         dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
-                                int size = o.getMsg().size();
-                                if (size == 0) {
-                                    EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.GETCAIJI_ERROR, o.getMsg()));
-                                } else {
-                                    EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.GETCAIJI_SSUCESS, o.getMsg()));
-                                }
+                                EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.CHANGEPWD_SSUCESS, o.getMsg()));
                             } else {
-                                EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.GETCAIJI_ERROR, o.getMsg()));
+                                EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.CHANGEPWD_ERROR, o.getMsg()));
                             }
                         }
                     }
@@ -117,7 +110,7 @@ public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobC
                     @Override
                     protected void onFail(ApiException e) {
                         dismissLoadingDialog();
-                        EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.GETCAIJI_ERROR, e.getMsg()));
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.CHANGEPWD_ERROR, e.getMsg()));
                     }
 
 
@@ -125,37 +118,16 @@ public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobC
                     protected void _onError(ApiException error) {
                         dismissLoadingDialog();
                         super._onError(error);
-                        EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.GETCAIJI_ERROR, ""));
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.CHANGEPWD_ERROR, ""));
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);
                         dismissLoadingDialog();
-                        EventBus.getDefault().postSticky(new PositionAcquisitionEvent(Constans.GETCAIJI_ERROR, ""));
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.CHANGEPWD_ERROR, ""));
                     }
-
-                    @Override
-                    protected void _onNext(GetCaijiTypeBean responseCustom) {
-                        super._onNext(responseCustom);
-                        dismissLoadingDialog();
-                    }
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        super.onSubscribe(d);
-                        dismissLoadingDialog();
-                    }
-
-                    @Override
-                    protected void onStart(Disposable d) {
-                        super.onStart(d);
-                        dismissLoadingDialog();
-                    }
-
-
                 });
-
     }
 
 

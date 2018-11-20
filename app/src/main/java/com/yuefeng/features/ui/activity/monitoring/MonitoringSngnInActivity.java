@@ -19,12 +19,13 @@ import android.widget.TextView;
 import com.baidu.location.BDLocation;
 import com.baidu.mapapi.model.LatLng;
 import com.common.base.codereview.BaseActivity;
+import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
 import com.common.utils.PreferencesUtils;
+import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
-import com.common.view.dialog.SucessCacheSureDialog;
 import com.common.view.popuwindow.CameraPhotoPopupWindow;
 import com.common.view.popuwindow.PersonalListPopupWindow;
 import com.luck.picture.lib.PictureSelector;
@@ -90,14 +91,13 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
     private double latitude;
     private double longitude;
     private String address;
-    private String type = "0";
+    private String personids;
     private MonitoringSngnInPresenter presenter;
     private String mImagesArrays;
-    private SucessCacheSureDialog sureDialog;
-
-    private List<PersonalParentBean> treeListData = new ArrayList<>();
     private List<Node> nodeList = new ArrayList<>();
     private PersonalListPopupWindow popupWindowTree;
+    private List<PersonalParentBean> treeListData = new ArrayList<>();
+    private boolean isFirstLocation = true;
 
     @Override
     protected int getContentViewResId() {
@@ -116,6 +116,7 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
         tv_title_setting.setText(R.string.submit);
         selectPhoto();
         tv_problem_address.setText(R.string.locationing);
+        isFirstLocation = true;
     }
 
 
@@ -123,6 +124,7 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
     public void initData() {
         requestPermissions();
         initEditText();
+        getTreeListData();
     }
 
     @Override
@@ -165,15 +167,18 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                     requestPermissions();
                     return;
                 }
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                address = location.getAddrStr();
-                if (!TextUtils.isEmpty(address)) {
-                    int length = address.length();
-                    address = address.substring(2, length);
-                    tv_problem_address.setText(address);
-                } else {
-                    tv_problem_address.setText(R.string.locationing);
+                if (isFirstLocation) {
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    address = location.getAddrStr();
+                    if (!TextUtils.isEmpty(address)) {
+                        isFirstLocation = false;
+                        int length = address.length();
+                        address = address.substring(2, length);
+                        tv_problem_address.setText(address);
+                    } else {
+                        tv_problem_address.setText(R.string.locationing);
+                    }
                 }
             }
         }, Constans.BDLOCATION_TIME);
@@ -208,6 +213,21 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
         });
     }
 
+
+    /*人员列表*/
+    private void getTreeListData() {
+        try {
+            if (presenter != null) {
+                String pid = PreferencesUtils.getString(this, "orgId", "");
+                String userid = PreferencesUtils.getString(this, "id", "");
+
+                presenter.getPersontree(ApiService.GETPERSONTREE, userid, pid);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposeProblemEvent(ProblemEvent event) {
@@ -218,11 +238,12 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                 tv_txt_count.setText("还可以输入" + count + "字");
                 break;
 
-            case Constans.UPLOADSUCESS:
-                showSuccessDialog(getString(R.string.upload_success));
+            case Constans.MONITORINGSIGNIN_SSUCESS:
+                PreferencesUtils.putString(this, Constans.ISSINGIN, TimeUtils.getCurrentTime2());
+                showSuccessDialog("签到成功，是否退出当前界面");
                 break;
-            case Constans.USERERROR:
-                showErrorToast("上传失败，请重试!");
+            case Constans.MONITORINGSIGNIN_ERROR:
+                showErrorToast("签到失败，请重试!");
                 break;
             case Constans.PICSTURESUCESS:
                 selectList = (List<LocalMedia>) event.getData();
@@ -230,17 +251,12 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                     showFilesSize(selectList);
                 }
                 break;
-
-        }
-    }
-
-    /*人员列表展示数据*/
-    private void showPersonallistDatas(List<PersonalParentBean> organs) {
-        try {
-            nodeList.clear();
-            nodeList = PersonalDatasUtils.ReturnPersonalTreesDatas(organs);
-        } catch (Exception e) {
-            e.printStackTrace();
+            case Constans.PERSONALLIST_SSUCESS://人员列表成功
+                treeListData = (List<PersonalParentBean>) event.getData();
+                if (treeListData.size() > 0) {
+                    showPersonallistDatas(treeListData);
+                }
+                break;
         }
     }
 
@@ -324,29 +340,33 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
 
     // 清空图片缓存，包括裁剪、压缩后的图片 注意:必须要在上传完成后调用 必须要获取权限
     private void delectSelectPhotos() {
-        RxPermissions permissions = new RxPermissions(this);
-        permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Observer<Boolean>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-            }
-
-            @Override
-            public void onNext(Boolean aBoolean) {
-                if (aBoolean) {
-                    PictureFileUtils.deleteCacheDirFile(MonitoringSngnInActivity.this);
-                } else {
-                    showSuccessToast(getString(R.string.picture_jurisdiction));
+        try {
+            RxPermissions permissions = new RxPermissions(this);
+            permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Observer<Boolean>() {
+                @Override
+                public void onSubscribe(Disposable d) {
                 }
-            }
 
-            @Override
-            public void onError(Throwable e) {
-            }
+                @Override
+                public void onNext(Boolean aBoolean) {
+                    if (aBoolean) {
+                        PictureFileUtils.deleteCacheDirFile(MonitoringSngnInActivity.this);
+                    } else {
+                        showSuccessToast(getString(R.string.picture_jurisdiction));
+                    }
+                }
 
-            @Override
-            public void onComplete() {
-            }
-        });
+                @Override
+                public void onError(Throwable e) {
+                }
+
+                @Override
+                public void onComplete() {
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -359,11 +379,9 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                 requestPermissions();/*重新定位*/
                 break;
             case R.id.tv_title_setting:
-                showSuccessToast(getString(R.string.submit));
-//                uploadProblem();
+                uploadProblem();
                 break;
             case R.id.tv_personal:
-                showSuccessToast(getString(R.string.personal));
                 initTreeListPopupView();
                 break;
         }
@@ -372,30 +390,33 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
 
     /*提交问题*/
     private void uploadProblem() {
+        try {
+            String memo = edt_problem_txt.getText().toString().trim();
+            if (TextUtils.isEmpty(memo)) {
+                showSuccessToast("请填写问题描述");
+                return;
+            }
+            if (TextUtils.isEmpty(mImagesArrays)) {
+                showSuccessToast("请选择图片上传");
+                return;
+            }
+            if (TextUtils.isEmpty(address)) {
+                showSuccessToast("请确定位置");
+                return;
+            }
 
-        String problem = edt_problem_txt.getText().toString().trim();
-        if (TextUtils.isEmpty(problem)) {
-            showSuccessToast("请填写问题描述");
-            return;
+            LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+            latitude = latLng.latitude;
+            longitude = latLng.longitude;
+
+            String pid = PreferencesUtils.getString(this, "orgId", "");
+            String userid = PreferencesUtils.getString(this, "id", "");
+//        personids = "eab2ffacffffffc976ce7286d4054823,eac99227ffffffc976ce72867fb4d7f8,13cdc60bffffffc92582d07de9285d6e,eab563fbffffffc976ce72866c1a4dac";
+            presenter.uploadWorkSign(ApiService.UPLOADWORKSIGN, pid, userid, address,
+                    String.valueOf(latitude), String.valueOf(longitude), personids, mImagesArrays, memo);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        if (TextUtils.isEmpty(mImagesArrays)) {
-            showSuccessToast("请选择图片上传");
-            return;
-        }
-        if (TextUtils.isEmpty(address)) {
-            showSuccessToast("请确定位置");
-            return;
-        }
-
-        LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
-        latitude = latLng.latitude;
-        longitude = latLng.longitude;
-
-        String pid = PreferencesUtils.getString(this, "orgId", "");
-        String userid = PreferencesUtils.getString(this, "id", "");
-//        presenter.uploadRubbishEvent(ApiService.UPLOADRUBBISHEVENT, userid, pid, problem, address,
-//                String.valueOf(longitude), String.valueOf(latitude), type, mImagesArrays);
-
     }
 
 
@@ -409,7 +430,6 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                     break;
             }
         }
-
     }
 
     /*展示图片*/
@@ -438,7 +458,8 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mImagesArrays = PictureSelectorUtils.compressionPhotos(MonitoringSngnInActivity.this, selectList, address);
+                String string = PreferencesUtils.getString(MonitoringSngnInActivity.this, Constans.STARTADDRESS, "");
+                mImagesArrays = PictureSelectorUtils.compressionPhotos(MonitoringSngnInActivity.this, selectList, string);
             }
         }).start();
         runOnUiThread(new Runnable() {
@@ -447,8 +468,6 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                 dismissLoadingDialog();
             }
         });
-//        if (!TextUtils.isEmpty(mImagesArrays)) {
-//        }
     }
 
 
@@ -460,6 +479,16 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
     }
 
 
+    /*人员列表展示数据*/
+    private void showPersonallistDatas(List<PersonalParentBean> organs) {
+        try {
+            nodeList.clear();
+            nodeList = PersonalDatasUtils.ReturnPersonalTreesDatas(organs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /*人员列表*/
     private void initTreeListPopupView() {
         try {
@@ -468,11 +497,11 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
             popupWindowTree.setSettingText("确定");
 
             popupWindowTree.setOnItemClickListener(new PersonalListPopupWindow.OnItemClickListener() {
-                @SuppressLint("SetTextI18n")
                 @Override
                 public void onGoBack(String name, String userId, String terminal) {
                     if (!TextUtils.isEmpty(name)) {
-                        tv_personal.setText("合照人" + name);
+                        tv_personal.setText(name);
+                        personids = userId;
                     }
                 }
 
@@ -480,7 +509,8 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                 @Override
                 public void onSure(String name, String userId, String terminal) {
                     if (!TextUtils.isEmpty(name)) {
-                        tv_personal.setText("合照人" + name);
+                        tv_personal.setText(name);
+                        personids = userId;
                     }
                 }
 
@@ -488,7 +518,8 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                 @Override
                 public void onSelectCar(String name, String userId, String terminal) {
                     if (!TextUtils.isEmpty(name)) {
-                        tv_personal.setText("合照人" + name);
+                        tv_personal.setText(name);
+                        personids = userId;
                     }
                 }
             });

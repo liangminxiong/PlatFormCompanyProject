@@ -1,25 +1,23 @@
 package com.yuefeng.features.adapter;
 
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.common.utils.StringUtils;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.modle.HistoryMonitoringBean;
+import com.yuefeng.features.modle.GetMonitoringHistoryDetaiBean;
 
 import java.util.List;
 
-public class HistoryMonitoringAdapter extends BaseQuickAdapter<HistoryMonitoringBean, BaseViewHolder> {
+public class HistoryMonitoringAdapter extends BaseQuickAdapter<GetMonitoringHistoryDetaiBean, BaseViewHolder> {
 
     private String startTime;
     private String endTime;
     private String startAddress;
     private String endAddress;
 
-    public HistoryMonitoringAdapter(int layoutResId, @Nullable List<HistoryMonitoringBean> data) {
+    public HistoryMonitoringAdapter(int layoutResId, @Nullable List<GetMonitoringHistoryDetaiBean> data) {
         super(layoutResId, data);
     }
 
@@ -29,14 +27,14 @@ public class HistoryMonitoringAdapter extends BaseQuickAdapter<HistoryMonitoring
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, HistoryMonitoringBean item) {
+    protected void convert(BaseViewHolder helper, GetMonitoringHistoryDetaiBean item) {
         if (item != null && helper != null) {
-            startTime = item.getStartTime();
-            endTime = item.getEndTime();
-            startAddress = item.getStartAddress();
-            endAddress = item.getEndAddress();
-            startTime = StringUtils.isEntryStrNull(startTime);
-            endTime = StringUtils.isEntryStrNull(endTime);
+            startTime = item.getStarttime();
+            endTime = item.getEndtime();
+            startAddress = item.getStartaddress();
+            endAddress = item.getEndaddress();
+            startTime = StringUtils.returnStrTime(startTime);
+            endTime = StringUtils.returnStrTime(endTime);
             startAddress = StringUtils.isEntryStrWu(startAddress);
             endAddress = StringUtils.isEntryStrWu(endAddress);
             helper.setText(R.id.tv_item_time, startTime + "---" + endTime)

@@ -45,7 +45,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="@dimen/sp_17"/>
+        android:textSize="@dimen/sp_18"/>
 
     <TextView
         android:id="@+id/tv_title_setting"
@@ -57,6 +57,6 @@
         android:layout_marginTop="@dimen/dp_10"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="17sp"
         tools:ignore="RelativeOverlap"/>
 </RelativeLayout>

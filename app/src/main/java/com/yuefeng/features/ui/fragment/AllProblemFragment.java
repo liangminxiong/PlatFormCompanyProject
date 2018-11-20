@@ -62,56 +62,64 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
 
     @Override
     public void initView() {
-        ButterKnife.bind(this, rootView);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
+        try {
+            ButterKnife.bind(this, rootView);
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
+            presenter = new AllProblemPresenter(this, (QualityInspectionActivity) getActivity());
+            recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
+            initRecycler();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        presenter = new AllProblemPresenter(this, (QualityInspectionActivity) getActivity());
-        recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
-        initRecycler();
     }
 
     private void initRecycler() {
-        allProblemAdapter = new AllProblemAdapter(R.layout.recycler_item_tab, listData);
-        recyclerview.setAdapter(allProblemAdapter);
-        allProblemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                String problemid = listData.get(position).getId();
-                String name = listData.get(position).getUploadpeoplename();
-                String state = listData.get(position).getState();
-                Intent intent = new Intent();
-                intent.setClass(Objects.requireNonNull(getActivity()), QualityInspectionDetailActivity.class);
-                intent.putExtra("PROBLEMID", problemid);
-                intent.putExtra("NAME", name);
-                intent.putExtra("STATE", state);
-                startActivity(intent);
+        try {
+            allProblemAdapter = new AllProblemAdapter(R.layout.recycler_item_tab, listData);
+            recyclerview.setAdapter(allProblemAdapter);
+            allProblemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    String problemid = listData.get(position).getId();
+                    String name = listData.get(position).getUploadpeoplename();
+                    String state = listData.get(position).getState();
+                    Intent intent = new Intent();
+                    intent.setClass(Objects.requireNonNull(getActivity()), QualityInspectionDetailActivity.class);
+                    intent.putExtra("PROBLEMID", problemid);
+                    intent.putExtra("NAME", name);
+                    intent.putExtra("STATE", state);
+                    startActivity(intent);
 
-            }
-        });
-
-        allProblemAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                int id = view.getId();
-                EventQuestionMsgBean eventQuestionMsgBean = listData.get(position);
-                switch (id) {
-                    case R.id.iv_item_forward:
-                        if (eventQuestionMsgBean != null) {
-                            chuliEvent(eventQuestionMsgBean);
-                        }
-                        break;
-                    case R.id.iv_item_claim:
-                        if (eventQuestionMsgBean != null) {
-                            iv_item_claim(eventQuestionMsgBean);
-                        }
-                        break;
                 }
-            }
-        });
+            });
+
+            allProblemAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                @Override
+                public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                    int id = view.getId();
+                    EventQuestionMsgBean eventQuestionMsgBean = listData.get(position);
+                    switch (id) {
+                        case R.id.iv_item_forward:
+                            if (eventQuestionMsgBean != null) {
+                                chuliEvent(eventQuestionMsgBean);
+                            }
+                            break;
+                        case R.id.iv_item_claim:
+                            if (eventQuestionMsgBean != null) {
+                                iv_item_claim(eventQuestionMsgBean);
+                            }
+                            break;
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -123,9 +131,13 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            getEventDatasByNet(true);
+        try {
+            super.setUserVisibleHint(isVisibleToUser);
+            if (isVisibleToUser) {
+                getEventDatasByNet(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -248,13 +260,17 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
 
     /*展示列表数据*/
     private void showAdapterDatasList(List<EventQuestionMsgBean> beanMsg) {
-        if (beanMsg.size() != 0) {
-            listData.clear();
-            listData.addAll(beanMsg);
-            allProblemAdapter.setNewData(listData);
-        } else {
-            listData.clear();
-            initRecycler();
+        try {
+            if (beanMsg.size() != 0) {
+                listData.clear();
+                listData.addAll(beanMsg);
+                allProblemAdapter.setNewData(listData);
+            } else {
+                listData.clear();
+                initRecycler();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

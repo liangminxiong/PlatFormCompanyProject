@@ -5,7 +5,7 @@
     android:id="@+id/ll_popup_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/color_f6"
     android:orientation="vertical">
 
     <include
@@ -14,14 +14,12 @@
 
     <View style="@style/horizontal_line"/>
 
-    <include layout="@layout/layout_search"/>
+    <include layout="@layout/layout_search_gray"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/dp_10"
-        android:layout_marginStart="@dimen/dp_10"
         android:layout_marginTop="@dimen/dp_3"
         android:visibility="visible"/>
 
@@ -29,8 +27,6 @@
         android:id="@+id/recyclerview_after"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/dp_10"
-        android:layout_marginStart="@dimen/dp_10"
         android:layout_marginTop="@dimen/dp_3"
         android:visibility="gone"/>
 

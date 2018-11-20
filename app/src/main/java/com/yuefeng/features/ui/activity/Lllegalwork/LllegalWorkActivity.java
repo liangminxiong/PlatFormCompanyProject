@@ -20,7 +20,6 @@ import com.common.utils.PreferencesUtils;
 import com.common.utils.ResourcesUtils;
 import com.common.view.popuwindow.PersonalListPopupWindow;
 import com.common.view.popuwindow.TreesListsPopupWindow;
-import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.MyLllegalPageAdapter;
@@ -58,16 +57,11 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
     TabLayout tabLayout;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
-//    @BindView(R.id.space)
-//    View view;
 
     private List<CarListInfosMsgBean> carListData = new ArrayList<>();
     private List<Node> carDatas = new ArrayList<>();
     private LllegalWorkPresenter presenter;
     private TreesListsPopupWindow carListPopupWindow;
-    private SimpleTreeRecyclerAdapter carlistAdapter;
-    private String carNumber;
-    private String terminal;
 
     //TabLayout标签
     private String[] titles = new String[]{"车辆违规", "人员违规"};
@@ -92,8 +86,6 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
         }
         ButterKnife.bind(this);
         presenter = new LllegalWorkPresenter(this, this);
-//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
         initTabLayout();
         getCarList();
         isCarOrPersonalList = true;
@@ -118,15 +110,15 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 
     /*车辆列表*/
     private void getCarList() {
+        try {
         if (presenter != null) {
             String pid = PreferencesUtils.getString(this, "orgId", "");
             String userid = PreferencesUtils.getString(this, "id", "");
-//            pid = "ea9b4033ffffee0101ed1860a1febcfb";
-//            userid = "eab2ffacffffffc976ce7286d4054823";
-            presenter.getCarListInfos(ApiService.LOADVEHICLELIST, pid, userid, "0");
-//            presenter.getCarListInfosNew(ApiService.GETVEHICLETREE, pid, userid, "0");
-            getTreeListData();
+            presenter.getCarListInfosNew(ApiService.GETVEHICLETREE, pid, userid, "0");
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
     @Override
@@ -145,13 +137,15 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 
     /*人员列表*/
     private void getTreeListData() {
+        try {
         if (presenter != null) {
             String pid = PreferencesUtils.getString(this, Constans.ORGID, "");
             String userid = PreferencesUtils.getString(this, "id", "");
-//            pid = "dg1954";
-//            userid = "19f66fabffffffc975d0e8f475995ee6";
             presenter.getPersontree(ApiService.GETPERSONTREE, userid, pid);
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 
 
@@ -159,7 +153,8 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void disposeLllegalWorkEvent(LllegalWorkEvent event) {
         switch (event.getWhat()) {
-            case Constans.CARLIST_SSUCESS:
+            case Constans.CARLIST_SSUCESS_NEW:
+                getTreeListData();
                 carListData = (List<CarListInfosMsgBean>) event.getData();
                 if (carListData.size() > 0) {
                     showCarlistDatas(carListData);
@@ -175,7 +170,7 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
                 }
                 break;
             case Constans.CARLIST_ERROR://车辆列表失败
-
+                getTreeListData();
                 break;
             default:
                 break;
@@ -257,33 +252,39 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
 
     /*车辆列表*/
     private void initCarlistPopupView() {
-        if (carDatas.size() > 0) {
-            carListPopupWindow = new TreesListsPopupWindow(this, carDatas, true);
-            carListPopupWindow.setTitleText("车辆列表");
-            carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
-            carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
-                @Override
-                public void onGoBack(String name, String terminal, String id) {
-                    if (!TextUtils.isEmpty(id)) {
-                        EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, id));
+        try {
+            if (carDatas.size() > 0) {
+                carListPopupWindow = new TreesListsPopupWindow(this, carDatas, true, false);
+                carListPopupWindow.setTitleText("车辆列表");
+                carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
+                carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
+                    @Override
+                    public void onGoBack(String name, String terminal, String id, boolean isGetDatas) {
+                        if (!TextUtils.isEmpty(id) && isGetDatas) {
+                            EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, id));
+                        }
                     }
-                }
 
-                @Override
-                public void onSure(String name, String terminal, String id) {
-                    if (!TextUtils.isEmpty(id)) {
-                        EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, id));
+                    @Override
+                    public void onSure(String name, String terminal, String id, boolean isGetDatas) {
+                        if (!TextUtils.isEmpty(id) && isGetDatas) {
+                            EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, id));
+                        }
                     }
-                }
 
-                @Override
-                public void onSelectCar(String carNumber, String terminal, String id) {
+                    @Override
+                    public void onSelectCar(String carNumber, String terminal, String id, boolean isGetDatas) {
 //                    if (!TextUtils.isEmpty(id)) {
 //                        EventBus.getDefault().postSticky(new LllegalWorkEvent(Constans.VECHIL_ID, id));
 //                    }
-                }
-            });
-            carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+                    }
+                });
+                carListPopupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+            } else {
+                getCarList();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -318,6 +319,8 @@ public class LllegalWorkActivity extends BaseActivity implements LllegalWorkCont
                     }
                 });
                 popupWindowTree.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+            }else {
+                getTreeListData();
             }
         } catch (Exception e) {
             e.printStackTrace();

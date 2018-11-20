@@ -32,8 +32,8 @@ public class PersonalAdapter extends BaseItemDraggableAdapter<PersonalinfoListBe
             tel = TextUtils.isEmpty(tel) ? "无" : tel;
 
             address = TextUtils.isEmpty(item.getAddress()) ? "暂无地址!" : item.getAddress();
-            helper.setText(R.id.tv_item_name, name)//+ "(" + position + ")"
-                    .setTextColor(R.id.tv_item_name, mContext.getResources().getColor(R.color.black_32))
+            helper.setText(R.id.tv_item_title, name)//+ "(" + position + ")"
+                    .setTextColor(R.id.tv_item_title, mContext.getResources().getColor(R.color.black_32))
                     .setGone(R.id.tv_item_type,true)
                     .setText(R.id.tv_item_type, position)
                     .setText(R.id.tv_item_other, address)

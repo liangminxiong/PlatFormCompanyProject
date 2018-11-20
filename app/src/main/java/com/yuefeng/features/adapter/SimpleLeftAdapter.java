@@ -49,7 +49,7 @@ public class SimpleLeftAdapter extends BaseAdapter {
             convertView =ResourcesUtils.inflate(R.layout.simple_list_item);
             holder = new ViewHolder();
 
-            holder.nameTV = (TextView) convertView.findViewById(R.id.tv_item_name);
+            holder.nameTV = (TextView) convertView.findViewById(R.id.tv_item_title);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

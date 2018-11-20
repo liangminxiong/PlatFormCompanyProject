@@ -109,23 +109,26 @@ public class MainActivity extends BaseActivity implements
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initView(Bundle savedInstanceState) {
-        ButterKnife.bind(this);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-        ll_parent.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        presenter = new SignInPresenter(this, this);
-        initViewPager();
-        viewPager.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
+        try {
+            ButterKnife.bind(this);
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
             }
-        });
-        iv_back.setVisibility(View.INVISIBLE);
-        tv_title.setText(msg_name);
-
+            ll_parent.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            presenter = new SignInPresenter(this, this);
+            initViewPager();
+            viewPager.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return false;
+                }
+            });
+            iv_back.setVisibility(View.INVISIBLE);
+            tv_title.setText(msg_name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -139,19 +142,23 @@ public class MainActivity extends BaseActivity implements
      */
     @SuppressLint("CheckResult")
     private void requestPermissions() {
-        RxPermissions rxPermission = new RxPermissions(this);
-        rxPermission.request(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean granted) throws Exception {
-                        if (!granted) {
-                            showSuccessToast("App未能获取相关权限，部分功能可能不能正常使用.");
+        try {
+            RxPermissions rxPermission = new RxPermissions(this);
+            rxPermission.request(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)
+                    .subscribe(new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean granted) throws Exception {
+//                            if (!granted) {
+//                                showSuccessToast("App未能获取相关权限，部分功能可能不能正常使用.");
+//                            }
+                            getLocation();
                         }
-                        getLocation();
-                    }
-                });
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void getLocation() {
@@ -190,32 +197,45 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void useBdGpsLocation() {
-        BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
-            @Override
-            public void myLocation(BDLocation location) {
-                if (location == null) {
-                    requestPermissions();
-                    return;
-                }
+        try {
+            BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
+                @Override
+                public void myLocation(BDLocation location) {
+                    if (location == null) {
+                        requestPermissions();
+                        return;
+                    }
 //                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                address = location.getAddrStr();
+                    address = location.getAddrStr();
 
 //                    LatLng latLng=BdLocationUtil.ConverCommonToBaidu()
-                if (isFirstLocation) {
-                    if (!TextUtils.isEmpty(address)) {
-                        int length = address.length();
-                        address = address.substring(2, length);
-                        latitude = location.getLatitude();
-                        longitude = location.getLongitude();
-                        isFirstLocation = false;
-                        showSignInTime(longitude, latitude, address);
+                    if (isFirstLocation) {
+                        if (!TextUtils.isEmpty(address)) {
+                            int length = address.length();
+                            address = address.substring(2, length);
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                            isFirstLocation = false;
+                            PreferencesUtils.putString(MainActivity.this, Constans.ADDRESS, address);
+                            try {
+                                String string = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
+                                if (string.equals("true")) {
+                                    showSignInTime(longitude, latitude, address);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
                     }
-                }
 //                } else {
 
-            }
+                }
 //            }
-        }, BDLOCATION_TIME);
+            }, BDLOCATION_TIME);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -226,77 +246,85 @@ public class MainActivity extends BaseActivity implements
 
     /*倒计时*/
     private void showSignInTime(final double longitude, final double latitude, final String address) {
-        PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", true);
-        if (sureDialog == null) {
-            sureDialog = new SigninCacheSureDialog(this);
-        }
-        String time = TimeUtils.getCurrentTime();
-        sureDialog.setTextTime(time);
-        sureDialog.setTextAddress(address);
-        sureDialog.setDeletaCacheListener(new SigninCacheSureDialog.DeletaCacheListener() {
-
-            @Override
-            public void sure() {
-                sureDialog.dismiss();
-                personalSignIn(longitude, latitude, address);
-                PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", false);
-                checkVersion();
-
+        try {
+            PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", true);
+            if (sureDialog == null) {
+                sureDialog = new SigninCacheSureDialog(this);
             }
+            String time = TimeUtils.getCurrentTime();
+            sureDialog.setTextTime(time);
+            sureDialog.setTextAddress(address);
+            sureDialog.setDeletaCacheListener(new SigninCacheSureDialog.DeletaCacheListener() {
 
-            @Override
-            public void cancle() {
-                sureDialog.dismiss();
-                PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", false);
-                checkVersion();
+                @Override
+                public void sure() {
+                    sureDialog.dismiss();
+                    personalSignIn(longitude, latitude, address);
+                    PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", false);
+                    checkVersion();
+
+                }
+
+                @Override
+                public void cancle() {
+                    sureDialog.dismiss();
+                    PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", false);
+                    checkVersion();
+                }
+            });
+
+            if (!isFinishing()) {
+                sureDialog.show();
             }
-        });
-
-        if (!isFinishing()) {
-            sureDialog.show();
+            initCountDown();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        initCountDown();
     }
 
     private void initCountDown() {
-        Observable.interval(1, TimeUnit.SECONDS)
-                .take(mTime)//计时次数
-                .map(new Function<Long, Long>() {
-                    @Override
-                    public Long apply(Long aLong) throws Exception {
-                        return mTime - aLong;// 3-0 3-2 3-1
-                    }
-                })
-                .compose(RxHelper.<Long>rxSchedulerHelper())
-                .subscribe(new Observer<Long>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                    }
-
-                    @Override
-                    public void onNext(Long value) {
-                        //                        Logger.e("value = " + value);
-                        String s = String.valueOf(value);
-                        if (sureDialog != null)
-                            sureDialog.setTextTimeDown(TextUtils.isEmpty(s) ? "" : "(" + s + " s)");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onComplete() {//结束，打卡
-                        if (sureDialog != null) {
-                            sureDialog.dismiss();
+        try {
+            Observable.interval(1, TimeUnit.SECONDS)
+                    .take(mTime)//计时次数
+                    .map(new Function<Long, Long>() {
+                        @Override
+                        public Long apply(Long aLong) throws Exception {
+                            return mTime - aLong;// 3-0 3-2 3-1
                         }
-                        checkVersion();
-                        boolean isSignIn = PreferencesUtils.getBoolean(MainActivity.this, "isSignIn");
-                        if (isSignIn) {
-                            personalSignIn(longitude, latitude, address);
+                    })
+                    .compose(RxHelper.<Long>rxSchedulerHelper())
+                    .subscribe(new Observer<Long>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
                         }
-                    }
-                });
+
+                        @Override
+                        public void onNext(Long value) {
+                            //                        Logger.e("value = " + value);
+                            String s = String.valueOf(value);
+                            if (sureDialog != null)
+                                sureDialog.setTextTimeDown(TextUtils.isEmpty(s) ? "" : "(" + s + " s)");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                        }
+
+                        @Override
+                        public void onComplete() {//结束，打卡
+                            if (sureDialog != null) {
+                                sureDialog.dismiss();
+                            }
+                            checkVersion();
+                            boolean isSignIn = PreferencesUtils.getBoolean(MainActivity.this, "isSignIn");
+                            if (isSignIn) {
+                                personalSignIn(longitude, latitude, address);
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -310,53 +338,57 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void initViewPager() {
-        tabItemInfos = new ArrayList<>();
-        HomeFragment homeFragment = new HomeFragment();
-        tabItemInfos.add(new TabItemInfo(homeFragment, R.drawable.home_button_selector, R.string.tab_main_name));
+        try {
+            tabItemInfos = new ArrayList<>();
+            HomeFragment homeFragment = new HomeFragment();
+            tabItemInfos.add(new TabItemInfo(homeFragment, R.drawable.home_button_selector, R.string.tab_main_name));
 
 //        tabItemInfos.add(new TabItemInfo(new TackFragment(), R.drawable.search_button_selector, R.string.tab_tack_name));
-        /*应用*/
-        tabItemInfos.add(new TabItemInfo(new FeaturesFragment(), R.drawable.application_button_selector, R.string.tab_search_name));
+            /*应用*/
+            tabItemInfos.add(new TabItemInfo(new FeaturesFragment(), R.drawable.application_button_selector, R.string.tab_search_name));
 //        tabItemInfos.add(new TabItemInfo(new AddressbookFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
-        tabItemInfos.add(new TabItemInfo(new UserInfoFragment(), R.drawable.my_button_selector, R.string.tab_mine_name));
+            tabItemInfos.add(new TabItemInfo(new UserInfoFragment(), R.drawable.my_button_selector, R.string.tab_mine_name));
 
-        pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), tabItemInfos, mActivity);
-        tabLayout.setTabMode(TabLayout.MODE_FIXED);
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.setOffscreenPageLimit(tabItemInfos.size());
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(0).select(); //默认选中某项放在加载viewpager之后
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), tabItemInfos, mActivity);
+            tabLayout.setTabMode(TabLayout.MODE_FIXED);
+            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+            viewPager.setAdapter(pagerAdapter);
+            viewPager.setOffscreenPageLimit(tabItemInfos.size());
+            tabLayout.setupWithViewPager(viewPager);
+            tabLayout.getTabAt(0).select(); //默认选中某项放在加载viewpager之后
+            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
-            String titleName = "";
+                String titleName = "";
 
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
-                if (position == 0) {
-                    titleName = msg_name;
-                } else if (position == 1) {
-                    titleName = tack_name;
-                } else if (position == 2) {
-                    titleName = features_name;
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    int position = tab.getPosition();
+                    if (position == 0) {
+                        titleName = msg_name;
+                    } else if (position == 1) {
+                        titleName = tack_name;
+                    } else if (position == 2) {
+                        titleName = features_name;
 //                } else if (position == 3) {
 //                    titleName = book_name;
-                } else {
-                    titleName = my_name;
+                    } else {
+                        titleName = my_name;
+                    }
+                    tv_title.setText(titleName);
                 }
-                tv_title.setText(titleName);
-            }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+                }
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-        initTabView();
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                }
+            });
+            initTabView();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initTabView() {
@@ -370,9 +402,13 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void personalSignIn(double longitude, double latitude, String address) {
-        userId = PreferencesUtils.getString(this, Constans.ID, "");
-        presenter.signIn(ApiService.QIANDAO, userId, "", "",
-                String.valueOf(longitude), String.valueOf(latitude), address, Constans.TYPE_ZERO);
+        try {
+            userId = PreferencesUtils.getString(this, Constans.ID, "");
+            presenter.signIn(ApiService.QIANDAO, userId, "", "",
+                    String.valueOf(longitude), String.valueOf(latitude), address, Constans.TYPE_ZERO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -431,14 +467,18 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onReverseGeoCodeResult(Map<String, Object> map) {
-        address = (String) map.get("address");
-        if (!TextUtils.isEmpty(address)) {
-            LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
-            latitude = latLng.latitude;
-            longitude = latLng.longitude;
-            showSignInTime(longitude, latitude, address);
-        } else {
-            useBdGpsLocation();
+        try {
+            address = (String) map.get("address");
+            if (!TextUtils.isEmpty(address)) {
+                LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
+                latitude = latLng.latitude;
+                longitude = latLng.longitude;
+                showSignInTime(longitude, latitude, address);
+            } else {
+                useBdGpsLocation();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
