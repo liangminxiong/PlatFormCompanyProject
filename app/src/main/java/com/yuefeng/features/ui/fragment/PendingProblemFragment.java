@@ -97,6 +97,7 @@ public class PendingProblemFragment extends BaseFragment implements QualityGetFr
                 intent.putExtra("PROBLEMID", problemid);
                 intent.putExtra("NAME", name);
                 intent.putExtra("STATE", state);
+                intent.putExtra("NOREPLY", "Yes");
                 startActivity(intent);
             }
         });

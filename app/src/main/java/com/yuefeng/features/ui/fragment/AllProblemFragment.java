@@ -91,6 +91,7 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
                     intent.putExtra("PROBLEMID", problemid);
                     intent.putExtra("NAME", name);
                     intent.putExtra("STATE", state);
+                    intent.putExtra("NOREPLY", "Yes");
                     startActivity(intent);
 
                 }
@@ -220,7 +221,6 @@ public class AllProblemFragment extends BaseFragment implements QualityGetFragme
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

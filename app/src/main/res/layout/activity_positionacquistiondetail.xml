@@ -64,7 +64,7 @@
             tools:ignore="HardcodedText"/>
 
         <TextView
-            android:id="@+id/tv_name"
+            android:id="@+id/tv_theme"
             style="@style/position_detail_name"
             android:layout_below="@id/type"
             android:layout_toEndOf="@id/name"

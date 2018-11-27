@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.common.utils.AppUtils;
 import com.common.utils.DensityUtil;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.modle.EventdetailMsgBean;
@@ -126,11 +127,11 @@ public class QualityInspectionDetailAdapter extends BaseItemDraggableAdapter<Eve
         if (imgUrl.contains(",")) {
             split = imgUrl.split(",");
             for (String aSplit : split) {
-                ImageInfo imageInfo = new ImageInfo(aSplit, 200, 200);
+                ImageInfo imageInfo = new ImageInfo(aSplit, (int) AppUtils.mScreenWidth, (int) AppUtils.mScreenHeight);
                 images.add(imageInfo);
             }
         } else {
-            ImageInfo imageInfo = new ImageInfo(imgUrl, 200, 200);
+            ImageInfo imageInfo = new ImageInfo(imgUrl, (int) AppUtils.mScreenWidth, (int) AppUtils.mScreenHeight);
             images.add(imageInfo);
         }
         if (adapter == null) {

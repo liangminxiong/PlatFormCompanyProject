@@ -22,18 +22,13 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.common.utils.Constans;
 import com.yuefeng.cartreeList.adapter.PersonalVechicleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
-import com.yuefeng.cartreeList.common.OnTreeNodeClickListener;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.event.JobMonitoringFragmentEvent;
 import com.yuefeng.features.modle.PersonalinfoListBean;
 import com.yuefeng.features.modle.QuestionListBean;
 import com.yuefeng.features.modle.VehicleinfoListBean;
 import com.yuefeng.utils.FilterMonitoringUtils;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,12 +60,16 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
     List<VehicleinfoListBean> vehicleinfoList = new ArrayList<>();
     List<QuestionListBean> questionList = new ArrayList<>();
     private String mId;
+    private String mIdTemp;
 
     public PersonaCarProblemPopupWindow(Context context, List<Node> carDatas, boolean isSingle) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mContext = context;
         this.mListData = carDatas;
         this.isSingle = isSingle;
+        personalinfoList.clear();
+        vehicleinfoList.clear();
+        questionList.clear();
         //设置点击空白处消失
         setTouchable(true);
         setOutsideTouchable(true);
@@ -107,7 +106,6 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 dismiss();
-                initEventBus();
 
             }
         });
@@ -123,7 +121,9 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 dismiss();
-                initEventBus();
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onSure(personalinfoList, vehicleinfoList, questionList);
+                }
             }
         });
 
@@ -165,14 +165,14 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
         mAdapter = new PersonalVechicleTreeRecyclerAdapter(recyclerview, mContext,
                 listData, 1, R.drawable.list_fold, R.drawable.list_fold, isSingle, false);
         recyclerview.setAdapter(mAdapter);
-        mAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
-            @Override
-            public void onClick(Node node, int position) {
-//                LogUtils.d("====allNodes ==9999 " + position);
-
-            }
-
-        });
+//        mAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
+//            @Override
+//            public void onClick(Node node, int position) {
+//                showSelectItemDatas(position);
+//
+//            }
+//
+//        });
         mAdapter.setOnCheckBoxInterface(new PersonalVechicleTreeRecyclerAdapter.OnCheckBoxInterface() {
             @Override
             public void onCheckBoxClick(Node node, int position) {
@@ -190,87 +190,52 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
         final List<Node> allNodes = mAdapter.getAllNodes();
         for (int i = 0; i < allNodes.size(); i++) {
             if (allNodes.get(i).isChecked()) {
-                initAllDatas(position, allNodes, i);
+                mPid = (String) allNodes.get(i).getpId();
+                mId = (String) allNodes.get(i).getId();
+                if (mPid.equals(FilterMonitoringUtils.First) && position == 0) {
+                    personalinfoList.clear();
+                    vehicleinfoList.clear();
+                    questionList.clear();
+                    if (mPid.equals(FilterMonitoringUtils.personalId)) {
+                        PersonalinfoListBean bean = (PersonalinfoListBean) allNodes.get(i).getBean();
+                        if (!mId.equals(mIdTemp)) {
+                            personalinfoList.add(bean);
+                        }
+                        mIdTemp = bean.getId();
+                    } else if (mPid.equals(FilterMonitoringUtils.vehicleId)) {
+                        VehicleinfoListBean bean = (VehicleinfoListBean) allNodes.get(i).getBean();
+                        if (!mId.equals(mIdTemp)) {
+                            vehicleinfoList.add(bean);
+                        }
+                        mIdTemp = bean.getId();
+                    } else if (mPid.equals(FilterMonitoringUtils.questionId)) {
+                        QuestionListBean bean = (QuestionListBean) allNodes.get(i).getBean();
+                        if (!mId.equals(mIdTemp)) {
+                            questionList.add(bean);
+                        }
+                        mIdTemp = bean.getId();
+                    }
+                } else if (mPid.equals(FilterMonitoringUtils.personalId)) {
+                    PersonalinfoListBean bean = (PersonalinfoListBean) allNodes.get(i).getBean();
+                    if (!mId.equals(mIdTemp)) {
+                        personalinfoList.add(bean);
+                    }
+                    mIdTemp = bean.getId();
+                } else if (mPid.equals(FilterMonitoringUtils.vehicleId)) {
+                    VehicleinfoListBean bean = (VehicleinfoListBean) allNodes.get(i).getBean();
+                    if (!mId.equals(mIdTemp)) {
+                        vehicleinfoList.add(bean);
+                    }
+                    mIdTemp = bean.getId();
+                } else if (mPid.equals(FilterMonitoringUtils.questionId)) {
+                    QuestionListBean bean = (QuestionListBean) allNodes.get(i).getBean();
+                    if (!mId.equals(mIdTemp)) {
+                        questionList.add(bean);
+                    }
+                    mIdTemp = bean.getId();
+                }
             }
         }
-    }
-
-    private void initAllDatas(List<Node> allNodes, int i) {
-        mPid = (String) allNodes.get(i).getpId();
-        mId = (String) allNodes.get(i).getId();
-        if (mPid.equals(FilterMonitoringUtils.First)) {
-            addAllDatatoList(mPid, allNodes, i);
-        } else if (mPid.equals(FilterMonitoringUtils.personalId)) {
-            PersonalinfoListBean bean = (PersonalinfoListBean) allNodes.get(i).getBean();
-            personalinfoList.add(bean);
-        } else if (mPid.equals(FilterMonitoringUtils.vehicleId)) {
-            VehicleinfoListBean bean = (VehicleinfoListBean) allNodes.get(i).getBean();
-            vehicleinfoList.add(bean);
-        } else if (mPid.equals(FilterMonitoringUtils.questionId)) {
-            QuestionListBean bean = (QuestionListBean) allNodes.get(i).getBean();
-            questionList.add(bean);
-        } else if (mPid.equals(FilterMonitoringUtils.parentId)) {
-            addAllDatatoList(mPid, allNodes, i);
-        }
-    }
-
-    private void initAllDatas(int position, List<Node> allNodes, int i) {
-        mPid = (String) allNodes.get(i).getpId();
-        mId = (String) allNodes.get(i).getId();
-        if (mPid.equals(FilterMonitoringUtils.First) && position == 0) {
-//            LogUtils.d("===initAllDatas=000 =" + mPid + " +++ " + mId);
-            addAllDatatoList(mPid, allNodes, i);
-        } else if (mPid.equals(FilterMonitoringUtils.personalId)) {
-//            LogUtils.d("===initAllDatas=111 =" + mPid + " +++ " + mId);
-            PersonalinfoListBean bean = (PersonalinfoListBean) allNodes.get(i).getBean();
-            personalinfoList.add(bean);
-        } else if (mPid.equals(FilterMonitoringUtils.vehicleId)) {
-//            LogUtils.d("===initAllDatas=222 =" + mPid + " +++ " + mId);
-            VehicleinfoListBean bean = (VehicleinfoListBean) allNodes.get(i).getBean();
-            vehicleinfoList.add(bean);
-        } else if (mPid.equals(FilterMonitoringUtils.questionId)) {
-//            LogUtils.d("===initAllDatas=333 =" + mPid + " +++ " + mId);
-            QuestionListBean bean = (QuestionListBean) allNodes.get(i).getBean();
-            questionList.add(bean);
-        } else if (mPid.equals(FilterMonitoringUtils.parentId)) {
-//            LogUtils.d("===initAllDatas=444 =" + mPid + " +++ " + mId);
-            addAllDatatoList(mPid, allNodes, i);
-        }
-    }
-
-    private void addAllDatatoList(String mPid, List<Node> allNodes, int i) {
-        if (mId.equals(FilterMonitoringUtils.personalId) && mPid.equals(FilterMonitoringUtils.personalId)) {
-            List<Node> children = allNodes.get(i).getChildren();
-            for (Node child : children) {
-                PersonalinfoListBean bean = (PersonalinfoListBean) child.getBean();
-                personalinfoList.add(bean);
-            }
-        } else if (mId.equals(FilterMonitoringUtils.vehicleId) && mPid.equals(FilterMonitoringUtils.vehicleId)) {
-            List<Node> children = allNodes.get(i).getChildren();
-            for (Node child : children) {
-
-                VehicleinfoListBean bean = (VehicleinfoListBean) child.getBean();
-                vehicleinfoList.add(bean);
-            }
-
-        } else if (mId.equals(FilterMonitoringUtils.questionId) && mPid.equals(FilterMonitoringUtils.questionId)) {
-            QuestionListBean bean = (QuestionListBean) allNodes.get(i).getBean();
-            questionList.add(bean);
-        }
-    }
-
-    private void initEventBus() {
-        if (personalinfoList.size() == 0 && vehicleinfoList.size() == 0
-                && questionList.size() == 0 && mAdapter != null) {
-            List<Node> allNodes = mAdapter.getAllNodes();
-            for (int i = 0; i < allNodes.size(); i++) {
-                initAllDatas(allNodes, i);
-            }
-        }
-
-        EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.PERSONAL_SSUCESS, personalinfoList));
-        EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.VEHICLE_SSUCESS, vehicleinfoList));
-        EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.PROBLEM_SSUCESS, questionList));
     }
 
 
@@ -317,13 +282,12 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
     }
 
     public interface OnItemClickListener {
-        void onGoBack(String listName, String userId, String terflag);
+        void onGoBack();
 
-//        void onSearch(String key);
+        void onSure(List<PersonalinfoListBean> personalinfoList,
+                    List<VehicleinfoListBean> vehicleinfoList,
+                    List<QuestionListBean> questionList);
 
-        void onSure(String listName, String userId, String terflag);
-
-        void onSelectCar(String carNumber, String userId, String terflag);
 
     }
 

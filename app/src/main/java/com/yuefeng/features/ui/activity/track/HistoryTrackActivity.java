@@ -340,9 +340,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 lls.add(p1);
             }
             if (lls.size() > 1) {
-                OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.BLUE).points(lls);
+                OverlayOptions ooPolyline = new PolylineOptions().width(15).color(Color.BLUE).points(lls);
                 mPolyline = (Polyline) mBaiduMap.addOverlay(ooPolyline);
-                BdLocationUtil.MoveMapToCenter(mBaiduMap, lls.get(lls.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
+                BdLocationUtil.MoveMapToCenter(mBaiduMap, lls.get(lls.size() - 1), Constans.BAIDU_ZOOM_TWENTY_ONE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -401,7 +401,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
-                    if (!TextUtils.isEmpty(address)) {
+                    if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                         int length = address.length();
                         address = address.substring(2, length);
                     }
@@ -410,7 +410,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                         isFirstLoc = false;
                         MapStatus ms = new MapStatus.Builder().target(latLngTemp)
                                 .overlook(-20).zoom(14).build();
-                        ooA = new MarkerOptions();
+                        ooA = new MarkerOptions().flat(true).anchor(0.5f, 0.5f);
                         ooA.icon(BitmapDescriptorFactory.fromResource(imageInt));
                         ooA.zIndex(10);
                         ooA.position(latLngTemp);
@@ -494,14 +494,14 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private void initPopupView() {
         try {
             selectList.clear();
-            popupWindow = new TreesListsPopupWindow(this, datas, true,true);
+            popupWindow = new TreesListsPopupWindow(this, datas, true, true);
             popupWindow.setTitleText("车辆列表");
             popupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
 
             popupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
                 @Override
-                public void onGoBack(String name, String terminala, String id,boolean isGetDatas) {
-                    carNumber =name;
+                public void onGoBack(String name, String terminala, String id, boolean isGetDatas) {
+                    carNumber = name;
                     terminal = terminala;
                     if (isGetDatas) {
                         getSelectCarInfos(name, terminal);
@@ -509,8 +509,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 }
 
                 @Override
-                public void onSure(String name, String terminala, String id,boolean isGetDatas) {
-                    carNumber =name;
+                public void onSure(String name, String terminala, String id, boolean isGetDatas) {
+                    carNumber = name;
                     terminal = terminala;
                     if (isGetDatas) {
                         getSelectCarInfos(name, terminal);
@@ -518,7 +518,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 }
 
                 @Override
-                public void onSelectCar(String carNumber, String terminal, String id,boolean isGetDatas) {
+                public void onSelectCar(String carNumber, String terminal, String id, boolean isGetDatas) {
 //                    getSelectCarInfos(carNumber, terminal);
                 }
             });
@@ -586,8 +586,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             BitmapDescriptor map_location = BitmapDescriptorFactory.fromResource(imageInt);
 
 //            if (index == 0) {
-            ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
-            BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
+            ooA = new MarkerOptions().flat(true).anchor(0.5f, 0.5f).position(p1).zIndex(9).draggable(true).icon(map_location);
+            BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, Constans.BAIDU_ZOOM_TWENTY_ONE);
 //            } else {
 //                ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
 //                BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
@@ -597,9 +597,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
             mMarker.setTitle(trackDataTn);
             mSeekBar.setProgress(index);
-            tvSpeed.setText(trackData.getSp() + "km/h");
+            tvSpeed.setText(trackData.getSp() + "km/h" + "   " + trackData.getGt());
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

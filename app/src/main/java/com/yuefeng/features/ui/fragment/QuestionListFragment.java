@@ -8,12 +8,12 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
-import com.common.event.CommonEvent;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.QuetionListAdapter;
-import com.yuefeng.features.event.JobMonitoringEvent;
 import com.yuefeng.features.event.JobMonitoringFragmentEvent;
+import com.yuefeng.features.event.ProblemListEvent;
 import com.yuefeng.features.modle.GetJobMonitotingMsgBean;
 import com.yuefeng.features.modle.QuestionListBean;
 
@@ -38,6 +38,7 @@ public class QuestionListFragment extends BaseFragment {
     private QuetionListAdapter adapter;
     private GetJobMonitotingMsgBean bean = null;
     private List<QuestionListBean> mList = new ArrayList<>();
+    private int mSize;
 
 
     @Override
@@ -68,10 +69,7 @@ public class QuestionListFragment extends BaseFragment {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                     QuestionListBean questionListBean = listData.get(position);
-                    List<QuestionListBean> questionList = new ArrayList<>();
-                    questionList.clear();
-                    questionList.add(questionListBean);
-                    EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.PROBLEM_SSUCESS, questionList));
+                    EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.PROBLEM_SSUCESS, questionListBean));
 
                 }
             });
@@ -97,21 +95,22 @@ public class QuestionListFragment extends BaseFragment {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void disposeJobMonitoringEvent(JobMonitoringEvent event) {
-        switch (event.getWhat()) {
-            case Constans.JOB_SSUCESS://展示
-                bean = (GetJobMonitotingMsgBean) event.getData();
-                if (bean != null) {
-                    showAdapterDatasList(bean);
-                }
-                break;
-            case Constans.JOB_ERROR:
-                noData();
-                break;
-        }
-    }
+//    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+//    public void disposeJobMonitoringEvent(JobMonitoringEvent event) {
+//        switch (event.getWhat()) {
+//            case Constans.JOB_SSUCESS://展示
+//                bean = (GetJobMonitotingMsgBean) event.getData();
+//                if (bean != null) {
+//                    mList = bean.getQuestionList();
+//                    mSize = mList.size();
+//                }
+//                break;
+//            case Constans.JOB_ERROR:
+//                noData();
+//                break;
+//        }
+//    }
 
     private void noData() {
         listData.clear();
@@ -120,35 +119,32 @@ public class QuestionListFragment extends BaseFragment {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void disposeCommonEvent(CommonEvent event) {
+    public void disposeProblemListEvent(ProblemListEvent event) {
         switch (event.getWhat()) {
-            case Constans.JOB_Q_SSUCESS://展示:
+            case Constans.PROBLEM_SSUCESS_LIST://展示:
                 mList.clear();
                 mList = (List<QuestionListBean>) event.getData();
-                initAdapterData(mList);
+                LogUtils.d("333333333==" + mList.size());
+                mSize = mList.size();
+                if (mSize > 0) {
+                    showAdapterDatasList(mList);
+                } else {
+                    noData();
+                }
                 break;
-        }
-    }
-
-    private void initAdapterData(List<QuestionListBean> list) {
-        int lenght = list.size();
-        if (lenght != 0 && adapter != null) {
-            listData.clear();
-            listData.addAll(list);
-            adapter.setNewData(listData);
-        } else {
-            noData();
         }
     }
 
     @Override
     protected void fetchData() {
+        if (mSize > 0) {
+            showAdapterDatasList(mList);
+        }
     }
 
     /*展示列表数据*/
-    private void showAdapterDatasList(GetJobMonitotingMsgBean beanMsg) {
+    private void showAdapterDatasList(List<QuestionListBean> list) {
         try {
-            List<QuestionListBean> list = beanMsg.getQuestionList();
             if (list.size() > 0) {
                 listData.clear();
                 listData.addAll(list);

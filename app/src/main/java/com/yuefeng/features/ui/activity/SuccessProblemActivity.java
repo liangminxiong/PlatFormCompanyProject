@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
+import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
 import com.common.utils.LogUtils;
@@ -369,8 +370,8 @@ public class SuccessProblemActivity extends BaseActivity implements EvaluationCo
         });
         new Thread(new Runnable() {
             @Override
-            public void run() {
-                mImages = PictureSelectorUtils.compressionPhotos(SuccessProblemActivity.this, selectList, "");
+            public void run() {String string = PreferencesUtils.getString(AppUtils.getContext(), Constans.ADDRESS, "");
+                mImages = PictureSelectorUtils.compressionPhotos(SuccessProblemActivity.this, selectList, string);
             }
         }).start();
         runOnUiThread(new Runnable() {

@@ -11,7 +11,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.common.base.BaseMvpFragment;
+import com.common.base.codereview.BaseFragment;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
@@ -19,7 +19,9 @@ import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.FeaturesMsgAdapter;
+import com.yuefeng.features.contract.FeaturesContract;
 import com.yuefeng.features.event.CarListEvent;
+import com.yuefeng.features.presenter.FeaturesPresenter;
 import com.yuefeng.features.ui.activity.JobMonitoringActivity;
 import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity;
 import com.yuefeng.features.ui.activity.QualityInspectionActivity;
@@ -28,8 +30,9 @@ import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
 import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
-import com.yuefeng.home.ui.activity.MsgListDetailInfosActivtiy;
-import com.yuefeng.home.ui.modle.MsgDataBean;
+import com.yuefeng.home.ui.activity.MsgListInfosActivtiy;
+import com.yuefeng.home.ui.modle.AnnouncementDataMsgBean;
+import com.yuefeng.ui.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -51,7 +54,7 @@ import butterknife.Unbinder;
  * 应用
  */
 
-public class FeaturesFragment extends BaseMvpFragment {
+public class FeaturesFragment extends BaseFragment implements FeaturesContract.View {
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
@@ -62,8 +65,9 @@ public class FeaturesFragment extends BaseMvpFragment {
     Unbinder unbinder;
 
     private FeaturesMsgAdapter adapter;
-    private List<MsgDataBean> listData = new ArrayList<>();
+    private List<AnnouncementDataMsgBean> listData = new ArrayList<>();
     private int tempPosition = 0;
+    private FeaturesPresenter mPresenter;
 
     @Override
     protected int getLayoutId() {
@@ -76,6 +80,8 @@ public class FeaturesFragment extends BaseMvpFragment {
             EventBus.getDefault().register(this);
         }
         unbinder = ButterKnife.bind(this, rootView);
+        mPresenter = new FeaturesPresenter(this, (MainActivity) getActivity());
+
         recyclerview.setHasFixedSize(true);
         recyclerview.setNestedScrollingEnabled(false);
         recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -93,6 +99,13 @@ public class FeaturesFragment extends BaseMvpFragment {
 
     @Override
     protected void fetchData() {
+        if (mPresenter != null) {
+            String pid = PreferencesUtils.getString(getContext(), Constans.ORGID, "");
+            String startTime = "2018-01-04 12:12:12";
+            String endTime = TimeUtils.getCurrentTime2();
+            pid = "dg1954";
+//            mPresenter.getAnnouncementByuserid(pid, startTime, endTime, "null");
+        }
     }
 
     @Override
@@ -116,51 +129,31 @@ public class FeaturesFragment extends BaseMvpFragment {
                     tempPosition = 3;
                 }
                 Intent intent = new Intent();
-                intent.setClass(Objects.requireNonNull(getActivity()), MsgListDetailInfosActivtiy.class);
+                intent.setClass(Objects.requireNonNull(getActivity()), MsgListInfosActivtiy.class);
                 intent.putExtra("msgList", (Serializable) listData);
                 intent.putExtra("tempPosition", tempPosition);
                 startActivity(intent);
             }
         });
-        showAdapterDatasList();
     }
 
     /*展示数据*/
-    private void showAdapterDatasList() {
-        List<MsgDataBean> bean = new ArrayList<>();
-        String name = "";
-        String detail = "";
-        for (int i = 0; i < 3; i++) {
-            MsgDataBean msgDataBean = new MsgDataBean();
-            if (i == 0) {
-                name = "侨银环保科技股份有限公司";
-                detail = "[审批]今天还有一个审批单待你处理，请尽快处理";
-                msgDataBean.setImageUrl(R.drawable.work);
-            } else if (i == 1) {
-                name = "升级提醒";
-                detail = "1.0.2版本新功能介绍";
-                msgDataBean.setImageUrl(R.drawable.upgrade);
-            } else {
-                name = "项目通知:池州一体化项目进展情况";
-                detail = "[执行]今天还有2个任务待你处理，请尽快完成";
-                msgDataBean.setImageUrl(R.drawable.item);
-            }
-            msgDataBean.setName(name);
-            msgDataBean.setTitle(name);
-            msgDataBean.setTime(TimeUtils.getHourMinute());
-            msgDataBean.setDetail(detail);
-            msgDataBean.setCount((i + 1) + "");
-            bean.add(msgDataBean);
-        }
+    private void showAdapterDatasList(List<AnnouncementDataMsgBean> list) {
         listData.clear();
-        listData.addAll(bean);
+        listData.addAll(list);
         adapter.setNewData(listData);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposeCarListEvent(CarListEvent event) {
         switch (event.getWhat()) {
-            case Constans.TRACK_SSUCESS://展示
+            case Constans.NEW_MSG_SUCCESS://展示最新消息
+                List<AnnouncementDataMsgBean> list = (List<AnnouncementDataMsgBean>) event.getData();
+                if (list.size() > 0) {
+                    showAdapterDatasList(list);
+                } else {
+                    showSuccessToast("无最新消息");
+                }
                 break;
 
             default:
@@ -207,7 +200,7 @@ public class FeaturesFragment extends BaseMvpFragment {
             case R.id.rl_qualityxuncha:
                 qualityXuncha();
                 break;
-            case R.id.rl_operationweigui://作业监控
+            case R.id.rl_operationweigui:
                 jobMonitoring();
                 break;
         }

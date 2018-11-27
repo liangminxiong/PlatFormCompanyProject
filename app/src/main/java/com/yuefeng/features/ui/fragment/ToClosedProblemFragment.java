@@ -99,6 +99,7 @@ public class ToClosedProblemFragment extends BaseFragment implements QualityGetF
                 intent.putExtra("PROBLEMID", problemid);
                 intent.putExtra("NAME", name);
                 intent.putExtra("STATE", state);
+                intent.putExtra("NOREPLY", "Yes");
                 startActivity(intent);
             }
         });

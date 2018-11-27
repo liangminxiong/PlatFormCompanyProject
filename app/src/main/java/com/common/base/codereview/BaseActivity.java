@@ -74,6 +74,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         tv_title = findViewById(R.id.tv_title);
         iv_back.setOnClickListener(this);
         isOnclick = true;
+        if (loadingDialog == null) {
+            loadingDialog = new LoadingDialog(this);
+        }
         initView(savedInstanceState);
     }
 
@@ -105,9 +108,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     public void showLoadingDialog(String txt) {
-        if (loadingDialog == null) {
-            loadingDialog = new LoadingDialog(this);
-        }
         if (!mActivity.isFinishing()) {
             loadingDialog.setMessage(txt);
             loadingDialog.show();

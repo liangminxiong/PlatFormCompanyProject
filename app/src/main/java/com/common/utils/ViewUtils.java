@@ -43,6 +43,13 @@ public class ViewUtils {
         textView.setLayoutParams(params);
     }
 
+    /*TextView height width*/
+    public static void setTvSizeColor(TextView textView, float size, int color) {
+        textView.setTextSize(size);
+        textView.setTextColor(color);
+    }
+
+
 
     /*ImageView height width*/
     public static void setIVHightOrWidth(ImageView imageView, int height, int width) {
@@ -109,6 +116,28 @@ public class ViewUtils {
             type = View.INVISIBLE;
         } else {
             type = View.VISIBLE;
+        }
+        view.setVisibility(type);
+    }
+
+    /*ImageView 显示不可见*/
+    public static void setIvInVisible(ImageView view, boolean visible) {
+        int type;
+        if (visible) {
+            type = View.INVISIBLE;
+        } else {
+            type = View.VISIBLE;
+        }
+        view.setVisibility(type);
+    }
+
+    /*ImageView 显示不可见*/
+    public static void setIvVisible(ImageView view, boolean visible) {
+        int type;
+        if (visible) {
+            type = View.VISIBLE;
+        } else {
+            type = View.INVISIBLE;
         }
         view.setVisibility(type);
     }

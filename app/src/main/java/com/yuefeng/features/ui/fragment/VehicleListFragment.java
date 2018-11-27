@@ -10,13 +10,11 @@ import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
-import com.common.event.CommonEvent;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.VehicleListAdapter;
-import com.yuefeng.features.event.JobMonitoringEvent;
 import com.yuefeng.features.event.JobMonitoringFragmentEvent;
+import com.yuefeng.features.event.VechileListEvent;
 import com.yuefeng.features.modle.GetJobMonitotingMsgBean;
 import com.yuefeng.features.modle.VehicleinfoListBean;
 import com.yuefeng.utils.LocationUtils;
@@ -36,21 +34,22 @@ import butterknife.ButterKnife;
 /*车辆*/
 public class VehicleListFragment extends BaseFragment implements View.OnTouchListener, LocationUtils.OnResultMapListener {
 
-    private static final String TAG = "tag";
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
     private List<VehicleinfoListBean> listData = new ArrayList<>();
     private VehicleListAdapter adapter;
 
-    private List<VehicleinfoListBean> list = null;
+    private List<VehicleinfoListBean> list = new ArrayList<>();
     private String latitude;
     private String longitude;
-    private int lenght;
     // 获取反地理编码对象
     private LocationUtils mLocationUtils;
     // 用来存储获取的定位信息
     private GetJobMonitotingMsgBean bean = null;
     private int count = 0;
+    private int mLastItemPosition;
+    private int mFirstItemPosition;
+    private int mSize;
 
     @Override
     protected int getLayoutId() {
@@ -60,18 +59,20 @@ public class VehicleListFragment extends BaseFragment implements View.OnTouchLis
     @Override
     public void initView() {
         try {
-        ButterKnife.bind(this, rootView);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-        recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
-        initRecycler();
+            ButterKnife.bind(this, rootView);
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
+            recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
+            initRecycler();
 
-        // 创建定位管理信息对象
-        mLocationUtils = new LocationUtils(getActivity());
+            // 创建定位管理信息对象
+            mLocationUtils = new LocationUtils(getActivity());
 //         开启定位
-        mLocationUtils.startLocation();
-        mLocationUtils.registerOnResult(this);
+            mLocationUtils.startLocation();
+            mLocationUtils.registerOnResult(this);
+            mFirstItemPosition = 0;
+            mLastItemPosition = 4;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,23 +81,48 @@ public class VehicleListFragment extends BaseFragment implements View.OnTouchLis
 
     private void initRecycler() {
         try {
-        adapter = new VehicleListAdapter(R.layout.recycler_item_job, listData);
-        recyclerview.getParent().requestDisallowInterceptTouchEvent(true);
-        recyclerview.setAdapter(adapter);
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                VehicleinfoListBean vehicleinfoListBean = listData.get(position);
-                List<VehicleinfoListBean> vehicleinfoList = new ArrayList<>();
-                vehicleinfoList.clear();
-                vehicleinfoList.add(vehicleinfoListBean);
-                EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.VEHICLE_SSUCESS, vehicleinfoList));
-            }
-        });
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+            adapter = new VehicleListAdapter(R.layout.recycler_item_job, listData);
+            recyclerview.getParent().requestDisallowInterceptTouchEvent(true);
+            recyclerview.setAdapter(adapter);
+            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    VehicleinfoListBean vehicleinfoListBean = listData.get(position);
+                    EventBus.getDefault().postSticky(new JobMonitoringFragmentEvent(Constans.VEHICLE_SSUCESS, vehicleinfoListBean));
+                }
+            });
+            recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                }
+
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                    RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                    //判断是当前layoutManager是否为LinearLayoutManager
+                    // 只有LinearLayoutManager才有查找第一个和最后一个可见view位置的方法
+                    if (layoutManager instanceof LinearLayoutManager) {
+                        LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
+                        //获取最后一个可见view的位置
+                        //获取第一个可见view的位置
+                        mFirstItemPosition = linearManager.findFirstVisibleItemPosition();
+                        if (count > mLastItemPosition) {
+                            count = mFirstItemPosition;
+                        }
+                        mLastItemPosition = linearManager.findLastVisibleItemPosition();
+                        if (count < mLastItemPosition) {
+                            count = mFirstItemPosition;
+                            benginGetAddress(count, false);
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -117,21 +143,22 @@ public class VehicleListFragment extends BaseFragment implements View.OnTouchLis
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void disposeJobMonitoringEvent(JobMonitoringEvent event) {
-        switch (event.getWhat()) {
-            case Constans.JOB_SSUCESS://展示
-                bean = (GetJobMonitotingMsgBean) event.getData();
-                if (bean != null) {
-                    showAdapterDatasList(bean);
-                }
-                break;
-            case Constans.JOB_ERROR:
-                noData();
-                break;
-        }
-    }
+//    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+//    public void disposeJobMonitoringEvent(JobMonitoringEvent event) {
+//        switch (event.getWhat()) {
+//            case Constans.JOB_SSUCESS://展示
+//                bean = (GetJobMonitotingMsgBean) event.getData();
+//                if (bean != null) {
+//                    list = bean.getVehicleinfoList();
+//                    mSize = list.size();
+//                }
+//                break;
+//            case Constans.JOB_ERROR:
+//                noData();
+//                break;
+//        }
+//    }
 
     private void noData() {
         listData.clear();
@@ -140,12 +167,17 @@ public class VehicleListFragment extends BaseFragment implements View.OnTouchLis
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void disposeCommonEvent(CommonEvent event) {
+    public void disposeVechileListEvent(VechileListEvent event) {
         switch (event.getWhat()) {
-            case Constans.JOB_V_SSUCESS://展示
+            case Constans.VEHICLE_SSUCESS_LIST://展示
                 list.clear();
                 list = (List<VehicleinfoListBean>) event.getData();
-                initAdapterData(list);
+                mSize = list.size();
+                if (mSize > 0) {
+//                    showAdapterDatasList(list);
+                } else {
+                    noData();
+                }
                 break;
         }
     }
@@ -153,13 +185,16 @@ public class VehicleListFragment extends BaseFragment implements View.OnTouchLis
 
     @Override
     protected void fetchData() {
+        if (mSize > 0) {
+            showAdapterDatasList(list);
+        }
     }
 
     /*展示列表数据*/
-    private void showAdapterDatasList(GetJobMonitotingMsgBean beanMsg) {
+    private void showAdapterDatasList(List<VehicleinfoListBean> list) {
         try {
             count = 0;
-            list = beanMsg.getVehicleinfoList();
+            mSize = list.size();
             initAdapterData(list);
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,64 +202,60 @@ public class VehicleListFragment extends BaseFragment implements View.OnTouchLis
     }
 
     private void initAdapterData(List<VehicleinfoListBean> list) {
-        lenght = list.size();
-        benginGetAddress(count, true);
+
         if (list.size() != 0 && adapter != null) {
             listData.clear();
             listData.addAll(list);
             adapter.setNewData(listData);
-        }else {
+            benginGetAddress(count, true);
+        } else {
             noData();
         }
     }
 
     private void benginGetAddress(int count, boolean isFirst) {
-      try {
-        if (count > (lenght - 1)) {
-            return;
-        }
-        if (lenght > 0 || list != null) {
-            latitude = list.get(count).getLatitude();
-            longitude = list.get(count).getLongitude();
-            if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude)) {
-                if (mLocationUtils == null) {
-//         开启定位
-                    mLocationUtils = new LocationUtils(getActivity());
-                    mLocationUtils.startLocation();
-                    mLocationUtils.registerOnResult(this);
-                }
-                if (isFirst) {
+        try {
+            if (count > (mSize - 1)) {
+                return;
+            }
+            if (mSize > 0 || list != null) {
+                latitude = list.get(count).getLatitude();
+                longitude = list.get(count).getLongitude();
+                if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude)) {
+                    if (mLocationUtils == null) {
+                        // 开启反编译
+                        mLocationUtils = new LocationUtils(getActivity());
+                        mLocationUtils.startLocation();
+                        mLocationUtils.registerOnResult(this);
+                    }
+                    if (isFirst) {
+                        mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
+                    }
                     mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
                 }
-                mLocationUtils.getAddress(Double.valueOf(latitude), Double.valueOf(longitude));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
     }
 
     @Override
     public void onReverseGeoCodeResult(Map<String, Object> map) {
         try {
-        String address = (String) map.get("address");
-        LogUtils.d("onReverseGeo 00= " + address);
-        if (TextUtils.isEmpty(address)) {
-            address = "检索当前地址失败!";
-        }
-
-        if (lenght > 0 || adapter != null) {
-            if (count <= (lenght - 1)) {
-                list.get(count).setAddress(address);
-                adapter.notifyDataSetChanged();
-                count++;
-                benginGetAddress(count, false);
+            String address = (String) map.get("address");
+            if (mSize > 0 || adapter != null) {
+                if (count <= (mSize - 1)) {
+                    list.get(count).setAddress(address);
+                    adapter.notifyDataSetChanged();
+                    count++;
+                    if (count <= mLastItemPosition) {
+                        benginGetAddress(count, false);
+                    }
+                }
             }
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
     }
 
     @Override

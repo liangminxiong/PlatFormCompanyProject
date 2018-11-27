@@ -8,22 +8,12 @@
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_26"
         android:scaleType="centerCrop"
         tools:ignore="ContentDescription"/>
 
-    <CheckBox
-        android:id="@+id/iv_select_tree"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="5dp"
-        android:background="@drawable/choose_seletor"
-        android:button="@null"
-        android:focusable="false"
-        android:visibility="visible"/>
 
     <ImageView
         android:id="@+id/icon_state"
@@ -35,10 +25,23 @@
 
     <TextView
         android:id="@+id/id_treenode_label"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="@dimen/dp_36"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:textColor="@color/gray"
         android:textSize="15sp"/>
+
+    <CheckBox
+        android:id="@+id/iv_select_tree"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/tree_cb_choose_seletor"
+        android:button="@null"
+        android:focusable="false"
+        android:visibility="visible"/>
 
 </LinearLayout>

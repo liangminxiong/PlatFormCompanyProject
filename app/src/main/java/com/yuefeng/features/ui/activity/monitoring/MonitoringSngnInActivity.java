@@ -171,9 +171,9 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
-                    if (!TextUtils.isEmpty(address)) {
+                    if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                         isFirstLocation = false;
-                        int length = address.length();
+                        int length = address.length(); PreferencesUtils.putString(MonitoringSngnInActivity.this, Constans.ADDRESS, address);
                         address = address.substring(2, length);
                         tv_problem_address.setText(address);
                     } else {

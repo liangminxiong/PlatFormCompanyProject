@@ -126,6 +126,7 @@ public class MainActivity extends BaseActivity implements
             });
             iv_back.setVisibility(View.INVISIBLE);
             tv_title.setText(msg_name);
+            PreferencesUtils.putString(MyApplication.getContext(), "Fengrun", "无");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -205,12 +206,9 @@ public class MainActivity extends BaseActivity implements
                         requestPermissions();
                         return;
                     }
-//                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                     address = location.getAddrStr();
-
-//                    LatLng latLng=BdLocationUtil.ConverCommonToBaidu()
                     if (isFirstLocation) {
-                        if (!TextUtils.isEmpty(address)) {
+                        if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                             int length = address.length();
                             address = address.substring(2, length);
                             latitude = location.getLatitude();
@@ -228,8 +226,6 @@ public class MainActivity extends BaseActivity implements
 
                         }
                     }
-//                } else {
-
                 }
 //            }
             }, BDLOCATION_TIME);

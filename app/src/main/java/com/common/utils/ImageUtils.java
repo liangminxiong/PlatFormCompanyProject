@@ -507,7 +507,8 @@ public class ImageUtils {
      */
     public static Bitmap drawTextToRightBottom(Context context, Bitmap bitmap, String text,
                                                int size, int color, int paddingRight, int paddingBottom) {
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+//        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
         paint.setColor(color);
         paint.setTextSize(dp2px(context, size));
         Rect bounds = new Rect();

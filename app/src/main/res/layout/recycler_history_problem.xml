@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/ll_layout_item"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_32"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
+        android:orientation="horizontal"
+        tools:ignore="RtlHardcoded,UselessLeaf">
+
+        <TextView
+            android:id="@+id/tv_item_type"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="@dimen/sp_13"/>
+
+        <TextView
+            android:id="@+id/tv_item_typenum"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dp_15"
+            android:gravity="center"
+            android:textSize="@dimen/sp_13"/>
+
+        <ImageView
+            android:id="@+id/iv_item_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/dp_8"
+            android:layout_marginStart="@dimen/dp_8"
+            android:gravity="center"
+            android:scaleType="fitXY"
+            android:textSize="@dimen/sp_13"
+            tools:ignore="ContentDescription"/>
+
+        <TextView
+            android:id="@+id/tv_item_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|right"
+            android:textSize="@dimen/sp_13"
+            tools:ignore="RtlHardcoded"/>
+
+
+    </LinearLayout>
+
+    <View style="@style/horizontal_line"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_100"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
+        tools:ignore="RtlHardcoded">
+        <!--android:scaleType="fitXY"-->
+        <ImageView
+            android:id="@+id/iv_item_logo"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_centerVertical="true"
+            tools:ignore="ContentDescription"/>
+
+        <TextView
+            android:id="@+id/tv_item_where"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_30"
+            android:layout_marginLeft="@dimen/dp_15"
+            android:layout_marginStart="@dimen/dp_15"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_toRightOf="@id/iv_item_logo"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/black_32"
+            android:textSize="@dimen/sp_14"
+            tools:ignore="RtlHardcoded"/>
+
+        <TextView
+            android:id="@+id/tv_item_reporter"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_30"
+            android:layout_below="@id/tv_item_where"
+            android:layout_marginLeft="@dimen/dp_15"
+            android:layout_marginStart="@dimen/dp_15"
+            android:layout_toRightOf="@id/iv_item_logo"
+            android:gravity="center"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/sp_13"
+            tools:ignore="RtlHardcoded"/>
+
+        <TextView
+            android:id="@+id/tv_item_procesonal"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp_30"
+            android:layout_below="@id/tv_item_reporter"
+            android:layout_marginLeft="@dimen/dp_15"
+            android:layout_marginStart="@dimen/dp_15"
+            android:layout_toRightOf="@id/iv_item_logo"
+            android:gravity="center"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/sp_13"
+            tools:ignore="RtlHardcoded"/>
+
+    </RelativeLayout>
+
+    <View style="@style/horizontal_line"/>
+
+
+</LinearLayout>

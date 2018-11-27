@@ -45,7 +45,6 @@ import com.baidu.navisdk.adapter.IBNRoutePlanManager;
 import com.baidu.navisdk.adapter.IBNTTSManager;
 import com.baidu.navisdk.adapter.IBaiduNaviManager;
 import com.common.base.codereview.BaseActivity;
-import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.LogUtils;
@@ -62,6 +61,9 @@ import com.yuefeng.features.adapter.MyJobViewPagerAdapter;
 import com.yuefeng.features.contract.JobMoniroringContract;
 import com.yuefeng.features.event.JobMonitoringEvent;
 import com.yuefeng.features.event.JobMonitoringFragmentEvent;
+import com.yuefeng.features.event.PersonalListEvent;
+import com.yuefeng.features.event.ProblemListEvent;
+import com.yuefeng.features.event.VechileListEvent;
 import com.yuefeng.features.modle.GetJobMonitotingMsgBean;
 import com.yuefeng.features.modle.PersonalinfoListBean;
 import com.yuefeng.features.modle.QuestionListBean;
@@ -183,13 +185,18 @@ public class JobMonitoringActivity extends BaseActivity implements
     private VehicleListFragment vehicleListFragment;
     private QuestionListFragment questionListFragment;
     private boolean isVisible;
-    List<PersonalinfoListBean> personalinfoList = new ArrayList<>();
-    List<VehicleinfoListBean> vehicleinfoList = new ArrayList<>();
-    List<QuestionListBean> questionList = new ArrayList<>();
+    //    List<PersonalinfoListBean> personalinfoList = new ArrayList<>();
+//    List<VehicleinfoListBean> vehicleinfoList = new ArrayList<>();
+//    List<QuestionListBean> questionList = new ArrayList<>();
     private List<Node> mNodeList = new ArrayList<>();
     private int mSize;
     private int mSize_v;
     private int mSize_q;
+    private String mStateType;
+    private String mPersonalCount;
+    private String mVehicleCount;
+    private String mQuestionCount;
+    private GetJobMonitotingMsgBean mBean;
 
     @Override
     protected int getContentViewResId() {
@@ -258,7 +265,6 @@ public class JobMonitoringActivity extends BaseActivity implements
             tabLayout.setupWithViewPager(viewPager);
             isFirstError = false;
             initBaiduMap();
-            requestPermissions();
 
             isFirstLoc = false;
         } catch (Exception e) {
@@ -268,9 +274,9 @@ public class JobMonitoringActivity extends BaseActivity implements
 
     private void initTabViewCount(List<String> stringList) {
         try {
-            tabItemInfoA.setTabCount("人员(" + stringList.get(0) + ")");
-            tabItemInfoB.setTabCount("车辆(" + stringList.get(1) + ")");
-            tabItemInfoC.setTabCount("问题(" + stringList.get(2) + ")");
+            tabItemInfoA.setTabCount(stringList.get(0));
+            tabItemInfoB.setTabCount(stringList.get(1));
+            tabItemInfoC.setTabCount(stringList.get(2));
             for (int i = 0; i < tabLayout.getTabCount(); i++) {
                 TabLayout.Tab tab = tabLayout.getTabAt(i);
                 if (tab != null) {
@@ -316,19 +322,78 @@ public class JobMonitoringActivity extends BaseActivity implements
     /*展示数据*/
     private void showFilterDatas() {
         try {
-            showLoadingDialog("请稍等...");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showLoadingDialog("请稍等...");
+                }
+            });
             if (mNodeList.size() > 0) {
                 PersonaCarProblemPopupWindow filterPopuWindow =
-                        new PersonaCarProblemPopupWindow(this, mNodeList, false);
+                        new PersonaCarProblemPopupWindow(JobMonitoringActivity.this, mNodeList, false);
                 filterPopuWindow.setTitleText("人员、车辆或者问题");
                 filterPopuWindow.setSettingText(getString(R.string.sure));
+                filterPopuWindow.setOnItemClickListener(new PersonaCarProblemPopupWindow.OnItemClickListener() {
+                    @Override
+                    public void onGoBack() {
+
+                    }
+
+                    @Override
+                    public void onSure(List<PersonalinfoListBean> personalinfoList, List<VehicleinfoListBean>
+                            vehicleinfoList, List<QuestionListBean> questionList) {
+                        showSelectDatas(personalinfoList, vehicleinfoList, questionList);
+
+                    }
+                });
                 filterPopuWindow.showAtLocation(ll_root, Gravity.BOTTOM, 0, 0);
             }
-            dismissLoadingDialog();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dismissLoadingDialog();
+                }
+            });
         } catch (Exception e) {
+
             dismissLoadingDialog();
             e.printStackTrace();
         }
+    }
+
+    private void showSelectDatas(List<PersonalinfoListBean> personalinfoList, List<VehicleinfoListBean>
+            vehicleinfoList, List<QuestionListBean> questionList) {
+        initDataEventBus(personalinfoList, vehicleinfoList, questionList);
+        int size_p = personalinfoList.size();
+        int size_v = vehicleinfoList.size();
+        int size = questionList.size();
+        LogUtils.d("11111111: " + size_p + " ++ " + size_v + " ++ " + size);
+        if (baiduMap != null) {
+            baiduMap.clear();
+            mks.clear();
+        }
+        mPersonalCount = String.valueOf(size_p);
+        if (size_p > 0) {
+            for (PersonalinfoListBean personalinfoListBean : personalinfoList) {
+                showPersonal(personalinfoListBean, false);
+            }
+        }
+        mVehicleCount = String.valueOf(size_v);
+        if (size_v > 0) {
+            for (VehicleinfoListBean vehicleinfoListBean : vehicleinfoList) {
+                showVehicle(vehicleinfoListBean, false);
+            }
+        }
+        mQuestionCount = String.valueOf(size);
+        if (size > 0) {
+            for (QuestionListBean questionListBean : questionList) {
+                if (questionListBean != null) {
+                    showProblem(questionListBean, false);
+                }
+            }
+        }
+
+        initListdatas("人员(" + mPersonalCount + ")", "车辆(" + mVehicleCount + ")", "问题(" + mQuestionCount + ")");
     }
 
     /**
@@ -368,7 +433,7 @@ public class JobMonitoringActivity extends BaseActivity implements
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
                     beginAddress = location.getAddrStr();
-                    if (!TextUtils.isEmpty(beginAddress)) {
+                    if (!TextUtils.isEmpty(beginAddress) && beginAddress.contains(getString(R.string.CHINA))) {
                         int length = beginAddress.length();
                         beginAddress = beginAddress.substring(2, length);
                     }
@@ -379,6 +444,7 @@ public class JobMonitoringActivity extends BaseActivity implements
                                 .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                         ooA = new MarkerOptions().icon(worker).zIndex(10);
 //                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+                        PreferencesUtils.putString(JobMonitoringActivity.this, Constans.ADDRESS, beginAddress);
                         ooA.position(mlatLng);
                         mMarker = null;
                         mMarker = (Marker) (baiduMap.addOverlay(ooA));
@@ -446,17 +512,15 @@ public class JobMonitoringActivity extends BaseActivity implements
         try {
             switch (event.getWhat()) {
                 case Constans.JOB_SSUCESS://展示
-                    GetJobMonitotingMsgBean bean = (GetJobMonitotingMsgBean) event.getData();
-                    if (bean != null) {
-                        showCountData(bean);
+                    mBean = (GetJobMonitotingMsgBean) event.getData();
+                    if (mBean != null) {
+                        showCountData(mBean);
                     }
                     break;
 
                 case Constans.JOB_ERROR:
                     showErrorToast("加载失败，请重试");
-//                    if (isFirstError) {
-//                        isFirstError = true;
-//                    }
+                    requestPermissions();
                     initListdatas("人员(0)", "车辆(0)", "问题(0)");
                     break;
             }
@@ -470,67 +534,33 @@ public class JobMonitoringActivity extends BaseActivity implements
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void disposeJobMonitoringFragmentEvent(JobMonitoringFragmentEvent event) {
-        if (baiduMap != null) {
-            baiduMap.clear();
-            mks.clear();
-        }
         isFirstLoc = true;
         isGoneOrVisibility = false;
         showViewPagerVisibilty();
         switch (event.getWhat()) {
             case Constans.PERSONAL_SSUCESS://人员:
-                personalinfoList.clear();
-                personalinfoList = (List<PersonalinfoListBean>) event.getData();
-                mSize = 0;
-                mSize = personalinfoList.size();
-                EventBus.getDefault().postSticky(new CommonEvent(Constans.JOB_P_SSUCESS, personalinfoList));
-                if (mSize > 0) {
-                    for (PersonalinfoListBean personalinfoListBean : personalinfoList) {
-                        if (mSize > 1) {
-                            showPersonal(personalinfoListBean, false);
-                        } else {
-                            showPersonal(personalinfoListBean, true);
-                        }
-                    }
+                PersonalinfoListBean personalinfoListBean = (PersonalinfoListBean) event.getData();
+                if (personalinfoListBean != null) {
+                    showPersonal(personalinfoListBean, true);
                 }
                 break;
             case Constans.VEHICLE_SSUCESS://车辆:
-                vehicleinfoList.clear();
-                vehicleinfoList = (List<VehicleinfoListBean>) event.getData();
-                mSize_v = 0;
-                mSize_v = vehicleinfoList.size();
-                EventBus.getDefault().postSticky(new CommonEvent(Constans.JOB_V_SSUCESS, vehicleinfoList));
-                if (mSize_v > 0) {
-                    for (VehicleinfoListBean vehicleinfoListBean : vehicleinfoList) {
-                        if (mSize_v > 1) {
-                            showVehicle(vehicleinfoListBean, false);
-                        } else {
-                            showVehicle(vehicleinfoListBean, true);
-                        }
-                    }
+                VehicleinfoListBean vehicleinfoListBean = (VehicleinfoListBean) event.getData();
+                if (vehicleinfoListBean != null) {
+                    showVehicle(vehicleinfoListBean, true);
                 }
                 break;
             case Constans.PROBLEM_SSUCESS://问题:
-                questionList.clear();
-                questionList = (List<QuestionListBean>) event.getData();
-                mSize_q = 0;
-                mSize_q = questionList.size();
-                EventBus.getDefault().postSticky(new CommonEvent(Constans.JOB_Q_SSUCESS, questionList));
-                if (mSize_q > 0) {
-                    for (QuestionListBean questionListBean : questionList) {
-                        if (mSize_q > 1) {
-                            showProblem(questionListBean, false);
-                        } else {
-                            showProblem(questionListBean, true);
-                        }
-                    }
+                QuestionListBean questionListBean = (QuestionListBean) event.getData();
+                if (questionListBean != null) {
+                    showProblem(questionListBean, true);
                 }
                 break;
             case Constans.JOB_ERROR:
                 break;
         }
-        initListdatas("人员(" + mSize + ")", "车辆(" + mSize_v + ")", "问题(" + mSize_q + ")");
     }
+
 
     /*选中人员*/
     private void showPersonal(final PersonalinfoListBean personalinfoListBean, boolean single) {
@@ -614,7 +644,6 @@ public class JobMonitoringActivity extends BaseActivity implements
             public void run() {
                 String latitude = vehicleinfoListBean.getLatitude();
                 String longitude = vehicleinfoListBean.getLongitude();
-                LogUtils.d("latlng == " + latitude + "+++ " + longitude);
                 if (latitude.equals("0.0") && longitude.equals("0.0")) {
                     return;
                 }
@@ -754,12 +783,17 @@ public class JobMonitoringActivity extends BaseActivity implements
     /**/
     private void showCountData(GetJobMonitotingMsgBean msg) {
         try {
-            String allcount = String.valueOf(msg.getPersonalnum());
-            String waitcount = String.valueOf(msg.getVehiclenum());
-            String doingcount = String.valueOf(msg.getQuestionnum());
-            initListdatas(allcount, waitcount, doingcount);
+            mPersonalCount = String.valueOf("人员(" + msg.getPersonalnum() + ")");
+            mVehicleCount = String.valueOf("车辆(" + msg.getVehiclenum() + ")");
+            mQuestionCount = String.valueOf("问题(" + msg.getQuestionnum() + ")");
+            initListdatas(mPersonalCount, mVehicleCount, mQuestionCount);
             mNodeList.clear();
             mNodeList = FilterMonitoringUtils.showFilterDatas(msg);
+            List<PersonalinfoListBean> personalinfoList = msg.getPersonalinfoList();
+            List<VehicleinfoListBean> vehicleinfoList = msg.getVehicleinfoList();
+            List<QuestionListBean> questionList = msg.getQuestionList();
+
+            initDataEventBus(personalinfoList, vehicleinfoList, questionList);
             showPersonnel(msg);
         } catch (Exception e) {
             e.printStackTrace();
@@ -833,6 +867,8 @@ public class JobMonitoringActivity extends BaseActivity implements
             List<VehicleinfoListBean> vehicleinfoList = data.getVehicleinfoList();
             List<QuestionListBean> questionList = data.getQuestionList();
 
+            initDataEventBus(personalinfoList, vehicleinfoList, questionList);
+
             if (personalinfoList.size() != 0) {
                 for (int i = 0; i < personalinfoList.size(); i++) {
                     if (i < 100) {
@@ -867,6 +903,12 @@ public class JobMonitoringActivity extends BaseActivity implements
         }
     }
 
+    private void initDataEventBus(List<PersonalinfoListBean> personalinfoList, List<VehicleinfoListBean> vehicleinfoList, List<QuestionListBean> questionList) {
+        EventBus.getDefault().postSticky(new PersonalListEvent(Constans.PERSONAL_SSUCESS_LIST, personalinfoList));
+        EventBus.getDefault().postSticky(new VechileListEvent(Constans.VEHICLE_SSUCESS_LIST, vehicleinfoList));
+        EventBus.getDefault().postSticky(new ProblemListEvent(Constans.PROBLEM_SSUCESS_LIST, questionList));
+    }
+
     private myMarkerClickListener myMarkerClickListener = null;
 
 
@@ -899,9 +941,11 @@ public class JobMonitoringActivity extends BaseActivity implements
 
                 showDialogProblem(questionList);
             }
-
+            isGoneOrVisibility = false;
+            showViewPagerVisibilty();
             return true;
         }
+
     }
 
     /*底部问题弹框*/
@@ -975,15 +1019,15 @@ public class JobMonitoringActivity extends BaseActivity implements
 //        if (TextUtils.isEmpty(address)) {
 //            address = "检索当前地址失败!";
 //        }
+            mStateType = vehicleList.getStateType();
             endAddress = address;
-            distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
-            distance = Math.abs(distance);
+
             terminalNO = vehicleList.getTerminalNO();
             final String registrationNO = vehicleList.getRegistrationNO();
             terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
             phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
             isVisible = true;
-            phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible);
+            phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible, mStateType);
             phototpop.setTakePhotoTouch(new ShowPersonalpop.TakePhotoTouch() {
                 @Override
                 public void onVideo() {//视频
@@ -997,7 +1041,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 
                 @Override
                 public void takeNativ() {//导航
-                    initNavicar(distance);
+                    initNavicar(BdLocationUtil.ConverGpsToBaidu(latLng));
                 }
 
                 @Override
@@ -1034,7 +1078,7 @@ public class JobMonitoringActivity extends BaseActivity implements
             name = personalList.getName();
             position = personalList.getPosition();
 
-
+            mStateType = personalList.getStateType();
             tel = personalList.getTel();
             className = personalList.getPid();
             latitude = personalList.getLatitude();
@@ -1060,10 +1104,9 @@ public class JobMonitoringActivity extends BaseActivity implements
 //        endAddress = address;
             terminalNO = personalList.getTerminalNO();
             terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
-            distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
             isVisible = false;
             phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
-            phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible);
+            phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible, mStateType);
             phototpop.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
@@ -1083,7 +1126,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 
                 @Override
                 public void takeNativ() {//导航
-                    initNavicar(distance);
+                    initNavicar(BdLocationUtil.ConverGpsToBaidu(latLng));
                 }
 
                 @Override
@@ -1117,7 +1160,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         }
         endAddress = address;
         if (phototpop != null) {
-            phototpop.setTextContent(name, position, tel, className, address, isVisible);
+            phototpop.setTextContent(name, position, tel, className, address, isVisible, mStateType);
         }
     }
 
@@ -1151,8 +1194,10 @@ public class JobMonitoringActivity extends BaseActivity implements
     /*=====================begin 导航 =======================*/
 
     /*导航追车*/
-    private void initNavicar(double distance) {
-
+    private void initNavicar(LatLng latLng) {
+        requestPermissions();
+        distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
+        distance = Math.abs(distance);
         /*初始化导航*/
 
         if (distance <= 500) {

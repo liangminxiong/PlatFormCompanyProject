@@ -158,8 +158,8 @@ public class PersonalLllegalWorkListFragment extends BaseFragment implements Lll
             String pid = PreferencesUtils.getString(Objects.requireNonNull(getContext()), Constans.ORGID, "");
             String startTime = TimeUtils.getYesterdayStartTime();
             String endTime = TimeUtils.getCurrentTime();
-            startTime = "2018-10-30 10:00:00";
-            endTime = "2018-11-01 15:00:00";
+//            startTime = "2018-10-30 10:00:00";
+//            endTime = "2018-11-01 15:00:00";
             presenter.getWeigui(ApiService.GETWEIGUI, pid, startTime, endTime, vid, Constans.TYPE_ONE, typeWhat);
         }
     } catch (Exception e) {

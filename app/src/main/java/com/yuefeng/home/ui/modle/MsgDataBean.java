@@ -1,74 +1,54 @@
 package com.yuefeng.home.ui.modle;
 
 import java.io.Serializable;
+import java.util.List;
 
+
+/*公告消息列表*/
 public class MsgDataBean implements Serializable {
 
-    private int imageUrl;
-    private String title;
-    private String detail;
-    private String time;
-    private String name;
 
-    @Override
-    public String toString() {
-        return "MsgDataBean{" +
-                "imageUrl=" + imageUrl +
-                ", title='" + title + '\'' +
-                ", detail='" + detail + '\'' +
-                ", time='" + time + '\'' +
-                ", count='" + count + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+    /**
+     * code : 0
+     * msg :
+     * count : 4
+     * data : []
+     */
+
+    private int code;
+    private String msg;
+    private int count;
+    private List<MsgListDataBean> data;
+
+    public int getCode() {
+        return code;
     }
 
-    private String count;
-
-    public int getImageUrl() {
-        return imageUrl;
+    public void setCode(int code) {
+        this.code = code;
     }
 
-    public void setImageUrl(int imageUrl) {
-        this.imageUrl = imageUrl;
+    public String getMsg() {
+        return msg;
     }
 
-    public String getTitle() {
-        return title;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDetail() {
-        return detail;
-    }
-
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(String count) {
+    public void setCount(int count) {
         this.count = count;
     }
 
-    public String getName() {
-        return name;
+    public List<MsgListDataBean> getData() {
+        return data;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setData(List<MsgListDataBean> data) {
+        this.data = data;
     }
 }

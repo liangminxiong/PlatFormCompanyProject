@@ -32,6 +32,7 @@ public class EventQuestionMsgBean implements Serializable {
     private String latitude;
     private String type;
     private String uploadpeoplename;
+    private String closetime;
 
     private boolean isSelected; //自定义列表是否选中的标识
 
@@ -137,5 +138,13 @@ public class EventQuestionMsgBean implements Serializable {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    public String getClosetime() {
+        return closetime;
+    }
+
+    public void setClosetime(String closetime) {
+        this.closetime = closetime;
     }
 }

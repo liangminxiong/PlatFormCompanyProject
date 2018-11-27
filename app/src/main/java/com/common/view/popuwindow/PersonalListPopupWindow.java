@@ -254,7 +254,7 @@ public class PersonalListPopupWindow extends PopupWindow {
 
 
     private void initSelectRecycleView() {
-        adapterSelect = new CarListSelectAdapter(R.layout.list_item, listData);
+        adapterSelect = new CarListSelectAdapter(R.layout.list_item, listData,1);
         recyclerview_after.setAdapter(adapterSelect);
 //        adapterSelect.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
 //            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -283,6 +283,18 @@ public class PersonalListPopupWindow extends PopupWindow {
     }
 
     private void selectSingle(int position, String type) {
+        if (stringBuffer == null) {
+            stringBuffer = new StringBuffer();
+        }
+
+        if (stringBufferFlag == null) {
+            stringBufferFlag = new StringBuffer();
+
+        }
+        if (stringBufferTerflag == null) {
+            stringBufferTerflag = new StringBuffer();
+
+        }
         if (stringBuffer != null) {
             stringBuffer.setLength(0);
         }

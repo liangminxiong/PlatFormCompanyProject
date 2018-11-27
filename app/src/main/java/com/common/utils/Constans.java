@@ -14,6 +14,7 @@ public class Constans {
     public static final int FOUR = 4;
     public static final int COMMON = 5;//公共
     public static final int TEN = 10;//公共
+    public static final int TWENTY = 20;
     /*
      * home模块 100~200
      * */
@@ -35,6 +36,7 @@ public class Constans {
     public static final int UPDATAAPP_SUCCESS = 14;//获取更新信息成功
     public static final int BAIDU_ZOOM_FOUTTEEN = 14;
     public static final int BAIDU_ZOOM_EIGHTEEN = 18;
+    public static final int BAIDU_ZOOM_TWENTY_ONE = 21;
     public static final String USERNAME = "user_name";//存储用户名
     public static final String USERNAME_N = "userName";//存储用户名
     public static final String USERPASSWORD = "user_pwd";//存储用户名密码
@@ -53,6 +55,9 @@ public class Constans {
     public static final String STARTADDRESS = "startAddress";
     public static final String ENDADDRESS = "endAddress";
     public static final String ADDRESS = "mAddress";
+
+    /*可选图片数量*/
+    public static final int IMAGES_SIX = 6;//
     /*
      * webview模块 20-40
      * */
@@ -66,7 +71,7 @@ public class Constans {
 
 
     /*
-     * 问题上报 40-50
+     * 问题上报 历史上报 40-50
      * */
     public static final int UPLOADSUCESS = 40;//问题上报成功
     public static final int EQUIPMENTCOUNTSUCESS = 41;//获取报警数量成功
@@ -75,6 +80,8 @@ public class Constans {
     public static final int WEBH5SUCESS = 44;//h5成功/*
     public static final int MARQUEEERROR = 45;//获取报警数量失败
     public static final int PICSTURESUCESS = 46;//图片成功
+    public static final int UPLOAD_HISTORY_SUCESS = 47;//历史问题上报成功
+    public static final int UPLOAD_HISTORY_ERROR = 48;
 
 
     /*
@@ -126,6 +133,10 @@ public class Constans {
     public static final int PERSONAL_SSUCESS = 74;//点击人员
     public static final int VEHICLE_SSUCESS = 75;//点击车辆
     public static final int PROBLEM_SSUCESS = 76;//点击问题
+    public static final int PERSONAL_SSUCESS_LIST = 741;//点击人员
+    public static final int VEHICLE_SSUCESS_LIST = 751;//点击车辆
+    public static final int PROBLEM_SSUCESS_LIST = 761;//点击问题
+    public static final int ALL_SSUCESS_LIST = 763;//全部
 
     public static final int TRACK_SSUCESS = 77;//
     public static final int TRACK_ERROR = 78;//
@@ -184,5 +195,18 @@ public class Constans {
     public static final String TYPE_ZERO = "0";//个人代签到/车辆违规查询
     public static final String TYPE_ONE = "1";//H5 主管代签到/人员违规查询
     public static final String TYPE_TWO = "2";//手机主管代签到
+
+    /*消息  120 -130 */
+    public static final int ONE_MSG_REPLY = 120;//回复刷新
+    public static final int MSG_LIST_SSUCESS = 121;//消息列表成功
+    public static final int MSG_LIST_ERROR = 122;
+    public static final int MSG_DETAIL_SSUCESS = 123;//消息详情成功
+    public static final int MSG_DETAIL_ERROR = 124;
+    public static final int MSG_REPLY_SSUCESS = 125;//回复消息成功
+    public static final int MSG_REPLY_ERROR = 126;
+    public static final int ANMENT_LIST_SSUCESS = 127;//公告成功
+    public static final int ANMENT_LIST_ERROR = 128;
+    public static final int NEW_MSG_SUCCESS = 129;
+    public static final int NEW_MSG_ERROR = 130;
 
 }

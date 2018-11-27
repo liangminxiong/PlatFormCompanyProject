@@ -9,10 +9,10 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.common.utils.AppUtils;
 import com.common.utils.ImageUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
-import com.yuefeng.commondemo.R;
 import com.yuefeng.photo.adapter.GvAdapter;
 import com.yuefeng.photo.bean.ImageInfo;
 import com.yuefeng.photo.view.MyGridView2;
@@ -39,11 +39,11 @@ public class ImageHelper {
         if (imgUrl.contains(",")) {
             String[] split = imgUrl.split(",");
             for (String aSplit : split) {
-                ImageInfo imageInfo = new ImageInfo(aSplit, 200, 200);
+                ImageInfo imageInfo = new ImageInfo(aSplit, (int) AppUtils.mScreenWidth, (int) AppUtils.mScreenHeight);
                 sImages.add(imageInfo);
             }
         } else {
-            ImageInfo imageInfo = new ImageInfo(imgUrl, 200, 200);
+            ImageInfo imageInfo = new ImageInfo(imgUrl, (int) AppUtils.mScreenWidth, (int) AppUtils.mScreenHeight);
             sImages.add(imageInfo);
         }
         adapter = new GvAdapter(context, sImages);
@@ -108,8 +108,8 @@ public class ImageHelper {
         int w = newOpts.outWidth;
         int h = newOpts.outHeight;
         // 现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-        float hh = 800f;// 这里设置高度为800f
-        float ww = 480f;// 这里设置宽度为480f
+        float hh = 1920f;// 这里设置高度为800f
+        float ww = 1080f;// 这里设置宽度为480f
         // 缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
         int be = 1;// be=1表示不缩放
         if (w > h && w > ww) {// 如果宽度大的话根据宽度固定大小缩放
@@ -134,8 +134,8 @@ public class ImageHelper {
         int w = newOpts.outWidth;
         int h = newOpts.outHeight;
         // 现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-        float hh = 800f;// 这里设置高度为800f
-        float ww = 480f;// 这里设置宽度为480f
+        float hh = 1920f;// 这里设置高度为800f
+        float ww = 1080f;// 这里设置宽度为480f
         // 缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
         int be = 1;// be=1表示不缩放
         if (w > h && w > ww) {// 如果宽度大的话根据宽度固定大小缩放
@@ -148,22 +148,20 @@ public class ImageHelper {
         newOpts.inSampleSize = be;// 设置缩放比例
         // 重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
         bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-        String string = PreferencesUtils.getString(MyApplication.getContext(), "Fengrun");
-        if (string.equals(context.getResources().getString(R.string.fengrun))) {
-            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, string, 10, Color.LTGRAY, 10, 20);
+
+        if (!TextUtils.isEmpty(txt)) {
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap,
+                    txt, 25, Color.LTGRAY, 10, 30);
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 25, Color.LTGRAY, 10, 5);
         } else {
+
+            txt = PreferencesUtils.getString(context, "mAddress", "");
             if (!TextUtils.isEmpty(txt)) {
-                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 10, Color.LTGRAY, 10, 20);
-                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 10, Color.LTGRAY, 10, 5);
+                bitmap = ImageUtils.drawTextToRightBottom(AppUtils.getContext(), bitmap, txt, 25, Color.LTGRAY, 10, 30);
+                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 25, Color.LTGRAY, 10, 5);
             } else {
-                txt = PreferencesUtils.getString(MyApplication.getContext(), "mAddress");
-                if (!TextUtils.isEmpty(txt)) {
-                    bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 10, Color.LTGRAY, 10, 20);
-                    bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 10, Color.LTGRAY, 10, 5);
-                } else {
-                    txt = TimeUtils.getCurrentTime();
-                    bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 10, Color.LTGRAY, 10, 20);
-                }
+                txt = TimeUtils.getCurrentTime();
+                bitmap = ImageUtils.drawTextToRightBottom(AppUtils.getContext(), bitmap, txt, 25, Color.LTGRAY, 10, 20);
             }
         }
         return compressImage(bitmap);// 压缩好比例大小后再进行质量压缩
@@ -184,8 +182,8 @@ public class ImageHelper {
         int w = newOpts.outWidth;
         int h = newOpts.outHeight;
         // 现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-        float hh = 800f;// 这里设置高度为800f
-        float ww = 480f;// 这里设置宽度为480f
+        float hh = 1920f;// 这里设置高度为800f
+        float ww = 1080f;// 这里设置宽度为480f
         // 缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
         int be = 1;// be=1表示不缩放
         if (w > h && w > ww) {// 如果宽度大的话根据宽度固定大小缩放
@@ -211,8 +209,8 @@ public class ImageHelper {
         int w = newOpts.outWidth;
         int h = newOpts.outHeight;
         // 现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-        float hh = 800f;// 这里设置高度为800f
-        float ww = 480f;// 这里设置宽度为480f
+        float hh = 1920f;// 这里设置高度为800f
+        float ww = 1080f;// 这里设置宽度为480f
         // 缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
         int be = 1;// be=1表示不缩放
         if (w > h && w > ww) {// 如果宽度大的话根据宽度固定大小缩放
@@ -225,18 +223,14 @@ public class ImageHelper {
         newOpts.inSampleSize = be;// 设置缩放比例
 //         重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
         bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-        String string = PreferencesUtils.getString(MyApplication.getContext(), "Fengrun");
-        if (string.equals(context.getResources().getString(R.string.fengrun))) {
-            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, string, 10, Color.LTGRAY, 10, 0);
+        String txt = PreferencesUtils.getString(MyApplication.getContext(), "mAddress");
+        if (!TextUtils.isEmpty(txt)) {
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap,
+                    txt, 25, Color.LTGRAY, 10, 30);
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 25, Color.LTGRAY, 0, 5);
         } else {
-            String txt = PreferencesUtils.getString(MyApplication.getContext(), "mAddress");
-            if (!TextUtils.isEmpty(txt)) {
-                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 10, Color.LTGRAY, 10, 20);
-                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 10, Color.LTGRAY, 0, 5);
-            } else {
-                txt = TimeUtils.getCurrentTime();
-                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 10, Color.LTGRAY, 10, 0);
-            }
+            txt = TimeUtils.getCurrentTime();
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 25, Color.LTGRAY, 25, 10);
         }
         return bitmap;
     }

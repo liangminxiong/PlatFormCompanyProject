@@ -74,6 +74,8 @@ public class ProblemUpdateActivity extends BaseActivity implements
     RelativeLayout iv_back;
     @BindView(R.id.tv_title)
     TextView tv_title;
+    @BindView(R.id.tv_title_setting)
+    TextView tv_title_setting;
     @BindColor(R.color.titel_color)
     int coloeWhite;
     @BindColor(R.color.titel_color)
@@ -126,13 +128,15 @@ public class ProblemUpdateActivity extends BaseActivity implements
 //        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         ButterKnife.bind(this);
         presenter = new ProblemUploadPresenter(this, this);
-        ViewUtils.setEditHightOrWidth(edt_problem_txt, (int) AppUtils.mScreenHeight / 5, ActionBar.LayoutParams.MATCH_PARENT);
-//        View view = findViewById(R.id.space);
-//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-        tv_title.setText("问题上报");
-        tv_type_jinji.setBackgroundResource(R.drawable.yiban3);
+        initUI();
         selectPhoto();
+    }
+
+    private void initUI() {
+        ViewUtils.setEditHightOrWidth(edt_problem_txt, (int) AppUtils.mScreenHeight / 5, ActionBar.LayoutParams.MATCH_PARENT);
+        tv_title.setText(R.string.problem_upload);
+        tv_title_setting.setText(R.string.history);
+        tv_type_jinji.setBackgroundResource(R.drawable.yiban3);
         tv_problem_address.setText(R.string.locationing);
     }
 
@@ -203,7 +207,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 address = location.getAddrStr();
-                if (!TextUtils.isEmpty(address)) {
+                if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                     int length = address.length();
                     address = address.substring(2, length);
                 }
@@ -400,7 +404,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
 
 
     /*紧急*/
-    @OnClick({R.id.tv_type_jinji, R.id.tv_problem_address, R.id.tv_upload})
+    @OnClick({R.id.tv_type_jinji, R.id.tv_problem_address, R.id.tv_upload, R.id.tv_title_setting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_problem_address:
@@ -413,7 +417,19 @@ public class ProblemUpdateActivity extends BaseActivity implements
             case R.id.tv_upload:
                 uploadProblem();
                 break;
+            case R.id.tv_title_setting:
+                toHistoryActivity();
+                break;
         }
+    }
+
+    private void toHistoryActivity() {
+        Intent intent = new Intent(ProblemUpdateActivity.this, HistoryProblemUpdataActivity.class);
+        String startTime = TimeUtils.getYesterdayStartTime();
+        String endTime = TimeUtils.getCurrentTime();
+        intent.putExtra(Constans.STARTTIME, startTime);
+        intent.putExtra(Constans.ENDTIME, endTime);
+        startActivity(intent);
     }
 
 

@@ -329,7 +329,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 address = location.getAddrStr();
-                if (!TextUtils.isEmpty(address)) {
+                if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                     int length = address.length();
                     address = address.substring(2, length);
                 }
@@ -341,7 +341,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
 
     private void firstLocation(double latitude, double longitude, String address) {
         try {
-            if (!TextUtils.isEmpty(address)) {
+            if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                 int length = address.length();
                 address = address.substring(2, length);
             }
@@ -661,6 +661,9 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             selectPhoto();
         }
         if (typeDistance.equals("2")) {
+            if (TextUtils.isEmpty(address)) {
+                address = PreferencesUtils.getString(PositionAcquisitionActivity.this, Constans.ADDRESS, "");
+            }
             tvTimeDistance.setText("本次采集地址:" + address);
         } else {
             initAreaOrDistance();
@@ -915,7 +918,8 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mImagesArrays = PictureSelectorUtils.compressionPhotos(PositionAcquisitionActivity.this, selectList, address);
+                String string = PreferencesUtils.getString(AppUtils.getContext(), Constans.ADDRESS, "");
+                mImagesArrays = PictureSelectorUtils.compressionPhotos(PositionAcquisitionActivity.this, selectList, string);
             }
         }).start();
         runOnUiThread(new Runnable() {

@@ -295,7 +295,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
 
     private void firstLocation(double latitude, double longitude, String address) {
         try {
-            if (!TextUtils.isEmpty(address)) {
+            if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                 int length = address.length();
                 address = address.substring(2, length);
             }

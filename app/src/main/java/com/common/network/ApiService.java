@@ -16,6 +16,10 @@ import com.yuefeng.features.modle.carlist.CarListInfosBean;
 import com.yuefeng.features.modle.carlist.OldCarListInfosBean;
 import com.yuefeng.features.modle.video.GetCaijiTypeBean;
 import com.yuefeng.features.modle.video.VideoEquipmentBean;
+import com.yuefeng.home.ui.modle.AnnouncementDataBean;
+import com.yuefeng.home.ui.modle.MsgDataBean;
+import com.yuefeng.home.ui.modle.MsgDataDetailBean;
+import com.yuefeng.home.ui.modle.ReplyContentBean;
 import com.yuefeng.login_splash.model.LoginBean;
 import com.yuefeng.personaltree.model.PersoanlTreeListBean;
 
@@ -39,6 +43,7 @@ public interface ApiService {
     String VIDEO_IP = "120.78.217.251";
     String VIDEO = "zgbd_fireControl/h5/getvideoequipment.action";
     String MIA_HW = "zgbd_hw/MobileInterface2/" + INTERFACEACTION;
+    String MIA_HW_bus = "zgbd_hw/business/review/";
 
     //服务器apk path,这里放了云平台的apk 作为测试
     String APPNAME = "Environmental.apk";
@@ -98,6 +103,14 @@ public interface ApiService {
 
     /*监察计划*/
     String GETJIANCHACOUNT = "getjianchacount";
+    /*历史问题上报*/
+    String GETEVEQUESTIONBYUSERID = "getEveQuestionByuserid";
+    /*获取消息列表公告*/
+    String GETDATAACTION = "getData.action";
+    /*消息详情*/
+    String GETMSGDETAIL = "getDetail.action";
+    /*消息回复*/
+    String DOREVIEW = "doReview.action";
 
 
     /*登录用户*/
@@ -110,17 +123,18 @@ public interface ApiService {
             @Field("client") String client);
 
     /*问题上报*/
+    @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<SubmitBean> uploadRubbishEvent(
-            @Query("function") String function,
-            @Query("userid") String userid,
-            @Query("pid") String pid,
-            @Query("problem") String problem,//描述
-            @Query("address") String address,
-            @Query("lng") String lng,
-            @Query("lat") String lat,
-            @Query("type") String type,//性质
-            @Query("imageArrays") String imageArrays);
+            @Field("function") String function,
+            @Field("userid") String userid,
+            @Field("pid") String pid,
+            @Field("problem") String problem,//描述
+            @Field("address") String address,
+            @Field("lng") String lng,
+            @Field("lat") String lat,
+            @Field("type") String type,//性质
+            @Field("imageArrays") String imageArrays);
 
     /*问题类型处理过程*/
     @POST(MIA_HW)
@@ -333,4 +347,50 @@ public interface ApiService {
             @Query("userid") String userid,
             @Query("timestart") String timestart,
             @Query("timeend") String timeend);
+
+    /*历史问题上报*/
+    @POST(MIA_HW)
+    Observable<EventQuestionBean> getEveQuestionByuserid(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Query("timestart") String timestart,
+            @Query("timeend") String timeend);
+
+    /*消息列表*/
+    @POST(MIA_HW_bus + GETDATAACTION)
+    Observable<MsgDataBean> getAnMentDataList(
+            @Query("pid") String userid,
+            @Query("page") int timestart,
+            @Query("limit") int timeend);
+
+    /*消息列表*/
+    @POST(MIA_HW_bus + GETMSGDETAIL)
+    Observable<MsgDataDetailBean> getMsgDetail(
+            @Query("reviewid") String reviewid);
+
+    /*消息列表*/
+    @FormUrlEncoded()
+    @POST(MIA_HW_bus + DOREVIEW)
+    Observable<ReplyContentBean> doReview(
+            @Field("pid") String pid,
+            @Field("reviewid") String reviewid,
+            @Field("reviewpersonel") String reviewpersonel,
+            @Field("reviewcontent") String reviewcontent,
+            @Field("imageurls") String imageurls);
+
+//    /*消息列表*/
+//    @FormUrlEncoded()
+//    @POST(MIA_HW)
+//    Observable<AnnouncementDataBean> getAnnouncementByuserid(
+//            @Field("userpid") String userpid,
+//            @Field("timestart") String timestart,
+//            @Field("timeend") String timeend);
+
+    /*包含最新消息列表*/
+    @POST(MIA_HW)
+    Observable<AnnouncementDataBean> getAnnouncementByuserid(
+            @Query("userpid") String userpid,
+            @Query("timestart") String timestart,
+            @Query("timeend") String timeend,
+            @Query("check") String check);
 }

@@ -25,6 +25,7 @@ import com.baidu.mapapi.model.LatLng;
 import com.common.base.codereview.BaseActivity;
 import com.common.utils.Constans;
 import com.common.utils.LocationGpsUtils;
+import com.common.utils.PreferencesUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
@@ -58,7 +59,7 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
     TextView tvTypeName;
     @BindView(R.id.tv_type_area)
     TextView tvTypeArea;
-    @BindView(R.id.tv_name)
+    @BindView(R.id.tv_theme)
     TextView tvName;
     @BindView(R.id.tv_image)
     TextView tvImage;
@@ -130,7 +131,9 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
             tvName.setText(name);
             tvTime.setText(time);
             imageUrls = msgBean.getImgeurl();
-
+            if (TextUtils.isEmpty(imageUrls)) {
+                imageUrls = ",,";
+            }
             ImageHelper.showImageBitmap(gridview, PositionAcquisitionDetailActivity.this, imageUrls);
 
             String lnglat = msgBean.getLnglat();
@@ -257,7 +260,7 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     address = location.getAddrStr();
-                    if (!TextUtils.isEmpty(address)) {
+                    if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                         int length = address.length();
                         address = address.substring(2, length);
                     }
@@ -271,13 +274,13 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
 
     private void firstLocation(double latitude, double longitude, String address) {
         try {
-            if (!TextUtils.isEmpty(address)) {
+            if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                 int length = address.length();
                 address = address.substring(2, length);
             }
             latLng = new LatLng(latitude, longitude);
             if (isFirstLoc) {
-                isFirstLoc = false;
+                isFirstLoc = false; PreferencesUtils.putString(PositionAcquisitionDetailActivity.this, Constans.ADDRESS, address);
                 MapStatus ms = new MapStatus.Builder().target(latLng)
                         .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                 ooA = new MarkerOptions().icon(personalImage).zIndex(10);

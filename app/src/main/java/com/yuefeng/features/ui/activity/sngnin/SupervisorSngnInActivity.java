@@ -273,7 +273,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
                 longitude = location.getLongitude();
                 address = location.getAddrStr();
 
-                if (!TextUtils.isEmpty(address)) {
+                if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                     int length = address.length();
                     address = address.substring(2, length);
                 }
@@ -281,6 +281,8 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
                     isFirstLocation = false;
                     if (!TextUtils.isEmpty(address)) {
                         tvAddress.setText(address);
+                        PreferencesUtils.putString(SupervisorSngnInActivity.this, "Fengrun", "");
+                        PreferencesUtils.putString(AppUtils.getContext(), Constans.ADDRESS, address);
                     } else {
                         isFirstLocation = true;
                         tvAddress.setText("点击重新定位");
@@ -483,7 +485,8 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    mImagesArrays = PictureSelectorUtils.compressionPhotos(SupervisorSngnInActivity.this, selectList, address);
+                    String string = PreferencesUtils.getString(AppUtils.getContext(), Constans.ADDRESS, "");
+                    mImagesArrays = PictureSelectorUtils.compressionPhotos(SupervisorSngnInActivity.this, selectList, string);
                 }
             }).start();
             runOnUiThread(new Runnable() {

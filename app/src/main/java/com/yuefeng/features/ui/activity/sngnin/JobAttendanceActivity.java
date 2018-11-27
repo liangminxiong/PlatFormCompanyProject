@@ -135,7 +135,7 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
                 longitude = location.getLongitude();
                 address = location.getAddrStr();
 
-                if (!TextUtils.isEmpty(address)) {
+                if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                     int length = address.length();
                     address = address.substring(2, length);
                 }
@@ -143,6 +143,7 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
                     isFirstLocation = false;
                     if (!TextUtils.isEmpty(address)) {
                         tvAddress.setText(address);
+                        PreferencesUtils.putString(JobAttendanceActivity.this, Constans.ADDRESS, address);
                     } else {
                         isFirstLocation = true;
                         tvAddress.setText("点击重新定位");

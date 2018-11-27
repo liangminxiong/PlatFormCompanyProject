@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.common.utils.GlideUtils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.photo.bean.ImageInfo;
@@ -65,7 +65,8 @@ public class GvAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        ImageLoader.getInstance().displayImage(list.get(position).getUrl(), holder.iv_image, optionsImag);
+        GlideUtils.loadImageViewLoading(holder.iv_image,list.get(position).getUrl(),R.mipmap.zanwutupian,R.mipmap.zanwutupian);
+//        ImageLoader.getInstance().displayImage(list.get(position).getUrl(), holder.iv_image, optionsImag);
         return convertView;
     }
 

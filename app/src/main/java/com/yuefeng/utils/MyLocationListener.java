@@ -4,9 +4,12 @@ import android.text.TextUtils;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
+import com.yuefeng.commondemo.R;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.common.utils.ResourcesUtils.getString;
 
 /**
  * 实现BDLocationListener,获取地理位置信息
@@ -37,7 +40,7 @@ public class MyLocationListener implements BDLocationListener {
             // 如果是网络定位
             // 获取地址信息
             String address = location.getAddrStr();
-            if (!TextUtils.isEmpty(address)) {
+            if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                 int length = address.length();
                 address = address.substring(2, length);
             }

@@ -381,14 +381,14 @@ public class LllegalWorkDetailActivity extends BaseActivity {
 //        BNRoutePlanNode sNode = new BNRoutePlanNode(mlatLng.longitude, mlatLng.latitude, beginAddress, beginAddress, coType);
 //        BNRoutePlanNode eNode = new BNRoutePlanNode(latLng.longitude, latLng.latitude, endAddress, endAddress, coType);
 
-        if ((latLng.longitude > 140.0) || (latLng.longitude < 65.0) || (latLng.latitude > 56.0) || (latLng.latitude < 12.0)) {
-            showSuccessToast("定位出问题，请检查");
-            return;
-        }
-        if ((latLngSecond.longitude > 140.0) || (latLngSecond.longitude < 65.0) || (latLngSecond.latitude > 56.0) || (latLngSecond.latitude < 12.0)) {
-            showSuccessToast("定位出问题，请检查");
-            return;
-        }
+//        if ((latLng.longitude > 140.0) || (latLng.longitude < 65.0) || (latLng.latitude > 56.0) || (latLng.latitude < 12.0)) {
+//            showSuccessToast("定位出问题，请检查");
+//            return;
+//        }
+//        if ((latLngSecond.longitude > 140.0) || (latLngSecond.longitude < 65.0) || (latLngSecond.latitude > 56.0) || (latLngSecond.latitude < 12.0)) {
+//            showSuccessToast("定位出问题，请检查");
+//            return;
+//        }
 
         if (TextUtils.isEmpty(endAddress) || endAddress.equals("暂无地址!")) {
             showSuccessToast("目的地不明确");

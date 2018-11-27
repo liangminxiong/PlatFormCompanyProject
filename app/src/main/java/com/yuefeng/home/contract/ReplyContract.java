@@ -9,9 +9,6 @@ public interface ReplyContract {
     }
 
     interface Presenter {
-        /*轨迹*/
-        void getGpsDatasByTer(String function, String terminal, String startTime, String endTime);
-        /*车辆列表*/
-        void getCarListInfos(String function, String organid, String userid, String isreg);
+        void doReview(String pid, String reviewid, String reviewpersonel, String reviewcontent, String imageurls);
     }
 }

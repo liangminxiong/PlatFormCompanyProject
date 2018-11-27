@@ -74,12 +74,12 @@
     <uses-permission android:name="com.yuefeng.paltform.permission.JPUSH_MESSAGE"/>
 
     <!--屏幕-->
-    <supports-screens
+    <!--<supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="false"
         android:resizeable="true"
-        android:smallScreens="true"/>
+        android:smallScreens="true"/>-->
 
     <application
         android:name="com.yuefeng.ui.MyApplication"
@@ -125,7 +125,6 @@
         </service>
         <!--========================百度地图（end）=============================-->
 
-
         <!--测试-->
         <activity
             android:name="com.yuefeng.ui.DemoTestActivity"
@@ -168,6 +167,10 @@
             android:name="com.yuefeng.features.ui.activity.ProblemUpdateActivity"
             android:hardwareAccelerated="false"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <!--历史问题上报-->
+        <activity
+            android:name="com.yuefeng.features.ui.activity.HistoryProblemUpdataActivity"
+            android:hardwareAccelerated="false"/>
         <!--问题巡检-->
         <activity
             android:name="com.yuefeng.features.ui.activity.QualityInspectionActivity"
@@ -236,11 +239,19 @@
             android:hardwareAccelerated="false"/>
         <!--消息详情-->
         <activity
-            android:name="com.yuefeng.home.ui.activity.MsgListDetailInfosActivtiy"
+            android:name="com.yuefeng.home.ui.activity.MsgListInfosActivtiy"
             android:hardwareAccelerated="false"/>
         <!--单一详情-->
         <activity
+            android:name="com.yuefeng.home.ui.activity.OnlyMsgDetailInfosActivtiy"
+            android:hardwareAccelerated="false"/>
+        <!--回复-->
+        <activity
             android:name="com.yuefeng.home.ui.activity.ReplyMsgDetailInfosActivtiy"
+            android:hardwareAccelerated="false"/>
+        <!--公告list-->
+        <activity
+            android:name="com.yuefeng.home.ui.activity.AnnouncementListInfosActivtiy"
             android:hardwareAccelerated="false"/>
         <!--违规作业-->
         <activity

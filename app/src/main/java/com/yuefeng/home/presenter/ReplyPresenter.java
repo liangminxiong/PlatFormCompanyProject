@@ -5,11 +5,10 @@ import com.common.network.ApiException;
 import com.common.network.HttpObservable;
 import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
-import com.yuefeng.features.event.CarListEvent;
-import com.yuefeng.features.modle.WheelPathBean;
-import com.yuefeng.features.modle.carlist.CarListInfosBean;
+import com.yuefeng.features.event.ProblemEvent;
 import com.yuefeng.home.contract.ReplyContract;
 import com.yuefeng.home.ui.activity.ReplyMsgDetailInfosActivtiy;
+import com.yuefeng.home.ui.modle.ReplyContentBean;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -26,24 +25,24 @@ public class ReplyPresenter extends BasePresenterImpl<ReplyContract.View,
     }
 
     @Override
-    public void getCarListInfos(String function, String organid, String userid, String isreg) {
+    public void doReview(String pid, String reviewid, String reviewpersonel, String reviewcontent, String imageurls) {
 
-        HttpObservable.getObservable(apiRetrofit.getCarListInfosNew(function, organid, userid, isreg))
+        HttpObservable.getObservable(apiRetrofit.doReview(pid,reviewid,reviewpersonel,reviewcontent,imageurls))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
-                .subscribe(new HttpResultObserver<CarListInfosBean>() {
+                .subscribe(new HttpResultObserver<ReplyContentBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
-                        showLoadingDialog("加载中...");
+                        showLoadingDialog("回复中...");
                     }
 
                     @Override
-                    protected void onSuccess(CarListInfosBean o) {
+                    protected void onSuccess(ReplyContentBean o) {
                         dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
-                                EventBus.getDefault().post(new CarListEvent(Constans.CARLIST_SSUCESS, o.getMsg()));
+                                EventBus.getDefault().post(new ProblemEvent(Constans.MSG_REPLY_SSUCESS, o.getResult()));
                             } else {
-                                EventBus.getDefault().post(new CarListEvent(Constans.CARLIST_ERROR, o.getMsg()));
+                                EventBus.getDefault().post(new ProblemEvent(Constans.MSG_REPLY_ERROR, o.getMsg()));
                             }
                         }
                     }
@@ -51,39 +50,21 @@ public class ReplyPresenter extends BasePresenterImpl<ReplyContract.View,
                     @Override
                     protected void onFail(ApiException e) {
                         dismissLoadingDialog();
-                        EventBus.getDefault().post(new CarListEvent(Constans.CARLIST_ERROR, e.getMsg()));
-                    }
-                });
-
-    }
-
-    @Override
-    public void getGpsDatasByTer(String function, String terminal, String startTime, String endTime) {
-
-        HttpObservable.getObservable(apiRetrofit.getGpsDatasByTer(function, terminal, startTime, endTime))
-//                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
-                .subscribe(new HttpResultObserver<WheelPathBean>() {
-                    @Override
-                    protected void onLoading(Disposable d) {
-                        showLoadingDialog("加载中...");
+                        EventBus.getDefault().post(new ProblemEvent(Constans.MSG_REPLY_ERROR, e.getMsg()));
                     }
 
                     @Override
-                    protected void onSuccess(WheelPathBean o) {
+                    public void onError(Throwable e) {
                         dismissLoadingDialog();
-                        if (getView() != null) {
-                            if (o.isSuccess()) {
-                                EventBus.getDefault().post(new CarListEvent(Constans.TRACK_SSUCESS, o.getMsg()));
-                            } else {
-                                EventBus.getDefault().post(new CarListEvent(Constans.TRACK_ERROR, o.getMsg()));
-                            }
-                        }
+                        EventBus.getDefault().post(new ProblemEvent(Constans.MSG_REPLY_ERROR, ""));
+                        super.onError(e);
                     }
 
                     @Override
-                    protected void onFail(ApiException e) {
+                    protected void _onError(ApiException error) {
                         dismissLoadingDialog();
-                        EventBus.getDefault().post(new CarListEvent(Constans.TRACK_ERROR, e.getMsg()));
+                        EventBus.getDefault().post(new ProblemEvent(Constans.MSG_REPLY_ERROR, error.getMsg()));
+                        super._onError(error);
                     }
                 });
 

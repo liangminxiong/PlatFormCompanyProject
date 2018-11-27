@@ -100,6 +100,7 @@ public class ProcessingProblemFragment extends BaseFragment implements QualityGe
                 intent.putExtra("PROBLEMID", problemid);
                 intent.putExtra("NAME", name);
                 intent.putExtra("STATE", state);
+                intent.putExtra("NOREPLY", "Yes");
                 startActivity(intent);
             }
         });

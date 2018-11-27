@@ -15,9 +15,11 @@ public class CarListSelectAdapter extends BaseItemDraggableAdapter<CarListSelect
     private String name;
     private String type;
     private int icon_type;
+    private int carType;
 
-    public CarListSelectAdapter(int layoutResId, @Nullable List<CarListSelectBean> data) {
+    public CarListSelectAdapter(int layoutResId, @Nullable List<CarListSelectBean> data,int carType) {
         super(layoutResId, data);
+        this.carType = carType;
     }
 
     @Override
@@ -29,14 +31,26 @@ public class CarListSelectAdapter extends BaseItemDraggableAdapter<CarListSelect
             type = TextUtils.isEmpty(type) ? "2" : type;
             helper.setText(R.id.id_treenode_label, name)
                     .addOnClickListener(R.id.iv_select_tree);
-            if (type.contains("0")) {
-                icon_type = R.drawable.list_qiche_tingche;
-            } else if (type.contains("1")) {
-                icon_type = R.drawable.list_qiche_xingshi;
-            } else if (type.contains("2")) {
-                icon_type = R.drawable.list_qiche_xingshi;
-            } else {
-                icon_type = R.drawable.list_qiche_ting10;
+            if (carType == 0) {
+                if (type.contains("0")) {
+                    icon_type = R.drawable.list_qiche_tingche;
+                } else if (type.contains("1")) {
+                    icon_type = R.drawable.list_qiche_xingshi;
+                } else if (type.contains("2")) {
+                    icon_type = R.drawable.list_qiche_xingshi;
+                } else {
+                    icon_type = R.drawable.list_qiche_ting10;
+                }
+            }else {
+                if (type.contains("0")) {
+                    icon_type = R.drawable.list_renyuan_tingzhi;
+                } else if (type.contains("1")) {
+                    icon_type = R.drawable.list_renyuan_xingshi;
+                } else if (type.contains("2")) {
+                    icon_type = R.drawable.list_renyuan_xingshi;
+                } else {
+                    icon_type = R.drawable.list_renyuan_tingche;
+                }
             }
             helper.setImageResource(R.id.icon, icon_type);
         }

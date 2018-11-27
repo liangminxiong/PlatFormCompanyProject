@@ -104,7 +104,7 @@ public class ShowPersonalpop extends PopupWindow {
 
     }
 
-    public void setTextContent(String name, String position, String phone, String classname, String address, boolean isVisible) {
+    public void setTextContent(String name, String position, String phone, String classname, String address, boolean isVisible,String stateType) {
         if (isVisible) {
             item_view.setVisibility(View.VISIBLE);
             tv_item_video.setVisibility(View.VISIBLE);
@@ -117,7 +117,7 @@ public class ShowPersonalpop extends PopupWindow {
         }
         String type = "";
 //        0  离线  1 停止 2 行驶 3 等待
-        switch (position) {
+        switch (stateType) {
             case "0":
                 type = "离线";
                 colorInt = context.getResources().getColor(R.color.gray);

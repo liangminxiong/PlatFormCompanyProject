@@ -8,6 +8,7 @@
     <color name="blue_07">#0070C7</color>
     <color name="blue_ten">#2F94D4</color>
     <color name="blue_4f">#4F9EFF</color>
+    <color name="blue_41">#41AFD1</color>
     <color name="text_blue">#0076FF</color>
     <color name="text_black">#333333</color>
     <color name="gray">#707070</color>
@@ -72,7 +73,7 @@
     <color name="gray_f0f0f0">#f0f0f0</color>
     <color name="gray_c8">#C8F8F4</color>
     <color name="gray_1e">#1EF1F1</color>
-    <color name="gray_70">#707070</color>
+    <color name="gray_70">#747474</color>
     <color name="gray_91">#919191</color>
     <color name="member_blue">#74a7ff</color>
     <!--覆盖颜色-->

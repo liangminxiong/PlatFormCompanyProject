@@ -192,6 +192,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 PreferencesUtils.putString(LoginActivity.this, Constans.ORGID, loginInfo.getOrgId());
                 PreferencesUtils.putString(LoginActivity.this, Constans.TELNUM, loginInfo.getTelNum());
                 PreferencesUtils.putString(LoginActivity.this, Constans.ID, loginInfo.getId());
+//                LogUtils.d("=============" + loginInfo.getId());
                 PreferencesUtils.putString(LoginActivity.this, Constans.EMAIL, loginInfo.getEmail());
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.ISREG, loginInfo.isIsreg());
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);

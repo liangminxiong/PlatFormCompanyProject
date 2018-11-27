@@ -8,16 +8,11 @@
     android:layout_below="@+id/space"
     android:background="@drawable/title_stuta">
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_24"
-        android:background="@color/transition"/>
-
     <RelativeLayout
         android:id="@+id/iv_back"
         android:layout_width="@dimen/dp_70"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_alignParentBottom="true"
         android:layout_below="@id/view"
         android:background="@color/transition"
         android:visibility="visible">
@@ -28,10 +23,10 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/dp_15"
-            android:drawablePadding="@dimen/dp_2"
             android:background="@color/transition"
-            android:textColor="@color/white"
+            android:drawablePadding="@dimen/dp_3"
             android:drawableStart="@drawable/selector_btn_back"
+            android:textColor="@color/white"
             android:visibility="visible"
             tools:ignore="ContentDescription"/>
 
@@ -41,6 +36,7 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/dp_40"
+        android:layout_alignParentBottom="true"
         android:layout_below="@id/view"
         android:layout_centerHorizontal="true"
         android:gravity="center"
@@ -54,8 +50,10 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@id/view"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_34"
         android:gravity="center"
+        android:paddingEnd="@dimen/dp_5"
+        android:paddingStart="@dimen/dp_8"
         android:textColor="@color/white"
         android:textSize="17sp"
         tools:ignore="RelativeOverlap"/>

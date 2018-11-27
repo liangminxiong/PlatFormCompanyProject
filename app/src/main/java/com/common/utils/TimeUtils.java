@@ -802,6 +802,19 @@ public class TimeUtils {
         return second;
     }
 
+    /*
+     * 将时分秒转为秒数
+     * */
+    public static String formatHourMin(String times) {
+        String time = "";
+        if (!TextUtils.isEmpty(times)) {
+            if (times.length() > 16) {
+                time = times.substring(11, 16);
+            }
+        }
+        return time;
+    }
+
 
     /*
      * 将时分秒转为秒数

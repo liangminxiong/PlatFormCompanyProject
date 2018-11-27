@@ -1,10 +1,11 @@
 package com.yuefeng.photo.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.common.utils.Constans;
+import com.common.utils.PreferencesUtils;
+import com.common.utils.TimeUtils;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
@@ -22,11 +26,9 @@ import com.luck.picture.lib.tools.DateUtils;
 import com.luck.picture.lib.tools.StringUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.event.ProblemEvent;
-import com.yuefeng.photo.utils.ImageHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,13 +74,14 @@ public class GridImageAdapter extends
 
         ImageView mImg;
         LinearLayout ll_del;
-        TextView tv_duration;
+        TextView tv_duration, tv_address;
 
         public ViewHolder(View view) {
             super(view);
             mImg = (ImageView) view.findViewById(R.id.fiv);
             ll_del = (LinearLayout) view.findViewById(R.id.ll_del);
             tv_duration = (TextView) view.findViewById(R.id.tv_duration);
+            tv_address = (TextView) view.findViewById(R.id.tv_address);
         }
     }
 
@@ -119,6 +122,7 @@ public class GridImageAdapter extends
     /**
      * 设置值
      */
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         //少于8张，显示继续添加的图标
@@ -160,17 +164,8 @@ public class GridImageAdapter extends
                 // 原图
                 path = media.getPath();
             }
-            // 图片
-            if (media.isCompressed()) {
-                Log.i("compress image result:", new File(media.getCompressPath()).length() / 1024 + "k");
-                Log.i("压缩地址::", media.getCompressPath());
-            }
 
-            Log.i("原图地址::", media.getPath());
             int pictureType = PictureMimeType.isPictureType(media.getPictureType());
-            if (media.isCut()) {
-                Log.i("裁剪地址::", media.getCutPath());
-            }
             long duration = media.getDuration();
             viewHolder.tv_duration.setVisibility(pictureType == PictureConfig.TYPE_VIDEO
                     ? View.VISIBLE : View.GONE);
@@ -183,6 +178,15 @@ public class GridImageAdapter extends
                 StringUtils.modifyTextViewDrawable(viewHolder.tv_duration, drawable, 0);
             }
             viewHolder.tv_duration.setText(DateUtils.timeParse(duration));
+            String address = PreferencesUtils.getString(context, Constans.ADDRESS, "");
+            String time = TimeUtils.getCurrentTime();
+            if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(time)) {
+                viewHolder.tv_address.setText(address + "\n" + time);
+            } else if (TextUtils.isEmpty(address)) {
+                viewHolder.tv_address.setText(time);
+            } else if (TextUtils.isEmpty(time)) {
+                viewHolder.tv_address.setText(address);
+            }
             if (mimeType == PictureMimeType.ofAudio()) {
                 viewHolder.mImg.setImageResource(R.drawable.audio_placeholder);
             } else {
@@ -192,13 +196,13 @@ public class GridImageAdapter extends
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
 //
 //                String string = SharePrefUtil.getString(Global.mContext, "Fengrun", "");
-                viewHolder.mImg.setImageBitmap(ImageHelper.getImageByPath(context, path));
+//                viewHolder.mImg.setImageBitmap(ImageHelper.getImageByPath(context, path));
 //                if (string.equals(context.getResources().getString(R.string.fengrun))) {
 //                } else {
-//                    Glide.with(viewHolder.itemView.getContext())
-//                            .load(path)
-//                            .apply(options)
-//                            .into(viewHolder.mImg);
+                Glide.with(viewHolder.itemView.getContext())
+                        .load(path)
+                        .apply(options)
+                        .into(viewHolder.mImg);
 //                }
 
             }

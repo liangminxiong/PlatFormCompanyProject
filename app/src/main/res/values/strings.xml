@@ -83,4 +83,7 @@
     <string name="caijiinfos_detail">采集信息详情</string>
     <string name="txt_reply">回复</string>
     <string name="msg">消息</string>
+    <string name="msg_detail">消息详情</string>
+    <string name="CHINA">中国</string>
+    <string name="problem_upload">问题上报</string>
 </resources>

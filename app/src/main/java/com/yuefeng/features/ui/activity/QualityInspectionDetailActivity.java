@@ -150,19 +150,26 @@ public class QualityInspectionDetailActivity extends BaseActivity implements Qua
         problemid = (String) bundle.get("PROBLEMID");
         name = (String) bundle.get("NAME");
         type = (String) bundle.get("STATE");
+        String noreply = (String) bundle.get("NOREPLY");
         tv_problem_reporter.setText(name);
-        if (type.equals("1")) {
-            llItemOne.setVisibility(View.GONE);
-            llItemTwo.setVisibility(View.VISIBLE);
-            ivItemClaim.setImageResource(R.drawable.xq_zhuanfa02);
-            ivItemForward.setImageResource(R.drawable.xq_renling02);
-        } else if (type.equals("2")) {
-            ivCommon.setImageResource(R.drawable.xq_finish02);
-        } else if (type.equals("3")) {
-            ivCommon.setImageResource(R.drawable.xq_close02);
-        } else {
+        assert noreply != null;
+        if (noreply.equals("No")) {
             llItemOne.setVisibility(View.GONE);
             llItemTwo.setVisibility(View.GONE);
+        } else {
+            if (type.equals("1")) {
+                llItemOne.setVisibility(View.GONE);
+                llItemTwo.setVisibility(View.VISIBLE);
+                ivItemClaim.setImageResource(R.drawable.xq_zhuanfa02);
+                ivItemForward.setImageResource(R.drawable.xq_renling02);
+            } else if (type.equals("2")) {
+                ivCommon.setImageResource(R.drawable.xq_finish02);
+            } else if (type.equals("3")) {
+                ivCommon.setImageResource(R.drawable.xq_close02);
+            } else {
+                llItemOne.setVisibility(View.GONE);
+                llItemTwo.setVisibility(View.GONE);
+            }
         }
     }
 

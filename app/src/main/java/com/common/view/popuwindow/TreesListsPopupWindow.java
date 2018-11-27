@@ -223,7 +223,7 @@ public class TreesListsPopupWindow extends PopupWindow {
     }
 
     private void initRecycleView() {
-        adapterSelect = new CarListSelectAdapter(R.layout.lv_new_list_item, listData);
+        adapterSelect = new CarListSelectAdapter(R.layout.lv_new_list_item, listData,0);
         recyclerview_after.setAdapter(adapterSelect);
         adapterSelect.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)

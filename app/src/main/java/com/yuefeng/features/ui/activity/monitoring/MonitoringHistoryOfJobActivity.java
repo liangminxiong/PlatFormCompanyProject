@@ -2,6 +2,7 @@ package com.yuefeng.features.ui.activity.monitoring;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ import com.yuefeng.features.event.ProblemEvent;
 import com.yuefeng.features.modle.GetMonitoringHistoryBean;
 import com.yuefeng.features.modle.GetMonitoringHistoryDetaiBean;
 import com.yuefeng.features.presenter.monitoring.MonitoringHistoryPresenter;
+import com.yuefeng.features.ui.activity.HistoryProblemUpdataActivity;
 import com.yuefeng.utils.BdLocationUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -240,13 +242,14 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
                     address = location.getAddrStr();
-                    if (!TextUtils.isEmpty(address)) {
+                    if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                         int length = address.length();
                         address = address.substring(2, length);
                     }
                     LatLng latLngTemp = new LatLng(latitude, longitude);
                     if (isFirstLocation) {
                         isFirstLocation = false;
+                        PreferencesUtils.putString(MonitoringHistoryOfJobActivity.this, Constans.ADDRESS, address);
                         MapStatus ms = new MapStatus.Builder().target(latLngTemp)
                                 .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                         ooA = new MarkerOptions().icon(personalImage).zIndex(10);
@@ -376,7 +379,7 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
     }
 
 
-    @OnClick({R.id.tv_start_time, R.id.tv_end_time})
+    @OnClick({R.id.tv_start_time, R.id.tv_end_time,R.id.tv_midle,R.id.tv_upload_count})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_start_time:
@@ -385,7 +388,25 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
             case R.id.tv_end_time:
                 chooseTime(2);
                 break;
+            case R.id.tv_midle:
+                intoHistoryUpload();
+
+                break;
+            case R.id.tv_upload_count:
+                intoHistoryUpload();
+                break;
         }
+    }
+
+    private void intoHistoryUpload() {
+        String startTime = tvStartTime.getText().toString().trim();
+        String endTime = tvEndTime.getText().toString().trim();
+        Intent intent = new Intent();
+        intent.setClass(MonitoringHistoryOfJobActivity.this, HistoryProblemUpdataActivity.class);
+        intent.putExtra(Constans.STARTTIME, startTime);
+        intent.putExtra(Constans.ENDTIME, endTime);
+        startActivity(intent);
+
     }
 
     /*选择时间*/

@@ -61,7 +61,7 @@ public class PictureSelectorUtils {
 
     /*图片选择*/
     public void initSselectPhoto(final Context context, final View view, RecyclerView recyclerView,
-                                  final List<LocalMedia> selectList) {
+                                 final List<LocalMedia> selectList, int count) {
         FullyGridLayoutManager manager = new FullyGridLayoutManager(context,
                 Constans.FOUR, GridLayoutManager.VERTICAL, false);
         this.mContext = context;
@@ -74,7 +74,7 @@ public class PictureSelectorUtils {
             }
         });
         mAdapter.setList(selectList);
-        mAdapter.setSelectMax(Constans.FOUR);
+        mAdapter.setSelectMax(count);
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(new GridImageAdapter.OnItemClickListener() {
             @Override
@@ -292,13 +292,7 @@ public class PictureSelectorUtils {
     }
 
     public String getImagesArrays(final Context context, final List<LocalMedia> selectList, final String address) {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mImagesArrays = PictureSelectorUtils.compressionPhotos(context, selectList, address);
-            }
-        }).start();
+        mImagesArrays = PictureSelectorUtils.compressionPhotos(context, selectList, address);
         return mImagesArrays;
     }
 }

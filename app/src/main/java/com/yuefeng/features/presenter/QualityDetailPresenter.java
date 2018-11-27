@@ -34,7 +34,7 @@ public class QualityDetailPresenter extends BasePresenterImpl<QualityDetailContr
                 .subscribe(new HttpResultObserver<GetEventdetailBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
-//                        showLoadingDialog("请稍等...");
+                        showLoadingDialog("请稍等...");
                     }
 
                     @Override

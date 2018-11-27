@@ -13,12 +13,12 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.BaseMvpFragment;
 import com.common.utils.Constans;
-import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.event.CarListEvent;
-import com.yuefeng.home.ui.activity.MsgListDetailInfosActivtiy;
+import com.yuefeng.home.ui.activity.AnnouncementListInfosActivtiy;
+import com.yuefeng.home.ui.activity.MsgListInfosActivtiy;
 import com.yuefeng.home.ui.adapter.HomeMsgInfosAdapter;
-import com.yuefeng.home.ui.modle.MsgDataBean;
+import com.yuefeng.home.ui.modle.MsgListDataBean;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -54,7 +54,7 @@ public class HomeFragment extends BaseMvpFragment {
     String msg_name;
     Unbinder unbinder;
     private HomeMsgInfosAdapter adapter;
-    private List<MsgDataBean> listData = new ArrayList<>();
+    private List<MsgListDataBean> listData = new ArrayList<>();
     private int tempPosition = 0;
 
     @Override
@@ -82,16 +82,18 @@ public class HomeFragment extends BaseMvpFragment {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent();
                 if (position == 0) {
                     tempPosition = 1;
+                    intent.setClass(Objects.requireNonNull(getActivity()), MsgListInfosActivtiy.class);
+                    intent.putExtra("msgList", (Serializable) listData);
                 } else if (position == 1) {
                     tempPosition = 2;
+                    intent.setClass(Objects.requireNonNull(getActivity()), MsgListInfosActivtiy.class);
                 } else {
                     tempPosition = 3;
+                    intent.setClass(Objects.requireNonNull(getActivity()), AnnouncementListInfosActivtiy.class);
                 }
-                Intent intent = new Intent();
-                intent.setClass(Objects.requireNonNull(getActivity()), MsgListDetailInfosActivtiy.class);
-                intent.putExtra("msgList", (Serializable) listData);
                 intent.putExtra("tempPosition", tempPosition);
                 startActivity(intent);
             }
@@ -103,27 +105,25 @@ public class HomeFragment extends BaseMvpFragment {
     private void showAdapterDatasList() {
         String name = "";
         String detail = "";
-        List<MsgDataBean> bean = new ArrayList<>();
+        List<MsgListDataBean> bean = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            MsgDataBean msgDataBean = new MsgDataBean();
+            MsgListDataBean msgDataBean = new MsgListDataBean();
             if (i == 0) {
                 name = "侨银环保科技股份有限公司";
                 detail = "[审批]今天还有一个审批单待你处理，请尽快处理";
-                msgDataBean.setImageUrl(R.drawable.work);
+                msgDataBean.setImageId(R.drawable.work);
             } else if (i == 1) {
                 name = "升级提醒";
                 detail = "1.0.2版本新功能介绍";
-                msgDataBean.setImageUrl(R.drawable.upgrade);
+                msgDataBean.setImageId(R.drawable.upgrade);
             } else {
                 name = "项目通知:池州一体化项目进展情况";
                 detail = "[执行]今天还有2个任务待你处理，请尽快完成";
-                msgDataBean.setImageUrl(R.drawable.item);
+                msgDataBean.setImageId(R.drawable.item);
             }
-            msgDataBean.setName(name);
-            msgDataBean.setTitle(name);
-            msgDataBean.setTime(TimeUtils.getHourMinute());
-            msgDataBean.setDetail(detail);
-            msgDataBean.setCount(1 + "");
+            msgDataBean.setOrg(name);
+            msgDataBean.setReviewtitle(name);
+            msgDataBean.setReviewcontent(detail);
             bean.add(msgDataBean);
         }
         listData.clear();
