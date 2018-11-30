@@ -174,7 +174,7 @@ public class VehicleListFragment extends BaseFragment implements View.OnTouchLis
                 list = (List<VehicleinfoListBean>) event.getData();
                 mSize = list.size();
                 if (mSize > 0) {
-//                    showAdapterDatasList(list);
+                    showAdapterDatasList(list);
                 } else {
                     noData();
                 }

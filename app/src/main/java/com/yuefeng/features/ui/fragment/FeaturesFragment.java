@@ -12,10 +12,10 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
+import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
-import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.FeaturesMsgAdapter;
@@ -30,15 +30,14 @@ import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
 import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
-import com.yuefeng.home.ui.activity.MsgListInfosActivtiy;
-import com.yuefeng.home.ui.modle.AnnouncementDataMsgBean;
+import com.yuefeng.home.ui.activity.NewMsgDetailInfosActivtiy;
+import com.yuefeng.home.modle.NewMsgListDataBean;
 import com.yuefeng.ui.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -65,9 +64,10 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     Unbinder unbinder;
 
     private FeaturesMsgAdapter adapter;
-    private List<AnnouncementDataMsgBean> listData = new ArrayList<>();
-    private int tempPosition = 0;
+    private List<NewMsgListDataBean> listData = new ArrayList<>();
     private FeaturesPresenter mPresenter;
+    private String mStartTime = "";
+    private String mEndTime = "";
 
     @Override
     protected int getLayoutId() {
@@ -99,18 +99,20 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
 
     @Override
     protected void fetchData() {
+
+    }
+
+    private void getNetDatas() {
         if (mPresenter != null) {
             String pid = PreferencesUtils.getString(getContext(), Constans.ORGID, "");
-            String startTime = "2018-01-04 12:12:12";
-            String endTime = TimeUtils.getCurrentTime2();
             pid = "dg1954";
-//            mPresenter.getAnnouncementByuserid(pid, startTime, endTime, "null");
+            mPresenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, mStartTime, mEndTime);
         }
     }
 
     @Override
     protected void initData() {
-
+        getNetDatas();
     }
 
 
@@ -121,24 +123,18 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (position == 0) {
-                    tempPosition = 1;
-                } else if (position == 1) {
-                    tempPosition = 2;
-                } else {
-                    tempPosition = 3;
-                }
+                NewMsgListDataBean dataBean = listData.get(position);
+                assert dataBean != null;
                 Intent intent = new Intent();
-                intent.setClass(Objects.requireNonNull(getActivity()), MsgListInfosActivtiy.class);
-                intent.putExtra("msgList", (Serializable) listData);
-                intent.putExtra("tempPosition", tempPosition);
+                intent.setClass(Objects.requireNonNull(getActivity()), NewMsgDetailInfosActivtiy.class);
+                intent.putExtra("dataBean", dataBean);
                 startActivity(intent);
             }
         });
     }
 
     /*展示数据*/
-    private void showAdapterDatasList(List<AnnouncementDataMsgBean> list) {
+    private void showAdapterDatasList(List<NewMsgListDataBean> list) {
         listData.clear();
         listData.addAll(list);
         adapter.setNewData(listData);
@@ -148,7 +144,7 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     public void disposeCarListEvent(CarListEvent event) {
         switch (event.getWhat()) {
             case Constans.NEW_MSG_SUCCESS://展示最新消息
-                List<AnnouncementDataMsgBean> list = (List<AnnouncementDataMsgBean>) event.getData();
+                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
                 if (list.size() > 0) {
                     showAdapterDatasList(list);
                 } else {
@@ -156,8 +152,7 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
                 }
                 break;
 
-            default:
-//                showSuccessToast("获取数据失败，请重试");
+            case  Constans.NEW_MSG_ERROR:
                 break;
 
         }
@@ -195,7 +190,7 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
                 toHistoryTrack();//历史轨迹
                 break;
             case R.id.rl_problemupload:
-                problemUpload();
+                problemUpload();//作业监察
                 break;
             case R.id.rl_qualityxuncha:
                 qualityXuncha();

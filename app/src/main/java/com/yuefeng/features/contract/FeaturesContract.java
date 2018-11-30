@@ -10,6 +10,6 @@ public interface FeaturesContract {
 
     interface Presenter {
 
-        void getAnnouncementByuserid(String userpid, String timestart, String timeend, String check);
+        void getAnnouncementByuserid(String function,String pid, String timestart, String timeend);
     }
 }

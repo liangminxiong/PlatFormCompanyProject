@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,7 +15,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swf_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/include">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview"
@@ -26,4 +27,109 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/rl_time"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_150"
+        android:layout_alignTop="@id/swf_layout"
+        android:layout_below="@id/include"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginStart="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_5"
+        android:background="@drawable/shape_cricle_bg_gray"
+        android:clickable="true"
+        android:visibility="invisible"
+        tools:ignore="UselessLeaf">
+
+        <TextView
+            android:id="@+id/start"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_5"
+            android:gravity="center"
+            android:text="开始时间"
+            android:textColor="@color/black"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_start_time"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_toEndOf="@id/start"
+            android:drawableEnd="@drawable/fold"
+            android:drawablePadding="@dimen/dp_5"
+            android:gravity="center_vertical"
+            android:hint="请选择开始时间"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray_87"
+            tools:ignore="HardcodedText"/>
+
+        <View
+            android:id="@+id/view_start"
+            style="@style/horizontal_line"
+            android:layout_below="@id/tv_start_time"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginStart="@dimen/dp_80"/>
+
+        <TextView
+            android:id="@+id/end"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/tv_start_time"
+            android:gravity="center"
+            android:text="结束时间"
+            android:textColor="@color/black"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/tv_end_time"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/view_start"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_toEndOf="@id/end"
+            android:drawableEnd="@drawable/fold"
+            android:drawablePadding="@dimen/dp_5"
+            android:gravity="center_vertical"
+            android:hint="请选择结束时间"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray_87"
+            tools:ignore="HardcodedText"/>
+
+        <View
+            android:id="@+id/view_end"
+            style="@style/horizontal_line"
+            android:layout_below="@id/tv_end_time"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginStart="@dimen/dp_80"/>
+
+        <TextView
+            android:id="@+id/tv_search"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:layout_below="@id/view_end"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/query_button_selector"
+            android:gravity="center"
+            android:textColor="@color/titel_color"
+            tools:ignore="HardcodedText"/>
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/iv_showtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@id/swf_layout"
+        android:layout_below="@id/include"
+        android:src="@drawable/time_history"
+        android:visibility="visible"
+        tools:ignore="ContentDescription"/>
+
+</RelativeLayout>

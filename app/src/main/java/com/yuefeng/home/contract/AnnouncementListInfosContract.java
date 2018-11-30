@@ -10,6 +10,6 @@ public interface AnnouncementListInfosContract {
 
     interface Presenter {
 
-        void getAnnouncementByuserid(String userpid, String timestart, String timeend, String check);
+        void getAnnouncementByuserid(String function,String pid, String timestart, String timeend ,int page,int limit,boolean isLoad);
     }
 }

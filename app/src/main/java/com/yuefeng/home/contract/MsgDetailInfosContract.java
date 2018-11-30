@@ -11,5 +11,6 @@ public interface MsgDetailInfosContract {
     interface Presenter {
 
         void getMsgDetail(String reviewid);
+        void getMsgDetail(String function,String reviewid);
     }
 }

@@ -170,7 +170,7 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
                 list = (List<PersonalinfoListBean>) event.getData();
                 mSize = list.size();
                 if (mSize > 0) {
-//                    showAdapterDatasList(list);
+                    showAdapterDatasList(list);
                 } else {
                     noData();
                 }
@@ -182,7 +182,6 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
     protected void fetchData() {
         if (mSize > 0) {
             showAdapterDatasList(list);
-            LogUtils.d("--------------");
         } else {
             noData();
         }

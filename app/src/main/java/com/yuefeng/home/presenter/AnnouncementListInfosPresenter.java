@@ -8,7 +8,7 @@ import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.yuefeng.home.contract.AnnouncementListInfosContract;
 import com.yuefeng.home.ui.activity.AnnouncementListInfosActivtiy;
-import com.yuefeng.home.ui.modle.AnnouncementDataBean;
+import com.yuefeng.home.modle.AnnouncementDataBean;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -25,22 +25,24 @@ public class AnnouncementListInfosPresenter extends BasePresenterImpl<Announceme
     }
 
     @Override
-    public void getAnnouncementByuserid(String userpid, String timestart, String timeend,String check) {
+    public void getAnnouncementByuserid(String function, String pid, String timestart, String timeend, int page, int limit, final boolean isLoad) {
 
-        HttpObservable.getObservable(apiRetrofit.getAnnouncementByuserid(userpid, timestart, timeend,check))
+        HttpObservable.getObservable(apiRetrofit.getAnnouncementByuserid(function,pid, timestart, timeend,page,limit))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<AnnouncementDataBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
-                        showLoadingDialog("加载中...");
+                        if (isLoad) {
+                            showLoadingDialog("加载中...");
+                        }
                     }
 
                     @Override
                     protected void onSuccess(AnnouncementDataBean o) {
                         dismissLoadingDialog();
                         if (getView() != null) {
-                            if (o.isSuccess()) {
-                                EventBus.getDefault().post(new CommonEvent(Constans.ANMENT_LIST_SSUCESS, o.getMsg()));
+                            if (o.getCode()==0) {
+                                EventBus.getDefault().post(new CommonEvent(Constans.ANMENT_LIST_SSUCESS, o));
                             } else {
                                 EventBus.getDefault().post(new CommonEvent(Constans.ANMENT_LIST_ERROR, o.getMsg()));
                             }
@@ -56,7 +58,7 @@ public class AnnouncementListInfosPresenter extends BasePresenterImpl<Announceme
                     @Override
                     public void onError(Throwable e) {
                         dismissLoadingDialog();
-                        EventBus.getDefault().post(new CommonEvent(Constans.ANMENT_LIST_ERROR, ""));
+                        EventBus.getDefault().post(new CommonEvent(Constans.ANMENT_LIST_ERROR_NULL, ""));
                         super.onError(e);
                     }
 

@@ -1,24 +1,22 @@
-package com.yuefeng.home.ui.modle;
+package com.yuefeng.home.modle;
 
 import java.io.Serializable;
 import java.util.List;
 
-
 /*公告消息列表*/
-public class MsgDataBean implements Serializable {
+public class AnnouncementDataBean implements Serializable {
 
 
     /**
      * code : 0
      * msg :
-     * count : 4
-     * data : []
+     * count : 3
      */
 
     private int code;
     private String msg;
     private int count;
-    private List<MsgListDataBean> data;
+    private List<AnnouncementDataMsgBean> data;
 
     public int getCode() {
         return code;
@@ -44,11 +42,12 @@ public class MsgDataBean implements Serializable {
         this.count = count;
     }
 
-    public List<MsgListDataBean> getData() {
+    public List<AnnouncementDataMsgBean> getData() {
         return data;
     }
 
-    public void setData(List<MsgListDataBean> data) {
+    public void setData(List<AnnouncementDataMsgBean> data) {
         this.data = data;
     }
+
 }

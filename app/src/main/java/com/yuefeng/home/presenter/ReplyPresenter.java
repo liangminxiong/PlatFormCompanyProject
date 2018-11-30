@@ -8,7 +8,7 @@ import com.common.utils.Constans;
 import com.yuefeng.features.event.ProblemEvent;
 import com.yuefeng.home.contract.ReplyContract;
 import com.yuefeng.home.ui.activity.ReplyMsgDetailInfosActivtiy;
-import com.yuefeng.home.ui.modle.ReplyContentBean;
+import com.yuefeng.home.modle.ReplyContentBean;
 
 import org.greenrobot.eventbus.EventBus;
 

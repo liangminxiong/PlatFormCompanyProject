@@ -1,4 +1,4 @@
-package com.yuefeng.home.ui.modle;
+package com.yuefeng.home.modle;
 
 import java.io.Serializable;
 import java.util.List;

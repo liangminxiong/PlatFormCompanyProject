@@ -1,34 +1,33 @@
-package com.yuefeng.home.ui.modle;
+package com.yuefeng.home.modle;
 
 import java.io.Serializable;
 
-public class MsgListDataBean implements Serializable {
+public class MsgDataDetailListBean implements Serializable {
     /**
-     * state : 0
-     * id : 39757dbd0a00001f561956441c00ac97
-     * reviewcontent : 不合格
-     * reviewdate : 2018-11-22 11:27:40
+     * state : 1
+     * id : 358843c20a00001f5b51f5fcadf29a70
+     * reviewcontent : 不通过
+     * reviewdate : 2018-11-21 17:09:40
+     * "isread": "1",
      * pid : dg1168
-     * reviewpersonel : 陈伟
+     * reviewpersonel : 测试
      * type : CONTENT
-     * reviewtitle : 【车审】粤ADV861(驳回)
+     * reviewtitle : 【维修】皖F35603(11号勾臂车)(驳回)
      * imageurls :
-     * reviewid : 11af05590a00001f20a1326282df5581
-     * org : 侨银环保科技股份有限公司
+     * reviewid : 2bbba31c0a00001f69b7dadadae8d9fe
      */
 
     private String state;
     private String id;
     private String reviewcontent;
     private String reviewdate;
+    private String isread;
     private String pid;
     private String reviewpersonel;
     private String type;
     private String reviewtitle;
     private String imageurls;
     private String reviewid;
-    private String org;
-    private int imageId;
 
     public String getState() {
         return state;
@@ -110,19 +109,11 @@ public class MsgListDataBean implements Serializable {
         this.reviewid = reviewid;
     }
 
-    public String getOrg() {
-        return org;
+    public String getIsread() {
+        return isread;
     }
 
-    public void setOrg(String org) {
-        this.org = org;
-    }
-
-    public int getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
+    public void setIsread(String isread) {
+        this.isread = isread;
     }
 }

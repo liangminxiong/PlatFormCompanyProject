@@ -185,9 +185,6 @@ public class JobMonitoringActivity extends BaseActivity implements
     private VehicleListFragment vehicleListFragment;
     private QuestionListFragment questionListFragment;
     private boolean isVisible;
-    //    List<PersonalinfoListBean> personalinfoList = new ArrayList<>();
-//    List<VehicleinfoListBean> vehicleinfoList = new ArrayList<>();
-//    List<QuestionListBean> questionList = new ArrayList<>();
     private List<Node> mNodeList = new ArrayList<>();
     private int mSize;
     private int mSize_v;
@@ -197,6 +194,7 @@ public class JobMonitoringActivity extends BaseActivity implements
     private String mVehicleCount;
     private String mQuestionCount;
     private GetJobMonitotingMsgBean mBean;
+    private boolean mIsFirstOnclick = true;
 
     @Override
     protected int getContentViewResId() {
@@ -310,7 +308,12 @@ public class JobMonitoringActivity extends BaseActivity implements
                 showViewPagerVisibilty();
                 break;
             case R.id.tv_title_setting:
-                showFilterDatas();
+                if (mIsFirstOnclick) {
+                    mIsFirstOnclick = false;
+                    showFilterDatas();
+                } else {
+                    showSuccessToast("请勿频繁点击");
+                }
                 break;
             case R.id.tv_back:
                 finish();
@@ -322,12 +325,6 @@ public class JobMonitoringActivity extends BaseActivity implements
     /*展示数据*/
     private void showFilterDatas() {
         try {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showLoadingDialog("请稍等...");
-                }
-            });
             if (mNodeList.size() > 0) {
                 PersonaCarProblemPopupWindow filterPopuWindow =
                         new PersonaCarProblemPopupWindow(JobMonitoringActivity.this, mNodeList, false);
@@ -336,24 +333,19 @@ public class JobMonitoringActivity extends BaseActivity implements
                 filterPopuWindow.setOnItemClickListener(new PersonaCarProblemPopupWindow.OnItemClickListener() {
                     @Override
                     public void onGoBack() {
-
+                        mIsFirstOnclick = true;
                     }
 
                     @Override
                     public void onSure(List<PersonalinfoListBean> personalinfoList, List<VehicleinfoListBean>
                             vehicleinfoList, List<QuestionListBean> questionList) {
+                        mIsFirstOnclick = true;
                         showSelectDatas(personalinfoList, vehicleinfoList, questionList);
 
                     }
                 });
                 filterPopuWindow.showAtLocation(ll_root, Gravity.BOTTOM, 0, 0);
             }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    dismissLoadingDialog();
-                }
-            });
         } catch (Exception e) {
 
             dismissLoadingDialog();

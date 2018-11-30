@@ -47,6 +47,14 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initView(Bundle savedInstanceState) {
         ButterKnife.bind(this);
+        if (!isTaskRoot()) {
+            finish();
+            return;
+        }
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
         try {
             imageView.setBackgroundResource(R.drawable.bg_login);
             requestPermissions();

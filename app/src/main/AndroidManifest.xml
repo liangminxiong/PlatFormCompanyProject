@@ -74,12 +74,12 @@
     <uses-permission android:name="com.yuefeng.paltform.permission.JPUSH_MESSAGE"/>
 
     <!--屏幕-->
-    <!--<supports-screens
+    <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="false"
         android:resizeable="true"
-        android:smallScreens="true"/>-->
+        android:smallScreens="true"/>
 
     <application
         android:name="com.yuefeng.ui.MyApplication"
@@ -91,6 +91,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+
 
         <!--适配7.0-->
         <provider
@@ -162,6 +163,14 @@
             android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringSngnInActivity"
             android:hardwareAccelerated="false"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <!--历史-->
+        <activity
+            android:name="com.yuefeng.features.ui.activity.monitoring.HistoryMonitoringSngnInActivity"
+            android:hardwareAccelerated="false"/>
+        <!--详情-->
+        <activity
+            android:name="com.yuefeng.features.ui.activity.monitoring.MonitoringSngnInDetailActivity"
+            android:hardwareAccelerated="false"/>
         <!--问题上报-->
         <activity
             android:name="com.yuefeng.features.ui.activity.ProblemUpdateActivity"
@@ -245,6 +254,10 @@
         <activity
             android:name="com.yuefeng.home.ui.activity.OnlyMsgDetailInfosActivtiy"
             android:hardwareAccelerated="false"/>
+        <!--最新消息详情-->
+        <activity
+            android:name="com.yuefeng.home.ui.activity.NewMsgDetailInfosActivtiy"
+            android:hardwareAccelerated="false"/>
         <!--回复-->
         <activity
             android:name="com.yuefeng.home.ui.activity.ReplyMsgDetailInfosActivtiy"
@@ -252,6 +265,17 @@
         <!--公告list-->
         <activity
             android:name="com.yuefeng.home.ui.activity.AnnouncementListInfosActivtiy"
+            android:hardwareAccelerated="false"/>
+        <!--app历史版本-->
+        <activity
+            android:name="com.yuefeng.home.ui.activity.HistoryAppVersionActivtiy"
+            android:hardwareAccelerated="false"/>
+        <activity
+            android:name="com.yuefeng.home.ui.activity.AppVersionDetailActivtiy"
+            android:hardwareAccelerated="false"/>
+        <!--公告详情-->
+        <activity
+            android:name="com.yuefeng.home.ui.activity.AnnouncementDetailInfosActivtiy"
             android:hardwareAccelerated="false"/>
         <!--违规作业-->
         <activity

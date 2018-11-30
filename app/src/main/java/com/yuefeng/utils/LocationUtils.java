@@ -14,6 +14,7 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.utils.CoordinateConverter;
+import com.common.utils.LogUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -138,9 +139,9 @@ public class LocationUtils implements MyLocationListener.OnLocationResultListene
             // 将地理位置信息载入到集合中
             String address = result.getAddress();
             if (TextUtils.isEmpty(address)) {
-//                address = "暂无地址!";
-                address = "";
+                address = "未匹配到相应地址!";
             }
+            LogUtils.d("=====address===" + address);
             map.put("address", address);
             if (mOnResultMapListener != null) {
                 mOnResultMapListener.onReverseGeoCodeResult(map);

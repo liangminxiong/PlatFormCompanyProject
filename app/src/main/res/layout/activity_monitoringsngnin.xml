@@ -104,9 +104,9 @@
             android:id="@+id/tv_personal"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_45"
-            android:gravity="center_vertical|right"
             android:drawableEnd="@drawable/jiancha_qiandao_next"
             android:drawablePadding="@dimen/dp_3"
+            android:gravity="center_vertical|right"
             android:singleLine="true"
             android:textColor="@color/black_32"
             android:textSize="@dimen/sp_14"
@@ -165,5 +165,15 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/color_f6"/>
+
+    <ImageView
+        android:id="@+id/iv_submit"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_50"
+        android:layout_marginEnd="@dimen/dp_15"
+        android:layout_marginBottom="@dimen/dp_20"
+        android:layout_marginStart="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_10"
+        android:src="@drawable/xiaoxi_but_tijiao_sel"/>
 
 </LinearLayout>

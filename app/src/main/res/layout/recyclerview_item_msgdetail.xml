@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/rl_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/rl_item"
                 android:background="@color/color_f6">
 
     <TextView
@@ -25,6 +25,17 @@
         android:layout_below="@id/tv_item_time"
         android:padding="@dimen/dp_10"
         android:src="@drawable/work"
+        tools:ignore="ContentDescription"/>
+
+    <ImageView
+        android:id="@+id/iv_item_isread"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_item_time"
+        android:layout_marginStart="@dimen/dp_28"
+        android:padding="@dimen/dp_10"
+        android:src="@drawable/shape_red_dot8"
+        android:visibility="invisible"
         tools:ignore="ContentDescription"/>
 
     <TextView

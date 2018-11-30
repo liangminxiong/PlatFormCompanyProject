@@ -1,16 +1,18 @@
-package com.yuefeng.home.ui.modle;
+package com.yuefeng.home.modle;
 
 import java.io.Serializable;
 
-/*公告*/
-public class AnnouncementDataMsgBean implements Serializable {
+public class NewMsgListDataBean implements Serializable {
+
     /**
-     * id : 52e3157a0a00000b303e7d6db406f386
-     * organname : 淮北项目
-     * issuedate : 2018-11-27 09:57:45.0
-     * subject : 测试002
-     * content : 测试002
-     * genre : 1 1-公告 、2-信息 ，3 -更新
+     * id : 5919909a0a00000b407cd4441dbbcc27
+     * organname : 洗扫车组
+     * issuedate : 2018-11-28 14:55:04.0
+     * subject : 222222
+     * content : 333333333
+     * genre : 1
+     * isread : 1
+     * notread : 0
      */
 
     private String id;
@@ -19,6 +21,8 @@ public class AnnouncementDataMsgBean implements Serializable {
     private String subject;
     private String content;
     private String genre;
+    private String isread;
+    private String notread;
 
     public String getId() {
         return id;
@@ -68,4 +72,19 @@ public class AnnouncementDataMsgBean implements Serializable {
         this.genre = genre;
     }
 
+    public String getIsread() {
+        return isread;
+    }
+
+    public void setIsread(String isread) {
+        this.isread = isread;
+    }
+
+    public String getNotread() {
+        return notread;
+    }
+
+    public void setNotread(String notread) {
+        this.notread = notread;
+    }
 }

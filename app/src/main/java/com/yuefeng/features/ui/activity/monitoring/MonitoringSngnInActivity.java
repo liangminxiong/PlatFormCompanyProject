@@ -61,7 +61,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 
-/*问题上报*/
+/*作业监察签到*/
 public class MonitoringSngnInActivity extends BaseActivity implements MonitoringContract.View {
 
     private static final String TAG = "tag";
@@ -112,8 +112,8 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
         ButterKnife.bind(this);
         presenter = new MonitoringSngnInPresenter(this, this);
         ViewUtils.setEditHightOrWidth(edt_problem_txt, (int) AppUtils.mScreenHeight / 5, ActionBar.LayoutParams.MATCH_PARENT);
-        tv_title.setText(getString(R.string.problem_updata));
-        tv_title_setting.setText(R.string.submit);
+        tv_title.setText("作业监察签到");
+        tv_title_setting.setText(R.string.history);
         selectPhoto();
         tv_problem_address.setText(R.string.locationing);
         isFirstLocation = true;
@@ -173,7 +173,8 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                     address = location.getAddrStr();
                     if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                         isFirstLocation = false;
-                        int length = address.length(); PreferencesUtils.putString(MonitoringSngnInActivity.this, Constans.ADDRESS, address);
+                        int length = address.length();
+                        PreferencesUtils.putString(MonitoringSngnInActivity.this, Constans.ADDRESS, address);
                         address = address.substring(2, length);
                         tv_problem_address.setText(address);
                     } else {
@@ -371,7 +372,7 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
 
 
     /*紧急*/
-    @OnClick({R.id.tv_personal, R.id.tv_problem_address, R.id.tv_title_setting})
+    @OnClick({R.id.tv_personal, R.id.tv_problem_address, R.id.tv_title_setting, R.id.iv_submit})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_problem_address:
@@ -379,12 +380,24 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                 requestPermissions();/*重新定位*/
                 break;
             case R.id.tv_title_setting:
+                toHistoryActivity();
+                break;
+            case R.id.iv_submit:
                 uploadProblem();
                 break;
             case R.id.tv_personal:
                 initTreeListPopupView();
                 break;
         }
+    }
+
+    private void toHistoryActivity() {
+        Intent intent = new Intent(MonitoringSngnInActivity.this,HistoryMonitoringSngnInActivity.class);
+        String startTime = TimeUtils.getYesterdayStartTime();
+        String endTime = TimeUtils.getCurrentTime();
+        intent.putExtra(Constans.STARTTIME, startTime);
+        intent.putExtra(Constans.ENDTIME, endTime);
+        startActivity(intent);
     }
 
 

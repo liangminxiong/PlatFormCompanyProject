@@ -1,10 +1,12 @@
-package com.yuefeng.home.ui.modle;
+package com.yuefeng.features.modle;
 
 import java.io.Serializable;
 import java.util.List;
 
-/*公告消息列表*/
-public class AnnouncementDataBean implements Serializable {
+/*签到历史*/
+public class HistorySngnInDataBean implements Serializable {
+
+
     /**
      * success : true
      * msgTitle : 成功提示
@@ -12,7 +14,7 @@ public class AnnouncementDataBean implements Serializable {
 
     private boolean success;
     private String msgTitle;
-    private List<AnnouncementDataMsgBean> msg;
+    private List<HistorySngnInListDataBean> msg;
 
     public boolean isSuccess() {
         return success;
@@ -30,12 +32,11 @@ public class AnnouncementDataBean implements Serializable {
         this.msgTitle = msgTitle;
     }
 
-    public List<AnnouncementDataMsgBean> getMsg() {
+    public List<HistorySngnInListDataBean> getMsg() {
         return msg;
     }
 
-    public void setMsg(List<AnnouncementDataMsgBean> msg) {
+    public void setMsg(List<HistorySngnInListDataBean> msg) {
         this.msg = msg;
     }
-
 }

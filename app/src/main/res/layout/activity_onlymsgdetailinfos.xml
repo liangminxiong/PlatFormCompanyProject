@@ -100,6 +100,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:horizontalSpacing="10dp"
+        android:visibility="invisible"
         android:listSelector="@android:color/white"
         android:numColumns="4"
         android:padding="@dimen/dp_15"

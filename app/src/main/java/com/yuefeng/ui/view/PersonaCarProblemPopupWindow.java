@@ -56,9 +56,9 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
     private String mPid;
     private List<Node> mListData = new ArrayList<>();
     private PersonalVechicleTreeRecyclerAdapter mAdapter;
-    List<PersonalinfoListBean> personalinfoList = new ArrayList<>();
-    List<VehicleinfoListBean> vehicleinfoList = new ArrayList<>();
-    List<QuestionListBean> questionList = new ArrayList<>();
+    private List<PersonalinfoListBean> personalinfoList = new ArrayList<>();
+    private List<VehicleinfoListBean> vehicleinfoList = new ArrayList<>();
+    private List<QuestionListBean> questionList = new ArrayList<>();
     private String mId;
     private String mIdTemp;
 
@@ -67,9 +67,9 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
         mContext = context;
         this.mListData = carDatas;
         this.isSingle = isSingle;
-        personalinfoList.clear();
-        vehicleinfoList.clear();
-        questionList.clear();
+//        personalinfoList.clear();
+//        vehicleinfoList.clear();
+//        questionList.clear();
         //设置点击空白处消失
         setTouchable(true);
         setOutsideTouchable(true);
@@ -96,9 +96,9 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
         iv_search = (ImageView) rootView.findViewById(R.id.iv_search);
         tv_setting = (TextView) rootView.findViewById(R.id.tv_title_setting);
         recyclerview.setLayoutManager(new LinearLayoutManager(mContext));
-        personalinfoList.clear();
-        vehicleinfoList.clear();
-        questionList.clear();
+//        personalinfoList.clear();
+//        vehicleinfoList.clear();
+//        questionList.clear();
         if (mListData.size() > 0) {
             initRecycleView(mListData);
         }
@@ -121,6 +121,7 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 dismiss();
+                showSelectItemDatas();
                 if (mOnItemClickListener != null) {
                     mOnItemClickListener.onSure(personalinfoList, vehicleinfoList, questionList);
                 }
@@ -159,9 +160,9 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
     }
 
     private void initRecycleView(List<Node> listData) {
-        personalinfoList.clear();
-        vehicleinfoList.clear();
-        questionList.clear();
+//        personalinfoList.clear();
+//        vehicleinfoList.clear();
+//        questionList.clear();
         mAdapter = new PersonalVechicleTreeRecyclerAdapter(recyclerview, mContext,
                 listData, 1, R.drawable.list_fold, R.drawable.list_fold, isSingle, false);
         recyclerview.setAdapter(mAdapter);
@@ -176,14 +177,14 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
         mAdapter.setOnCheckBoxInterface(new PersonalVechicleTreeRecyclerAdapter.OnCheckBoxInterface() {
             @Override
             public void onCheckBoxClick(Node node, int position) {
-                showSelectItemDatas(position);
+//                showSelectItemDatas();
             }
         });
     }
 
     /*点击车*/
     @SuppressLint("SetTextI18n")
-    private void showSelectItemDatas(int position) {
+    private void showSelectItemDatas() {
         if (mAdapter == null) {
             return;
         }
@@ -192,10 +193,10 @@ public class PersonaCarProblemPopupWindow extends PopupWindow {
             if (allNodes.get(i).isChecked()) {
                 mPid = (String) allNodes.get(i).getpId();
                 mId = (String) allNodes.get(i).getId();
-                if (mPid.equals(FilterMonitoringUtils.First) && position == 0) {
-                    personalinfoList.clear();
-                    vehicleinfoList.clear();
-                    questionList.clear();
+                if (mPid.equals(FilterMonitoringUtils.First)) {
+//                    personalinfoList.clear();
+//                    vehicleinfoList.clear();
+//                    questionList.clear();
                     if (mPid.equals(FilterMonitoringUtils.personalId)) {
                         PersonalinfoListBean bean = (PersonalinfoListBean) allNodes.get(i).getBean();
                         if (!mId.equals(mIdTemp)) {

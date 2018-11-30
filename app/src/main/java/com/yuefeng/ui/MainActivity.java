@@ -336,8 +336,7 @@ public class MainActivity extends BaseActivity implements
     private void initViewPager() {
         try {
             tabItemInfos = new ArrayList<>();
-            HomeFragment homeFragment = new HomeFragment();
-            tabItemInfos.add(new TabItemInfo(homeFragment, R.drawable.home_button_selector, R.string.tab_main_name));
+            tabItemInfos.add(new TabItemInfo(new HomeFragment(), R.drawable.home_button_selector, R.string.tab_main_name));
 
 //        tabItemInfos.add(new TabItemInfo(new TackFragment(), R.drawable.search_button_selector, R.string.tab_tack_name));
             /*应用*/
@@ -351,7 +350,7 @@ public class MainActivity extends BaseActivity implements
             viewPager.setAdapter(pagerAdapter);
             viewPager.setOffscreenPageLimit(tabItemInfos.size());
             tabLayout.setupWithViewPager(viewPager);
-            tabLayout.getTabAt(0).select(); //默认选中某项放在加载viewpager之后
+            tabLayout.getTabAt(1).select(); //默认选中某项放在加载viewpager之后
             tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
                 String titleName = "";

@@ -8,7 +8,7 @@ import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.yuefeng.home.contract.MsgListInfosContract;
 import com.yuefeng.home.ui.activity.MsgListInfosActivtiy;
-import com.yuefeng.home.ui.modle.MsgDataBean;
+import com.yuefeng.home.modle.MsgDataBean;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -25,9 +25,10 @@ public class MsgListInfosPresenter extends BasePresenterImpl<MsgListInfosContrac
     }
 
     @Override
-    public void getAnMentDataList(String pid, int page, int limit, final boolean isShowLoad) {
+    public void getAnMentDataList(String function, String pid, String timestart, String timeend,
+                                  int page, int limit, final boolean isShowLoad) {
 
-        HttpObservable.getObservable(apiRetrofit.getAnMentDataList(pid, page, limit))
+        HttpObservable.getObservable(apiRetrofit.getAnMentDataList(function, pid, timestart, timeend, page, limit))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<MsgDataBean>() {
                     @Override
@@ -42,7 +43,7 @@ public class MsgListInfosPresenter extends BasePresenterImpl<MsgListInfosContrac
                         dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.getCode() == 0) {
-                                EventBus.getDefault().post(new CommonEvent(Constans.MSG_LIST_SSUCESS, o.getData()));
+                                EventBus.getDefault().post(new CommonEvent(Constans.MSG_LIST_SSUCESS, o));
                             } else {
                                 EventBus.getDefault().post(new CommonEvent(Constans.MSG_LIST_ERROR, o.getMsg()));
                             }

@@ -9,6 +9,7 @@ import com.yuefeng.features.modle.GetKaoqinSumBean;
 import com.yuefeng.features.modle.GetMonitoringHistoryBean;
 import com.yuefeng.features.modle.GetMonitoringPlanCountBean;
 import com.yuefeng.features.modle.GetQuestionCountBean;
+import com.yuefeng.features.modle.HistorySngnInDataBean;
 import com.yuefeng.features.modle.LllegalworkBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.features.modle.WheelPathBean;
@@ -16,10 +17,14 @@ import com.yuefeng.features.modle.carlist.CarListInfosBean;
 import com.yuefeng.features.modle.carlist.OldCarListInfosBean;
 import com.yuefeng.features.modle.video.GetCaijiTypeBean;
 import com.yuefeng.features.modle.video.VideoEquipmentBean;
-import com.yuefeng.home.ui.modle.AnnouncementDataBean;
-import com.yuefeng.home.ui.modle.MsgDataBean;
-import com.yuefeng.home.ui.modle.MsgDataDetailBean;
-import com.yuefeng.home.ui.modle.ReplyContentBean;
+import com.yuefeng.home.modle.AnnouncementDataBean;
+import com.yuefeng.home.modle.AnnouncementDeBean;
+import com.yuefeng.home.modle.AppVersionDetailBean;
+import com.yuefeng.home.modle.HistoryAppVersionBean;
+import com.yuefeng.home.modle.MsgDataBean;
+import com.yuefeng.home.modle.MsgDataDetailBean;
+import com.yuefeng.home.modle.NewMsgDataBean;
+import com.yuefeng.home.modle.ReplyContentBean;
 import com.yuefeng.login_splash.model.LoginBean;
 import com.yuefeng.personaltree.model.PersoanlTreeListBean;
 
@@ -44,6 +49,9 @@ public interface ApiService {
     String VIDEO = "zgbd_fireControl/h5/getvideoequipment.action";
     String MIA_HW = "zgbd_hw/MobileInterface2/" + INTERFACEACTION;
     String MIA_HW_bus = "zgbd_hw/business/review/";
+    String MIA_HW_SYSTEM = "zgbd_hw/system/upgrade/";
+
+    String MIA_HW_RELEASE = "zgbd_hw/release/";
 
     //服务器apk path,这里放了云平台的apk 作为测试
     String APPNAME = "Environmental.apk";
@@ -96,6 +104,8 @@ public interface ApiService {
 
     /*监察签到*/
     String UPLOADWORKSIGN = "Uploadworksign";
+    /*签到历史*/
+    String GETAPPWORKSIGN = "getAppworksign";
     /*监察上报*/
     String UPLOADJIANCHA = "Uploadjiancha";
     /*监察历史*/
@@ -111,6 +121,14 @@ public interface ApiService {
     String GETMSGDETAIL = "getDetail.action";
     /*消息回复*/
     String DOREVIEW = "doReview.action";
+    /*获取公告*/
+    String GETAACTION = "getData.action";
+    String GETDATA = "getData";
+    /*公告详情*/
+    String GETDETAILACTION = "getDetail.action";
+    String GETDETAIL = "getDetail";
+    /*最新消息*/
+    String GETANNOUNCEMENTBYUSERID = "getAnnouncementByuserid";
 
 
     /*登录用户*/
@@ -363,10 +381,26 @@ public interface ApiService {
             @Query("page") int timestart,
             @Query("limit") int timeend);
 
-    /*消息列表*/
+    /*消息列表（时间）*/
+    @POST(MIA_HW_bus + GETDATAACTION)
+    Observable<MsgDataBean> getAnMentDataList(
+            @Query("function") String function,
+            @Query("pid") String userid,
+            @Query("timestart") String timestart,
+            @Query("timeend") String timeend,
+            @Query("page") int page,
+            @Query("limit") int limit);
+
+    /*消息详情*/
     @POST(MIA_HW_bus + GETMSGDETAIL)
     Observable<MsgDataDetailBean> getMsgDetail(
             @Query("reviewid") String reviewid);
+
+    /*消息列表*/
+    @POST(MIA_HW_bus + GETMSGDETAIL)
+    Observable<MsgDataDetailBean> getMsgDetail(
+            @Query("function") String function,
+            @Query("id") String reviewid);
 
     /*消息列表*/
     @FormUrlEncoded()
@@ -378,19 +412,52 @@ public interface ApiService {
             @Field("reviewcontent") String reviewcontent,
             @Field("imageurls") String imageurls);
 
-//    /*消息列表*/
-//    @FormUrlEncoded()
-//    @POST(MIA_HW)
-//    Observable<AnnouncementDataBean> getAnnouncementByuserid(
-//            @Field("userpid") String userpid,
-//            @Field("timestart") String timestart,
-//            @Field("timeend") String timeend);
-
-    /*包含最新消息列表*/
+    /*最新消息列表*/
+    @FormUrlEncoded()
     @POST(MIA_HW)
+    Observable<NewMsgDataBean> getAnnouncementByuserid(
+            @Field("function") String function,
+            @Field("pid") String pid,
+            @Field("timestart") String timestart,
+            @Field("timeend") String timeend);
+
+    /*公告*/
+    @POST(MIA_HW_RELEASE + GETAACTION)
     Observable<AnnouncementDataBean> getAnnouncementByuserid(
-            @Query("userpid") String userpid,
+            @Query("function") String function,
+            @Query("pid") String pid,
             @Query("timestart") String timestart,
             @Query("timeend") String timeend,
-            @Query("check") String check);
+            @Query("page") int page,
+            @Query("limit") int limit);
+
+    /*包含最新消息列表*/
+    @POST(MIA_HW_RELEASE + GETDETAILACTION)
+    Observable<AnnouncementDeBean> getAnnouncementDetail(
+            @Query("function") String function,
+            @Query("id") String id);
+
+    /*获取App历史版本*/
+    @FormUrlEncoded()
+    @POST(MIA_HW_SYSTEM + GETDATAACTION)
+    Observable<HistoryAppVersionBean> getAppHistoryVersion(
+            @Field("page") int page,
+            @Field("limit") int limit,
+            @Field("timestart") String timestart,
+            @Field("timeend") String timeend);
+
+    /*获取App历史版本详情*/
+    @FormUrlEncoded()
+    @POST(MIA_HW_SYSTEM + GETDETAILACTION)
+    Observable<AppVersionDetailBean> getAppVersionDetail(
+            @Field("id") String id);
+
+    /*获取监察签到历史*/
+    @FormUrlEncoded()
+    @POST(MIA_HW)
+    Observable<HistorySngnInDataBean> getAppWorkSign(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Field("timestart") String timestart,
+            @Field("timeend") String timeend);
 }

@@ -10,6 +10,7 @@ public interface MsgListInfosContract {
 
     interface Presenter {
 
-        void getAnMentDataList(String pid, int page, int limit,boolean isShowLoad);
+        void getAnMentDataList(String function, String pid,String timestart, String timeend,
+                               int page, int limit, boolean isShowLoad);
     }
 }

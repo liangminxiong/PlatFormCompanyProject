@@ -151,17 +151,17 @@ public class ImageHelper {
 
         if (!TextUtils.isEmpty(txt)) {
             bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap,
-                    txt, 25, Color.LTGRAY, 10, 30);
-            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 25, Color.LTGRAY, 10, 5);
+                    txt, 20, Color.LTGRAY, 10, 30);
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 20, Color.LTGRAY, 10, 5);
         } else {
 
             txt = PreferencesUtils.getString(context, "mAddress", "");
             if (!TextUtils.isEmpty(txt)) {
-                bitmap = ImageUtils.drawTextToRightBottom(AppUtils.getContext(), bitmap, txt, 25, Color.LTGRAY, 10, 30);
-                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 25, Color.LTGRAY, 10, 5);
+                bitmap = ImageUtils.drawTextToRightBottom(AppUtils.getContext(), bitmap, txt, 20, Color.LTGRAY, 10, 30);
+                bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 20, Color.LTGRAY, 10, 5);
             } else {
                 txt = TimeUtils.getCurrentTime();
-                bitmap = ImageUtils.drawTextToRightBottom(AppUtils.getContext(), bitmap, txt, 25, Color.LTGRAY, 10, 20);
+                bitmap = ImageUtils.drawTextToRightBottom(AppUtils.getContext(), bitmap, txt, 20, Color.LTGRAY, 10, 20);
             }
         }
         return compressImage(bitmap);// 压缩好比例大小后再进行质量压缩
@@ -226,11 +226,11 @@ public class ImageHelper {
         String txt = PreferencesUtils.getString(MyApplication.getContext(), "mAddress");
         if (!TextUtils.isEmpty(txt)) {
             bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap,
-                    txt, 25, Color.LTGRAY, 10, 30);
-            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 25, Color.LTGRAY, 0, 5);
+                    txt, 20, Color.LTGRAY, 10, 30);
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, TimeUtils.getCurrentTime(), 20, Color.LTGRAY, 0, 5);
         } else {
             txt = TimeUtils.getCurrentTime();
-            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 25, Color.LTGRAY, 25, 10);
+            bitmap = ImageUtils.drawTextToRightBottom(MyApplication.getContext(), bitmap, txt, 20, Color.LTGRAY, 25, 10);
         }
         return bitmap;
     }

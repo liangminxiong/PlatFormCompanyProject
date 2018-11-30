@@ -29,7 +29,7 @@ import com.yuefeng.commondemo.R;
 import com.yuefeng.features.event.ProblemEvent;
 import com.yuefeng.home.contract.ReplyContract;
 import com.yuefeng.home.presenter.ReplyPresenter;
-import com.yuefeng.home.ui.modle.ReplyContentBean;
+import com.yuefeng.home.modle.ReplyContentBean;
 import com.yuefeng.photo.utils.PictureSelectorUtils;
 import com.yuefeng.utils.BdLocationUtil;
 

@@ -409,7 +409,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                     if (isFirstLoc) {
                         isFirstLoc = false;
                         MapStatus ms = new MapStatus.Builder().target(latLngTemp)
-                                .overlook(-20).zoom(14).build();
+                                .overlook(-20).zoom(Constans.BAIDU_ZOOM_TWENTY_ONE).build();
+
                         ooA = new MarkerOptions().flat(true).anchor(0.5f, 0.5f);
                         ooA.icon(BitmapDescriptorFactory.fromResource(imageInt));
                         ooA.zIndex(10);

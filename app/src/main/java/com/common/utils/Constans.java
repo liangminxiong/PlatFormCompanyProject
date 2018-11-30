@@ -178,6 +178,8 @@ public class Constans {
      * */
     public static final int MONITORINGSIGNIN_SSUCESS = 100;//监察签到成功
     public static final int MONITORINGSIGNIN_ERROR = 101;//失败
+    public static final int MONITORINGSIGNINHIS_SSUCESS = 102;//监察签到历史
+    public static final int MONITORINGSIGNINHIS_ERROR = 103;//失败
 
     /*修改密码 110 */
     public static final int CHANGEPWD_SSUCESS = 110;//修改密码成功
@@ -196,7 +198,7 @@ public class Constans {
     public static final String TYPE_ONE = "1";//H5 主管代签到/人员违规查询
     public static final String TYPE_TWO = "2";//手机主管代签到
 
-    /*消息  120 -130 */
+    /*消息  120 -140 */
     public static final int ONE_MSG_REPLY = 120;//回复刷新
     public static final int MSG_LIST_SSUCESS = 121;//消息列表成功
     public static final int MSG_LIST_ERROR = 122;
@@ -206,7 +208,14 @@ public class Constans {
     public static final int MSG_REPLY_ERROR = 126;
     public static final int ANMENT_LIST_SSUCESS = 127;//公告成功
     public static final int ANMENT_LIST_ERROR = 128;
-    public static final int NEW_MSG_SUCCESS = 129;
+    public static final int ANMENT_LIST_ERROR_NULL = 1281;
+    public static final int NEW_MSG_SUCCESS = 129;//最新消息
     public static final int NEW_MSG_ERROR = 130;
+
+    public static final int APP_VERSION_SUCCESS = 131;//最新消息
+    public static final int APP_VERSION_ERROR = 132;
+
+    public static final int DETAIL_MSG_SUCCESS = 131;//已读详情
+    public static final int DETAIL_MSG_ERROR = 132;
 
 }

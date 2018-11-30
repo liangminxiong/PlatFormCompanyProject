@@ -723,6 +723,13 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
 
         OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
         mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
+        if (points.size() > 2) {
+            OverlayOptions markerOptions;
+            markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)).position(points.get(points.size() - 1))
+                    .rotate((float) BdLocationUtil.getAngle(mPolyline, 0));
+        }
+
         BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
     }
 

@@ -8,7 +8,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.common.utils.StringUtils;
 import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.home.ui.modle.MsgListDataBean;
+import com.yuefeng.home.modle.MsgListDataBean;
 
 import java.util.List;
 
@@ -22,6 +22,7 @@ public class MsgListsInfosAdapter extends BaseQuickAdapter<MsgListDataBean, Base
     private String content;
     private String name;
     private String reviewPersonel;
+    private String mIsread;
 
     public MsgListsInfosAdapter(int layoutResId, @Nullable List<MsgListDataBean> data, Context context) {
         super(layoutResId, data);
@@ -58,7 +59,12 @@ public class MsgListsInfosAdapter extends BaseQuickAdapter<MsgListDataBean, Base
             reviewPersonel = item.getReviewpersonel();
             reviewPersonel = StringUtils.isEntryStrWu(reviewPersonel);
             time = TimeUtils.formatHourMin(time);
-
+            mIsread = item.getIsread();
+            if (mIsread.equals("0")) {
+                helper.setVisible(R.id.iv_item_isread, true);
+            }else {
+                helper.setVisible(R.id.iv_item_isread, false);
+            }
 
             content = StringUtils.isEntryStrWu(content);
             name = StringUtils.isEntryStrWu(name);

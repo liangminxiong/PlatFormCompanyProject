@@ -213,17 +213,39 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         ivStop.setOnViewShortClick(new ImitateKeepButton.OnViewShortClick() {
             @Override
             public void onShortClick(View view) {
-                startCtimer();
+                isOnShortStart();
+
             }
         });
 
         ivStop.setOnViewClick(new PicLongClick());
     }
 
+    private void isOnShortStart() {
+        String effective = PreferencesUtils.getString(this, Constans.ISSINGIN, "");
+        String startTime = TimeUtils.getDayStartTime();
+        boolean lessThan = TimeUtils.isTimeLessThan(startTime, effective);
+        if (!TimeUtils.isEmpty(effective) && lessThan) {
+            startCtimer();
+        } else {
+            showSuccessToast("上报或者签到后才可开始监察");
+        }
+    }
+
     private class PicLongClick implements ImitateKeepButton.OnViewClick {
 
         @Override
         public void onFinish(View view) {
+
+            isOnFinish();
+        }
+    }
+
+    private void isOnFinish() {
+        String effective = PreferencesUtils.getString(this, Constans.ISSINGIN, "");
+        String startTime = TimeUtils.getDayStartTime();
+        boolean lessThan = TimeUtils.isTimeLessThan(startTime, effective);
+        if (!TimeUtils.isEmpty(effective) && lessThan) {
             ivStop.setBackgroundResource(R.drawable.jiancha_but_pause);
             initCtStop();
             tv_release();
@@ -231,6 +253,8 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
                 baiduMap.clear();
             }
             isFirstLoc = true;
+        } else {
+            showSuccessToast("上报或者签到后才可开始监察");
         }
     }
 

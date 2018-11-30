@@ -1,14 +1,13 @@
 package com.yuefeng.features.presenter;
 
 import com.common.base.codereview.BasePresenterImpl;
-import com.common.event.CommonEvent;
 import com.common.network.ApiException;
 import com.common.network.HttpObservable;
 import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.yuefeng.features.contract.FeaturesContract;
 import com.yuefeng.features.event.CarListEvent;
-import com.yuefeng.home.ui.modle.AnnouncementDataBean;
+import com.yuefeng.home.modle.NewMsgDataBean;
 import com.yuefeng.ui.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -26,18 +25,18 @@ public class FeaturesPresenter extends BasePresenterImpl<FeaturesContract.View,
     }
 
     @Override
-    public void getAnnouncementByuserid(String userpid, String timestart, String timeend, String check) {
+    public void getAnnouncementByuserid(String function,String pid, String timestart, String timeend) {
 
-        HttpObservable.getObservable(apiRetrofit.getAnnouncementByuserid(userpid, timestart, timeend, check))
+        HttpObservable.getObservable(apiRetrofit.getAnnouncementByuserid(function,pid, timestart, timeend))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
-                .subscribe(new HttpResultObserver<AnnouncementDataBean>() {
+                .subscribe(new HttpResultObserver<NewMsgDataBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
-                        showLoadingDialog("加载中...");
+//                        showLoadingDialog("加载中...");
                     }
 
                     @Override
-                    protected void onSuccess(AnnouncementDataBean o) {
+                    protected void onSuccess(NewMsgDataBean o) {
                         dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {
@@ -64,7 +63,7 @@ public class FeaturesPresenter extends BasePresenterImpl<FeaturesContract.View,
                     @Override
                     protected void _onError(ApiException error) {
                         dismissLoadingDialog();
-                        EventBus.getDefault().post(new CommonEvent(Constans.NEW_MSG_ERROR, error.getMsg()));
+                        EventBus.getDefault().post(new CarListEvent(Constans.NEW_MSG_ERROR, error.getMsg()));
                         super._onError(error);
                     }
                 });

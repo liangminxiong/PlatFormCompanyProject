@@ -1,7 +1,6 @@
 package com.yuefeng.home.ui.adapter;
 
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
@@ -9,47 +8,58 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.common.utils.StringUtils;
 import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.home.ui.modle.MsgListDataBean;
+import com.yuefeng.home.modle.NewMsgListDataBean;
 
 import java.util.List;
 
 /*消息*/
-public class HomeMsgInfosAdapter extends BaseItemDraggableAdapter<MsgListDataBean, BaseViewHolder> {
+public class HomeMsgInfosAdapter extends BaseItemDraggableAdapter<NewMsgListDataBean, BaseViewHolder> {
 
 
-    private String imageUrl;
+    private String genre;
     private String title;
     private String time;
     private String detail;
     private String count;
-    private String mName;
-    private String mReviewpersonel;
+    private String name;
+    private int icon;
 
-    public HomeMsgInfosAdapter(int layoutResId, @Nullable List<MsgListDataBean> data) {
+    public HomeMsgInfosAdapter(int layoutResId, @Nullable List<NewMsgListDataBean> data) {
         super(layoutResId, data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, MsgListDataBean item) {
-        /*
-         * iv_item_image
-         * tv_item_title
-         * tv_item_time
-         * tv_item_detail
-         * tv_item_count
-         * */
+    protected void convert(BaseViewHolder helper, NewMsgListDataBean item) {
         if (item != null && helper != null) {
-            imageUrl = item.getImageurls();
-            mName = item.getOrg();
-            title = item.getReviewtitle();
-            time = item.getReviewdate();
-            detail = item.getReviewcontent();
-            title = StringUtils.isEntryStrWu(title);
-            mReviewpersonel = item.getReviewpersonel();
-            mReviewpersonel = StringUtils.isEntryStrWu(mReviewpersonel);
+            genre = item.getGenre();
+            name = item.getOrganname();
+            title = item.getSubject();
+            time = item.getIssuedate();
+            detail = item.getContent();
+            title = StringUtils.isEntryStrNull(title);
             time = TimeUtils.formatHourMin(time);
-            int imageId = item.getImageId();
-            count = TextUtils.isEmpty(count) ? " " : count;
+            String isread = item.getIsread();
+            if (isread.equals("0")) {
+                helper.setVisible(R.id.iv_item_unread, true);
+            }
+            // genre：1就是公告，2就是超哥的信息，3是更新的
+            count = item.getNotread();
+            count = StringUtils.isEntryStrZero(count);
+            if (genre.equals("1")) {//公告
+                icon = R.drawable.work;
+                title = "[公告]" + title;
+            } else if (genre.equals("2")) { //项目信息
+                icon = R.drawable.xiangmutongzhi;
+                title = "[项目]" + title;
+            } else {//更新
+                title = "[升级]" + title;
+                icon = R.drawable.upgrade;
+            }
+            if (count.equals("0")) {
+                helper.setVisible(R.id.tv_item_count, false);
+            } else {
+                helper.setVisible(R.id.tv_item_count, true);
+            }
             TextView tv_item_title = helper.getView(R.id.tv_item_title);
             TextView tv_item_time = helper.getView(R.id.tv_item_time);
             TextView tv_item_detail = helper.getView(R.id.tv_item_detail);
@@ -57,16 +67,10 @@ public class HomeMsgInfosAdapter extends BaseItemDraggableAdapter<MsgListDataBea
             tv_item_time.setTextSize(12);
             tv_item_detail.setTextSize(12);
             helper.setText(R.id.tv_item_title, title)
+                    .setText(R.id.tv_item_count, count)
                     .setText(R.id.tv_item_time, time)
                     .setText(R.id.tv_item_detail, detail)
-                    .setVisible(R.id.tv_item_count, true)
-                    .setText(R.id.tv_item_count, count);
-//            ImageView iv_item_image = helper.getView(R.id.iv_item_image);
-//            if (!TextUtils.isEmpty(imageUrl)) {
-//                GlideUtils.loadImageViewCircle(iv_item_image, imageUrl, R.drawable.picture, R.drawable.picture);
-//            } else {
-//            }
-            helper.setImageResource(R.id.iv_item_image, imageId);
+                    .setImageResource(R.id.iv_item_image, icon);
         }
     }
 }

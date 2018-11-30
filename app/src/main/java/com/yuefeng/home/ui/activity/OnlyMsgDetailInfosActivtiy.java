@@ -12,14 +12,15 @@ import android.widget.TextView;
 
 import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
+import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.home.contract.MsgDetailInfosContract;
+import com.yuefeng.home.modle.MsgDataDetailListBean;
+import com.yuefeng.home.modle.MsgListDataBean;
 import com.yuefeng.home.presenter.MsgDetailInfosPresenter;
-import com.yuefeng.home.ui.modle.MsgDataDetailListBean;
-import com.yuefeng.home.ui.modle.MsgListDataBean;
 import com.yuefeng.photo.utils.ImageHelper;
 import com.yuefeng.photo.view.MyGridView2;
 
@@ -101,6 +102,7 @@ public class OnlyMsgDetailInfosActivtiy extends BaseActivity implements MsgDetai
         ViewUtils.setIvVisible(ivReply, visible);
     }
 
+    @SuppressLint("SetTextI18n")
     private void getDatas() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -109,6 +111,8 @@ public class OnlyMsgDetailInfosActivtiy extends BaseActivity implements MsgDetai
         if (mMsgData != null && mPresenter != null) {
             mReviewid = mMsgData.getReviewid();
             mPersonal = mMsgData.getReviewpersonel();
+            tvTheme.setText("项目: " + mMsgData.getReviewtitle());
+            tvContent.setText("内容: " + mMsgData.getReviewcontent() + "\n时间: " + com.yuefeng.utils.StringUtils.returnStrTime(mMsgData.getReviewdate()));
             getDataByNet(mReviewid);
         }
     }
@@ -116,6 +120,7 @@ public class OnlyMsgDetailInfosActivtiy extends BaseActivity implements MsgDetai
     private void getDataByNet(String reviewid) {
         if (!TextUtils.isEmpty(reviewid)) {
             mPresenter.getMsgDetail(reviewid);
+            mPresenter.getMsgDetail(ApiService.GETDETAIL, reviewid);
         }
     }
 
@@ -150,8 +155,8 @@ public class OnlyMsgDetailInfosActivtiy extends BaseActivity implements MsgDetai
         String name = StringUtils.isEntryStrWu(list.get(0).getReviewtitle());
         String theme = StringUtils.isEntryStrWu(list.get(0).getReviewcontent());
 
-        tvTheme.setText(name);
-        tvContent.setText(theme);
+        tvTheme.setText("项目: " + name);
+        tvContent.setText("内容: " + theme + "\n时间: " + com.yuefeng.utils.StringUtils.returnStrTime(mMsgData.getReviewdate()));
         if (size == 1) {
             setViewInVisible(true);
         } else {
@@ -160,7 +165,7 @@ public class OnlyMsgDetailInfosActivtiy extends BaseActivity implements MsgDetai
             String imageUrl = StringUtils.isEntryStrNull(list.get(1).getImageurls());
             setViewInVisible(false);
             tvMine.setText(personal + ": 回复");
-            tvReplyContent.setText("内容:" + content);
+            tvReplyContent.setText("内容: " + content);
             if (!TextUtils.isEmpty(imageUrl)) {
                 ImageHelper.showImageBitmap(gridview, OnlyMsgDetailInfosActivtiy.this, imageUrl);
             } else {
