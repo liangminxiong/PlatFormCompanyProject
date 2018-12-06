@@ -44,9 +44,9 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
     /*信息采集*/
     @Override
     public void upLoadmapInfo(String function, String pid, String userid, String typeid,
-                              String typename, String name, String lnglat, String area, String imageArrays) {
+                              String typename, String name, String lnglat, String area, String imageArrays,String id) {
         HttpObservable.getObservable(apiRetrofit.upLoadmapInfo(function, pid, userid, typeid,
-                typename, name, lnglat, area, imageArrays))
+                typename, name, lnglat, area, imageArrays,id))
                 .subscribe(new HttpResultObserver<SubmitBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
@@ -159,6 +159,51 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
 
     }
 
+    /*实时上传经纬度*/
+    @Override
+    public void uploadLnglat(String function, String type, String lng, String lat, String id) {
+        HttpObservable.getObservable(apiRetrofit.uploadLnglat(function, type, lng, lat, id))
+                .subscribe(new HttpResultObserver<SubmitBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(SubmitBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_SSUCESS, o.getMsg()));
+                            } else {
+                                EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_ERROR, e.getMsg()));
+                    }
+
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        super._onError(error);
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_ERROR, ""));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_ERROR, ""));
+                    }
+                });
+    }
+
 
     /*结束展示时间*/
     @SuppressLint("SetTextI18n")
@@ -169,14 +214,21 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
         String typeWhat = "";
         if (!TextUtils.isEmpty(timeLong)) {
             int length = timeLong.length();
-            if (length > 5) {//小时
+            if (length >= 8) {//小时
                 hourStr = timeLong.substring(0, 2);
                 minuteStr = timeLong.substring(3, 5);
                 secondStr = timeLong.substring(6, 8);
                 hourStr = StringUtils.getTimeNoZero(hourStr);
                 /* android:text="本次采集持续1分钟，距离0.1公里"*/
                 hour = hourStr + "小时";
-            } else {
+            } else if (length >= 7) {
+                hourStr = timeLong.substring(0, 1);
+                minuteStr = timeLong.substring(2, 4);
+                secondStr = timeLong.substring(5, 7);
+                hourStr = StringUtils.getTimeNoZero(hourStr);
+                /* android:text="本次采集持续1分钟，距离0.1公里"*/
+                hour = hourStr + "小时";
+            } else if (length >= 5) {
                 minuteStr = timeLong.substring(0, 2);
                 secondStr = timeLong.substring(3, 5);
             }
@@ -208,10 +260,6 @@ public class PositionAcquisitionPresenter extends BasePresenterImpl<PositionAcqu
             if (i == 0) {
                 lnglat = String.valueOf(latLng.longitude) + "," + latLng.latitude;
             } else {
-//                if (i == (size - 1)) {
-//                    lnglat = latLng.longitude + "," + latLng.latitude;
-//                } else {
-//                }
                 lnglat = lnglat + ";" + latLng.longitude + "," + latLng.latitude;
             }
         }

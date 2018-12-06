@@ -9,7 +9,6 @@ import android.text.TextUtils;
 
 import com.baidu.navisdk.util.common.LogUtil;
 import com.common.utils.LogUtils;
-import com.common.utils.ToastUtils;
 import com.yuefeng.ui.MainActivity;
 
 import org.json.JSONException;
@@ -49,12 +48,10 @@ public class MyJPushReceiver extends BroadcastReceiver {
             String title = bundle.getString(JPushInterface.EXTRA_NOTIFICATION_TITLE);//json串
             String alert = bundle.getString(JPushInterface.EXTRA_ALERT);//json串
             String string = bundle.getString(JPushInterface.EXTRA_EXTRA);//json串
-            ToastUtils.showToast(title + " ++ " + alert);
             try {
                 JSONObject jsonObject = new JSONObject(string);
 //                String type = jsonObject.getString("type");
                 String type = "1";
-                LogUtil.e(TAG, "type:" + type);
                 switch (type) {
                     case "1"://打开应用
                         if (isBackground(context)) {

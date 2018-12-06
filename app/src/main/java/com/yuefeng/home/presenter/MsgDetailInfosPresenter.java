@@ -84,13 +84,13 @@ public class MsgDetailInfosPresenter extends BasePresenterImpl<MsgDetailInfosCon
                     @Override
                     protected void onSuccess(MsgDataDetailBean o) {
                         dismissLoadingDialog();
-//                        if (getView() != null) {
+                        if (getView() != null) {
 //                            if (o.isSuccess()) {
 //                                EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_SSUCESS, o.getResult()));
 //                            } else {
 //                                EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_ERROR, o.getMsg()));
 //                            }
-//                        }
+                        }
                     }
 
                     @Override

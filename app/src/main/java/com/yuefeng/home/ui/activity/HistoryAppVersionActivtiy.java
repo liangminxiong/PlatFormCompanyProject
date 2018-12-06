@@ -108,6 +108,7 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
     /*获取数据源*/
     private void getDataByNet() {
         if (mPresenter != null) {
+//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
             mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, mStartTime, mEndTime, true);
         }
     }
@@ -173,6 +174,7 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
                 CURPAGE = 1;
                 mEndTime = TimeUtils.getCurrentTime2();
                 adapter.setEnableLoadMore(false);
+//                ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
                 mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, mStartTime, mEndTime, false);
             }
         });
@@ -194,6 +196,7 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
             public void run() {
                 if (mCount >= 10) {
                     ++CURPAGE;
+//                    ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
                     mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, mStartTime, mEndTime, false);
                     adapter.loadMoreComplete();
                 } else {
@@ -227,12 +230,13 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
 
     /*查询*/
     private void rl_search() {
-            rlTime.setVisibility(View.INVISIBLE);
-            ivShowtime.setVisibility(View.VISIBLE);
-            isRefresh = false;
-            CURPAGE = 1;
-            mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, tvStartTime.getText().toString().trim()
-                    , tvEndTime.getText().toString().trim(), true);
+        rlTime.setVisibility(View.INVISIBLE);
+        ivShowtime.setVisibility(View.VISIBLE);
+        isRefresh = false;
+        CURPAGE = 1;
+//        ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
+        mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, tvStartTime.getText().toString().trim()
+                , tvEndTime.getText().toString().trim(), true);
 
     }
 

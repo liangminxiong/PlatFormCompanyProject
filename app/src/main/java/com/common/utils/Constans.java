@@ -36,7 +36,7 @@ public class Constans {
     public static final int UPDATAAPP_SUCCESS = 14;//获取更新信息成功
     public static final int BAIDU_ZOOM_FOUTTEEN = 14;
     public static final int BAIDU_ZOOM_EIGHTEEN = 18;
-    public static final int BAIDU_ZOOM_TWENTY_ONE = 21;
+    public static final int BAIDU_ZOOM_TWENTY_ONE = 15;
     public static final String USERNAME = "user_name";//存储用户名
     public static final String USERNAME_N = "userName";//存储用户名
     public static final String USERPASSWORD = "user_pwd";//存储用户名密码
@@ -69,6 +69,15 @@ public class Constans {
     public static final int TWO_HUNDRED = 200;
     public static final int THREE_HUNDRED = 300;
 
+    /*签到type*/
+    public static final String TYPE_ZERO = "0";//个人代签到/车辆违规查询
+    public static final String TYPE_ONE = "1";//H5 主管代签到/人员违规查询
+    public static final String TYPE_TWO = "2";//手机主管代签到
+
+    /*上传经纬度type*/
+    public static final String TYPE_LATLNG_JC = "jc";//监察
+    public static final String TYPE_LATLNG_LINE = "line";
+    public static final int THIRTYTWO = 32;
 
     /*
      * 问题上报 历史上报 40-50
@@ -180,6 +189,8 @@ public class Constans {
     public static final int MONITORINGSIGNIN_ERROR = 101;//失败
     public static final int MONITORINGSIGNINHIS_SSUCESS = 102;//监察签到历史
     public static final int MONITORINGSIGNINHIS_ERROR = 103;//失败
+    public static final int UPLOADLNGLAT_SSUCESS = 104;//实时上传经纬度
+    public static final int UPLOADLNGLAT_ERROR = 105;//失败
 
     /*修改密码 110 */
     public static final int CHANGEPWD_SSUCESS = 110;//修改密码成功
@@ -193,10 +204,6 @@ public class Constans {
     //    public static final String BAIDU_APPID = "11959239";
     public static final String BAIDU_APPID = "14268406";
 
-
-    public static final String TYPE_ZERO = "0";//个人代签到/车辆违规查询
-    public static final String TYPE_ONE = "1";//H5 主管代签到/人员违规查询
-    public static final String TYPE_TWO = "2";//手机主管代签到
 
     /*消息  120 -140 */
     public static final int ONE_MSG_REPLY = 120;//回复刷新

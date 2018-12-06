@@ -8,13 +8,23 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.JPush.JPushManager;
 import com.common.base.codereview.BaseActivity;
-import com.common.utils.AppManager;
+import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.MD5Utils;
 import com.common.utils.PreferencesUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.login_splash.contract.LoginContract;
+import com.yuefeng.login_splash.event.LoginEvent;
+import com.yuefeng.login_splash.model.LoginDataBean;
+import com.yuefeng.login_splash.presenter.SplashPresenter;
 import com.yuefeng.ui.MainActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,10 +34,12 @@ import io.reactivex.functions.Consumer;
  * 引导界面
  */
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends BaseActivity implements LoginContract.View {
 
     @BindView(R.id.text)
     ImageView imageView;
+    private LoginDataBean mLoginInfo;
+    private SplashPresenter loginPresenter;
 
     @Override
     protected void initData() {
@@ -46,6 +58,9 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initView(Bundle savedInstanceState) {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
         ButterKnife.bind(this);
         if (!isTaskRoot()) {
             finish();
@@ -57,30 +72,98 @@ public class SplashActivity extends BaseActivity {
         }
         try {
             imageView.setBackgroundResource(R.drawable.bg_login);
+            sentBro();
             requestPermissions();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        loginPresenter = new SplashPresenter(this, this);
+
+    }
+
+    private void initUI() {
+        try {
+            String userNames = PreferencesUtils.getString(SplashActivity.this, Constans.USERNAME, "");
+            String passwords = PreferencesUtils.getString(SplashActivity.this, Constans.USERPASSWORD, "");
+            if (!TextUtils.isEmpty(userNames) && !TextUtils.isEmpty(passwords)) {
+                loginPresenter.login(ApiService.LOGIN, userNames, passwords, Constans.ANDROID);
+            } else {
+                toLoginActivity();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void toLoginActivity() {
+        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+        finish();
+    }
+
+    private void sentBro() {
+        Intent intent = new Intent();
+        intent.setAction("");
+        intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        sendBroadcast(intent);
+
+    }
+
     private void initCountDown() {
         try {
-            boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
-            if (isHaveDatas) {
-                String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
-                if (!TextUtils.isEmpty(string)) {//主界面
-//                    startActivity(new Intent(SplashActivity.this, DemoTestActivity.class));
-                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                } else {//登录界面
-                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                }
-            } else {
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-            }
-            finish();
+            initUI();
+//            boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
+//            if (isHaveDatas) {
+//                String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
+//                if (!TextUtils.isEmpty(string)) {//主界面
+////                    startActivity(new Intent(SplashActivity.this, DemoTestActivity.class));
+//                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+//                } else {//登录界面
+//                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+//                }
+//            } else {
+//                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+//            }
+//            finish();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void disposeLoginEvent(LoginEvent loginEvent) {
+        dismissLoadingDialog();
+        switch (loginEvent.getWhat()) {
+            case Constans.LOGIN:
+                if (loginEvent.getData() != null) {
+                    mLoginInfo = (LoginDataBean) loginEvent.getData();
+                }
+                PreferencesUtils.putString(SplashActivity.this, Constans.USERNAME, mLoginInfo.getLoginid());
+                PreferencesUtils.putString(SplashActivity.this, Constans.USERNAME_N, mLoginInfo.getUsername());
+
+                PreferencesUtils.putBoolean(SplashActivity.this, Constans.HAVE_USER_DATAS, true);
+                PreferencesUtils.putString(SplashActivity.this, Constans.ORGID, mLoginInfo.getOrgId());
+                PreferencesUtils.putString(SplashActivity.this, Constans.TELNUM, mLoginInfo.getTelNum());
+                PreferencesUtils.putString(SplashActivity.this, Constans.ID, mLoginInfo.getId());
+//                LogUtils.d("=============" + loginInfo.getId());
+                PreferencesUtils.putString(SplashActivity.this, Constans.EMAIL, mLoginInfo.getEmail());
+                PreferencesUtils.putBoolean(SplashActivity.this, Constans.ISREG, mLoginInfo.isIsreg());
+                String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
+                String alias = MD5Utils.toString(string);
+                JPushManager.getInstance().setAliasAndTags(alias, "");
+
+                toMainActivity();
+                break;
+            case Constans.USERERROR:
+                toLoginActivity();
+                break;
+        }
+    }
+
+    private void toMainActivity() {
+        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        finish();
     }
 
     @SuppressLint("CheckResult")
@@ -115,9 +198,10 @@ public class SplashActivity extends BaseActivity {
         return R.layout.activity_splash;
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        AppManager.getAppManager().getAllActivity();
+        EventBus.getDefault().unregister(this);
     }
 }

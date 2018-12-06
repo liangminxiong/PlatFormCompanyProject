@@ -379,7 +379,7 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
     }
 
 
-    @OnClick({R.id.tv_start_time, R.id.tv_end_time,R.id.tv_midle,R.id.tv_upload_count})
+    @OnClick({R.id.tv_start_time, R.id.tv_end_time, R.id.tv_midle, R.id.tv_upload_count, R.id.iv_search})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_start_time:
@@ -390,19 +390,48 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
                 break;
             case R.id.tv_midle:
                 intoHistoryUpload();
+            case R.id.iv_search:
+                iv_search();
 
                 break;
             case R.id.tv_upload_count:
                 intoHistoryUpload();
                 break;
+            case R.id.tv_sngnin_count:
+                intoHistorySngnIn();
+                break;
+            case R.id.tv_si:
+                intoHistorySngnIn();
+                break;
         }
     }
 
+    /*搜索*/
+    private void iv_search() {
+        String startTime = tvStartTime.getText().toString().trim();
+        String endTime = tvEndTime.getText().toString().trim();
+        getDatasByNet(startTime, endTime);
+    }
+
+    /*历史上报*/
     private void intoHistoryUpload() {
         String startTime = tvStartTime.getText().toString().trim();
         String endTime = tvEndTime.getText().toString().trim();
         Intent intent = new Intent();
         intent.setClass(MonitoringHistoryOfJobActivity.this, HistoryProblemUpdataActivity.class);
+        intent.putExtra(Constans.STARTTIME, startTime);
+        intent.putExtra(Constans.ENDTIME, endTime);
+        startActivity(intent);
+
+    }
+
+    /*历史签到*/
+    private void intoHistorySngnIn() {
+
+        String startTime = tvStartTime.getText().toString().trim();
+        String endTime = tvEndTime.getText().toString().trim();
+        Intent intent = new Intent();
+        intent.setClass(MonitoringHistoryOfJobActivity.this, HistoryMonitoringSngnInActivity.class);
         intent.putExtra(Constans.STARTTIME, startTime);
         intent.putExtra(Constans.ENDTIME, endTime);
         startActivity(intent);

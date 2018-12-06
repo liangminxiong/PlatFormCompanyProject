@@ -11,9 +11,12 @@ public interface PositionAcquisitionContract {
     interface Presenter {
         /*信息采集*/
         void upLoadmapInfo(String function, String pid, String userid, String typeid,
-                           String typename, String name, String lnglat, String area,String imageArrays);
+                           String typename, String name, String lnglat, String area,String imageArrays,String id);
 
         /*信息采集类型*/
         void getCaijiType(String function);
+
+        /*实时上传*/
+        void uploadLnglat(String function, String type, String lng, String lat,String id);
     }
 }

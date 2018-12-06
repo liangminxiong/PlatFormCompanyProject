@@ -91,6 +91,7 @@ public class AppVersionDetailActivtiy extends BaseActivity implements AppVersion
 
     private void getDataByNet(String reviewid) {
         if (!TextUtils.isEmpty(reviewid)) {
+//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
             mPresenter.getAppVersionDetail(reviewid);
         }
     }

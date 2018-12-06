@@ -39,8 +39,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_40"
                 android:gravity="center"
-                android:text="2018-01-01 00:00:00"
                 android:paddingStart="@dimen/dp_12"
+                android:text="2018-01-01 00:00:00"
                 android:textColor="@color/titel_color"
                 android:textSize="@dimen/sp_13"
                 tools:ignore="HardcodedText,RtlSymmetry"/>
@@ -58,11 +58,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/dp_30"
                 android:gravity="center"
-                android:paddingEnd="@dimen/dp_12"
+                android:paddingEnd="@dimen/dp_8"
                 android:text="2018-01-01 23:59:59"
                 android:textColor="@color/titel_color"
                 android:textSize="@dimen/sp_13"
                 tools:ignore="HardcodedText,RtlSymmetry"/>
+
+            <ImageView
+                android:id="@+id/iv_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingEnd="@dimen/dp_8"
+                android:src="@drawable/jiancha_calendar_search"
+                tools:ignore="ContentDescription,RtlSymmetry"/>
 
 
         </LinearLayout>

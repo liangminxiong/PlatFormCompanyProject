@@ -16,8 +16,8 @@ import com.common.utils.Constans;
 import com.common.utils.StringUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.home.contract.AnnouncementDetailContract;
-import com.yuefeng.home.presenter.AnnouncementDetailPresenter;
 import com.yuefeng.home.modle.AnnouncementDataMsgBean;
+import com.yuefeng.home.presenter.AnnouncementDetailPresenter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -93,6 +93,7 @@ public class AnnouncementDetailInfosActivtiy extends BaseActivity implements Ann
 
     private void getDataByNet(String reviewid) {
         if (!TextUtils.isEmpty(reviewid)) {
+//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE);
             mPresenter.getAnnouncementDetail(ApiService.GETDETAIL, reviewid);
         }
     }

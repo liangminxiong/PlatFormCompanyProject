@@ -103,6 +103,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     BitmapDescriptor personalImage = BitmapDescriptorFactory.fromResource(R.drawable.worker);
     BitmapDescriptor beginImage = BitmapDescriptorFactory.fromResource(R.drawable.start);
     BitmapDescriptor endImage = BitmapDescriptorFactory.fromResource(R.drawable.destination);
+    BitmapDescriptor arrowImage = BitmapDescriptorFactory.fromResource(R.drawable.arrow);
     private double latitude;
     private double longitude;
     private String address;
@@ -126,6 +127,8 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     private boolean isSecond = true;
     private boolean isThird = true;
 
+    private String thirtyTwoId = "";
+
     @Override
     protected int getContentViewResId() {
         return R.layout.activity_monitoringofjob;
@@ -144,6 +147,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         isSecond = true;
         isThird = true;
         initUI();
+        thirtyTwoId = "";
     }
 
     private void initUI() {
@@ -283,7 +287,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true); // 打开gps
         option.setCoorType("bd09ll"); // 设置坐标类型
-        option.setScanSpan(8000);
+        option.setScanSpan(10000);
         option.setIsNeedAddress(true);
         option.setAddrType("all");
         mLocClient.setLocOption(option);
@@ -296,7 +300,6 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     @Override
     protected void onStop() {
         super.onStop();
-        BdLocationUtil.getInstance().stopLocation();
     }
 
     /**
@@ -360,6 +363,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     private void drawTrackLine(LatLng latLng) {
         try {
             if (isPositionAcquisition) {
+                uploadLngLat(latLng);
                 points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
                 if (points.size() > 1 && baiduMap != null) {
                     drawLineIntoBaiduMap(baiduMap, points);
@@ -367,6 +371,18 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void uploadLngLat(LatLng latLng) {
+        double lng = latLng.longitude;
+        double lat = latLng.latitude;
+        if (TextUtils.isEmpty(thirtyTwoId)) {
+            thirtyTwoId = StringUtils.get32String(Constans.THIRTYTWO);
+        }
+        if (presenter != null) {
+//            LogUtils.d("thirtyTwoId===" + thirtyTwoId);
+            presenter.uploadLnglat(ApiService.UPLOADLNGLAT, Constans.TYPE_LATLNG_JC, String.valueOf(lng), String.valueOf(lat), thirtyTwoId);
         }
     }
 
@@ -378,10 +394,19 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         MarkerOptions oStart = new MarkerOptions();
         oStart.position(points.get(0));
         oStart.icon(beginImage);
-        this.baiduMap.addOverlay(oStart);
+        baiduMap.addOverlay(oStart);
 
-        OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(this.points);
+        OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
         mPolyline = (Polyline) this.baiduMap.addOverlay(ooPolyline);
+        if (points.size() >= 2) {
+
+            OverlayOptions markerOptions;
+            markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)).position(points.get(points.size() - 1))
+                    .rotate((float) BdLocationUtil.getAngle(mPolyline, 0));
+            mMarker = (Marker) baiduMap.addOverlay(markerOptions);
+        }
+
         BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
     }
 
@@ -389,6 +414,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     public void disposePositionAcquisitionEvent(PositionAcquisitionEvent event) {
         switch (event.getWhat()) {
             case Constans.MSGCOLECTION_SSUCESS:
+                thirtyTwoId = "";
                 PreferencesUtils.putString(MonitoringofJobActivity.this, Constans.ISSINGIN, "");
                 resetTime();
                 showSuccess();
@@ -405,6 +431,12 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
 
                 break;
             case Constans.CHANGEPWD_ERROR://上传失败
+
+                break;
+            case Constans.UPLOADLNGLAT_SSUCESS://实时上传经纬度成功
+//                String data = (String) event.getData();
+                break;
+            case Constans.UPLOADLNGLAT_ERROR://上传失败
 
                 break;
         }
@@ -488,7 +520,6 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        BdLocationUtil.getInstance().stopLocation();//停止定位
         if (mLocClient != null) {
             mLocClient.stop();
             mLocClient = null;
@@ -499,6 +530,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         mapview.onDestroy();
         mapview = null;
         beginImage.recycle();
+        arrowImage.recycle();
         endImage.recycle();
     }
 
@@ -562,16 +594,17 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
                 String userId = PreferencesUtils.getString(this, Constans.ID, "");
                 String startTime = PreferencesUtils.getString(this, Constans.STARTTIME, "");
                 String endTime = TimeUtils.getCurrentTime2();
-                String lnglat = presenter.getLnglatStr(points);
+//                String lnglat = presenter.getLnglatStr(points);
                 if (ctTimer != null) {
                     mTimesum = ctTimer.getText().toString().trim();
                 }
                 if (!TextUtils.isEmpty(mTimesum)) {
                     mTimesum = TimeUtils.formatTurnSecond(mTimesum);
                 }
+//                LogUtils.d("thirtyTwoId=111==" + thirtyTwoId);
                 String startAddress = PreferencesUtils.getString(MonitoringofJobActivity.this, Constans.STARTADDRESS, "");
                 String endAddress = PreferencesUtils.getString(MonitoringofJobActivity.this, Constans.ENDADDRESS, "");
-                presenter.uploadJianCcha(ApiService.UPLOADJIANCHA, userId, pid, startTime, endTime, mTimesum, lnglat, startAddress, endAddress);
+                presenter.uploadJianCcha(ApiService.UPLOADJIANCHA, userId, pid, startTime, endTime, mTimesum, thirtyTwoId, startAddress, endAddress);
             } catch (Exception e) {
                 e.printStackTrace();
             }

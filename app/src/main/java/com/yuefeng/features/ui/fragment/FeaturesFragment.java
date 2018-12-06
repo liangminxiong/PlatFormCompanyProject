@@ -30,8 +30,8 @@ import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
 import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
-import com.yuefeng.home.ui.activity.NewMsgDetailInfosActivtiy;
 import com.yuefeng.home.modle.NewMsgListDataBean;
+import com.yuefeng.home.ui.activity.NewMsgDetailInfosActivtiy;
 import com.yuefeng.ui.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -105,7 +105,8 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     private void getNetDatas() {
         if (mPresenter != null) {
             String pid = PreferencesUtils.getString(getContext(), Constans.ORGID, "");
-            pid = "dg1954";
+//            pid = "dg1954";
+//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
             mPresenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, mStartTime, mEndTime);
         }
     }

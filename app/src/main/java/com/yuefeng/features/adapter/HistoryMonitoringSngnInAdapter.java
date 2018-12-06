@@ -57,7 +57,7 @@ public class HistoryMonitoringSngnInAdapter extends BaseItemDraggableAdapter<His
             }
             helper.setText(R.id.tv_item_title, name)
                     .setText(R.id.tv_item_time, time)
-                    .setText(R.id.tv_item_type, "合照人:" + detail)
+//                    .setText(R.id.tv_item_type, "合照人:" + detail)
                     .setText(R.id.tv_item_address, "地点:" + address);
             ImageView iv_item_image = helper.getView(R.id.iv_item_image);
             mImageUrl = item.getImgurl();

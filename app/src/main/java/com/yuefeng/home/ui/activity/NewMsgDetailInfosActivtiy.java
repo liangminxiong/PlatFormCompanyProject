@@ -82,11 +82,24 @@ public class NewMsgDetailInfosActivtiy extends BaseActivity implements NewMsgDet
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void showUIData(NewMsgListDataBean msgData) {
+        String title = "";
+        String time = "";
+
+        String genre = msgData.getGenre();
+        if (genre.equals("1")) {//公告
+            title = "[主题]";
+        } else if (genre.equals("2")) { //项目信息
+            title = "[项目]" + title;
+        } else {//更新
+            title = "[版本]" + title;
+        }
         String content = msgData.getContent();
         String subject = msgData.getSubject();
-        tvTheme.setText(StringUtils.isEntryStrWu(subject));
-        tvContent.setText(StringUtils.isEntryStrWu(content));
+        time = msgData.getIssuedate();
+        tvTheme.setText(title + StringUtils.isEntryStrWu(subject));
+        tvContent.setText("[内容]" + StringUtils.isEntryStrWu(content) + "\n时间: " + time);
     }
 
     private void getDataByNet(String reviewid) {

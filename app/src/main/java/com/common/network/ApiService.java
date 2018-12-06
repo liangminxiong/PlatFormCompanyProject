@@ -53,7 +53,6 @@ public interface ApiService {
 
     String MIA_HW_RELEASE = "zgbd_hw/release/";
 
-    //服务器apk path,这里放了云平台的apk 作为测试
     String APPNAME = "Environmental.apk";
     String apkPath = "http://www.vocsystem.cn/webfiles/android/" + APPNAME;
     String sersionPath = "http://www.vocsystem.cn/webfiles/android/Environmental.txt";
@@ -129,6 +128,8 @@ public interface ApiService {
     String GETDETAIL = "getDetail";
     /*最新消息*/
     String GETANNOUNCEMENTBYUSERID = "getAnnouncementByuserid";
+    /*实时上传经纬度*/
+    String UPLOADLNGLAT = "uploadlnglat";
 
 
     /*登录用户*/
@@ -312,7 +313,8 @@ public interface ApiService {
             @Query("name") String name,
             @Query("lnglat") String lnglat,//经纬集合字符串
             @Query("area") String area,
-            @Query("imageArrays") String imageArrays);
+            @Query("imageArrays") String imageArrays,
+            @Query("id") String id);
 
     /*获取违规*/
     @POST(MIA_HW)
@@ -346,7 +348,7 @@ public interface ApiService {
             @Query("timestart") String timestart,
             @Query("timeend") String timeend,
             @Query("timesum") String timesum,
-            @Query("lnglat") String lnglat,
+            @Query("id") String lnglat,
             @Query("startaddress") String startAddress,
             @Query("endaddress") String endAddress);
 
@@ -400,7 +402,7 @@ public interface ApiService {
     @POST(MIA_HW_bus + GETMSGDETAIL)
     Observable<MsgDataDetailBean> getMsgDetail(
             @Query("function") String function,
-            @Query("id") String reviewid);
+            @Query("reviewid") String reviewid);
 
     /*消息列表*/
     @FormUrlEncoded()
@@ -460,4 +462,14 @@ public interface ApiService {
             @Query("userid") String userid,
             @Field("timestart") String timestart,
             @Field("timeend") String timeend);
+
+    /*实时上传经纬度*/
+    @FormUrlEncoded()
+    @POST(MIA_HW)
+    Observable<SubmitBean> uploadLnglat(
+            @Query("function") String function,
+            @Query("type") String type,
+            @Field("lng") String lng,
+            @Field("lat") String lat,
+            @Field("id") String id);
 }

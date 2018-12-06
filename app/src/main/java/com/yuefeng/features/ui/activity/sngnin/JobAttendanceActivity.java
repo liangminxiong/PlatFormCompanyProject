@@ -16,6 +16,7 @@ import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.utils.ViewUtils;
@@ -165,8 +166,15 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
     }
 
     @Override
-    protected void initData() {
+    protected void onStart() {
         initTime();
+        super.onStart();
+        LogUtils.d("============");
+
+    }
+
+    @Override
+    protected void initData() {
     }
 
     @SuppressLint("SetTextI18n")
@@ -194,7 +202,7 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
     public void disposeJobAttendanceEvent(JobAttendanceEvent event) {
         switch (event.getWhat()) {
             case Constans.SNGNIN_SSUCESS://获取信息成功
-                dataBean = (GetKaoqinSumMsgBean) event.getData();
+                GetKaoqinSumMsgBean dataBean = (GetKaoqinSumMsgBean) event.getData();
                 if (dataBean != null) {
                     showKaoqinSumMsg(dataBean);
                 }
@@ -213,6 +221,15 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
 
     /*展示本月签到信息*/
     private void showKaoqinSumMsg(GetKaoqinSumMsgBean dataBean) {
+        kaoqinsum = "";
+        late = "";
+        early = "";
+        daiqian = "";
+        qiaodao = "";
+        kuanggong = "";
+        signback = "";
+        kaoqinsum = "";
+
         kaoqinsum = dataBean.getKaoqinsum() + "";
         late = dataBean.getLate() + "";
         early = dataBean.getEarly() + "";
@@ -220,6 +237,8 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
         qiaodao = dataBean.getQiaodao() + "";
         kuanggong = dataBean.getKuanggong() + "";
         signback = dataBean.getSignback() + "";
+
+
         kaoqinsum = TextUtils.isEmpty(kaoqinsum) ? "0" : kaoqinsum;
         late = TextUtils.isEmpty(late) ? "0" : late;
         early = TextUtils.isEmpty(early) ? "0" : early;
@@ -228,6 +247,7 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
         kuanggong = TextUtils.isEmpty(kuanggong) ? "0" : kuanggong;
         signback = TextUtils.isEmpty(signback) ? "0" : signback;
 
+        LogUtils.d("===========" + kaoqinsum + " ++ " + late + " ++ " + early + " ++ " + daiqian + " ++ " + qiaodao + " ++ " + kuanggong + " ++ " + signback);
         tvChidao.setText(late);
         tvZaotui.setText(early);
         tvNosignin.setText(kuanggong);

@@ -33,6 +33,7 @@ public class MsgListDataBean implements Serializable {
     private String org;
     private int imageId;
 
+
     public String getState() {
         return state;
     }

@@ -23,10 +23,10 @@ import com.common.utils.TimeUtils;
 import com.common.view.timeview.TimePickerView;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.home.contract.MsgListInfosContract;
-import com.yuefeng.home.presenter.MsgListInfosPresenter;
-import com.yuefeng.home.ui.adapter.MsgListsInfosAdapter;
 import com.yuefeng.home.modle.MsgDataBean;
 import com.yuefeng.home.modle.MsgListDataBean;
+import com.yuefeng.home.presenter.MsgListInfosPresenter;
+import com.yuefeng.home.ui.adapter.MsgListsInfosAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -109,7 +109,8 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
     private void getDataByNet() {
         if (mPresenter != null) {
             mPid = PreferencesUtils.getString(this, Constans.ORGID, "");
-            mPid = "dg1168";
+//            mPid = "dg1168";
+//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
             mPresenter.getAnMentDataList(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, true);
         }
     }

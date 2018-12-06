@@ -765,7 +765,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 msg.obj = PlayIndex;
                 mHandler.sendMessage(msg);
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

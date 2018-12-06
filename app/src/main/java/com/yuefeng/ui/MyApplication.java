@@ -64,6 +64,7 @@ public class MyApplication extends Application {
 
         handler = new Handler();
         mainThreadId = android.os.Process.myTid();
+
         initThirdParty();
 
         /*内存泄露*/

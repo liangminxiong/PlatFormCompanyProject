@@ -80,6 +80,8 @@
                 android:layout_marginEnd="@dimen/dp_40"
                 android:background="@drawable/shape_gray_line"
                 android:gravity="center_vertical"
+                android:singleLine="true"
+                android:maxLength="20"
                 android:paddingStart="@dimen/dp_5"
                 android:hint="请填写名称"
                 android:textColor="@color/black"

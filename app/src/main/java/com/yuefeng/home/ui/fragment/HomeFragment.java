@@ -106,9 +106,14 @@ public class HomeFragment extends BaseFragment {
                     intent.setClass(Objects.requireNonNull(getActivity()), AnnouncementListInfosActivtiy.class);
                 } else if (genre.equals("2")) {
                     intent.setClass(Objects.requireNonNull(getActivity()), MsgListInfosActivtiy.class);
+//                    MsgListDataBean msgDataBean = new MsgListDataBean();
+//                    msgDataBean.setReviewid("43c62593ffffffc90debed0e841a2534");
+//                    intent.putExtra("msgData", msgDataBean);
+//                    intent.setClass(Objects.requireNonNull(getActivity()), OnlyMsgDetailInfosActivtiy.class);
                 } else {
                     intent.setClass(Objects.requireNonNull(getActivity()), HistoryAppVersionActivtiy.class);
                 }
+
                 startActivity(intent);
             }
         });

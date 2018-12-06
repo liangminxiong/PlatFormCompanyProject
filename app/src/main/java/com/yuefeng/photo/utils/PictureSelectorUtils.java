@@ -44,6 +44,7 @@ public class PictureSelectorUtils {
     private Context mContext;
     private String mImagesArrays;
     private List<LocalMedia> mSelectList;
+    private int selectMax;
 
     /**
      * 单例
@@ -66,6 +67,7 @@ public class PictureSelectorUtils {
                 Constans.FOUR, GridLayoutManager.VERTICAL, false);
         this.mContext = context;
         this.mSelectList = selectList;
+        this.selectMax = count;
         recyclerView.setLayoutManager(manager);
         mAdapter = new GridImageAdapter(context, new GridImageAdapter.onAddPicClickListener() {
             @Override
@@ -74,7 +76,7 @@ public class PictureSelectorUtils {
             }
         });
         mAdapter.setList(selectList);
-        mAdapter.setSelectMax(count);
+        mAdapter.setSelectMax(selectMax);
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(new GridImageAdapter.OnItemClickListener() {
             @Override
@@ -107,7 +109,7 @@ public class PictureSelectorUtils {
                 }
 //                onCarema();
                 PictureSelectorUtils.getInstance().onAcCamera((Activity) context,
-                        PictureSelectorUtils.getInstance().type, Constans.FOUR, selectList);
+                        PictureSelectorUtils.getInstance().type, selectMax, selectList);
             }
 
             @Override
@@ -117,7 +119,7 @@ public class PictureSelectorUtils {
                 }
 //                onPhoto();
                 PictureSelectorUtils.getInstance().onAcAlbum((Activity) context,
-                        PictureSelectorUtils.getInstance().type, Constans.FOUR, Constans.FOUR,
+                        PictureSelectorUtils.getInstance().type, selectMax, Constans.FOUR,
                         true, ImageUtils.getPath(), selectList);
             }
 

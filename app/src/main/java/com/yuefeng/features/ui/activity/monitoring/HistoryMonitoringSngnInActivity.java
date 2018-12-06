@@ -98,6 +98,7 @@ public class HistoryMonitoringSngnInActivity extends BaseActivity implements His
     private void getNetDatas(String startTime, String endTime) {
         if (mPresenter != null) {
             String userid = PreferencesUtils.getString(this, Constans.ID);
+//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_GU);
             mPresenter.getAppWorkSign(ApiService.GETAPPWORKSIGN, userid, startTime, endTime);
         }
     }

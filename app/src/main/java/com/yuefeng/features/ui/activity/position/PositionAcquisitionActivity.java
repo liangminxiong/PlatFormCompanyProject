@@ -5,8 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.GpsStatus;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.widget.GridLayoutManager;
@@ -24,6 +22,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -39,13 +40,11 @@ import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseActivity;
-import com.common.location.LocationHelper;
-import com.common.location.MyLocationListener;
 import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.ImageUtils;
-import com.common.utils.LocationGpsUtils;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
@@ -66,6 +65,7 @@ import com.yuefeng.features.ui.view.MsgCollectionPopupWindow;
 import com.yuefeng.photo.adapter.GridImageAdapter;
 import com.yuefeng.photo.other.FullyGridLayoutManager;
 import com.yuefeng.photo.utils.PictureSelectorUtils;
+import com.yuefeng.ui.MyApplication;
 import com.yuefeng.utils.BdLocationUtil;
 import com.yuefeng.utils.LocationUtils;
 
@@ -154,7 +154,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     private int current = 0;
     private long mRecordTime;
     private LatLng latLng;
-    private LocationHelper mLocationHelper;
     private LatLng latLngTemp = null;
     /*距离*/
     private double distance = 0;
@@ -185,6 +184,10 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     private boolean isFirstInit = true;
     private boolean isFirstInitCt = true;
     private boolean isFirstInitFinish = true;
+    private String thirtyTwoId = "";
+
+    public MoLocationListenner myListener = new MoLocationListenner();
+    private LocationClient mLocClient;
 
     @Override
     protected int getContentViewResId() {
@@ -205,6 +208,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         isFirstInit = true;
         isFirstInitCt = true;
         isFirstInitFinish = true;
+        thirtyTwoId = "";
     }
 
 
@@ -293,50 +297,50 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 });
     }
 
+    /**
+     * 定位SDK监听函数
+     */
+    public class MoLocationListenner implements BDLocationListener {
+
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            // map view 销毁后不在处理新接收的位置
+            if (location == null || mapview == null) {
+                return;
+            }
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            address = location.getAddrStr();
+            firstLocation(latitude, longitude, address);
+        }
+    }
+
     /*定位*/
     private void getLocation() {
         baiduMap = mapview.getMap();
         // 地图初始化
         mapview.showZoomControls(false);// 缩放控件是否显示
-
         // 开启定位图层
         baiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         baiduMap.setMyLocationEnabled(true);
         // 定位初始化
+        mLocClient = new LocationClient(this);
+        mLocClient.registerLocationListener(myListener);
+        LocationClientOption option = new LocationClientOption();
+        option.setOpenGps(true); // 打开gps
+        option.setCoorType("bd09ll"); // 设置坐标类型
+        option.setScanSpan(10000);
+        option.setIsNeedAddress(true);
+        option.setAddrType("all");
+        mLocClient.setLocOption(option);
+        mLocClient.start();
 
         baiduMap.showMapPoi(true);
-        boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
-        if (!gpsOPen) {
-            showSuccessToast("GPS未开启，定位有偏差");
-        }
-        useBdGpsLocation();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        BdLocationUtil.getInstance().stopLocation();
-    }
-
-    private void useBdGpsLocation() {
-        BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
-            @Override
-            public void myLocation(BDLocation location) {
-                if (location == null) {
-                    requestPermissions();
-                    return;
-                }
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-                address = location.getAddrStr();
-                if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
-                    int length = address.length();
-                    address = address.substring(2, length);
-                }
-                firstLocation(latitude, longitude, address);
-            }
-        }, Constans.BDLOCATION_TIME);
-        initLocation();
     }
 
     private void firstLocation(double latitude, double longitude, String address) {
@@ -345,83 +349,54 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 int length = address.length();
                 address = address.substring(2, length);
             }
-            latLngTemp = new LatLng(latitude, longitude);
+            latLng = new LatLng(latitude, longitude);
+            if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
+                int length = address.length();
+                address = address.substring(2, length);
+            }
             if (isFirstLoc) {
                 isFirstLoc = false;
-                MapStatus ms = new MapStatus.Builder().target(latLngTemp)
+                latLngTemp = new LatLng(latitude, longitude);
+                MapStatus ms = new MapStatus.Builder().target(latLng)
                         .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                 ooA = new MarkerOptions().icon(personalImage).zIndex(10);
-                ooA.position(latLngTemp);
+                ooA.position(latLng);
+//                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                 mMarker = null;
                 mMarker = (Marker) (baiduMap.addOverlay(ooA));
-                ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                 baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
 //            BdLocationUtil.MoveMapToCenter(baiduMap, latLngTemp, 14);
-                PreferencesUtils.putString(PositionAcquisitionActivity.this, "Fengrun", "");
-                PreferencesUtils.putString(PositionAcquisitionActivity.this, "mAddress", address);
+                PreferencesUtils.putString(MyApplication.getContext(), "Fengrun", address);
+                PreferencesUtils.putString(MyApplication.getContext(), "mAddress", address);
+                PreferencesUtils.putString(PositionAcquisitionActivity.this, Constans.STARTADDRESS, address);
             }
+            PreferencesUtils.putString(PositionAcquisitionActivity.this, Constans.ENDADDRESS, address);
+            starDrawTrackLine(latLng);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /*定时刷新*/
-    private void initLocation() {
-        mLocationHelper = new LocationHelper(this, Constans.TEN);
-        mLocationHelper.initLocation(new MyLocationListener() {
-
-            @Override
-            public void updateLastLocation(Location location) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
-                latitude = latLng.latitude;
-                longitude = latLng.longitude;
-            }
-
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void updateLocation(Location location) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-                latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(latitude, longitude));
-                longitude = latLng.longitude;
-                latitude = latLng.latitude;
-                starDrawTrackLine(latLng);
-            }
-
-            @Override
-            public void updateStatus(String provider, int status, Bundle extras) {
-
-            }
-
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void updateGpsStatus(GpsStatus gpsStatus) {
-
-            }
-        });
     }
 
     private void starDrawTrackLine(LatLng latLng) {
         if (latLng == null) {
             return;
         }
-        double distance = DistanceUtil.getDistance(latLngTemp, latLng);
-        if (distance > 0) {
-            latLngTemp = latLng;
-            drawTrackLine(latLngTemp);
-        }
+        drawTrackLine(latLngTemp);
     }
 
     /*划线*/
     private void drawTrackLine(LatLng latLng) {
+        LogUtils.d("thirtyTwoId ==00===" + typePosition);
         try {
             if (isPositionAcquisition) {
+                if (typePosition == 1) {
+                    uploadLngLat(latLng);
+                }
                 points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
                 if (points.size() > 1 && baiduMap != null) {
                     //清除上一次轨迹，避免重叠绘画
-                    drawLineIntoBaiduMap(baiduMap, points);
+                    drawLineIntoBaiduMap(baiduMap, points, true);
                 }
             }
         } catch (Exception e) {
@@ -429,10 +404,22 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         }
     }
 
+    private void uploadLngLat(LatLng latLng) {
+        double lng = latLng.longitude;
+        double lat = latLng.latitude;
+        if (TextUtils.isEmpty(thirtyTwoId)) {
+            thirtyTwoId = StringUtils.get32String(Constans.THIRTYTWO);
+        }
+        if (presenter != null) {
+            presenter.uploadLnglat(ApiService.UPLOADLNGLAT, Constans.TYPE_LATLNG_LINE, String.valueOf(lng), String.valueOf(lat), thirtyTwoId);
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposePositionAcquisitionEvent(PositionAcquisitionEvent event) {
         switch (event.getWhat()) {
             case Constans.MSGCOLECTION_SSUCESS:
+                thirtyTwoId = "";
                 showSuccessDialog("上传成功，是否退出当前界面?");
                 break;
             case Constans.MSGCOLECTION_ERROR://上传失败
@@ -447,9 +434,13 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             case Constans.GETCAIJI_ERROR://获采集类型失败
 //                showSuccessToast("发布失败");
                 break;
-            default:
-
+            case Constans.UPLOADLNGLAT_SSUCESS:
+//                showSuccessToast("成功");
                 break;
+            case Constans.UPLOADLNGLAT_ERROR:
+//                showSuccessToast("发布失败");
+                break;
+
         }
     }
 
@@ -496,9 +487,9 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        BdLocationUtil.getInstance().stopLocation();//停止定位
-        if (mLocationHelper != null) {
-            mLocationHelper.removeLocationUpdatesListener();
+        if (mLocClient != null) {
+            mLocClient.stop();
+            mLocClient = null;
         }
         assert mapview != null;
         mapview.getMap().clear();
@@ -633,9 +624,15 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 showSuccessToast("请填写名称");
                 return;
             }
-            lnglat = presenter.getLnglatStr(points);
+            if (typePosition == 0) {
+                lnglat = presenter.getLnglatStr(points);
+
+            }
+            if (typePosition == 1) {
+                lnglat = "";
+            }
             presenter.upLoadmapInfo(ApiService.UPLOADMAPINFO, pid, userId, typeId, tyepName, name, lnglat,
-                    area, mImagesArrays);
+                    area, mImagesArrays, thirtyTwoId);
         }
     }
 
@@ -701,8 +698,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         }
         //起始点图层也会被清除，重新绘画
         if (points.size() > 1 && baiduMap != null) {
-            drawLineIntoBaiduMap(baiduMap, points);
-
+            drawLineIntoBaiduMap(baiduMap, points, false);
 
             MarkerOptions oEnd = new MarkerOptions();
             oEnd.position(points.get(points.size() - 2));
@@ -712,7 +708,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     }
 
     /*划线*/
-    private void drawLineIntoBaiduMap(BaiduMap baiduMap, List<LatLng> points) {
+    private void drawLineIntoBaiduMap(BaiduMap baiduMap, List<LatLng> points, boolean isFirstDraw) {
         //清除上一次轨迹，避免重叠绘画
         baiduMap.clear();
         //起始点图层也会被清除，重新绘画
@@ -723,11 +719,14 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
 
         OverlayOptions ooPolyline = new PolylineOptions().width(12).color(Color.RED).points(points);
         mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
-        if (points.size() > 2) {
-            OverlayOptions markerOptions;
-            markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)).position(points.get(points.size() - 1))
-                    .rotate((float) BdLocationUtil.getAngle(mPolyline, 0));
+        if (isFirstDraw) {
+            if (points.size() >= 2) {
+                OverlayOptions markerOptions;
+                markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)).position(points.get(points.size() - 1))
+                        .rotate((float) BdLocationUtil.getAngle(mPolyline, 0));
+                mMarker = (Marker) baiduMap.addOverlay(markerOptions);
+            }
         }
 
         BdLocationUtil.MoveMapToCenter(baiduMap, points.get(points.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
@@ -925,7 +924,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String string = PreferencesUtils.getString(AppUtils.getContext(), Constans.ADDRESS, "");
+                String string = PreferencesUtils.getString(AppUtils.getContext(), Constans.ENDADDRESS, "");
                 mImagesArrays = PictureSelectorUtils.compressionPhotos(PositionAcquisitionActivity.this, selectList, string);
             }
         }).start();

@@ -23,10 +23,10 @@ import com.common.utils.TimeUtils;
 import com.common.view.timeview.TimePickerView;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.home.contract.AnnouncementListInfosContract;
-import com.yuefeng.home.presenter.AnnouncementListInfosPresenter;
-import com.yuefeng.home.ui.adapter.AnnouncementListsInfosAdapter;
 import com.yuefeng.home.modle.AnnouncementDataBean;
 import com.yuefeng.home.modle.AnnouncementDataMsgBean;
+import com.yuefeng.home.presenter.AnnouncementListInfosPresenter;
+import com.yuefeng.home.ui.adapter.AnnouncementListsInfosAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -111,8 +111,8 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
     private void getDataByNet() {
         if (mPresenter != null) {
             mPid = PreferencesUtils.getString(this, Constans.ORGID, "");
-            mPid = "dg1954";
-
+//            mPid = "dg1954";
+//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
             mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, true);
         }
     }
@@ -178,6 +178,7 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
                 CURPAGE = 1;
                 mEndTime = TimeUtils.getCurrentTime2();
                 adapter.setEnableLoadMore(false);
+//                ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
                 mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, false);
             }
         });
@@ -199,6 +200,7 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
             public void run() {
                 if (mCount >= 10) {
                     ++CURPAGE;
+//                    ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
                     mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, false);
                     adapter.loadMoreComplete();
                 } else {
@@ -237,6 +239,7 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
             ivShowtime.setVisibility(View.VISIBLE);
             isRefresh = false;
             CURPAGE = 1;
+//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
             mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, tvStartTime.getText().toString().trim()
                     , tvEndTime.getText().toString().trim(), CURPAGE, Constans.TEN, true);
 

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
-import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
@@ -119,8 +118,8 @@ public class OnlyMsgDetailInfosActivtiy extends BaseActivity implements MsgDetai
 
     private void getDataByNet(String reviewid) {
         if (!TextUtils.isEmpty(reviewid)) {
+//            mPresenter.getMsgDetail(ApiService.GETDETAIL, reviewid);
             mPresenter.getMsgDetail(reviewid);
-            mPresenter.getMsgDetail(ApiService.GETDETAIL, reviewid);
         }
     }
 

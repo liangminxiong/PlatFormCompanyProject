@@ -3,7 +3,6 @@ package com.yuefeng.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -99,7 +98,6 @@ public class MainActivity extends BaseActivity implements
     private String address;
     private double latitude;
     private double longitude;
-    private com.yuefeng.utils.LocationUtils mLocationUtils;
 
     @Override
     protected int getContentViewResId() {
@@ -166,34 +164,7 @@ public class MainActivity extends BaseActivity implements
 
         boolean gpsOPen = LocationGpsUtils.isGpsOPen(this);
         if (gpsOPen) {
-//            useGpsLocation();
-//        } else {
             useBdGpsLocation();
-        }
-    }
-
-    private void useGpsLocation() {
-        try {
-            // 创建定位管理信息对象
-            mLocationUtils = new com.yuefeng.utils.LocationUtils(this);
-//         开启定位
-            mLocationUtils.startLocation();
-            mLocationUtils.registerOnResult(this);
-
-            Location location = BdLocationUtil.getInstance().startLocationServise(MainActivity.this);
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            latitude = latLng.latitude;
-            longitude = latLng.longitude;
-            if (mLocationUtils == null) {
-//         开启定位
-                mLocationUtils = new LocationUtils(this);
-                mLocationUtils.startLocation();
-                mLocationUtils.registerOnResult(this);
-            }
-            mLocationUtils.getAddress(latitude, longitude);
-            mLocationUtils.getAddress(latitude, longitude);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -254,7 +225,9 @@ public class MainActivity extends BaseActivity implements
 
                 @Override
                 public void sure() {
-                    sureDialog.dismiss();
+                    if (!isFinishing()) {
+                        sureDialog.dismiss();
+                    }
                     personalSignIn(longitude, latitude, address);
                     PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", false);
                     checkVersion();
@@ -263,7 +236,9 @@ public class MainActivity extends BaseActivity implements
 
                 @Override
                 public void cancle() {
-                    sureDialog.dismiss();
+                    if (!isFinishing()) {
+                        sureDialog.dismiss();
+                    }
                     PreferencesUtils.putBoolean(MainActivity.this, "isSignIn", false);
                     checkVersion();
                 }
@@ -308,7 +283,7 @@ public class MainActivity extends BaseActivity implements
 
                         @Override
                         public void onComplete() {//结束，打卡
-                            if (sureDialog != null) {
+                            if (sureDialog != null && !isFinishing()) {
                                 sureDialog.dismiss();
                             }
                             checkVersion();

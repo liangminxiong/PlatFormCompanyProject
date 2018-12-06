@@ -74,13 +74,13 @@
     <uses-permission android:name="com.yuefeng.paltform.permission.JPUSH_MESSAGE"/>
 
     <!--屏幕-->
-    <supports-screens
+    <!--<supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="false"
         android:resizeable="true"
         android:smallScreens="true"/>
-
+-->
     <application
         android:name="com.yuefeng.ui.MyApplication"
         android:allowBackup="true"
@@ -117,7 +117,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
+            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
 
         <service
             android:name="com.baidu.location.f"
@@ -148,8 +148,7 @@
             android:hardwareAccelerated="false"/>
 
         <activity
-            android:name="com.yuefeng.login_splash.ui.LoginActivity"
-            android:hardwareAccelerated="false"/>
+            android:name="com.yuefeng.login_splash.ui.LoginActivity"/>
 
         <!--作业监察-->
         <activity

@@ -123,9 +123,10 @@ public class MonitoringSngnInDetailActivity extends BaseActivity {
             time = StringUtils.isEntryStrWu(time);
             contents = StringUtils.isEntryStrWu(contents);
             typeName = StringUtils.isEntryStrWu(typeName);
-            tvType.setText("合照人");
+            tvType.setText("");
             nameType.setText("描述");
-            tvTypeName.setText(typeName);
+            tvTypeName.setText("");
+//            tvTypeName.setText(typeName);
             tvTypeArea.setText("");
             tvName.setText(name);
             tvTime.setText(time);

@@ -42,9 +42,9 @@ public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobC
     /*信息采集*/
     @Override
     public void uploadJianCcha(String function, String userid, String pid, String timestart,
-                               String timeend, String timesum, String lnglat,String startAddress,String endAddress) {
+                               String timeend, String timesum, String id, String startAddress, String endAddress) {
         HttpObservable.getObservable(apiRetrofit.uploadJianCcha(function, userid, pid, timestart,
-                timeend, timesum, lnglat,startAddress,endAddress))
+                timeend, timesum, id, startAddress, endAddress))
                 .subscribe(new HttpResultObserver<SubmitBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
@@ -126,6 +126,51 @@ public class MonitoringOfJobPresenter extends BasePresenterImpl<MonitoringOfJobC
                         super.onError(e);
                         dismissLoadingDialog();
                         EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.CHANGEPWD_ERROR, ""));
+                    }
+                });
+    }
+
+    /*实时上传经纬度*/
+    @Override
+    public void uploadLnglat(String function, String type, String lng, String lat, String id) {
+        HttpObservable.getObservable(apiRetrofit.uploadLnglat(function, type, lng, lat, id))
+                .subscribe(new HttpResultObserver<SubmitBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(SubmitBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_SSUCESS, o.getMsg()));
+                            } else {
+                                EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_ERROR, e.getMsg()));
+                    }
+
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        super._onError(error);
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_ERROR, ""));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new PositionAcquisitionEvent(Constans.UPLOADLNGLAT_ERROR, ""));
                     }
                 });
     }

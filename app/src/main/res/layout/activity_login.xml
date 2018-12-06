@@ -8,7 +8,7 @@
 
     <include
         layout="@layout/title_bar_mvp"
-        android:visibility="gone"/>
+        android:visibility="invisible"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="@dimen/dp_190"
+        android:layout_marginTop="@dimen/dp_150"
         android:orientation="horizontal">
 
         <TextView
@@ -35,7 +35,6 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:background="@color/transparent"
-            android:drawablePadding="20dp"
             android:hint="请输入账号"
             android:textColor="@color/white"
             android:textColorHint="@color/transparent_db"
@@ -84,24 +83,23 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:background="@null"
-            android:drawablePadding="20dp"
+            android:background="@color/transparent"
             android:hint="请输入密码"
-            android:inputType="textPassword"
             android:textColor="@color/white"
             android:textColorHint="@color/transparent_db"
             android:textSize="@dimen/sp_17"
-            tools:ignore="HardcodedText"/>
+            tools:ignore="HardcodedText,TextFields"/>
 
-        <Button
+        <ImageView
             android:id="@+id/btn_eye_type"
             android:layout_width="22dp"
             android:layout_height="22dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginEnd="15dp"
             android:layout_marginRight="15dp"
-            android:background="@drawable/invisible"
             android:gravity="center"
-            tools:ignore="RtlHardcoded"/>
+            android:src="@drawable/invisible"
+            tools:ignore="ContentDescription,RtlHardcoded"/>
 
     </LinearLayout>
 
