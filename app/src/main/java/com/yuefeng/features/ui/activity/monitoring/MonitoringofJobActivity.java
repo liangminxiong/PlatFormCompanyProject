@@ -287,7 +287,7 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true); // 打开gps
         option.setCoorType("bd09ll"); // 设置坐标类型
-        option.setScanSpan(10000);
+        option.setScanSpan(Constans.BDLOCATION_TIME);
         option.setIsNeedAddress(true);
         option.setAddrType("all");
         mLocClient.setLocOption(option);
@@ -435,6 +435,8 @@ public class MonitoringofJobActivity extends BaseActivity implements MonitoringO
                 break;
             case Constans.UPLOADLNGLAT_SSUCESS://实时上传经纬度成功
 //                String data = (String) event.getData();
+//                LogUtils.d("UPLOADLNGLAT_SSUCESS");
+//                uploadLngLat(latLng);
                 break;
             case Constans.UPLOADLNGLAT_ERROR://上传失败
 

@@ -39,12 +39,14 @@
             style="@style/position_detail_type"
             android:layout_below="@id/iv_line"
             android:text="类型"
+            android:visibility="visible"
             tools:ignore="HardcodedText"/>
 
         <TextView
             android:id="@+id/tv_type_name"
             style="@style/position_detail_name"
             android:layout_below="@id/iv_line"
+            android:visibility="visible"
             android:layout_toEndOf="@id/type"
             tools:ignore="HardcodedText"/>
 
@@ -54,6 +56,7 @@
             android:layout_below="@id/iv_line"
             android:layout_toEndOf="@id/tv_type_name"
             android:text="(作业区域)"
+            android:visibility="visible"
             tools:ignore="HardcodedText"/>
 
         <TextView

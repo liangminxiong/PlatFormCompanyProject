@@ -2,11 +2,16 @@ package com.yuefeng.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +25,7 @@ import com.baidu.mapapi.model.LatLng;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.updateapputils.UpdateManager;
+import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.LocationGpsUtils;
 import com.common.utils.PreferencesUtils;
@@ -29,6 +35,7 @@ import com.common.view.dialog.SigninCacheSureDialog;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.ui.fragment.FeaturesFragment;
+import com.yuefeng.home.modle.NewMsgListDataBean;
 import com.yuefeng.home.ui.fragment.HomeFragment;
 import com.yuefeng.login_splash.contract.SignInContract;
 import com.yuefeng.login_splash.event.SignInEvent;
@@ -57,6 +64,8 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+
+import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 
 public class MainActivity extends BaseActivity implements
         SignInContract.View, LocationUtils.OnResultMapListener {
@@ -98,6 +107,10 @@ public class MainActivity extends BaseActivity implements
     private String address;
     private double latitude;
     private double longitude;
+
+    private String AnnTime;
+    private String ProjectTime;
+    private String VersionTime;
 
     @Override
     protected int getContentViewResId() {
@@ -153,6 +166,7 @@ public class MainActivity extends BaseActivity implements
 //                                showSuccessToast("App未能获取相关权限，部分功能可能不能正常使用.");
 //                            }
                             getLocation();
+                            getdata();
                         }
                     });
         } catch (Exception e) {
@@ -202,6 +216,40 @@ public class MainActivity extends BaseActivity implements
             }, BDLOCATION_TIME);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void getdata() {
+        try {
+            Observable.interval(0, 60, TimeUnit.SECONDS)
+                    .compose(RxHelper.<Long>rxSchedulerHelper())
+                    .subscribe(new Observer<Long>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                        }
+
+                        @Override
+                        public void onNext(Long value) {
+                            getNetDatas();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                        }
+
+                        @Override
+                        public void onComplete() {
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getNetDatas() {
+        if (presenter != null) {
+            String pid = PreferencesUtils.getString(MainActivity.this, Constans.ORGID, "");
+            presenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, "", "");
         }
     }
 
@@ -382,18 +430,96 @@ public class MainActivity extends BaseActivity implements
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void disposeSignInEvent(SignInEvent event) {
         switch (event.getWhat()) {
             case Constans.LOGIN:
-//                String data = (String) event.getData();
-//                showSuccessToast(data);
+                break;
+            case Constans.NEW_MSG_SUCCESS:
+                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
+                if (list.size() > 0) {
+                    showAdapterDatasList(list);
+                }
                 break;
             default:
-//                String dataa = (String) event.getData();
-//                showErrorToast(dataa);
                 break;
         }
+    }
+
+    private void showAdapterDatasList(List<NewMsgListDataBean> list) {
+        AnnTime = PreferencesUtils.getString(MainActivity.this, Constans.ANNTIME, "");
+        ProjectTime = PreferencesUtils.getString(MainActivity.this, Constans.PROJECTTIME, "");
+        VersionTime = PreferencesUtils.getString(MainActivity.this, Constans.VERSIONTIME, "");
+
+        for (int i = 0; i < list.size(); i++) {
+            String title = list.get(i).getSubject();
+            String content = list.get(i).getContent();
+            String time = list.get(i).getIssuedate();
+            if (!TextUtils.isEmpty(title) && !TextUtils.isEmpty(time) && !TextUtils.isEmpty(content)) {
+                if (i == 0) {
+                    boolean startEndTime = TimeUtils.startSmortEndTime(AnnTime, time);
+                    if (startEndTime) {
+                        PreferencesUtils.putString(MainActivity.this, Constans.ANNTIME, time);
+                        initNotification("[公告]" + list.get(i).getSubject(), list.get(i).getContent(), i);
+                    }
+                } else if (i == 1) {
+                    boolean startEndTime = TimeUtils.startSmortEndTime(ProjectTime, time);
+                    if (startEndTime) {
+                        PreferencesUtils.putString(MainActivity.this, Constans.PROJECTTIME, time);
+                        initNotification("[项目]" + list.get(i).getSubject(), list.get(i).getContent(), i);
+                    }
+                } else {
+                    boolean startEndTime = TimeUtils.startSmortEndTime(VersionTime, time);
+                    if (startEndTime) {
+                        PreferencesUtils.putString(MainActivity.this, Constans.VERSIONTIME, time);
+                        initNotification("[版本]" + list.get(i).getSubject(), list.get(i).getContent(), i);
+                    }
+                }
+            }
+        }
+    }
+
+    //    private void initNotification(String annoum, String project, String centent) {
+    private void initNotification(String title, String content, int position) {
+
+//        Notification.Builder builder = new Notification.Builder(AppUtils.getContext());
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        NotificationManager mNotifyMgr = (NotificationManager) AppUtils.getContext().getSystemService(NOTIFICATION_SERVICE);
+        Intent push = new Intent(AppUtils.getContext(), MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(AppUtils.getContext(), 0, push, FLAG_CANCEL_CURRENT);
+        builder.setContentTitle(title);
+        builder.setContentText("内容:" + content);   //内容
+        builder.setWhen(System.currentTimeMillis());       //设置通知时间
+        builder.setSmallIcon(R.mipmap.icon_app);            //设置小图标
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icon_app));
+        builder.setDefaults(Notification.DEFAULT_ALL);   //打开呼吸灯，声音，震动，触发系统默认行为
+        builder.setAutoCancel(true);
+        //设置点击后取消Notification
+        //比较手机sdk版本与Android 5.0 Lollipop的sdk
+
+//        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+//        String[] events = {annoum, project, centent};
+//        inboxStyle.setBigContentTitle("侨银环保");
+//        inboxStyle.setSummaryText("");
+//        for (String event : events) {
+//            inboxStyle.addLine(event);
+//        }
+//        builder.setStyle(inboxStyle);
+
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+
+            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            builder.setPriority(Notification.PRIORITY_DEFAULT);//设置该通知优先级
+            builder.setCategory(Notification.CATEGORY_MESSAGE);//设置通知类别
+        }
+        builder.setContentIntent(contentIntent);
+
+        //第五步：发送通知请求：
+        Notification notify = builder.build();//得到一个Notification对象
+        mNotifyMgr.notify(position, notify);//发送通知请求
     }
 
     @Override

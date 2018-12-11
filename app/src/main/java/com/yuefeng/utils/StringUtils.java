@@ -66,14 +66,14 @@ public class StringUtils {
 //    0  离线  1 停止 2 行驶 3 等待
     public static int getPersonalBitmapResource(String stateType) {
         int typeInt = 0;
-        if (stateType.equals("0")) {
-            typeInt = R.drawable.worker_lixian;
+        if (stateType.equals("3")) {
+            typeInt = R.drawable.worker_ting10;
         } else if (stateType.equals("1")) {
             typeInt = R.drawable.worker_tingche;
         } else if (stateType.equals("2")) {
             typeInt = R.drawable.worker_yidong;
         } else {
-            typeInt = R.drawable.worker_ting10;
+            typeInt = R.drawable.worker_lixian;
         }
 
         return typeInt;
@@ -83,15 +83,14 @@ public class StringUtils {
 //    0  离线  1 停止 2 行驶 3 等待
     public static int getVehicleBitmapResource(String stateType) {
         int typeInt = 0;
-        if (stateType.equals("0")) {
-            typeInt = R.drawable.vehicle_lixian;
-
+        if (stateType.equals("3")) {
+            typeInt = R.drawable.vehicle_ting10;
         } else if (stateType.equals("1")) {
             typeInt = R.drawable.vehicle_tingche;
         } else if (stateType.equals("2")) {
             typeInt = R.drawable.vehicle_yidong;
         } else {
-            typeInt = R.drawable.vehicle_ting10;
+            typeInt = R.drawable.vehicle_lixian;
         }
 
         return typeInt;

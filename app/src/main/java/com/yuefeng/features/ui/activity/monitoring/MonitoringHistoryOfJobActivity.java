@@ -379,7 +379,8 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
     }
 
 
-    @OnClick({R.id.tv_start_time, R.id.tv_end_time, R.id.tv_midle, R.id.tv_upload_count, R.id.iv_search})
+    @OnClick({R.id.tv_start_time, R.id.tv_end_time, R.id.tv_midle, R.id.tv_upload_count
+            , R.id.iv_search, R.id.tv_sngnin_count, R.id.tv_si})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_start_time:
@@ -391,6 +392,7 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
             case R.id.tv_midle:
                 intoHistoryUpload();
             case R.id.iv_search:
+
                 iv_search();
 
                 break;

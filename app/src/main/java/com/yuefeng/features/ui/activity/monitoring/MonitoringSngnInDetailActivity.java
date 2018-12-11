@@ -120,14 +120,17 @@ public class MonitoringSngnInDetailActivity extends BaseActivity {
             typeName = msgBean.getPersonalName();
 
             name = StringUtils.isEntryStrWu(name);
-            time = StringUtils.isEntryStrWu(time);
+            time = StringUtils.returnStrTime(time);
             contents = StringUtils.isEntryStrWu(contents);
             typeName = StringUtils.isEntryStrWu(typeName);
-            tvType.setText("");
+//            tvType.setText("");
+//            tvTypeName.setText("");
+//            tvTypeArea.setText("");
+            ViewUtils.setTvVisibleOrGone(tvType,false);
+            ViewUtils.setTvVisibleOrGone(tvTypeName,false);
+            ViewUtils.setTvVisibleOrGone(tvTypeArea,false);
             nameType.setText("描述");
-            tvTypeName.setText("");
 //            tvTypeName.setText(typeName);
-            tvTypeArea.setText("");
             tvName.setText(name);
             tvTime.setText(time);
             imageUrls = msgBean.getImgurl();

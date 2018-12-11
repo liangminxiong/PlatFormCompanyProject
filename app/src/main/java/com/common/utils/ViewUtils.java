@@ -110,6 +110,17 @@ public class ViewUtils {
     }
 
     /*TextView 显示不可见*/
+    public static void setTvVisibleOrGone(TextView view, boolean visible) {
+        int type;
+        if (visible) {
+            type = View.VISIBLE;
+        } else {
+            type = View.GONE;
+        }
+        view.setVisibility(type);
+    }
+
+    /*TextView 显示不可见*/
     public static void setTvInVisible(TextView view, boolean visible) {
         int type;
         if (visible) {

@@ -58,7 +58,7 @@ public class MsgListsInfosAdapter extends BaseQuickAdapter<MsgListDataBean, Base
             title = StringUtils.isEntryStrWu(title);
             reviewPersonel = item.getReviewpersonel();
             reviewPersonel = StringUtils.isEntryStrWu(reviewPersonel);
-            time = TimeUtils.formatHourMin(time);
+            time = TimeUtils.isTodayTime(time);
             mIsread = item.getIsread();
             if (mIsread.equals("0")) {
                 helper.setVisible(R.id.iv_item_isread, true);

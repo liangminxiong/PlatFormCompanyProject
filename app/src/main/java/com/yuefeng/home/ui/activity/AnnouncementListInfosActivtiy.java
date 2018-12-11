@@ -98,7 +98,7 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
         tv_back.setText(R.string.back);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         initRecycleView();
-        getDataByNet();
+//        getDataByNet();
     }
 
     @OnClick(R.id.tv_back)
@@ -106,15 +106,28 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
         finish();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isRefresh = false;
+        CURPAGE = 1;
+        getDataByNet();
+    }
+
+
 
     /*获取数据源*/
     private void getDataByNet() {
         if (mPresenter != null) {
             mPid = PreferencesUtils.getString(this, Constans.ORGID, "");
-//            mPid = "dg1954";
-//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
             mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, true);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        listData.clear();
+        super.onStop();
     }
 
     @SuppressLint("SetTextI18n")
@@ -133,7 +146,7 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
                 if (!isRefresh) {
                     adapter.setNewData(listData);
                     isRefresh = true;
-                    adapter.setEnableLoadMore(true);
+                    adapter.setEnableLoadMore(false);
                 } else {
                     if (listData != null) {
                         adapter.addData(listData);
@@ -162,9 +175,10 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                int id = view.getId();
-                AnnouncementDataMsgBean msgBean = listData.get(position);
-                toOnlyDetailActivity(msgBean);
+                if (listData.size() > 0) {
+                    AnnouncementDataMsgBean msgBean = listData.get(position);
+                    toOnlyDetailActivity(msgBean);
+                }
             }
         });
     }
@@ -174,13 +188,12 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                isRefresh = false;
-                CURPAGE = 1;
-                mEndTime = TimeUtils.getCurrentTime2();
-                adapter.setEnableLoadMore(false);
-//                ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
-                mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, false);
-            }
+                    isRefresh = false;
+                    CURPAGE = 1;
+                    mEndTime = TimeUtils.getCurrentTime2();
+                    adapter.setEnableLoadMore(false);
+                    mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, false);
+                }
         });
     }
 
@@ -198,9 +211,8 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
         recyclerview.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mCount >= 10) {
+                if (mCount > 10) {
                     ++CURPAGE;
-//                    ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
                     mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, false);
                     adapter.loadMoreComplete();
                 } else {
@@ -220,7 +232,6 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
                 tv_end();
                 break;
             case R.id.recyclerview:
-                showErrorToast("aaaaaaaa");
                 break;
             case R.id.tv_search:
                 rl_search();

@@ -157,7 +157,11 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
                 widgetClick(v);
                 break;
         }
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override

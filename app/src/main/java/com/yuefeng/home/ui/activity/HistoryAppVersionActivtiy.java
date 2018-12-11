@@ -96,7 +96,21 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
         tv_back.setText(R.string.back);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         initRecycleView();
+//        getDataByNet();
+    }
+
+    @Override
+    protected void onStart() {
+        isRefresh = false;
+        CURPAGE = 1;
         getDataByNet();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        listData.clear();
+        super.onStop();
     }
 
     @OnClick(R.id.tv_back)
@@ -158,9 +172,10 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                int id = view.getId();
-                HistoryAppListVersionBean msgBean = listData.get(position);
-                toOnlyDetailActivity(msgBean);
+                if (listData.size() > 0) {
+                    HistoryAppListVersionBean msgBean = listData.get(position);
+                    toOnlyDetailActivity(msgBean);
+                }
             }
         });
     }
@@ -194,7 +209,7 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
         recyclerview.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mCount >= 10) {
+                if (mCount > 10) {
                     ++CURPAGE;
 //                    ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
                     mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, mStartTime, mEndTime, false);

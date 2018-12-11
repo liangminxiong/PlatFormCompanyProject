@@ -73,7 +73,7 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
     private TimePickerView timePickerView;
     private String mStartTime;
     private String mEndTime;
-    private int mCount;
+    private int mCount=0;
 
     @Override
     protected int getContentViewResId() {
@@ -96,12 +96,20 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
         tv_back.setText(R.string.back);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         initRecycleView();
-        getDataByNet();
+//        getDataByNet();
     }
 
     @OnClick(R.id.tv_back)
     public void onClick() {
         finish();
+    }
+
+    @Override
+    protected void onStart() {
+        isRefresh = false;
+        CURPAGE = 1;
+        getDataByNet();
+        super.onStart();
     }
 
 
@@ -132,7 +140,7 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
                 if (!isRefresh) {
                     adapter.setNewData(listData);
                     isRefresh = true;
-                    adapter.setEnableLoadMore(true);
+                    adapter.setEnableLoadMore(false);
                 } else {
                     if (listData != null) {
                         adapter.addData(listData);
@@ -151,6 +159,11 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
         swipeRefreshLayout.setRefreshing(false);
     }
 
+    @Override
+    protected void onStop() {
+        listData.clear();
+        super.onStop();
+    }
 
     private void initRecycleView() {
         adapter = new MsgListsInfosAdapter(R.layout.recyclerview_item_msgdetail, listData, MsgListInfosActivtiy.this);
@@ -161,19 +174,10 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                int id = view.getId();
-                MsgListDataBean msgListDataBean = listData.get(position);
-                toOnlyDetailActivity(msgListDataBean);
-//                switch (id) {
-//                    case R.id.tv_item_name:
-//                        break;
-//                    case R.id.tv_item_content:
-//                        toOnlyDetailActivity(msgListDataBean);
-//                        break;
-//                    case R.id.tv_item_detail:
-//                        toOnlyDetailActivity(msgListDataBean);
-//                        break;
-//                }
+                if (listData.size() > 0) {
+                    MsgListDataBean msgListDataBean = listData.get(position);
+                    toOnlyDetailActivity(msgListDataBean);
+                }
             }
         });
     }
@@ -196,7 +200,7 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
         recyclerview.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mCount >= 10) {
+                if (mCount > 10) {
                     ++CURPAGE;
                     mPresenter.getAnMentDataList(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, false);
                     adapter.loadMoreComplete();

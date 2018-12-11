@@ -23,6 +23,7 @@ public class Constans {
     public static final int HOMEERROR = 100;//首页请求数据失败
     public static final int HOMEDASUCCESS = 103;//banner,homedata请求数据成功，取消loading
     public static final int BDLOCATION_TIME = 10000;//定位时间间隔
+    public static final int BDLOCATION_TIME_THREE = 3000;//定位时间间隔
     public static final String COOKIE_PREF = "cookie_pref";//cookie保存
     public static final String HAVE_USER_DATAS = "have_user_datas";//数据
     /*
@@ -76,7 +77,8 @@ public class Constans {
 
     /*上传经纬度type*/
     public static final String TYPE_LATLNG_JC = "jc";//监察
-    public static final String TYPE_LATLNG_LINE = "line";
+    public static final String TYPE_LATLNG_LINE = "line";//线路
+    public static final String TYPE_LATLNG_MR = "mr";//网格
     public static final int THIRTYTWO = 32;
 
     /*
@@ -225,4 +227,9 @@ public class Constans {
     public static final int DETAIL_MSG_SUCCESS = 131;//已读详情
     public static final int DETAIL_MSG_ERROR = 132;
 
+    public static final String THIRTYTWOID = "thirtyTwoId";
+    public static final String ANNTIME = "AnnTime";
+    public static final String PROJECTTIME = "ProjectTime";
+    public static final String VERSIONTIME = "VersionTime";
+    public static final String TERMINAL = "Terminal";
 }

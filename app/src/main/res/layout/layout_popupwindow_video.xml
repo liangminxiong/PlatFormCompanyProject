@@ -9,7 +9,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_24"
-        android:background="@color/titel_color"/>
+        android:background="@drawable/title_stuta"/>
 
     <com.babelstar.gviewer.VideoView
         android:id="@+id/videoview"

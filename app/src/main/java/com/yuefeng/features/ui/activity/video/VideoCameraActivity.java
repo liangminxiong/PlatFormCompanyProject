@@ -2,6 +2,7 @@ package com.yuefeng.features.ui.activity.video;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -27,13 +28,10 @@ import com.common.view.popuwindow.TreesListsPopupWindow;
 import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.adapter.CarListSelectAdapter;
 import com.yuefeng.features.contract.VideolistVContract;
 import com.yuefeng.features.event.LllegalWorkEvent;
-import com.yuefeng.features.modle.carlist.CarListSelectBean;
 import com.yuefeng.features.modle.video.ChangeVideoEquipmentDataBean;
 import com.yuefeng.features.presenter.VideolistVPresenter;
-import com.yuefeng.features.ui.view.VideoPopupWindow;
 import com.yuefeng.utils.VideoDatasUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -76,8 +74,6 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     VideoView mImageView4;
 
     private UpdateViewThread mUpdateViewThread = null;
-    private UpdateViewThreadOne mUpdateViewThreadOne = null;
-    private VideoPopupWindow popupWindow;
 
     private List<ChangeVideoEquipmentDataBean> carListData = new ArrayList<>();
     private List<Node> carDatas = new ArrayList<>();
@@ -87,10 +83,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     private SimpleTreeRecyclerAdapter carlistAdapter;
     private String carNumber;
     private String terminal;
-    private CarListSelectAdapter adapter;
-    private boolean isFirstOnclik = true;
-
-    private List<CarListSelectBean> listData = new ArrayList<>();
+    private String mCarNum;
 
 
     @Override
@@ -105,10 +98,6 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-//        View view = findViewById(R.id.space);
-//        view.setBackground(mActivity.getResources().getDrawable(R.drawable.title_toolbar_bg_blue));
-//        StatusBarUtil.setFadeStatusBarHeight(mActivity, view);
-
         presenter = new VideolistVPresenter(this, this);
         initUI();
         carDatasSelect.clear();
@@ -177,13 +166,14 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     /*车辆列表*/
     private void initCarlistPopupView() {
         if (carDatas.size() > 0) {
-            carListPopupWindow = new TreesListsPopupWindow(this, carDatas, true,false);
+            carListPopupWindow = new TreesListsPopupWindow(this, carDatas, true, false);
             carListPopupWindow.setTitleText("车辆列表");
             carListPopupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
 
             carListPopupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
                 @Override
                 public void onGoBack(String name, String terminal, String id, boolean isGetDatas) {
+                    mCarNum = name;
                     tv_title.setText(name);
                     if (isGetDatas) {
                         showVideoList(terminal);
@@ -192,6 +182,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
 
                 @Override
                 public void onSure(String name, String terminal, String id, boolean isGetDatas) {
+                    mCarNum = name;
                     tv_title.setText(name);
                     if (isGetDatas) {
                         showVideoList(terminal);
@@ -216,7 +207,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
         if (TextUtils.isEmpty(terminal)) {
             showSuccessToast("终端号获取失败");
         } else {
-
+            PreferencesUtils.putString(VideoCameraActivity.this, Constans.TERMINAL, terminal);
             initViewHightWith();
 
             ll_nodata.setVisibility(View.GONE);
@@ -237,6 +228,7 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     }
 
     private void initViewHightWith() {
+
         int hight = (int) AppUtils.mScreenHeight / 4;
         ViewUtils.setIVHightOrWidth(mImageView1, hight, ActionBar.LayoutParams.MATCH_PARENT);
         ViewUtils.setIVHightOrWidth(mImageView2, hight, ActionBar.LayoutParams.MATCH_PARENT);
@@ -287,31 +279,14 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
     }
 
     private void jumpZooVideoCamera(int channel, String channum) {
-//        if (!TextUtils.isEmpty(num)) {
-//            Intent intent = new Intent(VideoCameraActivity.this, VideoCameraZooActivity.class);
-//            Bundle bundle = new Bundle();
-//            bundle.putString("tp", num);
-//            bundle.putInt("channel", channel);
-//            bundle.putString("channum", channum);
-//            intent.putExtras(bundle);
-//            startActivity(intent);
-//        }
-        popupWindow = new VideoPopupWindow(this);
-        popupWindow.videoview.setViewInfo(terminal, terminal, channel, channum);
-        popupWindow.videoview.StartAV();
-        mUpdateViewThreadOne = new UpdateViewThreadOne();
-        mUpdateViewThreadOne.start();
-        popupWindow.setOnItemClickListener(new VideoPopupWindow.OnItemClickListener() {
-            @Override
-            public void onVideoDismiss() {
-                mUpdateViewThreadOne.setExit(true);
-                mUpdateViewThreadOne = null;
-                popupWindow.videoview.StopAV();
-                popupWindow.dismiss();
-            }
-        });
-
-        popupWindow.showAtLocation(ll_problem, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+        String terminal = PreferencesUtils.getString(VideoCameraActivity.this, Constans.TERMINAL, "");
+        Intent intent = new Intent();
+        intent.setClass(VideoCameraActivity.this, VideoCameraZooActivity.class);
+        intent.putExtra("mCarNum", mCarNum);
+        intent.putExtra("tp", terminal);
+        intent.putExtra("channel", channel);
+        intent.putExtra("channum", channum);
+        startActivity(intent);
     }
 
     public class UpdateViewThread extends Thread {
@@ -334,37 +309,6 @@ public class VideoCameraActivity extends BaseActivity implements VideolistVContr
                         mImageView2.updateView();
                         mImageView3.updateView();
                         mImageView4.updateView();
-                        Thread.sleep(20);
-                    } else {
-                        Thread.sleep(100);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            this.isExit = true;
-        }
-    }
-
-    public class UpdateViewThreadOne extends Thread {
-        private boolean isExit = false;
-        private boolean isPause = false;
-
-        public void setExit(boolean isExit) {
-            this.isExit = isExit;
-        }
-
-        public void setPause(boolean isPause) {
-            this.isPause = isPause;
-        }
-
-        public void run() {
-            while (!isExit) {
-                try {
-                    if (!isPause) {
-                        if (popupWindow != null) {
-                            popupWindow.videoview.updateView();
-                        }
                         Thread.sleep(20);
                     } else {
                         Thread.sleep(100);

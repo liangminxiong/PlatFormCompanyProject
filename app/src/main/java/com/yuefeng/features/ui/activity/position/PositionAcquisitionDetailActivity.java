@@ -25,6 +25,7 @@ import com.baidu.mapapi.model.LatLng;
 import com.common.base.codereview.BaseActivity;
 import com.common.utils.Constans;
 import com.common.utils.LocationGpsUtils;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
@@ -137,22 +138,25 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
             ImageHelper.showImageBitmap(gridview, PositionAcquisitionDetailActivity.this, imageUrls);
 
             String lnglat = msgBean.getLnglat();
+
+            LogUtils.d("000000==" + lnglat);
+
             if (TextUtils.isEmpty(lnglat)) {
                 requestPermissions();
             } else {
                 initBaiduMap();
-                showDataImageIntoMap(lnglat);
+                showDataImageIntoMap(lnglat,typeName);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void showDataImageIntoMap(String lnglat) {
+    private void showDataImageIntoMap(String lnglat,String typeName) {
         List<LatLng> points = com.yuefeng.utils.StringUtils.getLnglat(lnglat);
         int size = points.size();
         if (size > 1) {
-            drawLineIntoBaiduMap(points);
+            drawLineIntoBaiduMap(points,typeName);
         } else {
             LatLng latLng = points.get(0);
             if (baiduMap != null) {
@@ -167,10 +171,13 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
         }
     }
 
-    private void drawLineIntoBaiduMap(List<LatLng> points) {
+    private void drawLineIntoBaiduMap(List<LatLng> points,String typeName) {
         try {
             //起始点图层也会被清除，重新绘画
             if (points.size() > 1) {
+                if (typeName.equals("作业网格")) {
+                    points.add(points.get(0));
+                }
                 //清除上一次轨迹，避免重叠绘画
                 baiduMap.clear();
                 //起始点图层也会被清除，重新绘画

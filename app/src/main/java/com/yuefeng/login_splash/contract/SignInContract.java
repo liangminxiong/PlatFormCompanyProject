@@ -17,5 +17,7 @@ public interface SignInContract {
     interface Presenter {
         void signIn(String function, String userid, String terflag, String useridflag,
                     String lon, String lat, String address, String type);
+
+        void getAnnouncementByuserid(String function, String pid, String timestart, String timeend);
     }
 }

@@ -23,9 +23,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * Created  on 2018-05-18.
- * author:seven
- * email:seven2016s@163.com
  */
 
 public class TimeUtils {
@@ -99,16 +96,20 @@ public class TimeUtils {
 //日
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 //获取系统时间
-//小时
-//        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-//分钟
-//        int minute = calendar.get(Calendar.MINUTE);
-//秒
-//        int second = calendar.get(Calendar.SECOND);
+        String tH = "";
+        String tM = "";
+        if (month < 10) {
+            tH = "0" + month;
+        } else {
+            tH = String.valueOf(month);
+        }
+        if (day < 10) {
+            tM = "0" + day;
+        } else {
+            tM = String.valueOf(day);
+        }
 
-//        time2.setText("Calendar获取当前日期"+year+"年"+month+"月"+day+"日"+hour+":"+minute+":"+second);
-
-        time = year + "-" + month + "-" + day;
+        time = year + "-" + tH + "-" + tM;
         return time;
     }
 
@@ -417,8 +418,22 @@ public class TimeUtils {
      * @return end
      */
     public static boolean getBoolenStartEndTime(String start, String end) {
-        if (start.equals("") || end.equals("")) {
+        if (TimeUtils.isEmpty(start) || TimeUtils.isEmpty(end)) {
             return false;
+        }
+        Date stime = toDate(start, dateFormaterChinese);
+        Date etime = toDate(end, dateFormaterChinese);
+        if (stime != null && etime != null) {
+
+            long t = etime.getTime() - stime.getTime(); // 相差毫秒数
+            if (t >= 0)
+                return true;
+        }
+        return false;
+    }
+    public static boolean startSmortEndTime(String start, String end) {
+        if (TimeUtils.isEmpty(start) || TimeUtils.isEmpty(end)) {
+            return true;
         }
         Date stime = toDate(start, dateFormaterChinese);
         Date etime = toDate(end, dateFormaterChinese);
@@ -800,6 +815,27 @@ public class TimeUtils {
 
 
         return second;
+    }
+
+    /*
+     * 是否今天
+     * */
+    public static String isTodayTime(String times) {
+        String time = "";
+        String day = TimeUtils.getYearMonthDay();
+
+        if (!TextUtils.isEmpty(times)) {
+            if (times.length() > 16) {
+                time = times.substring(0, 10);
+                if (time.equals(day)) {
+                    time = times.substring(11, 16);
+                } else {
+                    time = times;
+                }
+            }
+        }
+
+        return time;
     }
 
     /*

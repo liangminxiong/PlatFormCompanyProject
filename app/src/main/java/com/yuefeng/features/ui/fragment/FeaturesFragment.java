@@ -20,7 +20,6 @@ import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.adapter.FeaturesMsgAdapter;
 import com.yuefeng.features.contract.FeaturesContract;
-import com.yuefeng.features.event.CarListEvent;
 import com.yuefeng.features.presenter.FeaturesPresenter;
 import com.yuefeng.features.ui.activity.JobMonitoringActivity;
 import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity;
@@ -32,6 +31,7 @@ import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
 import com.yuefeng.home.modle.NewMsgListDataBean;
 import com.yuefeng.home.ui.activity.NewMsgDetailInfosActivtiy;
+import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.ui.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -105,15 +105,13 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     private void getNetDatas() {
         if (mPresenter != null) {
             String pid = PreferencesUtils.getString(getContext(), Constans.ORGID, "");
-//            pid = "dg1954";
-//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
             mPresenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, mStartTime, mEndTime);
         }
     }
 
     @Override
     protected void initData() {
-        getNetDatas();
+//        getNetDatas();
     }
 
 
@@ -141,8 +139,26 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
         adapter.setNewData(listData);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void disposeCarListEvent(CarListEvent event) {
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void disposeCarListEvent(CarListEvent event) {
+//        switch (event.getWhat()) {
+//            case Constans.NEW_MSG_SUCCESS://展示最新消息
+//                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
+//                if (list.size() > 0) {
+//                    showAdapterDatasList(list);
+//                } else {
+//                    showSuccessToast("无最新消息");
+//                }
+//                break;
+//
+//            case  Constans.NEW_MSG_ERROR:
+//                break;
+//
+//        }
+//    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void disposeCommonEvent(SignInEvent event) {
         switch (event.getWhat()) {
             case Constans.NEW_MSG_SUCCESS://展示最新消息
                 List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
@@ -153,7 +169,8 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
                 }
                 break;
 
-            case  Constans.NEW_MSG_ERROR:
+            case Constans.NEW_MSG_ERROR:
+//                addNativeDatas();
                 break;
 
         }

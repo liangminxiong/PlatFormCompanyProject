@@ -12,15 +12,20 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
+import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.PreferencesUtils;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.event.CarListEvent;
+import com.yuefeng.home.contract.HomeContract;
 import com.yuefeng.home.modle.MsgListDataBean;
 import com.yuefeng.home.modle.NewMsgListDataBean;
+import com.yuefeng.home.presenter.HomePresenter;
 import com.yuefeng.home.ui.activity.AnnouncementListInfosActivtiy;
 import com.yuefeng.home.ui.activity.HistoryAppVersionActivtiy;
 import com.yuefeng.home.ui.activity.MsgListInfosActivtiy;
 import com.yuefeng.home.ui.adapter.HomeMsgInfosAdapter;
+import com.yuefeng.login_splash.event.SignInEvent;
+import com.yuefeng.ui.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,8 +46,7 @@ import butterknife.Unbinder;
  * Created by Administrator on 2018/7/11.
  */
 
-public class HomeFragment extends BaseFragment {
-    //        implements HomeContract.View{
+public class HomeFragment extends BaseFragment implements HomeContract.View {
     @BindView(R.id.tv_tab_name)
     TextView tv_tab_name;
     @BindView(R.id.tv_search_txt)
@@ -57,10 +61,11 @@ public class HomeFragment extends BaseFragment {
     Unbinder unbinder;
     private HomeMsgInfosAdapter adapter;
     private List<NewMsgListDataBean> listData = new ArrayList<>();
-//    private HomePresenter mPresenter;
+    private HomePresenter mPresenter;
 
     private String mStartTime = "";
     private String mEndTime = "";
+    private boolean isGetDataAgain = false;
 
     @Override
     protected int getLayoutId() {
@@ -73,28 +78,41 @@ public class HomeFragment extends BaseFragment {
             EventBus.getDefault().register(this);
         }
         unbinder = ButterKnife.bind(this, rootView);
-//        mPresenter = new HomePresenter(this, (MainActivity) getActivity());
+        mPresenter = new HomePresenter(this, (MainActivity) getActivity());
         tv_tab_name.setText(msg_name);
         tvSearchTxt.clearFocus();
         tvSearchTxt.setCursorVisible(false);
         recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         initRecycleView();
         rlSearch.setVisibility(View.VISIBLE);
-//        getNetDatas();
+        isGetDataAgain = false;
     }
+
+    @Override
+    public void onStart() {
+        if (isGetDataAgain) {
+            getNetDatas();
+        }
+        super.onStart();
+    }
+
+    @Override
+    protected void fetchData() {
+    }
+
 
     private void getNetDatas() {
-//        if (mPresenter != null) {
-//            String pid = PreferencesUtils.getString(getContext(), Constans.ORGID, "");
-//            pid = "dg1954";
-//            mPresenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, mStartTime, mEndTime);
-//        }
+        if (mPresenter != null) {
+            String pid = PreferencesUtils.getString(getContext(), Constans.ORGID, "");
+            mPresenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, mStartTime, mEndTime);
+        }
     }
 
-    private void initRecycleView() {
 
+    private void initRecycleView() {
         adapter = new HomeMsgInfosAdapter(R.layout.recyclerview_item_msginfos, listData);
         recyclerview.setAdapter(adapter);
+        addNativeDatas();
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
@@ -106,39 +124,17 @@ public class HomeFragment extends BaseFragment {
                     intent.setClass(Objects.requireNonNull(getActivity()), AnnouncementListInfosActivtiy.class);
                 } else if (genre.equals("2")) {
                     intent.setClass(Objects.requireNonNull(getActivity()), MsgListInfosActivtiy.class);
-//                    MsgListDataBean msgDataBean = new MsgListDataBean();
-//                    msgDataBean.setReviewid("43c62593ffffffc90debed0e841a2534");
-//                    intent.putExtra("msgData", msgDataBean);
-//                    intent.setClass(Objects.requireNonNull(getActivity()), OnlyMsgDetailInfosActivtiy.class);
                 } else {
                     intent.setClass(Objects.requireNonNull(getActivity()), HistoryAppVersionActivtiy.class);
                 }
-
                 startActivity(intent);
+                isGetDataAgain = true;
             }
         });
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void disposeCommonEvent(CommonEvent event) {
-//        switch (event.getWhat()) {
-//            case Constans.NEW_MSG_SUCCESS://展示最新消息
-//                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
-//                if (list.size() > 0) {
-//                    showAdapterDatasList(list);
-//                } else {
-//                    showSuccessToast("无最新消息");
-//                }
-//                break;
-//
-//            default:
-//                break;
-//
-//        }
-//    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void disposeCarListEvent(CarListEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void disposeCommonEvent(SignInEvent event) {
         switch (event.getWhat()) {
             case Constans.NEW_MSG_SUCCESS://展示最新消息
                 List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
@@ -148,12 +144,31 @@ public class HomeFragment extends BaseFragment {
                     showSuccessToast("无最新消息");
                 }
                 break;
+
             case Constans.NEW_MSG_ERROR:
                 addNativeDatas();
                 break;
 
         }
     }
+
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void disposeCarListEvent(CarListEvent event) {
+//        switch (event.getWhat()) {
+//            case Constans.NEW_MSG_SUCCESS://展示最新消息
+//                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
+//                if (list.size() > 0) {
+//                    showAdapterDatasList(list);
+//                } else {
+//                    showSuccessToast("无最新消息");
+//                }
+//                break;
+//            case Constans.NEW_MSG_ERROR:
+//                addNativeDatas();
+//                break;
+//
+//        }
+//    }
 
     private void addNativeDatas() {
         List<NewMsgListDataBean> list = new ArrayList<>();
@@ -215,11 +230,6 @@ public class HomeFragment extends BaseFragment {
                 tvSearchTxt.setCursorVisible(true);
                 break;
         }
-    }
-
-    @Override
-    protected void fetchData() {
-
     }
 
     @Override

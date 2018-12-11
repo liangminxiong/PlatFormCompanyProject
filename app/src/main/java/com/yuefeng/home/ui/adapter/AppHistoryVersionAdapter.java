@@ -47,10 +47,12 @@ public class AppHistoryVersionAdapter extends BaseQuickAdapter<HistoryAppListVer
             time = item.getVerdate();
             content = item.getVercontent();
             title = StringUtils.isEntryStrWu(title);
-            time = TimeUtils.formatHourMin(time);
+            time = TimeUtils.isTodayTime(time);
             mIsread = item.getIsread();
             if (mIsread.equals("0")) {
                 helper.setVisible(R.id.iv_item_isread, true);
+            }else {
+                helper.setVisible(R.id.iv_item_isread, false);
             }
             content = StringUtils.isEntryStrWu(content);
             name = StringUtils.isEntryStrWu(name);

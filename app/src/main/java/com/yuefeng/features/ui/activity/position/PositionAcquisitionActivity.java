@@ -179,7 +179,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     private List<GetCaijiTypeMsgBean> listType = new ArrayList<>();
     private String typeId;
     private String area;
-    private String lnglat;
+    private String lnglat = "";
     private boolean isFirstComeIn = true;
     private boolean isFirstInit = true;
     private boolean isFirstInitCt = true;
@@ -311,7 +311,11 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             latitude = location.getLatitude();
             longitude = location.getLongitude();
             address = location.getAddrStr();
-            firstLocation(latitude, longitude, address);
+            if ((longitude > 140.0) || (longitude < 65.0) || (latitude > 56.0) || (latitude < 12.0)) {
+                LogUtils.d("坐标异常");
+            } else {
+                firstLocation(latitude, longitude, address);
+            }
         }
     }
 
@@ -382,22 +386,31 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         if (latLng == null) {
             return;
         }
-        drawTrackLine(latLngTemp);
+        if (points.size() > 0) {
+            LatLng latLngDis = points.get(points.size() - 1);
+            double distance = DistanceUtil.getDistance(latLngDis, latLng);
+            LogUtils.d("距离====" + distance);
+            if (Math.abs(distance) < 1000) {
+                drawTrackLine(latLng);
+            }
+        } else {
+            drawTrackLine(latLng);
+        }
     }
 
     /*划线*/
     private void drawTrackLine(LatLng latLng) {
-        LogUtils.d("thirtyTwoId ==00===" + typePosition);
         try {
             if (isPositionAcquisition) {
-                if (typePosition == 1) {
-                    uploadLngLat(latLng);
-                }
+                uploadLngLat(latLng);
                 points.add(latLng);//如果要运动完成后画整个轨迹，位置点都在这个集合中
                 if (points.size() > 1 && baiduMap != null) {
                     //清除上一次轨迹，避免重叠绘画
                     drawLineIntoBaiduMap(baiduMap, points, true);
                 }
+            } else {
+                points.clear();
+                points.add(latLng);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -405,13 +418,20 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
     }
 
     private void uploadLngLat(LatLng latLng) {
+        String type = "";
         double lng = latLng.longitude;
         double lat = latLng.latitude;
         if (TextUtils.isEmpty(thirtyTwoId)) {
             thirtyTwoId = StringUtils.get32String(Constans.THIRTYTWO);
+            PreferencesUtils.putString(PositionAcquisitionActivity.this, Constans.THIRTYTWOID, thirtyTwoId);
+        }
+        if (typePosition == 1) {
+            type = Constans.TYPE_LATLNG_LINE;
+        } else if (typePosition == 0) {
+            type = Constans.TYPE_LATLNG_MR;
         }
         if (presenter != null) {
-            presenter.uploadLnglat(ApiService.UPLOADLNGLAT, Constans.TYPE_LATLNG_LINE, String.valueOf(lng), String.valueOf(lat), thirtyTwoId);
+            presenter.uploadLnglat(ApiService.UPLOADLNGLAT, type, String.valueOf(lng), String.valueOf(lat), thirtyTwoId);
         }
     }
 
@@ -624,13 +644,13 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 showSuccessToast("请填写名称");
                 return;
             }
-            if (typePosition == 0) {
-                lnglat = presenter.getLnglatStr(points);
-
-            }
-            if (typePosition == 1) {
+            if (tyepName.equals("线路")||tyepName.equals("网格")) {
                 lnglat = "";
+            } else {
+                lnglat = presenter.getLnglatStr(points);
             }
+            LogUtils.d("=========" + lnglat + " ++ " + thirtyTwoId);
+            thirtyTwoId = PreferencesUtils.getString(PositionAcquisitionActivity.this, Constans.THIRTYTWOID, "");
             presenter.upLoadmapInfo(ApiService.UPLOADMAPINFO, pid, userId, typeId, tyepName, name, lnglat,
                     area, mImagesArrays, thirtyTwoId);
         }
@@ -669,7 +689,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
 
     /*距离或者面积*/
     private void initAreaOrDistance() {
-        LatLng latLngTemp = null;
         area = "";
         if (points.size() > 2) {
             if (typePosition == 0) {//网格

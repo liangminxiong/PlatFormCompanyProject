@@ -47,10 +47,12 @@ public class AnnouncementListsInfosAdapter extends BaseQuickAdapter<Announcement
             time = item.getIssuedate();
             content = item.getContent();
             title = StringUtils.isEntryStrWu(title);
-            time = TimeUtils.formatHourMin(time);
+            time = TimeUtils.isTodayTime(time);
             mIsread = item.getIsread();
             if (mIsread.equals("0")) {
                 helper.setVisible(R.id.iv_item_isread, true);
+            }else {
+                helper.setVisible(R.id.iv_item_isread, false);
             }
             content = StringUtils.isEntryStrWu(content);
             name = StringUtils.isEntryStrWu(name);
@@ -58,15 +60,7 @@ public class AnnouncementListsInfosAdapter extends BaseQuickAdapter<Announcement
                     .setText(R.id.tv_item_name, name)
                     .setText(R.id.tv_item_title, title)
                     .setText(R.id.tv_item_content, "公告内容: " + content)
-//                    .addOnClickListener(R.id.tv_item_name)
-//                    .addOnClickListener(R.id.tv_item_content)
-//                    .addOnClickListener(R.id.tv_item_detail);
                     .addOnClickListener(R.id.rl_item);
-//            ImageView iv_item_image = helper.getView(R.id.iv_item_image);
-//            if (!TextUtils.isEmpty(imageUrl)) {
-//                GlideUtils.loadImageViewCircle(iv_item_image, imageUrl, R.drawable.picture, R.drawable.picture);
-//            } else {
-//            }
             helper.setImageResource(R.id.iv_user_logo, R.drawable.work);
         }
     }

@@ -241,6 +241,9 @@
         <activity
             android:name="com.yuefeng.features.ui.activity.video.VideoCameraActivity"
             android:hardwareAccelerated="false"/>
+        <activity
+            android:name="com.yuefeng.features.ui.activity.video.VideoCameraZooActivity"
+            android:hardwareAccelerated="false"/>
         <!--web详情-->
         <activity
             android:name="com.yuefeng.home.ui.activity.WebDetailInfosActivtiy"

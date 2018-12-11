@@ -228,6 +228,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 //         开启定位
             mLocationUtils.startLocation();
             mLocationUtils.registerOnResult(this);
+            requestPermissions();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1187,7 +1188,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 
     /*导航追车*/
     private void initNavicar(LatLng latLng) {
-        requestPermissions();
+
         distance = DistanceUtil.getDistance(mlatLng, BdLocationUtil.ConverGpsToBaidu(latLng));
         distance = Math.abs(distance);
         /*初始化导航*/

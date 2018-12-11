@@ -61,7 +61,7 @@
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_150"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_15"
                     android:background="@drawable/bg_nor"
                     tools:ignore="ContentDescription"/>

@@ -575,6 +575,9 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             double Longitude = trackData.getLo();
             LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(Latitude, Longitude));// 转经纬度;
             double ang = mTrackDatas.get(index).getAng();
+//            if (mBaiduMap != null) {
+//                mBaiduMap.clear();
+//            }
             if (type.equals("worker")) {
 //                imageInt = R.drawable.worker;
             } else {

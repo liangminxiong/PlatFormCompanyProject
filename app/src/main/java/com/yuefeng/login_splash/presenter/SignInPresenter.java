@@ -6,6 +6,7 @@ import com.common.network.HttpObservable;
 import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.yuefeng.features.modle.SubmitBean;
+import com.yuefeng.home.modle.NewMsgDataBean;
 import com.yuefeng.login_splash.contract.SignInContract;
 import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.ui.MainActivity;
@@ -39,16 +40,61 @@ public class SignInPresenter extends BasePresenterImpl<SignInContract.View, Main
                     protected void onSuccess(SubmitBean o) {
                         if (getView() != null) {
                             if (o.isSuccess()) {
-                                EventBus.getDefault().post(new SignInEvent(Constans.LOGIN, o.getMsg()));
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.LOGIN, o.getMsg()));
                             } else {
-                                EventBus.getDefault().post(new SignInEvent(Constans.USERERROR, o.getMsgTitle()));
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.USERERROR, o.getMsgTitle()));
                             }
                         }
                     }
 
                     @Override
                     protected void onFail(ApiException e) {
-                        EventBus.getDefault().post(new SignInEvent(Constans.USERERROR, e.getMsg()));
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.USERERROR, e.getMsg()));
+                    }
+                });
+
+    }
+
+    @Override
+    public void getAnnouncementByuserid(String function,String pid, String timestart, String timeend) {
+
+        HttpObservable.getObservable(apiRetrofit.getAnnouncementByuserid(function,pid, timestart, timeend))
+                .subscribe(new HttpResultObserver<NewMsgDataBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(NewMsgDataBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.NEW_MSG_SUCCESS, o.getMsg()));
+                            } else {
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.NEW_MSG_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.NEW_MSG_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.NEW_MSG_ERROR, ""));
+                        super.onError(e);
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.NEW_MSG_ERROR, error.getMsg()));
+                        super._onError(error);
                     }
                 });
 
