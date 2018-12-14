@@ -1,5 +1,6 @@
 package com.yuefeng.home.ui.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -29,7 +30,6 @@ import com.yuefeng.home.ui.activity.MsgListInfosActivtiy;
 import com.yuefeng.home.ui.adapter.ConversationListAdapterEx;
 import com.yuefeng.home.ui.adapter.HomeMsgInfosAdapter;
 import com.yuefeng.login_splash.event.SignInEvent;
-import com.yuefeng.rongIm.RongIMUtils;
 import com.yuefeng.ui.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -77,23 +77,15 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
     private String mEndTime = "";
     private boolean isGetDataAgain = false;
 
-    /*测试融云*/
-    public static String libaiToken = "aHHKNr+jpANSk+uWQRY39gM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cCCo35Kr7Jm6letTWyBnuJKhz4P1/QEycI9EHoqNufxmiRbEGBi6ETk=";
-    public static String dufuToken = "RYCau/8zuqnDOmQTWPRG1QM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cDJY62ny6gUtsHqBkVNTaVu99jIf/dRs6EZ/XPYM5WYb2aUb9QjRZ7s=";
-    public static String wangxizhiToken = "DAH3ZJtjSLdz3oaJJPaMYgM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cAQ4syW7Urv0jMLVuVYI85XcyUNRn2uYB2yGD+SXX0kF";
-    public static String libaiName = "李白";
-    public static String dufuName = "杜甫";
-    public static String wangxizhiName = "王羲之";
-    public static String libaiUserId = "zxcvbnmasdfghjkl";
-    public static String dufuUserId = "asdfghjklzxcvbnm";
-    public static String wangxizhiUserId = "qwertyuiop";
-    private static String portraitUrl = "http://rongcloud-web.qiniudn.com/docs_demo_rongcloud_logo.png";
+    /**
+     * 会话列表的fragment
+     */
+    private ConversationListFragment mConversationListFragment = null;
+    private boolean isDebug;
+    private Context mContext;
+    private Conversation.ConversationType[] mConversationsTypes = null;
 
-    //会话的聊天窗口
-    ConversationListFragment mListFragment;
-    FragmentManager mManager;
-    private boolean isDebug=true;
-    private Conversation.ConversationType[] mConversationsTypes;
+
 
     @Override
     protected int getLayoutId() {
@@ -115,60 +107,6 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
         rlSearch.setVisibility(View.VISIBLE);
         isGetDataAgain = false;
 
-        RongIMUtils.init(libaiUserId, libaiName, portraitUrl);
-        RongIMUtils.connectToken(libaiToken);
-        //会话列表
-        mListFragment = (ConversationListFragment) initConversationList();
-        mManager = getChildFragmentManager();
-        mManager.beginTransaction().replace(R.id.chat_content,mListFragment).commit();
-
-    }
-
-    private Fragment initConversationList() {
-        if (mListFragment == null) {
-            ConversationListFragment listFragment = new ConversationListFragment();
-            listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
-            Uri uri;
-            if (isDebug) {
-                uri = Uri.parse("rong://" + getContext().getApplicationInfo().packageName).buildUpon()
-                        .appendPath("conversationlist")
-                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "true") //设置私聊会话是否聚合显示
-                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
-                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
-                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
-                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
-                        .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
-                        .build();
-                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
-                        Conversation.ConversationType.GROUP,
-                        Conversation.ConversationType.PUBLIC_SERVICE,
-                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
-                        Conversation.ConversationType.SYSTEM,
-                        Conversation.ConversationType.DISCUSSION
-                };
-
-            } else {
-                uri = Uri.parse("rong://" + getContext().getApplicationInfo().packageName).buildUpon()
-                        .appendPath("conversationlist")
-                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
-                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
-                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
-                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
-                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
-                        .build();
-                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
-                        Conversation.ConversationType.GROUP,
-                        Conversation.ConversationType.PUBLIC_SERVICE,
-                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
-                        Conversation.ConversationType.SYSTEM
-                };
-            }
-            listFragment.setUri(uri);
-            mListFragment = listFragment;
-            return listFragment;
-        } else {
-            return mListFragment;
-        }
     }
 
     @Override
@@ -232,26 +170,72 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
                 addNativeDatas();
                 break;
 
+//            case Constans.RONGIM_SUCCESS:
+//                ToastUtils.showToast("融云连接成功");
+//                initConversationListUI();
+//
+//                break;
+
         }
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void disposeCarListEvent(CarListEvent event) {
-//        switch (event.getWhat()) {
-//            case Constans.NEW_MSG_SUCCESS://展示最新消息
-//                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
-//                if (list.size() > 0) {
-//                    showAdapterDatasList(list);
-//                } else {
-//                    showSuccessToast("无最新消息");
-//                }
-//                break;
-//            case Constans.NEW_MSG_ERROR:
-//                addNativeDatas();
-//                break;
-//
-//        }
-//    }
+    private void initConversationListUI() {
+        //会话列表
+        // 加入自定义会话列表
+        FragmentManager fragmentManager = getChildFragmentManager();
+        fragmentManager.beginTransaction()
+                .add(R.id.chat_content, initConversationList())
+                .commit();
+    }
+
+
+    private Fragment initConversationList() {
+        if (mConversationListFragment == null) {
+            ConversationListFragment listFragment = new ConversationListFragment();
+            listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
+            Uri uri;
+            if (isDebug) {
+                uri = Uri.parse("rong://" + getActivity().getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "true") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM,
+                        Conversation.ConversationType.DISCUSSION
+                };
+
+            } else {
+                uri = Uri.parse("rong://" + getActivity().getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM
+                };
+            }
+            listFragment.setUri(uri);
+            mConversationListFragment = listFragment;
+            return listFragment;
+        } else {
+            return mConversationListFragment;
+        }
+    }
+
 
     private void addNativeDatas() {
         List<NewMsgListDataBean> list = new ArrayList<>();

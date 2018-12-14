@@ -7,10 +7,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -33,13 +35,16 @@ import com.common.utils.RxHelper;
 import com.common.utils.TimeUtils;
 import com.common.view.dialog.SigninCacheSureDialog;
 import com.luck.picture.lib.permissions.RxPermissions;
+import com.yuefeng.book.ui.fragment.AddressbookFragment;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.ui.fragment.FeaturesFragment;
 import com.yuefeng.home.modle.NewMsgListDataBean;
+import com.yuefeng.home.ui.adapter.ConversationListAdapterEx;
 import com.yuefeng.home.ui.fragment.HomeFragment;
 import com.yuefeng.login_splash.contract.SignInContract;
 import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.login_splash.presenter.SignInPresenter;
+import com.yuefeng.rongIm.RongIMUtils;
 import com.yuefeng.ui.base.fragment.NoSlideViewPager;
 import com.yuefeng.ui.base.fragment.TabItemInfo;
 import com.yuefeng.usercenter.ui.fragment.UserInfoFragment;
@@ -64,6 +69,9 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.rong.imkit.RongContext;
+import io.rong.imkit.fragment.ConversationListFragment;
+import io.rong.imlib.model.Conversation;
 
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 
@@ -112,6 +120,18 @@ public class MainActivity extends BaseActivity implements
     private String ProjectTime;
     private String VersionTime;
 
+    /*测试融云*/
+    public static String libaiToken = "aHHKNr+jpANSk+uWQRY39gM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cCCo35Kr7Jm6letTWyBnuJKhz4P1/QEycI9EHoqNufxmiRbEGBi6ETk=";
+    public static String dufuToken = "RYCau/8zuqnDOmQTWPRG1QM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cDJY62ny6gUtsHqBkVNTaVu99jIf/dRs6EZ/XPYM5WYb2aUb9QjRZ7s=";
+    public static String wangxizhiToken = "DAH3ZJtjSLdz3oaJJPaMYgM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cAQ4syW7Urv0jMLVuVYI85XcyUNRn2uYB2yGD+SXX0kF";
+    public static String libaiName = "李白";
+    public static String dufuName = "杜甫";
+    public static String wangxizhiName = "王羲之";
+    public static String libaiUserId = "zxcvbnmasdfghjkl";
+    public static String dufuUserId = "asdfghjklzxcvbnm";
+    public static String wangxizhiUserId = "qwertyuiop";
+    private static String portraitUrl = "http://rongcloud-web.qiniudn.com/docs_demo_rongcloud_logo.png";
+
     @Override
     protected int getContentViewResId() {
         return R.layout.activity_main;
@@ -126,6 +146,8 @@ public class MainActivity extends BaseActivity implements
             if (!EventBus.getDefault().isRegistered(this)) {
                 EventBus.getDefault().register(this);
             }
+            RongIMUtils.init(libaiUserId, libaiName, portraitUrl);
+            RongIMUtils.connectToken(libaiToken);
             ll_parent.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             presenter = new SignInPresenter(this, this);
             initViewPager();
@@ -138,6 +160,7 @@ public class MainActivity extends BaseActivity implements
             iv_back.setVisibility(View.INVISIBLE);
             tv_title.setText(msg_name);
             PreferencesUtils.putString(MyApplication.getContext(), "Fengrun", "无");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -356,6 +379,62 @@ public class MainActivity extends BaseActivity implements
 
     }
 
+
+    /**
+     * 会话列表的fragment
+     */
+    private ConversationListFragment mConversationListFragment = null;
+    private boolean isDebug;
+    private Conversation.ConversationType[] mConversationsTypes = null;
+
+
+    private Fragment initConversationList() {
+        if (mConversationListFragment == null) {
+            ConversationListFragment listFragment = new ConversationListFragment();
+            listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
+            Uri uri;
+            if (isDebug) {
+                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "true") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM,
+                        Conversation.ConversationType.DISCUSSION
+                };
+
+            } else {
+                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM
+                };
+            }
+            listFragment.setUri(uri);
+            mConversationListFragment = listFragment;
+            return listFragment;
+        } else {
+            return mConversationListFragment;
+        }
+    }
+
     private void initViewPager() {
         try {
             tabItemInfos = new ArrayList<>();
@@ -364,16 +443,16 @@ public class MainActivity extends BaseActivity implements
 //        tabItemInfos.add(new TabItemInfo(new TackFragment(), R.drawable.search_button_selector, R.string.tab_tack_name));
             /*应用*/
             tabItemInfos.add(new TabItemInfo(new FeaturesFragment(), R.drawable.application_button_selector, R.string.tab_search_name));
-//        tabItemInfos.add(new TabItemInfo(new AddressbookFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
+            tabItemInfos.add(new TabItemInfo(new AddressbookFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
             tabItemInfos.add(new TabItemInfo(new UserInfoFragment(), R.drawable.my_button_selector, R.string.tab_mine_name));
-
+//            initConversationListUI();
             pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), tabItemInfos, mActivity);
             tabLayout.setTabMode(TabLayout.MODE_FIXED);
             tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
             viewPager.setAdapter(pagerAdapter);
             viewPager.setOffscreenPageLimit(tabItemInfos.size());
             tabLayout.setupWithViewPager(viewPager);
-            tabLayout.getTabAt(1).select(); //默认选中某项放在加载viewpager之后
+            tabLayout.getTabAt(0).select(); //默认选中某项放在加载viewpager之后
             tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
                 String titleName = "";
@@ -387,8 +466,8 @@ public class MainActivity extends BaseActivity implements
                         titleName = tack_name;
                     } else if (position == 2) {
                         titleName = features_name;
-//                } else if (position == 3) {
-//                    titleName = book_name;
+//                    } else if (position == 3) {
+//                        titleName = book_name;
                     } else {
                         titleName = my_name;
                     }
@@ -441,9 +520,11 @@ public class MainActivity extends BaseActivity implements
                     showAdapterDatasList(list);
                 }
                 break;
-            default:
-                break;
         }
+    }
+
+    private void initConversationListUI() {
+        tabItemInfos.add(new TabItemInfo(initConversationList(), R.drawable.search_button_selector, R.string.tab_tack_name));
     }
 
     private void showAdapterDatasList(List<NewMsgListDataBean> list) {
@@ -559,6 +640,7 @@ public class MainActivity extends BaseActivity implements
         tabItemInfos = null;
         tabLayout = null;
         EventBus.getDefault().unregister(this);
+        RongIMUtils.destroyRongIM();
     }
 
     @Override

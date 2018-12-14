@@ -232,4 +232,5 @@ public class Constans {
     public static final String PROJECTTIME = "ProjectTime";
     public static final String VERSIONTIME = "VersionTime";
     public static final String TERMINAL = "Terminal";
+    public static final int RONGIM_SUCCESS = 1000;//融云成功
 }

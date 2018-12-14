@@ -73,6 +73,50 @@
         android:protectionLevel="signature"/>
     <uses-permission android:name="com.yuefeng.paltform.permission.JPUSH_MESSAGE"/>
 
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- ⼩米 配置开始 < -->
+    <permission
+        android:name="cn.rongcloud.im.permission.MIPUSH_RECEIVE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="cn.rongcloud.im.permission.MIPUSH_RECEIVE" />
+    <!-- ⼩米 配置结束 < -->
+    <!-- GCM 配置开始 < -->
+    <permission
+        android:name="cn.rongcloud.im.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="cn.rongcloud.im.permission.C2D_MESSAGE" />
+    <!-- GCM 配置结束 < -->
+    <!-- 华为 配置开始 < -->
+    <!--HMS-SDK 引导升级 HMS 功能，访问 OTA 服务器需要网络权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!--HMS-SDK 引导升级 HMS 功能，保存下载的升级包需要 SD 卡写权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 检测网络状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 检测 wifi 状态 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 为了获取用户手机的 IMEI，用来唯一的标识用户。-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!-- 如果是安卓 8.0，应用编译配置的 targetSdkVersion>=26，请务必添加以下权限 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- 华为 配置结束 < -->
+
+    <!-- MeiZu 配置开始 < -->
+    <!-- 兼容 flyme5.0 以下版本，魅族内部集成 pushSDK 必填，不然无法收到 消息 -->
+    <uses-permission
+        android:name="com.meizu.flyme.push.permission.RECEIVE"/>
+    <permission
+        android:name="cn.rongcloud.im.push.permission.MESSAGE"
+        android:protectionLevel="signature"/>
+    <uses-permission android:name="cn.rongcloud.im.push.permission.MESSAGE"/>
+    <!-- 兼容 flyme3.0 配置权限 -->
+    <uses-permission android:name="com.meizu.c2dm.permission.RECEIVE" />
+    <!-- MeiZu 配置结束 < -->
+
+
     <!--屏幕-->
     <!--<supports-screens
         android:anyDensity="true"
@@ -364,7 +408,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
 
                 <data
-                    android:host="lmx.com.rong_clouddemo"
+                    android:host="io.rong.fast"
                     android:pathPrefix="/subconversationlist"
                     android:scheme="rong"/>
             </intent-filter>
@@ -382,7 +426,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
 
                 <data
-                    android:host="lmx.com.rong_clouddemo"
+                    android:host="io.rong.fast"
                     android:pathPrefix="/conversation/"
                     android:scheme="rong"/>
             </intent-filter>
@@ -400,7 +444,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
 
                 <data
-                    android:host="lmx.com.rong_clouddemo"
+                    android:host="io.rong.fast"
                     android:pathPrefix="/conversationlist"
                     android:scheme="rong"/>
             </intent-filter>

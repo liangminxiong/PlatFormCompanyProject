@@ -1168,6 +1168,10 @@ public class JobMonitoringActivity extends BaseActivity implements
 
     /*跳转轨迹*/
     private void intoTrack(String terminalNO, String type, String carNum) {
+        if (TextUtils.isEmpty(terminalNO)||TextUtils.isEmpty(type)||TextUtils.isEmpty(carNum)){
+            showSuccessToast("车辆信息出错，请重新加载");
+            return;
+        }
         if (latLng != null) {
             Intent intent = new Intent();
             intent.setClass(JobMonitoringActivity.this, HistoryTrackActivity.class);

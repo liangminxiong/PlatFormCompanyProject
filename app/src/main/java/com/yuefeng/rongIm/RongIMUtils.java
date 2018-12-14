@@ -4,7 +4,11 @@ package com.yuefeng.rongIm;
 import android.content.Context;
 import android.net.Uri;
 
+import com.common.utils.Constans;
+import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.ui.MyApplication;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +60,7 @@ public class RongIMUtils {
 
             @Override
             public void onSuccess(String s) {
+                EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_SUCCESS, ""));
             }
 
             @Override
