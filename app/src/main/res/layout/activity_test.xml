@@ -12,59 +12,693 @@
     <include
         android:id="@+id/include"
         layout="@layout/title_bar_mvp"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <ImageView
-        android:id="@+id/iv_friend_acatar"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginTop="@dimen/dp_10"
-        android:src="@mipmap/ice_image_i_add"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/include"
-        tools:ignore="ContentDescription,RtlHardcoded"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="82dp"
+        android:background="@color/color_f6">
 
-    <TextView
-        android:id="@+id/tv_friend_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginTop="@dimen/dp_2"
-        android:textColor="#404040"
-        android:textSize="@dimen/sp_15"
-        app:layout_constraintLeft_toRightOf="@+id/iv_friend_acatar"
-        app:layout_constraintTop_toTopOf="@+id/iv_friend_acatar"
-        tools:ignore="RtlHardcoded"
-        tools:text="共享对象"/>
+        <TextView
+            android:id="@+id/tv_begin"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:gravity="center"
+            android:text="开始时间:"
+            android:textColor="@color/black"
+            android:textSize="14sp"/>
 
-    <TextView
-        android:id="@+id/tv_friend_motto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginStart="@dimen/dp_10"
-        android:textColor="#404040"
-        android:textSize="@dimen/sp_14"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_friend_acatar"
-        app:layout_constraintLeft_toRightOf="@+id/iv_friend_acatar"
-        tools:ignore="RtlHardcoded"
-        tools:text="我有句mmp一定要讲"/>
+        <TextView
+            android:id="@+id/tv_begin_time"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
+            android:drawableRight="@drawable/fold_right"
+            android:drawablePadding="20dp"
+            android:layout_toRightOf="@id/tv_begin"
+            android:gravity="center_vertical"
+            android:text="2018-11-22 20:44:12"
+            android:textColor="@color/blue"
+            android:textSize="15sp"/>
 
-    <TextView
-        android:id="@+id/tv_mine_friend_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/dp_10"
-        android:layout_marginRight="@dimen/dp_10"
-        android:textSize="@dimen/sp_15"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_friend_name"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_friend_name"
-        tools:ignore="RtlHardcoded"
-        tools:text="刚刚"/>
+        <View
+            android:id="@+id/view_line"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@id/tv_begin"
+            android:background="@color/color_f6"/>
 
+        <TextView
+            android:id="@+id/tv_end"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_below="@id/view_line"
+            android:layout_marginLeft="15dp"
+            android:gravity="center"
+            android:text="结束时间:"
+            android:textColor="@color/black"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_end_time"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_below="@id/view_line"
+            android:drawableRight="@drawable/fold_right"
+            android:drawablePadding="20dp"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/tv_end"
+            android:gravity="center_vertical"
+            android:text="2018-11-22 20:44:12"
+            android:textColor="@color/blue"
+            android:textSize="15sp"/>
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@id/tv_end"
+            android:background="@color/color_f6"/>
+
+        <Button
+            android:id="@+id/btn_sumbit"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_centerHorizontal="true"
+            android:background="@color/blue"
+            android:onClick="search"
+            android:text="查询"
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+
+    </RelativeLayout>
+
+    <!-- <ScrollView
+         android:layout_width="match_parent"
+         android:layout_height="match_parent">
+
+         <RelativeLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/color_f6">
+
+             <TextView
+                 android:id="@+id/tv_name"
+                 style="@style/textview_tcblue_ts14"
+                 android:text="客户名称:"/>
+
+             <TextView
+                 android:id="@+id/tv_personal_name"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_toRightOf="@id/tv_name"
+                 android:text="张三"/>
+
+             <TextView
+                 android:id="@+id/tv_clientl"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_toRightOf="@id/tv_personal_name"
+                 android:paddingStart="25dp"
+                 android:text="客户联系人:"/>
+
+             <TextView
+                 android:id="@+id/tv_clientl_name"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_toRightOf="@id/tv_clientl"
+                 android:text="李四"/>
+
+
+             <TextView
+                 android:id="@+id/tv_drive"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_name"
+                 android:text="行驶路线:"/>
+
+             <TextView
+                 android:id="@+id/tv_drive_line"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_name"
+                 android:layout_toRightOf="@id/tv_drive"
+                 android:text="高峰快线32路"/>
+
+             <TextView
+                 android:id="@+id/tv_desc"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_drive"
+                 android:text="行程描述:"/>
+
+             <TextView
+                 android:id="@+id/tv_desc_memo"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_drive"
+                 android:layout_toRightOf="@id/tv_desc"
+                 android:text="超车超车"/>
+
+             <TextView
+                 android:id="@+id/tv_begin"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_desc"
+                 android:text="始点:"/>
+
+             <TextView
+                 android:id="@+id/tv_begin_address"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_desc"
+                 android:layout_toRightOf="@id/tv_begin"
+                 android:text="广州"/>
+
+             <TextView
+                 android:id="@+id/tv_midle"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_begin"
+                 android:text="中途点:"/>
+
+             <TextView
+                 android:id="@+id/tv_midle_address"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_begin"
+                 android:layout_toRightOf="@id/tv_midle"
+                 android:text="上海"/>
+
+             <TextView
+                 android:id="@+id/tv_end"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_midle"
+                 android:text="终点:"/>
+
+             <TextView
+                 android:id="@+id/tv_end_address"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_midle"
+                 android:layout_toRightOf="@id/tv_end"
+                 android:text="北京"/>
+
+
+             <TextView
+                 android:id="@+id/tv_receivable"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_end"
+                 android:text="应收:"/>
+
+             <TextView
+                 android:id="@+id/tv_receivable_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_end"
+                 android:layout_toRightOf="@id/tv_receivable"
+                 android:text="460"/>
+
+             <TextView
+                 android:id="@+id/tv_receivabled"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_end"
+                 android:layout_toRightOf="@id/tv_receivable_count"
+                 android:paddingStart="25dp"
+                 android:text="已收:"/>
+
+             <TextView
+                 android:id="@+id/tv_receivabled_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_end"
+                 android:layout_toRightOf="@id/tv_receivabled"
+                 android:text="400"/>
+
+             <TextView
+                 android:id="@+id/tv_tolls"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_end"
+                 android:layout_toRightOf="@id/tv_receivabled_count"
+                 android:paddingStart="25dp"
+                 android:text="路桥费:"/>
+
+             <TextView
+                 android:id="@+id/tv_tolls_personal"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_end"
+                 android:layout_toRightOf="@id/tv_tolls"
+                 android:text="我方付"/>
+
+             &lt;!&ndash;停车费&ndash;&gt;
+
+             <TextView
+                 android:id="@+id/tv_parkingfee"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_receivable"
+                 android:text="停车费:"/>
+
+             <TextView
+                 android:id="@+id/tv_parkingfee_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_receivable"
+                 android:layout_toRightOf="@id/tv_parkingfee"
+                 android:text="我方付"/>
+
+             <TextView
+                 android:id="@+id/tv_payment"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_receivable"
+                 android:layout_toRightOf="@id/tv_parkingfee_count"
+                 android:text="付款方式:"/>
+
+             <TextView
+                 android:id="@+id/tv_payment_method"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_receivable"
+                 android:layout_toRightOf="@id/tv_payment"
+                 android:text="挂账"/>
+
+             <TextView
+                 android:id="@+id/tv_car"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_parkingfee"
+                 android:text="车牌号:"/>
+
+             <TextView
+                 android:id="@+id/tv_car_number"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_parkingfee"
+                 android:layout_toRightOf="@id/tv_parkingfee"
+                 android:text="粤AK9847"/>
+
+             <TextView
+                 android:id="@+id/tv_seat"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_parkingfee"
+                 android:layout_toRightOf="@id/tv_car_number"
+                 android:paddingStart="25dp"
+                 android:text="座位:"/>
+
+             <TextView
+                 android:id="@+id/tv_seat_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_parkingfee"
+                 android:layout_toRightOf="@id/tv_seat"
+                 android:text="40"/>
+
+             <TextView
+                 android:id="@+id/tv_firstdriver"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_car"
+                 android:text="第一司机:"/>
+
+             <TextView
+                 android:id="@+id/tv_firstdriver_name"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_car"
+                 android:layout_toRightOf="@id/tv_firstdriver"
+                 android:text="胡歌"/>
+
+             <TextView
+                 android:id="@+id/tv_seconddriver"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_car"
+                 android:layout_toRightOf="@id/tv_firstdriver_name"
+                 android:text="第二司机:"/>
+
+             <TextView
+                 android:id="@+id/tv_seconddriver_name"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_car"
+                 android:layout_toRightOf="@id/tv_seconddriver"
+                 android:text="彭于晏"/>
+
+             <TextView
+                 android:id="@+id/tv_salesman"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_firstdriver"
+                 android:text="业务员:"/>
+
+             <TextView
+                 android:id="@+id/tv_salesman_name"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_firstdriver"
+                 android:layout_toRightOf="@id/tv_salesman"
+                 android:text="唐嫣"/>
+
+             <TextView
+                 android:id="@+id/tv_order"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_salesman"
+                 android:text="订单类型:"/>
+
+             <TextView
+                 android:id="@+id/tv_order_type"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_salesman"
+                 android:layout_toRightOf="@id/tv_order"
+                 android:text="主动下单"/>
+
+             <TextView
+                 android:id="@+id/tv_usecar"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_salesman"
+                 android:layout_toRightOf="@id/tv_order_type"
+                 android:text="用车性质:"/>
+
+             <TextView
+                 android:id="@+id/tv_usecar_type"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_salesman"
+                 android:layout_toRightOf="@id/tv_usecar"
+                 android:text="租赁"/>
+
+
+             <TextView
+                 android:id="@+id/tv_be_time"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_order"
+                 android:text="预计出发时间:"/>
+
+             <TextView
+                 android:id="@+id/tv_begin_time"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_order"
+                 android:layout_toRightOf="@id/tv_be_time"
+                 android:text="2018-12-13 20:04:45"/>
+
+             <TextView
+                 android:id="@+id/tv_e_time"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_be_time"
+                 android:text="预计返程时间:"/>
+
+             <TextView
+                 android:id="@+id/tv_end_time"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_be_time"
+                 android:layout_toRightOf="@id/tv_e_time"
+                 android:text="2018-12-13 20:04:45"/>
+
+             <TextView
+                 android:id="@+id/tv_day"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_e_time"
+                 android:text="用车天数（天）:"/>
+
+             <TextView
+                 android:id="@+id/tv_day_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_e_time"
+                 android:layout_toRightOf="@id/tv_day"
+                 android:text="2"/>
+
+             <TextView
+                 android:id="@+id/tv_dispatch"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_day"
+                 android:text="可二次调度时间:"/>
+
+             <TextView
+                 android:id="@+id/tv_dispatch_time"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_day"
+                 android:layout_toRightOf="@id/tv_dispatch"
+                 android:text="2018-12-12 12 04:45:12"/>
+
+             <TextView
+                 android:id="@+id/tv_estimated"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_dispatch"
+                 android:text="预计里程:"/>
+
+             <TextView
+                 android:id="@+id/tv_estimated_mileage"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_dispatch"
+                 android:layout_toRightOf="@id/tv_estimated"
+                 android:text="48.87"/>
+
+             <TextView
+                 android:id="@+id/tv_invoice"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_dispatch"
+                 android:layout_marginLeft="25dp"
+                 android:layout_toRightOf="@id/tv_estimated_mileage"
+                 android:text="发票类型:"/>
+
+             <TextView
+                 android:id="@+id/tv_invoice_type"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_dispatch"
+                 android:layout_toRightOf="@id/tv_invoice"
+                 android:text="自主"/>
+
+             &lt;!&ndash;回扣&ndash;&gt;
+             <TextView
+                 android:id="@+id/tv_rebate"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_estimated"
+                 android:text="回扣(%):"/>
+
+             <TextView
+                 android:id="@+id/tv_rebate_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_estimated"
+                 android:layout_toRightOf="@id/tv_rebate"
+                 android:text="5"/>
+
+             <TextView
+                 android:id="@+id/tv_admissionfee"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_estimated"
+                 android:layout_marginLeft="30dp"
+                 android:layout_toRightOf="@id/tv_rebate_count"
+                 android:text="入场费(元):"/>
+
+             <TextView
+                 android:id="@+id/tv_admissionfee_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_estimated"
+                 android:layout_toRightOf="@id/tv_admissionfee"
+                 android:text="32"/>
+
+             &lt;!&ndash;路桥费&ndash;&gt;
+             <TextView
+                 android:id="@+id/tv_road"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_rebate"
+                 android:text="路桥费(元):"/>
+
+             <TextView
+                 android:id="@+id/tv_roadmoney_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_rebate"
+                 android:layout_toRightOf="@id/tv_road"
+                 android:text="54"/>
+
+             <TextView
+                 android:id="@+id/tv_parking"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_rebate"
+                 android:layout_marginLeft="30dp"
+                 android:layout_toRightOf="@id/tv_roadmoney_count"
+                 android:text="停车费(元):"/>
+
+             <TextView
+                 android:id="@+id/tv_parkingmoney_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_rebate"
+                 android:layout_toRightOf="@id/tv_parking"
+                 android:text="32"/>
+
+             &lt;!&ndash;燃油费&ndash;&gt;
+             <TextView
+                 android:id="@+id/tv_oils"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_road"
+                 android:text="燃油费(元):"/>
+
+             <TextView
+                 android:id="@+id/tv_oilsmoney_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_road"
+                 android:layout_toRightOf="@id/tv_road"
+                 android:text="50"/>
+
+             <TextView
+                 android:id="@+id/tv_adtion"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_road"
+                 android:layout_marginLeft="30dp"
+                 android:layout_toRightOf="@id/tv_oilsmoney_count"
+                 android:text="住宿费(元):"/>
+
+             <TextView
+                 android:id="@+id/tv_adtionmoney_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_road"
+                 android:layout_toRightOf="@id/tv_adtion"
+                 android:text="40"/>
+
+
+             &lt;!&ndash;伙食费&ndash;&gt;
+             <TextView
+                 android:id="@+id/tv_foods"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_oils"
+                 android:text="伙食费(元):"/>
+
+             <TextView
+                 android:id="@+id/tv_foodsmoney_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_oils"
+                 android:layout_toRightOf="@id/tv_road"
+                 android:text="53"/>
+
+             <TextView
+                 android:id="@+id/tv_other"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_oils"
+                 android:layout_marginLeft="30dp"
+                 android:layout_toRightOf="@id/tv_foodsmoney_count"
+                 android:text="其他补贴(元):"/>
+
+             <TextView
+                 android:id="@+id/tv_othernmoney_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_oils"
+                 android:layout_toRightOf="@id/tv_other"
+                 android:text="40"/>
+
+
+             &lt;!&ndash;司机奖金&ndash;&gt;
+             <TextView
+                 android:id="@+id/tv_firstbonus"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_foods"
+                 android:text="第一司机奖金(元):"/>
+
+             <TextView
+                 android:id="@+id/tv_firstbonus_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_foods"
+                 android:layout_toRightOf="@id/tv_firstbonus"
+                 android:text="1222"/>
+
+             <TextView
+                 android:id="@+id/tv_firstcommission"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_foods"
+                 android:layout_marginLeft="30dp"
+                 android:layout_toRightOf="@id/tv_firstbonus_count"
+                 android:text="第一司机提成(%):"/>
+
+             <TextView
+                 android:id="@+id/tv_firstcommission_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_foods"
+                 android:layout_toRightOf="@id/tv_firstcommission"
+                 android:text="4"/>
+
+             &lt;!&ndash;司机奖金&ndash;&gt;
+             <TextView
+                 android:id="@+id/tv_secondbonus"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_firstbonus"
+                 android:text="第二司机奖金(元):"/>
+
+             <TextView
+                 android:id="@+id/tv_secondbonus_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_firstbonus"
+                 android:layout_toRightOf="@id/tv_secondbonus"
+                 android:text="1222"/>
+
+             <TextView
+                 android:id="@+id/tv_secondcommission"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_firstbonus"
+                 android:layout_marginLeft="30dp"
+                 android:layout_toRightOf="@id/tv_firstbonus_count"
+                 android:text="第二司机提成(%):"/>
+
+             <TextView
+                 android:id="@+id/tv_secondcommission_count"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_firstbonus"
+                 android:layout_toRightOf="@id/tv_secondcommission"
+                 android:text="5"/>
+
+             <TextView
+                 android:id="@+id/tv_memo"
+                 style="@style/textview_tcblue_ts14"
+                 android:layout_below="@id/tv_secondbonus"
+                 android:text="备注:"/>
+
+             <TextView
+                 android:id="@+id/tv_memo_detail"
+                 style="@style/textview_tcblack_ts14"
+                 android:layout_below="@id/tv_secondbonus"
+                 android:layout_toRightOf="@id/tv_memo"
+                 android:text="路单录入成功了哟"/>
+
+             <TextView
+                 android:id="@+id/tv_begin_mellege"
+                 android:layout_width="100dp"
+                 android:layout_height="50dp"
+                 android:layout_below="@id/tv_memo"
+                 android:layout_marginTop="20dp"
+                 android:background="@color/white"
+                 android:gravity="center"
+                 android:text="开始里程:"
+                 android:textColor="@color/black"
+                 android:textSize="14sp"/>
+
+             <EditText
+                 android:id="@+id/edt_begin_mellege"
+                 android:layout_width="match_parent"
+                 android:layout_height="50dp"
+                 android:layout_below="@id/tv_memo"
+                 android:layout_marginTop="20dp"
+                 android:textSize="14sp"
+                 android:layout_toRightOf="@id/tv_begin_mellege"
+                 android:background="@color/white"
+                 android:hint="请输入开始里程"/>
+
+
+             <TextView
+                 android:id="@+id/tv_end_mellege"
+                 android:layout_width="100dp"
+                 android:layout_height="50dp"
+                 android:layout_below="@id/tv_begin_mellege"
+                 android:layout_marginTop="1dp"
+                 android:background="@color/white"
+                 android:gravity="center"
+                 android:text="结束里程:"
+                 android:textColor="@color/black"
+                 android:textSize="14sp"/>
+
+             <EditText
+                 android:id="@+id/edt_end_mellege"
+                 android:layout_width="match_parent"
+                 android:layout_height="50dp"
+                 android:layout_below="@id/tv_begin_mellege"
+                 android:layout_marginTop="1dp"
+                 android:textSize="14sp"
+                 android:layout_toRightOf="@id/tv_end_mellege"
+                 android:background="@color/white"
+                 android:hint="请输入结束里程"/>
+
+
+             <Button
+                 android:id="@+id/btn_sumbit"
+                 android:layout_width="match_parent"
+                 android:layout_height="40dp"
+                 android:layout_below="@id/tv_end_mellege"
+                 android:layout_marginBottom="30dp"
+                 android:layout_marginLeft="15dp"
+                 android:layout_marginRight="15dp"
+                 android:layout_marginTop="40dp"
+                 android:background="@color/blue"
+                 android:onClick="sumbit"
+                 android:text="提交"
+                 android:textColor="@color/white"
+                 tools:ignore="HardcodedText"/>
+
+
+         </RelativeLayout>
+     </ScrollView>-->
 
 </android.support.constraint.ConstraintLayout>

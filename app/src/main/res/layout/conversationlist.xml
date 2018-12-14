@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
@@ -33,8 +32,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:orientation="vertical"
+            android:layout_height="match_parent"
             tools:ignore="ScrollViewSize">
 
             <include layout="@layout/layout_search"/>
@@ -48,15 +47,14 @@
 
             <View style="@style/horizontal_line"/>
 
-            <!--会话列表-->
-        <LinearLayout
-            android:id="@+id/chat_content"
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="match_parent"/>
+            <fragment
+                android:id="@+id/conversationlist"
+                android:name="io.rong.imkit.fragment.ConversationListFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
 
         </LinearLayout>
     </ScrollView>
 
-
-</android.support.v7.widget.LinearLayoutCompat>
+</LinearLayout>

@@ -235,4 +235,6 @@ public class HistoryPositionAcqusitionActivity extends BaseActivity implements H
         EventBus.getDefault().unregister(this);
     }
 
+    public void search(View view) {
+    }
 }

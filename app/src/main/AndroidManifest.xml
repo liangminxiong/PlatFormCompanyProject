@@ -104,9 +104,9 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
-
         <!--========================百度地图（begin）============  =================-->
         <!--开发版  3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c  or发布版 / BIvUidCXbyoqMciDxLVzbRPE6I91hZaN-->
+
 
         <!--导航 appid-->
         <meta-data
@@ -117,7 +117,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
+            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
 
         <service
             android:name="com.baidu.location.f"
@@ -127,11 +127,13 @@
         <!--========================百度地图（end）=============================-->
 
         <!--测试-->
-        <activity
-            android:name="com.yuefeng.ui.DemoTestActivity"
-            android:hardwareAccelerated="false"/>
+        <!--<activity-->
+        <!--android:name="com.yuefeng.ui.DemoTestActivity"-->
+        <!--android:hardwareAccelerated="false"/>-->
         <!--启动页-->
 
+
+        <!--android:name="com.yuefeng.ui.DemoTestActivity" -->
         <activity
             android:name="com.yuefeng.login_splash.ui.SplashActivity"
             android:hardwareAccelerated="false"
@@ -348,6 +350,74 @@
             </intent-filter>
         </receiver>
         <!-- 极光推送自定义的广播接收器 ym end-->
+
+        <!--融云 begin===========================================-->
+        <!--聚合会话列表-->
+        <activity
+            android:name="com.yuefeng.home.ui.imActivity.SubConversationListActivtiy"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data
+                    android:host="lmx.com.rong_clouddemo"
+                    android:pathPrefix="/subconversationlist"
+                    android:scheme="rong"/>
+            </intent-filter>
+        </activity>
+
+        <!--会话界面-->
+        <activity
+            android:name="com.yuefeng.home.ui.imActivity.ConversationActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data
+                    android:host="lmx.com.rong_clouddemo"
+                    android:pathPrefix="/conversation/"
+                    android:scheme="rong"/>
+            </intent-filter>
+        </activity>
+
+        <!--会话列表-->
+        <activity
+            android:name="com.yuefeng.home.ui.imActivity.ConversationListActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data
+                    android:host="lmx.com.rong_clouddemo"
+                    android:pathPrefix="/conversationlist"
+                    android:scheme="rong"/>
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name="com.yuefeng.home.ui.receiver.SealNotificationReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="io.rong.push.intent.MESSAGE_ARRIVED"/>
+                <action android:name="io.rong.push.intent.MI_MESSAGE_ARRIVED"/>
+                <action android:name="io.rong.push.intent.MESSAGE_CLICKED"/>
+                <action android:name="io.rong.push.intent.MI_MESSAGE_CLICKED"/>
+            </intent-filter>
+        </receiver>
+
+        <!--融云 begin===========================================-->
 
     </application>
 

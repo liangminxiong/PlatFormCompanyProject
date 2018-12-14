@@ -1,6 +1,7 @@
 package com.yuefeng.ui;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -21,6 +22,7 @@ import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.yuefeng.citySelector.db.DBManager;
+import com.yuefeng.rongIm.RongIMUtils;
 
 
 /**
@@ -69,6 +71,8 @@ public class MyApplication extends Application {
 
         /*内存泄露*/
 //        refWatcher= setupLeakCanary();
+        /*融云初始化*/
+        RongIMUtils.initRongIM(this);
     }
 
     public static MyApplication getInstance() {
@@ -161,5 +165,29 @@ public class MyApplication extends Application {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         return ni != null && ni.isConnectedOrConnecting();
+    }
+
+    /**
+     * 获得当前进程的名字
+     *
+     * @param context
+     * @return
+     */
+    public static String getCurProcessName(Context context) {
+
+        int pid = android.os.Process.myPid();
+
+        ActivityManager activityManager = (ActivityManager) context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+
+        assert activityManager != null;
+        for (ActivityManager.RunningAppProcessInfo appProcess : activityManager.getRunningAppProcesses()) {
+
+            if (appProcess.pid == pid) {
+
+                return appProcess.processName;
+            }
+        }
+        return null;
     }
 }

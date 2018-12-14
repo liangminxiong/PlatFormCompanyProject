@@ -36,6 +36,7 @@ public class DemoTestActivity extends BaseActivity {
     @BindView(R.id.ll_parent)
     ConstraintLayout llParent;
 
+
     @Override
     protected int getContentViewResId() {
         return R.layout.activity_test;
@@ -90,31 +91,24 @@ public class DemoTestActivity extends BaseActivity {
     }
 
     @Override
-    protected boolean isNeedTranslateBar() {
-        return true;
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
 
-    @OnClick({R.id.tv_title_setting, R.id.iv_friend_acatar})
+
+    @OnClick({R.id.tv_title_setting})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_title_setting:
                 initPopuWindows();
-                break;
-            case R.id.iv_friend_acatar:
-                showSuccessToast("MMP");
                 break;
         }
     }
 
     private void initPopuWindows() {
         List<EventQuestionMsgBean> listData = new ArrayList<>();
-        MultipletemPopupWindow popupWindow = new MultipletemPopupWindow(this, listData,true,true);
+        MultipletemPopupWindow popupWindow = new MultipletemPopupWindow(this, listData, true, true);
         popupWindow.setTitleText("选择车辆");
         popupWindow.setSettingText(getString(R.string.submit));
         popupWindow.setOnItemClickListener(new MultipletemPopupWindow.OnItemClickListener() {
@@ -135,4 +129,6 @@ public class DemoTestActivity extends BaseActivity {
         });
         popupWindow.showAtLocation(llParent, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
     }
+
+
 }

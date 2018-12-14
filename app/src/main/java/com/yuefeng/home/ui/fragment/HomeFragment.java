@@ -1,9 +1,12 @@
 package com.yuefeng.home.ui.fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -23,8 +26,10 @@ import com.yuefeng.home.presenter.HomePresenter;
 import com.yuefeng.home.ui.activity.AnnouncementListInfosActivtiy;
 import com.yuefeng.home.ui.activity.HistoryAppVersionActivtiy;
 import com.yuefeng.home.ui.activity.MsgListInfosActivtiy;
+import com.yuefeng.home.ui.adapter.ConversationListAdapterEx;
 import com.yuefeng.home.ui.adapter.HomeMsgInfosAdapter;
 import com.yuefeng.login_splash.event.SignInEvent;
+import com.yuefeng.rongIm.RongIMUtils;
 import com.yuefeng.ui.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -40,6 +45,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.rong.imkit.RongContext;
+import io.rong.imkit.fragment.ConversationListFragment;
+import io.rong.imlib.model.Conversation;
+
+//import com.yuefeng.home.ui.imActivity.ConversationListFragment;
 
 
 /**
@@ -67,6 +77,24 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
     private String mEndTime = "";
     private boolean isGetDataAgain = false;
 
+    /*测试融云*/
+    public static String libaiToken = "aHHKNr+jpANSk+uWQRY39gM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cCCo35Kr7Jm6letTWyBnuJKhz4P1/QEycI9EHoqNufxmiRbEGBi6ETk=";
+    public static String dufuToken = "RYCau/8zuqnDOmQTWPRG1QM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cDJY62ny6gUtsHqBkVNTaVu99jIf/dRs6EZ/XPYM5WYb2aUb9QjRZ7s=";
+    public static String wangxizhiToken = "DAH3ZJtjSLdz3oaJJPaMYgM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cAQ4syW7Urv0jMLVuVYI85XcyUNRn2uYB2yGD+SXX0kF";
+    public static String libaiName = "李白";
+    public static String dufuName = "杜甫";
+    public static String wangxizhiName = "王羲之";
+    public static String libaiUserId = "zxcvbnmasdfghjkl";
+    public static String dufuUserId = "asdfghjklzxcvbnm";
+    public static String wangxizhiUserId = "qwertyuiop";
+    private static String portraitUrl = "http://rongcloud-web.qiniudn.com/docs_demo_rongcloud_logo.png";
+
+    //会话的聊天窗口
+    ConversationListFragment mListFragment;
+    FragmentManager mManager;
+    private boolean isDebug=true;
+    private Conversation.ConversationType[] mConversationsTypes;
+
     @Override
     protected int getLayoutId() {
         return R.layout.module_fragment_home;
@@ -86,6 +114,61 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
         initRecycleView();
         rlSearch.setVisibility(View.VISIBLE);
         isGetDataAgain = false;
+
+        RongIMUtils.init(libaiUserId, libaiName, portraitUrl);
+        RongIMUtils.connectToken(libaiToken);
+        //会话列表
+        mListFragment = (ConversationListFragment) initConversationList();
+        mManager = getChildFragmentManager();
+        mManager.beginTransaction().replace(R.id.chat_content,mListFragment).commit();
+
+    }
+
+    private Fragment initConversationList() {
+        if (mListFragment == null) {
+            ConversationListFragment listFragment = new ConversationListFragment();
+            listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
+            Uri uri;
+            if (isDebug) {
+                uri = Uri.parse("rong://" + getContext().getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "true") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM,
+                        Conversation.ConversationType.DISCUSSION
+                };
+
+            } else {
+                uri = Uri.parse("rong://" + getContext().getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM
+                };
+            }
+            listFragment.setUri(uri);
+            mListFragment = listFragment;
+            return listFragment;
+        } else {
+            return mListFragment;
+        }
     }
 
     @Override
