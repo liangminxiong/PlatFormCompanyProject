@@ -47,6 +47,16 @@ public class H5JSInterface {
     }
 
     /*
+     * android发送数据到h5
+     * */
+    @JavascriptInterface
+    public void androidUpload() {
+        if (control != null) {
+            control.H5ControlAndroidEvent();
+        }
+    }
+
+    /*
     * h5发送数据到android
     * */
     @JavascriptInterface

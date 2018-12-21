@@ -1,24 +1,26 @@
 package com.common.base.codereview;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
-import android.view.MotionEvent;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.baidu.location.LocationClient;
 import com.common.network.RxLifeManager;
 import com.common.utils.AppManager;
-import com.common.utils.AppUtils;
 import com.common.utils.StatusBarUtil;
 import com.common.utils.ToastUtils;
 import com.common.view.dialog.LoadingDialog;
@@ -27,17 +29,16 @@ import com.yuefeng.commondemo.R;
 
 
 /**
- * Created  on 2018-01-04.
- * author:seven
- * email:seven2016s@163.com
  */
 
+//public abstract class BaseActivity extends FragmentActivity implements View.OnClickListener {
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
     public BaseActivity mActivity;
     public RelativeLayout iv_back;
     public TextView tv_title;
     private LoadingDialog loadingDialog;
     private boolean isOnclick = true;
+    static Notification notification = null;
 
     static {
         //5.0以下兼容vector
@@ -45,6 +46,16 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     private SucessCacheSureDialog sureDialog;
+
+    public void setTitle(String title) {
+        if (tv_title != null) {
+            if (!TextUtils.isEmpty(title)) {
+                tv_title.setText(title);
+            } else {
+                tv_title.setText("无标题");
+            }
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +73,25 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+
+        initMap();
+    }
+
+    private void initMap() {
+        //开启前台定位服务：
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            LocationClient locationClient = new LocationClient(this);
+            Notification.Builder builder = new Notification.Builder(mActivity.getApplicationContext());
+//获取一个Notification构造器
+            builder.setContentTitle("正在进行后台定位") // 设置下拉列表里的标题
+                    .setSmallIcon(R.mipmap.icon_app) // 设置状态栏内的小图标
+                    .setContentText("定位") // 设置上下文内容
+                    .setAutoCancel(true)
+                    .setWhen(System.currentTimeMillis()); // 设置该通知发生的时间
+            notification = builder.build();
+            notification.defaults = Notification.DEFAULT_SOUND; //设置为默认的声音
+            locationClient.enableLocInForeground(1001, notification);// 调起前台定位
+        }
     }
 
     protected boolean isNeedTranslateBar() {
@@ -89,13 +119,17 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             sureDialog.setDeletaCacheListener(new SucessCacheSureDialog.DeletaCacheListener() {
                 @Override
                 public void sure() {
-                    sureDialog.dismiss();
+                    if (!isFinishing()) {
+                        sureDialog.dismiss();
+                    }
                     finish();
                 }
 
                 @Override
                 public void cancle() {
-                    sureDialog.dismiss();
+                    if (!isFinishing()) {
+                        sureDialog.dismiss();
+                    }
                 }
             });
 
@@ -105,6 +139,40 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void showSureGetAgainDataDialog(String txt) {
+        try {
+            if (sureDialog == null) {
+                sureDialog = new SucessCacheSureDialog(this);
+            }
+            sureDialog.setTextContent(txt);
+            sureDialog.setDeletaCacheListener(new SucessCacheSureDialog.DeletaCacheListener() {
+                @Override
+                public void sure() {
+                    if (!isFinishing()) {
+                        sureDialog.dismiss();
+                    }
+                    getDatasAgain();
+                }
+
+                @Override
+                public void cancle() {
+                    if (!isFinishing()) {
+                        sureDialog.dismiss();
+                    }
+                }
+            });
+
+            if (!isFinishing()) {
+                sureDialog.show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getDatasAgain() {
     }
 
     public void showLoadingDialog(String txt) {
@@ -120,19 +188,19 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                View view = getCurrentFocus();
-                AppUtils.hideKeyboard(ev, view, this);//调用方法判断是否需要隐藏键盘
-                break;
-
-            default:
-                break;
-        }
-        return super.dispatchTouchEvent(ev);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        switch (ev.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                View view = getCurrentFocus();
+//                AppUtils.hideKeyboard(ev, view, this);//调用方法判断是否需要隐藏键盘
+//                break;
+//
+//            default:
+//                break;
+//        }
+//        return super.dispatchTouchEvent(ev);
+//    }
 
     protected abstract int getContentViewResId();
 

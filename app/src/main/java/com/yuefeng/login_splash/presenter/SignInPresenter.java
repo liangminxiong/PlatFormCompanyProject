@@ -5,6 +5,9 @@ import com.common.network.ApiException;
 import com.common.network.HttpObservable;
 import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
+import com.yuefeng.contacts.modle.TokenBean;
+import com.yuefeng.contacts.modle.contacts.OrganPersonalBean;
+import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.home.modle.NewMsgDataBean;
 import com.yuefeng.login_splash.contract.SignInContract;
@@ -56,9 +59,9 @@ public class SignInPresenter extends BasePresenterImpl<SignInContract.View, Main
     }
 
     @Override
-    public void getAnnouncementByuserid(String function,String pid, String timestart, String timeend) {
+    public void getAnnouncementByuserid(String function, String pid, String timestart, String timeend) {
 
-        HttpObservable.getObservable(apiRetrofit.getAnnouncementByuserid(function,pid, timestart, timeend))
+        HttpObservable.getObservable(apiRetrofit.getAnnouncementByuserid(function, pid, timestart, timeend))
                 .subscribe(new HttpResultObserver<NewMsgDataBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
@@ -98,5 +101,245 @@ public class SignInPresenter extends BasePresenterImpl<SignInContract.View, Main
                     }
                 });
 
+    }
+
+    /*获取token*/
+    @Override
+    public void getToken(String userid, String username, String usericon) {
+
+        HttpObservable.getObservable(apiRetrofit.getToken(userid, username, usericon))
+                .subscribe(new HttpResultObserver<TokenBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(TokenBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                if (o.getCode() == 200) {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_SUCCESS, o));
+                                } else {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_ERROR, o.getData()));
+                                }
+                            } else {
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_ERROR, o.getData()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_ERROR, ""));
+                        super.onError(e);
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_ERROR, error.getMsg()));
+                        super._onError(error);
+                    }
+                });
+    }
+
+    @Override
+    public void groupCreate(String userids, String createuserid, String groupName) {
+        HttpObservable.getObservable(apiRetrofit.groupCreate(userids, createuserid, groupName))
+                .subscribe(new HttpResultObserver<GroupCreateBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(GroupCreateBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                if (o.getCode() == 200) {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPCREATE_SUCCESS, o));
+                                } else {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPCREATE_SUCCESS, o.getData()));
+                                }
+                            } else {
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPCREATE_ERROR, o.getData()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPCREATE_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPCREATE_ERROR, ""));
+                        super.onError(e);
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPCREATE_ERROR, error.getMsg()));
+                        super._onError(error);
+                    }
+                });
+    }
+
+    /*删群*/
+    @Override
+    public void groupDismiss(String userid, String groupid) {
+        HttpObservable.getObservable(apiRetrofit.groupDismiss(userid, groupid))
+                .subscribe(new HttpResultObserver<GroupCreateBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(GroupCreateBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                if (o.getCode() == 200) {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPDISMISS_SUCCESS, o));
+                                } else {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPDISMISS_ERROR, o.getData()));
+                                }
+                            } else {
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPDISMISS_ERROR, o.getData()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPDISMISS_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPDISMISS_ERROR, ""));
+                        super.onError(e);
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPDISMISS_ERROR, error.getMsg()));
+                        super._onError(error);
+                    }
+                });
+    }
+
+    /*入群*/
+    @Override
+    public void groupJoin(String userids, String groupid) {
+        HttpObservable.getObservable(apiRetrofit.groupJoin(userids, groupid))
+                .subscribe(new HttpResultObserver<GroupCreateBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(GroupCreateBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                if (o.getCode() == 200) {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPJOIN_SUCCESS, o));
+                                } else {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPJOIN_ERROR, o.getData()));
+                                }
+                            } else {
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPJOIN_ERROR, o.getData()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPJOIN_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPJOIN_ERROR, ""));
+                        super.onError(e);
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.GROUPJOIN_ERROR, error.getMsg()));
+                        super._onError(error);
+                    }
+                });
+    }
+
+    /*通讯录*/
+    @Override
+    public void findOrganWithID(String id, String name, Integer type) {
+        HttpObservable.getObservable(apiRetrofit.findOrganWithID(id,  name, type))
+                .subscribe(new HttpResultObserver<OrganPersonalBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(OrganPersonalBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                if (o.getCode() == 200) {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.CONTACTS_SUCCESS, o.getData()));
+                                } else {
+                                    EventBus.getDefault().postSticky(new SignInEvent(Constans.CONTACTS_ERROR, o.getMsg()));
+                                }
+                            } else {
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.CONTACTS_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.CONTACTS_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.CONTACTS_ERROR, ""));
+                        super.onError(e);
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.CONTACTS_ERROR, error.getMsg()));
+                        super._onError(error);
+                    }
+                });
     }
 }

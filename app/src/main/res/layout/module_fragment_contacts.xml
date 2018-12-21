@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/color_f6"
+    android:layout_height="match_parent">
+
+   <!-- <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="@dimen/dp_55"
+        android:layout_height="@dimen/dp_55"
+        android:layout_marginStart="@dimen/dp_15"
+        android:padding="@dimen/dp_8"
+        android:src="@drawable/item"
+        android:visibility="visible"
+        tools:ignore="ContentDescription,MissingConstraints"/>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_55"
+        android:layout_toEndOf="@id/iv_logo"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/dp_8"
+        android:text="侨银环保啊放假啊"
+        android:textColor="#424141"
+        android:textSize="@dimen/sp_16"
+        android:visibility="visible"/>-->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/iv_logo"
+        app:layout_constraintTop_toBottomOf="@id/iv_logo"/>
+
+
+</RelativeLayout>

@@ -7,10 +7,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.common.utils.ToastUtils;
+import com.yuefeng.ui.MyApplication;
 
 public class HttpErrorReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
         String action = intent.getAction();
         if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
             //获得ConnectivityManager对象

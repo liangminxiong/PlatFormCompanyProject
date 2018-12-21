@@ -3,12 +3,24 @@ package com.yuefeng.home.ui.imActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 
+import com.common.base.codereview.BaseActivity;
+import com.common.event.CommonEvent;
+import com.common.utils.Constans;
+import com.common.utils.LogUtils;
+import com.common.utils.StringUtils;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.contacts.contract.GroupQueryContract;
+import com.yuefeng.contacts.modle.UserDeatailInfosBean;
+import com.yuefeng.contacts.presenter.GroupQueryPresenter;
 import com.yuefeng.ui.MyApplication;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Locale;
 
@@ -19,9 +31,9 @@ import io.rong.imlib.model.Conversation;
 
 
 /*会话界面*/
-public class ConversationActivity extends FragmentActivity {
+public class ConversationActivity extends BaseActivity implements GroupQueryContract.View {
 
-    private String mTargetId,title;
+    private String mTargetId, title;
 
     boolean isFromPush = false;
 
@@ -29,14 +41,57 @@ public class ConversationActivity extends FragmentActivity {
      * 会话类型
      */
     private Conversation.ConversationType mConversationType;
+    private GroupQueryPresenter mPresenter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.conversation);
-//        Intent intent = getIntent();
-//        getIntentDate(intent);
-//        isReconnect(intent);
+    protected int getContentViewResId() {
+        return R.layout.conversation;
+    }
+
+    @Override
+    protected void initView(Bundle savedInstanceState) {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+        mPresenter = new GroupQueryPresenter(this, this);
+        Intent intent = getIntent();
+        getIntentDate(intent);
+        isReconnect(intent);
+    }
+
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void setLisenter() {
+
+    }
+
+    @Override
+    protected void widgetClick(View v) {
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void disposeSCommonEvent(CommonEvent event) {
+        switch (event.getWhat()) {
+            case Constans.USERDETAIL_SUCCESS://获取通讯录成功
+                UserDeatailInfosBean.DataBean bean = (UserDeatailInfosBean.DataBean) event.getData();
+                showUIDatas(bean);
+                break;
+            case Constans.USERDETAIL_ERROR:
+                setTitle("无");
+                break;
+        }
+    }
+
+    private void showUIDatas(UserDeatailInfosBean.DataBean bean) {
+        if (bean != null) {
+            String name = StringUtils.isEntryStrWu(bean.getUsername());
+            setTitle(name);
+        }
     }
 
 
@@ -48,9 +103,22 @@ public class ConversationActivity extends FragmentActivity {
         title = intent.getData().getQueryParameter("title");
 //        Toast.makeText(this, title+"<<<会话ID>>>>>>>>>" + mTargetId, Toast.LENGTH_SHORT).show();
         //intent.getData().getLastPathSegment();//获得当前会话类型
+        LogUtils.d(title + " == " + mTargetId);
+//        setTitle("无");
         mConversationType = Conversation.ConversationType.valueOf(intent.getData().getLastPathSegment().toUpperCase(Locale.getDefault()));
 
 //        enterFragment(mConversationType, mTargetId);
+        getWhatGroupDatasByNet(mTargetId);
+    }
+
+    private void getWhatGroupDatasByNet(String userId) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
+        if (mPresenter != null) {
+            mPresenter.groupQueryWithUser(userId);
+        }
     }
 
 
@@ -67,7 +135,6 @@ public class ConversationActivity extends FragmentActivity {
         Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
                 .appendPath("conversation").appendPath(mConversationType.getName().toLowerCase())
                 .appendQueryParameter("targetId", mTargetId).build();
-
         fragment.setUri(uri);
     }
 
@@ -112,7 +179,7 @@ public class ConversationActivity extends FragmentActivity {
         //push
         if (intent.getData().getScheme().equals("rong") && intent.getData().getQueryParameter("isFromPush") != null) {
             isFromPush = true;
-            Log.e("","isFromPush");
+            Log.e("", "isFromPush");
             //通过intent.getData().getQueryParameter("push") 为true，判断是否是push消息
             if (intent.getData().getQueryParameter("isFromPush").equals("true")) {
                 reconnect(token);
@@ -131,7 +198,7 @@ public class ConversationActivity extends FragmentActivity {
     @Override
     public void onBackPressed() {
         ConversationFragment fragment = (ConversationFragment) getSupportFragmentManager().findFragmentById(R.id.conversation);
-        if(!fragment.onBackPressed()) {
+        if (!fragment.onBackPressed()) {
             finish();
         }
     }
@@ -143,5 +210,11 @@ public class ConversationActivity extends FragmentActivity {
             finish();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

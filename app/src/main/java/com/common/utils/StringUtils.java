@@ -73,6 +73,38 @@ public class StringUtils {
         return time;
     }
 
+    /*返回人2字*/
+    public static String returnUserTwoLenght(String string) {
+        String text = "";
+        if (!TextUtils.isEmpty(string)) {
+            int length = string.length();
+            if (length > 2) {
+                text = string.substring(length - 2, length);
+            } else {
+                text = string;
+            }
+        } else {
+            text = "无题";
+        }
+        return text;
+    }
+
+    /*返回机构2字*/
+    public static String returnOrganTwoLenght(String string) {
+        String text = "";
+        if (!TextUtils.isEmpty(string)) {
+            int length = string.length();
+            if (length > 2) {
+                text = string.substring(0, 2);
+            } else {
+                text = string;
+            }
+        } else {
+            text = "无题";
+        }
+        return text;
+    }
+
     /*空字符串返回无*/
     public static String isEntryStrWu(String string) {
         return TextUtils.isEmpty(string) ? "无" : string;

@@ -18,8 +18,10 @@ import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.updateapputils.UpdateManager;
 import com.common.utils.Constans;
+import com.common.utils.LocationGpsUtils;
 import com.common.utils.MD5Utils;
 import com.common.utils.PreferencesUtils;
+import com.common.utils.ToastUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.login_splash.contract.LoginContract;
@@ -162,6 +164,13 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login:
+
+                if (!LocationGpsUtils.isGpsOPen(LoginActivity.this)) {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivityForResult(intent, 0);
+                    ToastUtils.showToast("请先开启GPS");
+                    return;
+                }
                 userNames = accountEt.getText().toString().trim();
                 passwords = passwordEt.getText().toString().trim();
 
@@ -201,6 +210,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 }
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.HAVE_USER_DATAS, true);
                 PreferencesUtils.putString(LoginActivity.this, Constans.ORGID, loginInfo.getOrgId());
+                PreferencesUtils.putString(LoginActivity.this, Constans.ORGNAME, loginInfo.getRoleName());
                 PreferencesUtils.putString(LoginActivity.this, Constans.TELNUM, loginInfo.getTelNum());
                 PreferencesUtils.putString(LoginActivity.this, Constans.ID, loginInfo.getId());
 //                LogUtils.d("=============" + loginInfo.getId());

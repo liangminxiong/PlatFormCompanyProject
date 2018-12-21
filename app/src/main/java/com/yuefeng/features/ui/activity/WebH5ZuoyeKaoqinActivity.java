@@ -233,6 +233,11 @@ public class WebH5ZuoyeKaoqinActivity extends BaseActivity implements H5Control 
     }
 
     @Override
+    public void H5ControlAndroidEvent() {
+
+    }
+
+    @Override
     public void H5ControlAndroidEvent(String url, Bundle bundle) {
 
     }

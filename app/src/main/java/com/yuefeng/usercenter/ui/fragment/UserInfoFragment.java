@@ -64,8 +64,8 @@ public class UserInfoFragment extends BaseMvpFragment {
     TextView userName;
     @BindView(R.id.tv_user_phone)
     TextView tvUserPhone;
-    @BindView(R.id.tv_tab_name)
-    TextView tv_tab_name;
+//    @BindView(R.id.tv_tab_name)
+//    TextView tv_tab_name;
     @BindView(R.id.ui_share)
     UserInfoItemView shareApp;
     @BindView(R.id.ui_clean)
@@ -96,7 +96,7 @@ public class UserInfoFragment extends BaseMvpFragment {
         unbinder = ButterKnife.bind(this, rootView);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.staff);
         userView.setImageBitmap(bitmap);
-        tv_tab_name.setText(my_name);
+//        tv_tab_name.setText(my_name);
         initUI();
     }
 

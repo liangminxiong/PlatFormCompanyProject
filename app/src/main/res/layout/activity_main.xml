@@ -7,16 +7,8 @@
               android:orientation="vertical">
 
     <include
-        layout="@layout/view_1px"
-        android:visibility="gone"/>
-
-    <include
         layout="@layout/title_bar_mvp"
-        android:visibility="gone"/>
-
-    <View
-        style="@style/horizontal_line"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
     <com.yuefeng.ui.base.fragment.NoSlideViewPager
         android:id="@+id/viewpager"

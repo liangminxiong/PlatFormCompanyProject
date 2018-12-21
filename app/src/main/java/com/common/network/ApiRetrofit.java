@@ -46,19 +46,22 @@ public class ApiRetrofit {
                 .connectTimeout(CONNECT_TIME_OUT, TimeUnit.SECONDS)/*读写链接超时*/
                 .readTimeout(READ_TIME_OUT, TimeUnit.SECONDS)
                 .writeTimeout(READ_TIME_OUT, TimeUnit.SECONDS)
-                .addInterceptor(httpLoggingInterceptor)//打印log日志
                 .addInterceptor(new AddCookieInterceptor())
                 .addInterceptor(new SaveCookieInterceptor())
+                .addInterceptor(new MoreBaseUrlInterceptor())
+                .addNetworkInterceptor(httpLoggingInterceptor)//打印log日志
                 .retryOnConnectionFailure(true)//失败重连
                 .build();
 
+
         getRetrofit(baseUrl);
-        apiServise = retrofit.create(ApiService.class);
+
     }
 
     public static void changeApiBaseUrl(String newApiBaseUrl) {
         baseUrl = newApiBaseUrl;
         getRetrofit(baseUrl);
+
     }
 
     private static void getRetrofit(String baseUrl) {
@@ -68,7 +71,7 @@ public class ApiRetrofit {
                 .client(okHttpClient)
                 .baseUrl(baseUrl)
                 .build();
-//        LogUtils.d("=======baseUrl======" + baseUrl);
+        apiServise = retrofit.create(ApiService.class);
     }
 
     /*

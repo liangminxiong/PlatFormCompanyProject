@@ -43,6 +43,7 @@ import com.yuefeng.personaltree.model.PersonalParentBean;
 import com.yuefeng.photo.adapter.GridImageAdapter;
 import com.yuefeng.photo.other.FullyGridLayoutManager;
 import com.yuefeng.photo.utils.PictureSelectorUtils;
+import com.yuefeng.ui.MyApplication;
 import com.yuefeng.utils.BdLocationUtil;
 import com.yuefeng.utils.PersonalDatasUtils;
 
@@ -397,6 +398,11 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     /*签到*/
     private void sngnIn() {
         String memo = edtMemo.getText().toString().trim();
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("无网络，请检查网络设置");
+        }
+
         if (presenter != null) {
             String userId = PreferencesUtils.getString(this, Constans.ID, "");
             presenter.spSignIn(ApiService.QIANDAO, userId, terflag, useridflag,

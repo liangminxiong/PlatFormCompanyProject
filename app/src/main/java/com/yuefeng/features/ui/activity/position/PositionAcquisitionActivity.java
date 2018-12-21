@@ -354,10 +354,6 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 address = address.substring(2, length);
             }
             latLng = new LatLng(latitude, longitude);
-            if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
-                int length = address.length();
-                address = address.substring(2, length);
-            }
             if (isFirstLoc) {
                 isFirstLoc = false;
                 latLngTemp = new LatLng(latitude, longitude);
@@ -390,9 +386,9 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
             LatLng latLngDis = points.get(points.size() - 1);
             double distance = DistanceUtil.getDistance(latLngDis, latLng);
             LogUtils.d("距离====" + distance);
-            if (Math.abs(distance) < 1000) {
-                drawTrackLine(latLng);
-            }
+            drawTrackLine(latLng);
+//            if (Math.abs(distance) < 1000) {
+//            }
         } else {
             drawTrackLine(latLng);
         }
@@ -644,7 +640,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
                 showSuccessToast("请填写名称");
                 return;
             }
-            if (tyepName.equals("线路")||tyepName.equals("网格")) {
+            if (tyepName.equals("线路") || tyepName.equals("网格")) {
                 lnglat = "";
             } else {
                 lnglat = presenter.getLnglatStr(points);
@@ -782,6 +778,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         } else {//选择基础设施
             ininViewStubFinish();
             tv_finish("2");
+            rlSelectType.setVisibility(View.INVISIBLE);
             btnBeginorstop.setVisibility(View.INVISIBLE);
             isPositionAcquisition = false;
         }

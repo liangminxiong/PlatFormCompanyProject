@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/title_bar_mvp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_45"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tv_group"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingStart="@dimen/dp_15"
+            android:text="群组名："
+            android:textColor="@color/black_32"
+            android:textSize="@dimen/dp_15"
+            tools:ignore="HardcodedText,RtlSymmetry,SpUsage"/>
+
+        <EditText
+            android:id="@+id/edt_groupname"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_toEndOf="@id/tv_group"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:hint="请输入群组名称"
+            android:maxLength="15"
+            android:textSize="@dimen/dp_14"
+            tools:ignore="HardcodedText,SpUsage,TextFields"/>
+
+    </RelativeLayout>
+
+    <View style="@style/horizontal_line"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"/>
+
+        <com.common.view.other.SideBar
+            android:id="@+id/side_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:paddingEnd="10dp"
+            android:textColor="@color/gray_70"
+            android:textSize="15sp"
+            tools:ignore="RtlSymmetry"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

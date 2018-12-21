@@ -19,5 +19,16 @@ public interface SignInContract {
                     String lon, String lat, String address, String type);
 
         void getAnnouncementByuserid(String function, String pid, String timestart, String timeend);
+        //获取token
+        void getToken(String userid, String username, String usericon);
+        //创建
+        void groupCreate(String userids, String createuserid, String groupName);
+        //创建
+        void groupDismiss(String userid, String groupid);
+        /*加入群组*/
+        void groupJoin(String userids, String groupid);
+
+        /*获取机构，用户*/
+        void findOrganWithID(String id, String name, Integer type);
     }
 }

@@ -2,6 +2,7 @@ package com.yuefeng.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,13 +13,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,17 +32,21 @@ import com.common.updateapputils.UpdateManager;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
 import com.common.utils.LocationGpsUtils;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.RxHelper;
 import com.common.utils.TimeUtils;
 import com.common.view.dialog.SigninCacheSureDialog;
 import com.luck.picture.lib.permissions.RxPermissions;
-import com.yuefeng.book.ui.fragment.AddressbookFragment;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.contacts.fragment.ContactsFragment;
+import com.yuefeng.contacts.modle.TokenBean;
+import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
+import com.yuefeng.contacts.ui.activity.FartherGroupNameActivity;
+import com.yuefeng.contacts.ui.activity.GreateGroupChatActivity;
 import com.yuefeng.features.ui.fragment.FeaturesFragment;
 import com.yuefeng.home.modle.NewMsgListDataBean;
-import com.yuefeng.home.ui.adapter.ConversationListAdapterEx;
-import com.yuefeng.home.ui.fragment.HomeFragment;
+import com.yuefeng.home.ui.fragment.ConversationListHomeFragment;
 import com.yuefeng.login_splash.contract.SignInContract;
 import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.login_splash.presenter.SignInPresenter;
@@ -64,14 +70,13 @@ import butterknife.BindColor;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.rong.imkit.RongContext;
-import io.rong.imkit.fragment.ConversationListFragment;
-import io.rong.imlib.model.Conversation;
+import io.rong.imlib.model.UserInfo;
 
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 
@@ -79,10 +84,12 @@ public class MainActivity extends BaseActivity implements
         SignInContract.View, LocationUtils.OnResultMapListener {
     @BindView(R.id.iv_back)
     RelativeLayout iv_back;
+    @BindView(R.id.tv_title_setting)
+    TextView tv_title_setting;
     @BindView(R.id.ll_parent)
     LinearLayout ll_parent;
-    @BindView(R.id.tv_title)
-    TextView tv_title;
+    @BindView(R.id.rly_home_title)
+    RelativeLayout rly_home_title;
     @BindColor(R.color.titel_color)
     int coloeWhite;
     @BindColor(R.color.titel_color)
@@ -106,6 +113,9 @@ public class MainActivity extends BaseActivity implements
     @BindString(R.string.tab_mine_name)
     String my_name;
 
+//    @BindDrawable(R.drawable.windbg)
+//    Drawable wind;
+
     private int mTime = 10;
     private SigninCacheSureDialog sureDialog;
     private static final int BDLOCATION_TIME = 10000;
@@ -121,16 +131,13 @@ public class MainActivity extends BaseActivity implements
     private String VersionTime;
 
     /*测试融云*/
-    public static String libaiToken = "aHHKNr+jpANSk+uWQRY39gM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cCCo35Kr7Jm6letTWyBnuJKhz4P1/QEycI9EHoqNufxmiRbEGBi6ETk=";
-    public static String dufuToken = "RYCau/8zuqnDOmQTWPRG1QM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cDJY62ny6gUtsHqBkVNTaVu99jIf/dRs6EZ/XPYM5WYb2aUb9QjRZ7s=";
-    public static String wangxizhiToken = "DAH3ZJtjSLdz3oaJJPaMYgM6cY2j1V36sF/P4vhFDM0WqIiR2LA7cAQ4syW7Urv0jMLVuVYI85XcyUNRn2uYB2yGD+SXX0kF";
-    public static String libaiName = "李白";
-    public static String dufuName = "杜甫";
-    public static String wangxizhiName = "王羲之";
-    public static String libaiUserId = "zxcvbnmasdfghjkl";
-    public static String dufuUserId = "asdfghjklzxcvbnm";
-    public static String wangxizhiUserId = "qwertyuiop";
-    private static String portraitUrl = "http://rongcloud-web.qiniudn.com/docs_demo_rongcloud_logo.png";
+    public static String zhangsanName = "张三";
+    public static String zhangsanUserId = "eab2ffacffffffc976ce7286d4054823";
+    private int mCount = 0;
+    private int mPosition = 0;
+    private String mString;
+    private String mGroupID;
+    private PopupWindow mPopupWindow;
 
     @Override
     protected int getContentViewResId() {
@@ -146,8 +153,6 @@ public class MainActivity extends BaseActivity implements
             if (!EventBus.getDefault().isRegistered(this)) {
                 EventBus.getDefault().register(this);
             }
-            RongIMUtils.init(libaiUserId, libaiName, portraitUrl);
-            RongIMUtils.connectToken(libaiToken);
             ll_parent.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             presenter = new SignInPresenter(this, this);
             initViewPager();
@@ -160,7 +165,15 @@ public class MainActivity extends BaseActivity implements
             iv_back.setVisibility(View.INVISIBLE);
             tv_title.setText(msg_name);
             PreferencesUtils.putString(MyApplication.getContext(), "Fengrun", "无");
-
+            mString = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
+            if (mString.equals("true")) {//个人
+                mPosition = 0;
+                tv_title_setting.setBackgroundResource(R.drawable.add);
+            } else {
+                rly_home_title.setVisibility(View.GONE);
+            }
+            mPosition = 0;
+            mCount = 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -190,6 +203,8 @@ public class MainActivity extends BaseActivity implements
 //                            }
                             getLocation();
                             getdata();
+                            getTokenByNet();
+
                         }
                     });
         } catch (Exception e) {
@@ -254,6 +269,9 @@ public class MainActivity extends BaseActivity implements
                         @Override
                         public void onNext(Long value) {
                             getNetDatas();
+                            if (mCount > 0) {
+                                getTokenByNet();
+                            }
                         }
 
                         @Override
@@ -270,6 +288,10 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void getNetDatas() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
         if (presenter != null) {
             String pid = PreferencesUtils.getString(MainActivity.this, Constans.ORGID, "");
             presenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, "", "");
@@ -376,76 +398,143 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     protected void widgetClick(View v) {
-
     }
 
 
-    /**
-     * 会话列表的fragment
-     */
-    private ConversationListFragment mConversationListFragment = null;
-    private boolean isDebug;
-    private Conversation.ConversationType[] mConversationsTypes = null;
+    /*后来者有时间在抽基类
+     * */
+    @OnClick(R.id.tv_title_setting)
+    public void onClick(View view) {
 
+        // 获取自定义的菜单布局文件
+        View popupWindow_view = getLayoutInflater().inflate(R.layout.chat_menu, null, false);
+        // 创建PopupWindow实例,设置菜单宽度和高度为包裹其自身内容
+        mPopupWindow = new PopupWindow(popupWindow_view, ActionBar.LayoutParams.WRAP_CONTENT,
+                ActionBar.LayoutParams.WRAP_CONTENT, true);
+        //设置菜单显示在按钮的下面
+//        mPopupWindow.setBackgroundDrawable(wind);
+        mPopupWindow.showAsDropDown(findViewById(R.id.tv_title_setting), 0, 0);
 
-    private Fragment initConversationList() {
-        if (mConversationListFragment == null) {
-            ConversationListFragment listFragment = new ConversationListFragment();
-            listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
-            Uri uri;
-            if (isDebug) {
-                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
-                        .appendPath("conversationlist")
-                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "true") //设置私聊会话是否聚合显示
-                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
-                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
-                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
-                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
-                        .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
-                        .build();
-                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
-                        Conversation.ConversationType.GROUP,
-                        Conversation.ConversationType.PUBLIC_SERVICE,
-                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
-                        Conversation.ConversationType.SYSTEM,
-                        Conversation.ConversationType.DISCUSSION
-                };
-
-            } else {
-                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
-                        .appendPath("conversationlist")
-                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
-                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
-                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
-                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
-                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
-                        .build();
-                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
-                        Conversation.ConversationType.GROUP,
-                        Conversation.ConversationType.PUBLIC_SERVICE,
-                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
-                        Conversation.ConversationType.SYSTEM
-                };
+        //点击发起群聊功能
+        Button btnChat = (Button) popupWindow_view.findViewById(R.id.btn_chat);
+        Button btnCreategroup = (Button) popupWindow_view.findViewById(R.id.btn_creategroup);
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //如果菜单存在并且为显示状态，就关闭菜单并初始化菜单
+                if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                    mPopupWindow.dismiss();
+                    mPopupWindow = null;
+                }
+                toChat();
             }
-            listFragment.setUri(uri);
-            mConversationListFragment = listFragment;
-            return listFragment;
-        } else {
-            return mConversationListFragment;
+        });
+        btnCreategroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LogUtils.d("onClick=======创建群组========");
+                //如果菜单存在并且为显示状态，就关闭菜单并初始化菜单
+                if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                    mPopupWindow.dismiss();
+                    mPopupWindow = null;
+                }
+                toCreateGroup();
+            }
+        });
+
+        // 点击其他地方消失
+        //注意：如果menu布局中，item选项为Button的话，此方法不起作用，应该是跟Button的事件传递有关
+        popupWindow_view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                LogUtils.d("onTouch===============");
+                //如果菜单存在并且为显示状态，就关闭菜单并初始化菜单
+                if (mPopupWindow != null && mPopupWindow.isShowing()) {
+
+                    mPopupWindow.dismiss();
+                    mPopupWindow = null;
+                } else {
+
+                }
+                return false;
+            }
+        });
+
+
+    }
+
+    private void toCreateGroup() {
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, GreateGroupChatActivity.class);
+        startActivity(intent);
+
+    }
+
+    private void toChat() {
+        Intent intent = new Intent();
+
+        intent.setClass(MainActivity.this, FartherGroupNameActivity.class);
+
+        intent.putExtra(Constans.GROUPNAME, "通讯录");
+        intent.putExtra(Constans.GROUPID, "dg1168");
+        startActivity(intent);
+    }
+
+    /*入群*/
+    private void groupJoin() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
+        if (presenter != null) {
+            UserInfo info = getUserToken();
+            String userIds = info.getUserId();
+            mGroupID = "c0f22509ffffffc9559812847281a2ad";
+            presenter.groupJoin(userIds, mGroupID);
+        }
+    }
+
+    /*删除群组*/
+    private void groupDisimis() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
+        if (presenter != null) {
+            UserInfo info = getUserToken();
+            String userIds = info.getUserId();
+            presenter.groupDismiss(userIds, mGroupID);
+        }
+    }
+
+    /*获取token*/
+    private void getTokenByNet() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
+        UserInfo info = getUserToken();
+        if (presenter != null) {
+            LogUtils.d("====userid==" + info.getUserId() + "+++ " + info.getName());
+            presenter.getToken(info.getUserId(), info.getName(), info.getPortraitUri().toString());
         }
     }
 
     private void initViewPager() {
         try {
             tabItemInfos = new ArrayList<>();
-            tabItemInfos.add(new TabItemInfo(new HomeFragment(), R.drawable.home_button_selector, R.string.tab_main_name));
 
-//        tabItemInfos.add(new TabItemInfo(new TackFragment(), R.drawable.search_button_selector, R.string.tab_tack_name));
-            /*应用*/
+
+            final String string = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
+            if (string.equals("true")) {//个人
+                tabItemInfos.add(new TabItemInfo(new ConversationListHomeFragment(), R.drawable.home_button_selector, R.string.tab_main_name));
+//            tabItemInfos.add(new TabItemInfo(new HomeFragment(), R.drawable.home_button_selector, R.string.tab_main_name));
+                tabItemInfos.add(new TabItemInfo(new ContactsFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
+                /*应用*/
+            }
+
             tabItemInfos.add(new TabItemInfo(new FeaturesFragment(), R.drawable.application_button_selector, R.string.tab_search_name));
-            tabItemInfos.add(new TabItemInfo(new AddressbookFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
             tabItemInfos.add(new TabItemInfo(new UserInfoFragment(), R.drawable.my_button_selector, R.string.tab_mine_name));
-//            initConversationListUI();
             pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), tabItemInfos, mActivity);
             tabLayout.setTabMode(TabLayout.MODE_FIXED);
             tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -459,17 +548,29 @@ public class MainActivity extends BaseActivity implements
 
                 @Override
                 public void onTabSelected(TabLayout.Tab tab) {
-                    int position = tab.getPosition();
-                    if (position == 0) {
-                        titleName = msg_name;
-                    } else if (position == 1) {
-                        titleName = tack_name;
-                    } else if (position == 2) {
-                        titleName = features_name;
-//                    } else if (position == 3) {
-//                        titleName = book_name;
+                    mPosition = tab.getPosition();
+                    if (string.equals("true")) {//个人
+                        if (mPosition == 0) {
+                            titleName = msg_name;
+                            rly_home_title.setVisibility(View.VISIBLE);
+                        } else if (mPosition == 2) {
+                            rly_home_title.setVisibility(View.GONE);
+                            titleName = features_name;
+                        } else if (mPosition == 1) {
+                            titleName = book_name;
+                            rly_home_title.setVisibility(View.VISIBLE);
+                        } else {
+                            titleName = my_name;
+                            rly_home_title.setVisibility(View.VISIBLE);
+                        }
                     } else {
-                        titleName = my_name;
+                        if (mPosition == 0) {
+                            rly_home_title.setVisibility(View.GONE);
+                            titleName = features_name;
+                        } else {
+                            titleName = my_name;
+                            rly_home_title.setVisibility(View.VISIBLE);
+                        }
                     }
                     tv_title.setText(titleName);
                 }
@@ -495,10 +596,13 @@ public class MainActivity extends BaseActivity implements
                 tab.setCustomView(pagerAdapter.getTabView(i));
             }
         }
-
     }
 
     private void personalSignIn(double longitude, double latitude, String address) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
         try {
             userId = PreferencesUtils.getString(this, Constans.ID, "");
             presenter.signIn(ApiService.QIANDAO, userId, "", "",
@@ -517,15 +621,50 @@ public class MainActivity extends BaseActivity implements
             case Constans.NEW_MSG_SUCCESS:
                 List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
                 if (list.size() > 0) {
-                    showAdapterDatasList(list);
+//                    showAdapterDatasList(list);
                 }
+                break;
+            case Constans.RONGIM_SUCCESS:
+                TokenBean tokenBean = (TokenBean) event.getData();
+                String token = tokenBean.getData();
+                LogUtils.d("=====token=00==" + token);
+                initRongIMToken(token);
+                break;
+            case Constans.RONGIM_ERROR:
+                LogUtils.d("=====token=11==");
+                mCount = 1;
+                break;
+            case Constans.GROUPCREATE_SUCCESS:
+                GroupCreateBean groupCreateBean = (GroupCreateBean) event.getData();
+                mGroupID = groupCreateBean.getData();
+                String title = groupCreateBean.getText();
+                LogUtils.d("=====创群成功" + mGroupID);
+                RongIMUtils.startGroupChat(MainActivity.this, mGroupID, title);
+                break;
+            case Constans.GROUPCREATE_ERROR:
+                LogUtils.d("创群失败");
                 break;
         }
     }
 
-    private void initConversationListUI() {
-        tabItemInfos.add(new TabItemInfo(initConversationList(), R.drawable.search_button_selector, R.string.tab_tack_name));
+    /*融云连接token*/
+    private void initRongIMToken(String token) {
+
+
+        UserInfo info = getUserToken();
+        RongIMUtils.init(info.getUserId(), info.getName(), info.getPortraitUri().toString());
+        RongIMUtils.connectToken(token);
     }
+
+    private UserInfo getUserToken() {
+
+        userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
+        String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
+        String portraitUrl = "http://vocsystem.cn/webfiles/rongyun/image/d_icon.png";
+        UserInfo info = new UserInfo(userId, name, Uri.parse(portraitUrl));
+        return info;
+    }
+
 
     private void showAdapterDatasList(List<NewMsgListDataBean> list) {
         AnnTime = PreferencesUtils.getString(MainActivity.this, Constans.ANNTIME, "");

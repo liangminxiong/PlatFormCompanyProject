@@ -21,7 +21,6 @@ import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.home.contract.HomeContract;
-import com.yuefeng.home.modle.MsgListDataBean;
 import com.yuefeng.home.modle.NewMsgListDataBean;
 import com.yuefeng.home.presenter.HomePresenter;
 import com.yuefeng.home.ui.activity.AnnouncementListInfosActivtiy;
@@ -169,13 +168,6 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
             case Constans.NEW_MSG_ERROR:
                 addNativeDatas();
                 break;
-
-//            case Constans.RONGIM_SUCCESS:
-//                ToastUtils.showToast("融云连接成功");
-//                initConversationListUI();
-//
-//                break;
-
         }
     }
 
@@ -257,36 +249,6 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
     private void showAdapterDatasList(List<NewMsgListDataBean> list) {
         listData.clear();
         listData.addAll(list);
-        adapter.setNewData(listData);
-    }
-
-    /*展示数据*/
-    private void showAdapterDatasList() {
-        String name = "";
-        String detail = "";
-        List<MsgListDataBean> bean = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            MsgListDataBean msgDataBean = new MsgListDataBean();
-            if (i == 0) {
-                name = "侨银环保科技股份有限公司";
-                detail = "[审批]今天还有一个审批单待你处理，请尽快处理";
-                msgDataBean.setImageId(R.drawable.work);
-            } else if (i == 1) {
-                name = "升级提醒";
-                detail = "1.0.2版本新功能介绍";
-                msgDataBean.setImageId(R.drawable.upgrade);
-            } else {
-                name = "项目通知:池州一体化项目进展情况";
-                detail = "[执行]今天还有2个任务待你处理，请尽快完成";
-                msgDataBean.setImageId(R.drawable.item);
-            }
-            msgDataBean.setOrg(name);
-            msgDataBean.setReviewtitle(name);
-            msgDataBean.setReviewcontent(detail);
-            bean.add(msgDataBean);
-        }
-        listData.clear();
-//        listData.addAll(bean);
         adapter.setNewData(listData);
     }
 

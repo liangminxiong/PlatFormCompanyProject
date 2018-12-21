@@ -13,6 +13,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.common.event.CommonEvent;
+import com.common.view.webview.H5JSInterface;
+import com.yuefeng.ui.MyApplication;
+
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * Created by Administrator on 2018/2/27.
  */
@@ -23,25 +29,23 @@ public class WebViewUtils {
     private WebView webView;
     private Context context;
     private WebSettings webSettings;
+    private H5JSInterface h5JSInterface;
 
-    public static WebViewUtils getInstance() {
-        if (null == instance) {
-            synchronized (WebViewUtils.class) {
-                if (null == instance) {
-                    instance = new WebViewUtils();
-                }
-            }
-        }
-        return instance;
+    public H5JSInterface getH5JsInterface() {
+        return h5JSInterface;
+    }
+
+    public WebViewUtils() {
+
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     public void initWebView(Context context, String url, final WebView webView, final ProgressBar progressBar) {
         this.context = context;
         this.webView = webView;
-        if (webSettings == null) {
-            webSettings = webView.getSettings();
-        }
+//        if (webSettings == null) {
+//        }
+        webSettings = webView.getSettings();
         WebChromeClient wvcc = new WebChromeClient();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUseWideViewPort(true); // 关键点
@@ -65,7 +69,8 @@ public class WebViewUtils {
         } else {
             webSettings.setLoadsImagesAutomatically(false);
         }
-
+        h5JSInterface = new H5JSInterface(MyApplication.getContext());
+        webView.addJavascriptInterface(h5JSInterface, "javaObject");
         webView.setDownloadListener(new MyWebViewDownLoadListener());
         webView.loadUrl(url);
         webView.setWebViewClient(new WebViewClient() {
@@ -135,6 +140,7 @@ public class WebViewUtils {
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype,
                                     long contentLength) {
+            EventBus.getDefault().post(new CommonEvent(Constans.WEBSUCESS, url));
         }
 
     }

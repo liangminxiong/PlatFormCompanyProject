@@ -10,5 +10,6 @@ import android.os.Bundle;
  */
 
 public interface H5Control {
+    void H5ControlAndroidEvent();
     void H5ControlAndroidEvent(String url, Bundle bundle);
 }

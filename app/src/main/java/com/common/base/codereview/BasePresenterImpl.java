@@ -67,36 +67,36 @@ public class BasePresenterImpl<V extends BaseView, T extends BaseActivity> imple
     }
 
     public void dismissLoadingDialog() {
-        if (loadingDialog != null ) {
+        if (loadingDialog != null && !mActivity.isFinishing()) {
             loadingDialog.dismiss();
         }
     }
 
     /*
-    * view 是否关联
-    * */
+     * view 是否关联
+     * */
     public boolean isViewAttach() {
         return viewReference != null && viewReference.get() != null;
     }
 
     /*
-    * activity是否关联
-    * */
+     * activity是否关联
+     * */
     public boolean isActivityAttach() {
         return activityReference != null && activityReference.get() != null;
     }
 
     /*
-    * 获取view
-    * 
-    * */
+     * 获取view
+     *
+     * */
     public V getView() {
         return viewReference == null ? null : viewReference.get();
     }
 
     /*
-    * 获取activity
-    * */
+     * 获取activity
+     * */
     public T getActivity() {
         return activityReference == null ? null : activityReference.get();
     }

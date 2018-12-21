@@ -100,6 +100,41 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         return null;
     }
 
+
+    public void showSureGetAgainDataDialog(String txt) {
+        try {
+            if (sureDialog == null) {
+                sureDialog = new SucessCacheSureDialog(getActivity());
+            }
+            sureDialog.setTextContent(txt);
+            sureDialog.setDeletaCacheListener(new SucessCacheSureDialog.DeletaCacheListener() {
+                @Override
+                public void sure() {
+                    if (!getActivity().isFinishing()) {
+                        sureDialog.dismiss();
+                    }
+                    getDatasAgain();
+                }
+
+                @Override
+                public void cancle() {
+                    if (!getActivity().isFinishing()) {
+                        sureDialog.dismiss();
+                    }
+                }
+            });
+
+            if (!getActivity().isFinishing()) {
+                sureDialog.show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getDatasAgain() {
+    }
+
     /*加载框*/
     public void showLoadingDialog(String txt) {
         if (loadingDialog != null && !getActivity().isFinishing()) {

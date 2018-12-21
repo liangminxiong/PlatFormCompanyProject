@@ -4,16 +4,13 @@ package com.yuefeng.rongIm;
 import android.content.Context;
 import android.net.Uri;
 
-import com.common.utils.Constans;
-import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.ui.MyApplication;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import io.rong.imkit.RongIM;
+import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Message;
@@ -50,6 +47,13 @@ public class RongIMUtils {
         }, true);
     }
 
+    public static UserInfo getRongIMUserInfo(String userId){
+        UserInfo mine = RongUserInfoManager.getInstance().getUserInfo(userId);
+
+        return  mine;
+    }
+
+
     /*连接融云*/
     public static void connectToken(String token) {
         RongIM.connect(token, new RongIMClient.ConnectCallback() {
@@ -60,7 +64,7 @@ public class RongIMUtils {
 
             @Override
             public void onSuccess(String s) {
-                EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_SUCCESS, ""));
+//                EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_SUCCESS, ""));
             }
 
             @Override

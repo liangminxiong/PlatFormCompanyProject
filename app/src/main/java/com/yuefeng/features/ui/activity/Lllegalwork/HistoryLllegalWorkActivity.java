@@ -234,6 +234,8 @@ public class HistoryLllegalWorkActivity extends BaseActivity implements HistoryL
     private void showAdapterDatasList(List<LllegalworMsgBean> beanList) {
         listData.clear();
         listData.addAll(beanList);
-        adapter.setNewData(listData);
+        if (adapter != null) {
+            adapter.setNewData(listData);
+        }
     }
 }

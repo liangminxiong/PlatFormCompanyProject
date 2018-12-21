@@ -43,6 +43,7 @@ public class Constans {
     public static final String USERPASSWORD = "user_pwd";//存储用户名密码
     public static final String ANDROID = "android";
     public static final String ORGID = "orgId";
+    public static final String ORGNAME = "orgName";
     public static final String ID = "id";
     public static final String EMAIL = "Email";
     public static final String ISREG = "Isreg";
@@ -232,5 +233,25 @@ public class Constans {
     public static final String PROJECTTIME = "ProjectTime";
     public static final String VERSIONTIME = "VersionTime";
     public static final String TERMINAL = "Terminal";
-    public static final int RONGIM_SUCCESS = 1000;//融云成功
+
+    /*融云   1000 - 1100*/
+    public static final int RONGIM_SUCCESS = 1000;//融云token成功
+    public static final int RONGIM_ERROR = 1001;
+    public static final int GROUPCREATE_SUCCESS = 1002;//创群成功
+    public static final int GROUPCREATE_ERROR = 1003;
+    public static final int GROUPDISMISS_SUCCESS = 1004;//删群成功
+    public static final int GROUPDISMISS_ERROR = 1005;
+    public static final int GROUPJOIN_SUCCESS = 1006;//入群成功
+    public static final int GROUPJOIN_ERROR = 1007;
+    public static final String GROUPID = "GroupID";//机构组
+    public static final String GROUPNAME = "GroupName";
+    public static final int WEBSUCESS = 1008;//网页
+
+    public static final int CONTACTS_SUCCESS = 1009;//获取通讯录成功
+    public static final int CONTACTS_ERROR = 1010;
+
+    public static final int ALLUSER_SUCCESS = 1011;//获取所有人通讯录成功
+    public static final int ALLUSER_ERROR = 1012;
+    public static final int USERDETAIL_SUCCESS = 1013;//获取通讯录个人信息成功
+    public static final int USERDETAIL_ERROR = 1014;
 }

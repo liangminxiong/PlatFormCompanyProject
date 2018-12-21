@@ -111,20 +111,20 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
 
     private void initCountDown() {
         try {
-            initUI();
-//            boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
-//            if (isHaveDatas) {
-//                String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
-//                if (!TextUtils.isEmpty(string)) {//主界面
-////                    startActivity(new Intent(SplashActivity.this, DemoTestActivity.class));
-//                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
-//                } else {//登录界面
-//                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-//                }
-//            } else {
-//                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-//            }
-//            finish();
+//            initUI();
+            boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
+            if (isHaveDatas) {
+                String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
+                if (!TextUtils.isEmpty(string)) {//主界面
+//                    startActivity(new Intent(SplashActivity.this, DemoTestActivity.class));
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                } else {//登录界面
+                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                }
+            } else {
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            }
+            finish();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -172,11 +172,20 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
             RxPermissions rxPermission = new RxPermissions(SplashActivity.this);
             //请求权限全部结果 Manifest.permission.CAMERA,
             rxPermission.request(
-                    Manifest.permission.SYSTEM_ALERT_WINDOW,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.GET_ACCOUNTS,
+                    Manifest.permission.READ_PHONE_STATE,
+                    //位置
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION)
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    //相机、麦克风
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.WAKE_LOCK,
+                    Manifest.permission.CAMERA,
+                    //存储空间
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_SETTINGS,
+                    Manifest.permission.SYSTEM_ALERT_WINDOW,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)
                     .subscribe(new Consumer<Boolean>() {
                         @Override
                         public void accept(Boolean granted) throws Exception {

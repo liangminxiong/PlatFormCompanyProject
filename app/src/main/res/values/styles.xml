@@ -313,5 +313,26 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="userdetail_style_gray_14s">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp_40</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/dp_20</item>
+        <item name="android:paddingTop">@dimen/dp_5</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textSize">@dimen/sp_13</item>
+    </style>
+
+    <style name="userdetail_style_black_s16">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp_34</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/dp_20</item>
+        <item name="android:textColor">@color/black_32</item>
+        <item name="android:textSize">@dimen/sp_16</item>
+    </style>
+
 
 </resources>

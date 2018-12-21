@@ -6,55 +6,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <LinearLayout
+    <include layout="@layout/title_bar_mvp" android:visibility="gone"/>
+
+    <fragment
+        android:id="@+id/conversationlist"
+        android:name="io.rong.imkit.fragment.ConversationListFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/title_stuta"
-        android:orientation="vertical">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_24"/>
-
-        <TextView
-            android:id="@+id/tv_tab_name"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_40"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_17"/>
-
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="match_parent"
-            tools:ignore="ScrollViewSize">
-
-            <include layout="@layout/layout_search"/>
-
-            <View style="@style/horizontal_line"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_180d"/>
-
-            <View style="@style/horizontal_line"/>
-
-            <fragment
-                android:id="@+id/conversationlist"
-                android:name="io.rong.imkit.fragment.ConversationListFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-
-        </LinearLayout>
-    </ScrollView>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

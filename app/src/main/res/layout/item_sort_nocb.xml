@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/catalog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#eae5e5"
+        android:paddingStart="@dimen/dp_10"
+        android:padding="5dp"
+        android:textColor="#424141"
+        android:textSize="14sp"
+        tools:ignore="RtlSymmetry"/>
+
+    <TextView
+        android:id="@+id/iv_item_logo"
+        android:layout_width="@dimen/dp_42"
+        android:layout_height="@dimen/dp_42"
+        android:layout_below="@id/catalog"
+        android:layout_marginBottom="@dimen/dp_8"
+        android:layout_marginStart="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_8"
+        android:background="@drawable/shape_bg_blue32"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="ContentDescription,MissingConstraints"/>
+
+    <TextView
+        android:id="@+id/tv_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_55"
+        android:layout_below="@id/catalog"
+        android:layout_marginEnd="@dimen/dp_60"
+        android:layout_toEndOf="@id/iv_item_logo"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/dp_8"
+        android:textColor="#424141"
+        android:textSize="@dimen/sp_16"
+        android:visibility="visible"
+        tools:ignore="RtlSymmetry"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.6dp"
+        android:layout_below="@id/iv_item_logo"
+        android:layout_marginEnd="@dimen/dp_20"
+        android:layout_marginStart="70dp"
+        android:background="#E7E7E7"
+        tools:ignore="RtlSymmetry"/>
+
+</RelativeLayout>

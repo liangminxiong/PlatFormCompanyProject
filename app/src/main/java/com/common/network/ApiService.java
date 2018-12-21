@@ -1,5 +1,13 @@
 package com.common.network;
 
+import com.yuefeng.contacts.modle.CheckOnlineBean;
+import com.yuefeng.contacts.modle.TokenBean;
+import com.yuefeng.contacts.modle.UpdateUserBean;
+import com.yuefeng.contacts.modle.UserDeatailInfosBean;
+import com.yuefeng.contacts.modle.contacts.OrganPersonalBean;
+import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserBean;
+import com.yuefeng.contacts.modle.groupchat.AllUserContactsBean;
+import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
 import com.yuefeng.features.modle.EventQuestionBean;
 import com.yuefeng.features.modle.GetAllPersonalBean;
 import com.yuefeng.features.modle.GetEventdetailBean;
@@ -31,6 +39,7 @@ import com.yuefeng.personaltree.model.PersoanlTreeListBean;
 import io.reactivex.Observable;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -50,8 +59,13 @@ public interface ApiService {
     String MIA_HW = "zgbd_hw/MobileInterface2/" + INTERFACEACTION;
     String MIA_HW_bus = "zgbd_hw/business/review/";
     String MIA_HW_SYSTEM = "zgbd_hw/system/upgrade/";
+    //小蔡本地
+    String MIA_CHAT = "zgbd_voc/rongyun/";
+    /*京东*/
+    String MIA_HAO = "zgbd_voc_test/rongyun/";
 
     String MIA_HW_RELEASE = "zgbd_hw/release/";
+    String MIA_HW_BUSINESS = "zgbd_hw/web/business/";
 
     String APPNAME = "Environmental.apk";
     String apkPath = "http://www.vocsystem.cn/webfiles/android/" + APPNAME;
@@ -132,7 +146,12 @@ public interface ApiService {
     String UPLOADLNGLAT = "uploadlnglat";
 
 
+    String H5URL_BUSINESSEDIT = NetworkUrl.ANDROID_TEST_SERVICE + MIA_HW_BUSINESS + "businessedit.html?userpid=";
+    String H5URL_APPLYEDIT = NetworkUrl.ANDROID_TEST_SERVICE + MIA_HW_BUSINESS + "applyedit.html?pid=";
+    String UPLOADFILE = NetworkUrl.ANDROID_TEST_SERVICE + "zgbd_hw/business/FileUpload.action";
+
     /*登录用户*/
+    @Headers({"urlname:ali"})
     @FormUrlEncoded
     @POST(MIA)
     Observable<LoginBean> login(
@@ -142,6 +161,7 @@ public interface ApiService {
             @Field("client") String client);
 
     /*问题上报*/
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<SubmitBean> uploadRubbishEvent(
@@ -156,6 +176,7 @@ public interface ApiService {
             @Field("imageArrays") String imageArrays);
 
     /*问题类型处理过程*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<EventQuestionBean> getEventquestion(
             @Query("function") String function,
@@ -164,6 +185,7 @@ public interface ApiService {
             @Query("type") String type);
 
     /*问题认领*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<SubmitBean> updatequestions(
             @Query("function") String function,
@@ -176,6 +198,7 @@ public interface ApiService {
             @Query("paifaid") String paifaid);
 
     /*问题数量*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetQuestionCountBean> getQuestionCount(
             @Query("function") String function,
@@ -183,12 +206,14 @@ public interface ApiService {
             @Query("userid") String userid);
 
     /*问题详情*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetEventdetailBean> GetEventdetail(
             @Query("function") String function,
             @Query("problemid") String problemid);
 
     /*作业监控*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetJobMonitotingBean> getmonitorinfo(
             @Query("function") String function,
@@ -197,12 +222,14 @@ public interface ApiService {
             @Query("isreg") String isreg);
 
     /*获取主管*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetAllPersonalBean> getAllpersonal(
             @Query("function") String function,
             @Query("pid") String pid);
 
     /*个人签到*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<SubmitBean> signIn(
             @Query("function") String function,
@@ -215,6 +242,7 @@ public interface ApiService {
             @Query("type") String type);
 
     /*主管签到*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<SubmitBean> spSignIn(
             @Query("function") String function,
@@ -229,6 +257,7 @@ public interface ApiService {
             @Query("imageArrays") String imageArrays);
 
     /*轨迹*/
+    @Headers({"urlname:ali"})
     @POST(MIA)
     Observable<WheelPathBean> getGpsDatasByTer(
             @Query("function") String function,
@@ -237,12 +266,14 @@ public interface ApiService {
             @Query("endTime") String endTime);
 
     /*视频*/
+    @Headers({"urlname:ali"})
     @POST(VIDEO)
     Observable<VideoEquipmentBean> getVideoList(
             @Query("pid") String terminal,
             @Query("type") String endTime);
 
     /*车辆列表*/
+    @Headers({"urlname:ali"})
     @POST(MIA)
     Observable<OldCarListInfosBean> getCarListInfos(
             @Query("function") String function,
@@ -251,6 +282,7 @@ public interface ApiService {
             @Query("isreg") String isreg);
 
     /*车辆列表*/
+    @Headers({"urlname:ali"})
     @POST(MIA)
     Observable<CarListInfosBean> getCarListInfosNew(
             @Query("function") String function,
@@ -259,6 +291,7 @@ public interface ApiService {
             @Query("isreg") String isreg);
 
     /*视频列表*/
+    @Headers({"urlname:ali"})
     @POST(MIA)
     Observable<VideoEquipmentBean> getVideoTree(
             @Query("function") String function,
@@ -267,6 +300,7 @@ public interface ApiService {
             @Query("isreg") String isreg);
 
     /*问题类型处理过程*/
+    @Headers({"urlname:ali"})
     @POST(MIA)
     Observable<SubmitBean> changePwd(
             @Query("function") String function,
@@ -275,6 +309,7 @@ public interface ApiService {
             @Query("newpassword") String newpassword);
 
     /*签到*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<PersoanlTreeListBean> getPersontree(
             @Query("function") String function,
@@ -282,6 +317,7 @@ public interface ApiService {
             @Query("pid") String pid);
 
     /*签到总信息*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetKaoqinSumBean> getKaoqinSum(
             @Query("function") String function,
@@ -290,11 +326,13 @@ public interface ApiService {
             @Query("timeend") String timeend);
 
     /*获取信息采集类型*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetCaijiTypeBean> getCaijiType(
             @Query("function") String function);
 
     /*历史采集信息*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetHistoryCaijiInfosBean> getHistoryCaijiInfo(
             @Query("function") String function,
@@ -303,6 +341,7 @@ public interface ApiService {
             @Query("timeend") String timeend);
 
     /*上传采集数据*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<SubmitBean> upLoadmapInfo(
             @Query("function") String function,
@@ -317,6 +356,7 @@ public interface ApiService {
             @Query("id") String id);
 
     /*获取违规*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<LllegalworkBean> getWeigui(
             @Query("function") String function,
@@ -327,6 +367,7 @@ public interface ApiService {
             @Query("type") String type);
 
     /*作业监察签到*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<SubmitBean> uploadWorkSign(
             @Query("function") String function,
@@ -340,6 +381,7 @@ public interface ApiService {
             @Query("memo") String memo);
 
     /*作业监察上报*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<SubmitBean> uploadJianCcha(
             @Query("function") String function,
@@ -353,6 +395,7 @@ public interface ApiService {
             @Query("endaddress") String endAddress);
 
     /*作业监察历史*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetMonitoringHistoryBean> getWorkJianCha(
             @Query("function") String function,
@@ -361,6 +404,7 @@ public interface ApiService {
             @Query("timeend") String timeend);
 
     /*作业监察历史*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetMonitoringPlanCountBean> getJianChaCount(
             @Query("function") String function,
@@ -369,6 +413,7 @@ public interface ApiService {
             @Query("timeend") String timeend);
 
     /*历史问题上报*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<EventQuestionBean> getEveQuestionByuserid(
             @Query("function") String function,
@@ -377,6 +422,7 @@ public interface ApiService {
             @Query("timeend") String timeend);
 
     /*消息列表*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW_bus + GETDATAACTION)
     Observable<MsgDataBean> getAnMentDataList(
             @Query("pid") String userid,
@@ -384,6 +430,7 @@ public interface ApiService {
             @Query("limit") int timeend);
 
     /*消息列表（时间）*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW_bus + GETDATAACTION)
     Observable<MsgDataBean> getAnMentDataList(
             @Query("function") String function,
@@ -394,17 +441,20 @@ public interface ApiService {
             @Query("limit") int limit);
 
     /*消息详情*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW_bus + GETMSGDETAIL)
     Observable<MsgDataDetailBean> getMsgDetail(
             @Query("reviewid") String reviewid);
 
     /*消息列表*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW_bus + GETMSGDETAIL)
     Observable<MsgDataDetailBean> getMsgDetail(
             @Query("function") String function,
             @Query("reviewid") String reviewid);
 
     /*消息列表*/
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW_bus + DOREVIEW)
     Observable<ReplyContentBean> doReview(
@@ -415,6 +465,7 @@ public interface ApiService {
             @Field("imageurls") String imageurls);
 
     /*最新消息列表*/
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<NewMsgDataBean> getAnnouncementByuserid(
@@ -424,6 +475,7 @@ public interface ApiService {
             @Field("timeend") String timeend);
 
     /*公告*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW_RELEASE + GETAACTION)
     Observable<AnnouncementDataBean> getAnnouncementByuserid(
             @Query("function") String function,
@@ -434,12 +486,14 @@ public interface ApiService {
             @Query("limit") int limit);
 
     /*包含最新消息列表*/
+    @Headers({"urlname:ali"})
     @POST(MIA_HW_RELEASE + GETDETAILACTION)
     Observable<AnnouncementDeBean> getAnnouncementDetail(
             @Query("function") String function,
             @Query("id") String id);
 
     /*获取App历史版本*/
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW_SYSTEM + GETDATAACTION)
     Observable<HistoryAppVersionBean> getAppHistoryVersion(
@@ -449,12 +503,14 @@ public interface ApiService {
             @Field("timeend") String timeend);
 
     /*获取App历史版本详情*/
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW_SYSTEM + GETDETAILACTION)
     Observable<AppVersionDetailBean> getAppVersionDetail(
             @Field("id") String id);
 
     /*获取监察签到历史*/
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<HistorySngnInDataBean> getAppWorkSign(
@@ -464,6 +520,7 @@ public interface ApiService {
             @Field("timeend") String timeend);
 
     /*实时上传经纬度*/
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<SubmitBean> uploadLnglat(
@@ -471,5 +528,115 @@ public interface ApiService {
             @Query("type") String type,
             @Field("lng") String lng,
             @Field("lat") String lat,
+            @Field("id") String id);
+
+    /*获取token*/
+    String GETTOKEN = "login.action";
+    /*修改用户信息*/
+    String UPDATEUSER = "updateUser.action";
+    /*监察是否在线*/
+    String CHECKUSERONLINE = "checkUserOnline.action";
+    /*创建群组*/
+    String GROUPCREATE = "groupCreate.action";
+    /*加入群组*/
+    String GROUPJOIN = "groupJoin.action";
+    /*解散群组*/
+    String GROUPDISMISS = "groupDismiss.action";
+
+    /*通过用户id获取用户所有群组*/
+    String GROUPQUERYWITHUSER = "groupQueryWithUser.action";
+
+
+    /*获取token*/
+
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + GETTOKEN)
+    Observable<TokenBean> getToken(
+            @Field("userid") String userid,
+            @Field("username") String username,
+            @Field("usericon") String usericon);
+
+    /*修改用户信息*/
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + UPDATEUSER)
+    Observable<UpdateUserBean> updateUser(
+            @Field("userid") String userid,
+            @Field("username") String username,
+            @Field("usericon") String usericon);
+
+    /*通过用户id获取用户所有群组*/
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + GROUPQUERYWITHUSER)
+    Observable<GroupQueryWithUserBean> groupQueryWithUser(
+            @Field("userid") String userid);
+
+    /*监察是否在线*/
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + CHECKUSERONLINE)
+    Observable<CheckOnlineBean> checkUserOnline(
+            @Field("userid") String userid);
+
+    /*创建群组*/
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + GROUPCREATE)
+    Observable<GroupCreateBean> groupCreate(
+            @Field("userids") String userids,
+            @Field("createuserid") String createuserid,
+            @Field("groupName") String groupName);
+
+    /*加入群组*/
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + GROUPJOIN)
+    Observable<GroupCreateBean> groupJoin(
+            @Field("userids") String userids,
+            @Field("groupid") String groupid);
+
+    /*解散群组*/
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + GROUPDISMISS)
+    Observable<GroupCreateBean> groupDismiss(
+            @Field("userid") String userid,
+            @Field("groupid") String groupid);
+
+
+    //    通过机构id获取下级机构和用户
+    String FINDORGANWITHID = "findOrganWithID.action";
+    //获取所有融云注册用户
+    String FINDALLUSER = "findAllUser.action";
+    /*通讯录用户详情*/
+    String FINDUSERWITHID = "findUserWithID.action";
+
+
+    //    通过机构id获取下级机构和用户
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + FINDORGANWITHID)
+    Observable<OrganPersonalBean> findOrganWithID(
+            @Field("id") String id,
+            @Field("name") String name,
+            @Field("type") Integer type);
+
+    //获取所有融云注册用户
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + FINDALLUSER)
+    Observable<AllUserContactsBean> findAllUser(
+            @Field("page") Integer page,//页码，从1开始，不传则取全部
+            @Field("count") Integer count,//每页的条数，不传则取全部
+            @Field("name") String name,//模糊搜索过滤名称
+            @Field("type") Integer type);//0所有用户 1已注册融云用户 ,默认不传为0
+
+    // 获取所有融云注册用户
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + FINDUSERWITHID)
+    Observable<UserDeatailInfosBean> findUserWithID(
             @Field("id") String id);
 }

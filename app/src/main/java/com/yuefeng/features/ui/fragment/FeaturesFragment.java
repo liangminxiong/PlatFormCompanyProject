@@ -15,10 +15,10 @@ import com.common.base.codereview.BaseFragment;
 import com.common.network.ApiService;
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.adapter.FeaturesMsgAdapter;
 import com.yuefeng.features.contract.FeaturesContract;
 import com.yuefeng.features.presenter.FeaturesPresenter;
 import com.yuefeng.features.ui.activity.JobMonitoringActivity;
@@ -30,7 +30,11 @@ import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
 import com.yuefeng.home.modle.NewMsgListDataBean;
-import com.yuefeng.home.ui.activity.NewMsgDetailInfosActivtiy;
+import com.yuefeng.home.ui.activity.AnnouncementListInfosActivtiy;
+import com.yuefeng.home.ui.activity.HistoryAppVersionActivtiy;
+import com.yuefeng.home.ui.activity.MsgListInfosActivtiy;
+import com.yuefeng.home.ui.activity.WebDetailInfosActivtiy;
+import com.yuefeng.home.ui.adapter.HomeMsgInfosAdapter;
 import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.ui.MainActivity;
 
@@ -63,11 +67,14 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     ScrollView scrollview;
     Unbinder unbinder;
 
-    private FeaturesMsgAdapter adapter;
+    //    private FeaturesMsgAdapter adapter;
+    private HomeMsgInfosAdapter adapter;
     private List<NewMsgListDataBean> listData = new ArrayList<>();
     private FeaturesPresenter mPresenter;
     private String mStartTime = "";
     private String mEndTime = "";
+    private boolean isGetDataAgain = false;
+    private String mUrl;
 
     @Override
     protected int getLayoutId() {
@@ -87,7 +94,7 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
         recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         initRecycleView();
         recyclerview.setFocusable(false);
-
+        isGetDataAgain = false;
         initViewHorW();
     }
 
@@ -111,53 +118,87 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
 
     @Override
     protected void initData() {
-//        getNetDatas();
+    }
+
+    @Override
+    public void onStart() {
+        if (isGetDataAgain) {
+            getNetDatas();
+        }
+        super.onStart();
     }
 
 
+    //    private void initRecycleView() {
+//        adapter = new FeaturesMsgAdapter(R.layout.recyclerview_item_msginfos, listData);
+//        recyclerview.setAdapter(adapter);
+//        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//            @Override
+//            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                NewMsgListDataBean dataBean = listData.get(position);
+//                assert dataBean != null;
+//                Intent intent = new Intent();
+//                intent.setClass(Objects.requireNonNull(getActivity()), NewMsgDetailInfosActivtiy.class);
+//                intent.putExtra("dataBean", dataBean);
+//                startActivity(intent);
+//            }
+//        });
+//    }
+
     private void initRecycleView() {
-        adapter = new FeaturesMsgAdapter(R.layout.recyclerview_item_msginfos, listData);
+        adapter = new HomeMsgInfosAdapter(R.layout.recyclerview_item_msginfos, listData);
         recyclerview.setAdapter(adapter);
+        addNativeDatas();
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                NewMsgListDataBean dataBean = listData.get(position);
-                assert dataBean != null;
                 Intent intent = new Intent();
-                intent.setClass(Objects.requireNonNull(getActivity()), NewMsgDetailInfosActivtiy.class);
-                intent.putExtra("dataBean", dataBean);
+                String genre = listData.get(position).getGenre();
+                // genre：1就是公告，2就是超哥的信息，3是更新的
+                if (genre.equals("1")) {//公告
+                    intent.setClass(Objects.requireNonNull(getActivity()), AnnouncementListInfosActivtiy.class);
+                } else if (genre.equals("2")) {
+                    intent.setClass(Objects.requireNonNull(getActivity()), MsgListInfosActivtiy.class);
+                } else {
+                    intent.setClass(Objects.requireNonNull(getActivity()), HistoryAppVersionActivtiy.class);
+                }
                 startActivity(intent);
+                isGetDataAgain = true;
             }
         });
+    }
+
+    private void addNativeDatas() {
+        List<NewMsgListDataBean> list = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            NewMsgListDataBean bean = new NewMsgListDataBean();
+            bean.setGenre(String.valueOf(i));
+            bean.setContent("");
+            bean.setIsread("1");
+            bean.setIssuedate("");
+            bean.setOrganname("");
+            bean.setSubject("");
+            list.add(bean);
+        }
+
+        showAdapterDatasList(list);
     }
 
     /*展示数据*/
     private void showAdapterDatasList(List<NewMsgListDataBean> list) {
         listData.clear();
-        listData.addAll(list);
-        adapter.setNewData(listData);
+        if (list.size() > 0) {
+            listData.addAll(list);
+        }
+        if (adapter != null) {
+            adapter.setNewData(listData);
+        }
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void disposeCarListEvent(CarListEvent event) {
-//        switch (event.getWhat()) {
-//            case Constans.NEW_MSG_SUCCESS://展示最新消息
-//                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
-//                if (list.size() > 0) {
-//                    showAdapterDatasList(list);
-//                } else {
-//                    showSuccessToast("无最新消息");
-//                }
-//                break;
-//
-//            case  Constans.NEW_MSG_ERROR:
-//                break;
-//
-//        }
-//    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void disposeCommonEvent(SignInEvent event) {
         switch (event.getWhat()) {
             case Constans.NEW_MSG_SUCCESS://展示最新消息
@@ -188,8 +229,8 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @OnClick({R.id.rl_kaoqin, R.id.rl_operationbianji, R.id.rl_historytrack, R.id.rl_videojian,
-            R.id.rl_problemupload, R.id.rl_qualityxuncha, R.id.rl_operationweigui, R.id.rl_msgcollection})
+    @OnClick({R.id.rl_kaoqin, R.id.rl_operationbianji, R.id.rl_historytrack, R.id.rl_videojian, R.id.rl_historytrack1,
+            R.id.rl_problemupload, R.id.rl_qualityxuncha, R.id.rl_operationweigui, R.id.rl_msgcollection, R.id.rl_money_manage})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_videojian:
@@ -216,7 +257,45 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
             case R.id.rl_operationweigui:
                 jobMonitoring();
                 break;
+            case R.id.rl_money_manage:
+                moneyManage(1);//新增申请
+                break;
+            case R.id.rl_historytrack1:
+                moneyManage(2);//我的申请
+                break;
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void moneyManage(int type) {
+        String title = "";
+        String userid = PreferencesUtils.getString(Objects.requireNonNull(getActivity()), Constans.ORGID, "");
+        if (type == 1) {
+            mUrl = ApiService.H5URL_BUSINESSEDIT + userid;
+            title = "新增申请";
+        }else {
+            mUrl = ApiService.H5URL_APPLYEDIT + userid;
+            title = "我的申请";
+        }
+
+        moneyManage(mUrl, title);
+
+    }
+
+    /*资产管理*/
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void moneyManage(String url, String title) {
+
+//        String orderName = PreferencesUtils.getString(Objects.requireNonNull(getActivity()), Constans.ORGNAME, "");
+//        orderName = "q";   + "&orgName=" + orderName
+
+        Intent intent = new Intent();
+        LogUtils.d("=======" + url);
+        intent.setClass(Objects.requireNonNull(getActivity()), WebDetailInfosActivtiy.class);
+        intent.putExtra("webUrl", url);
+        intent.putExtra("tiTle", title);
+        startActivity(intent);
     }
 
     /*；违规作业*/

@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:layout_below="@+id/space"
-    android:background="@drawable/title_stuta">
+    android:background="@drawable/title_stuta"
+    android:visibility="visible">
 
     <RelativeLayout
         android:id="@+id/iv_back"
@@ -41,7 +42,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="@dimen/sp_18"/>
+        android:textSize="@dimen/sp_20"/>
 
     <TextView
         android:id="@+id/tv_title_setting"
@@ -50,7 +51,7 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@id/view"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="@dimen/dp_34"
+        android:layout_marginTop="@dimen/dp_32"
         android:gravity="center"
         android:paddingEnd="@dimen/dp_5"
         android:paddingStart="@dimen/dp_8"

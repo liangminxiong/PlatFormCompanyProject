@@ -8,25 +8,25 @@
               android:background="@color/white"
               android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/title_stuta"
-        android:orientation="vertical">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@drawable/title_stuta"-->
+        <!--android:orientation="vertical">-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_24"/>
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/dp_24"/>-->
 
-        <TextView
-            android:id="@+id/tv_tab_name"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_40"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_17"/>
+        <!--<TextView-->
+            <!--android:id="@+id/tv_tab_name"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/dp_40"-->
+            <!--android:gravity="center"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="@dimen/sp_17"/>-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
     <View
         android:layout_width="match_parent"

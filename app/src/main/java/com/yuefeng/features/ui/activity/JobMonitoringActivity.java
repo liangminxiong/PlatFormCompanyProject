@@ -572,9 +572,9 @@ public class JobMonitoringActivity extends BaseActivity implements
             public void run() {
                 String latitude = personalinfoListBean.getLatitude();
                 String longitude = personalinfoListBean.getLongitude();
-                if (latitude.equals("0.0") && longitude.equals("0.0")) {
-                    return;
-                }
+//                if (latitude.equals("0.0") && longitude.equals("0.0")) {
+//                    return;
+//                }
                 if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
                     LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
                     // 构建MarkerOption，用于在地图上添加Marker
@@ -637,9 +637,9 @@ public class JobMonitoringActivity extends BaseActivity implements
             public void run() {
                 String latitude = vehicleinfoListBean.getLatitude();
                 String longitude = vehicleinfoListBean.getLongitude();
-                if (latitude.equals("0.0") && longitude.equals("0.0")) {
-                    return;
-                }
+//                if (latitude.equals("0.0") && longitude.equals("0.0")) {
+//                    return;
+//                }
                 if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
                     LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
                     String stateType = vehicleinfoListBean.getStateType();
@@ -702,9 +702,9 @@ public class JobMonitoringActivity extends BaseActivity implements
                     String latitude = questionListBean.getLatitude();
                     String longitude = questionListBean.getLongitude();
 
-                    if (latitude.equals("0.0") && longitude.equals("0.0")) {
-                        return;
-                    }
+//                    if (latitude.equals("0.0") && longitude.equals("0.0")) {
+//                        return;
+//                    }
                     if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
                         LatLng latLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
 
@@ -1168,7 +1168,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 
     /*跳转轨迹*/
     private void intoTrack(String terminalNO, String type, String carNum) {
-        if (TextUtils.isEmpty(terminalNO)||TextUtils.isEmpty(type)||TextUtils.isEmpty(carNum)){
+        if (TextUtils.isEmpty(terminalNO) || TextUtils.isEmpty(type) || TextUtils.isEmpty(carNum)) {
             showSuccessToast("车辆信息出错，请重新加载");
             return;
         }

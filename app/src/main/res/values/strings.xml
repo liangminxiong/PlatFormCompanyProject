@@ -86,4 +86,12 @@
     <string name="msg_detail">消息详情</string>
     <string name="CHINA">中国</string>
     <string name="problem_upload">问题上报</string>
+
+
+    <string name="text_group">发起聊天</string>
+    <string name="text_add">添加好友</string>
+    <string name="text_sweep">扫一扫</string>
+    <string name="text_collect">收付款</string>
+    <string name="text_help">帮助与反馈</string>
+
 </resources>
