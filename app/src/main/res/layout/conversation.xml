@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/title_bar_mvp"/>
+    <include
+        layout="@layout/title_bar_mvp"/>
 
     <fragment
         android:id="@+id/conversation"

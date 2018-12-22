@@ -3,6 +3,7 @@ package com.yuefeng.rongIm;
 
 import android.content.Context;
 import android.net.Uri;
+import android.view.View;
 
 import com.yuefeng.ui.MyApplication;
 
@@ -10,17 +11,50 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.rong.imkit.RongIM;
+import io.rong.imkit.model.GroupUserInfo;
+import io.rong.imkit.model.UIConversation;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
+import io.rong.imlib.model.Group;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.UserInfo;
 import io.rong.message.ImageMessage;
 
 /*融云工具类*/
-public class RongIMUtils {
+public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
+        RongIM.UserInfoProvider,
+        RongIM.GroupInfoProvider,
+        RongIM.GroupUserInfoProvider,
+        RongIMClient.ConnectionStatusListener,
+        RongIM.ConversationBehaviorListener,
+        RongIM.IGroupMembersProvider {
 
-    public static void initRongIM(Context context) {
+    private static RongIMUtils mRongCloudInstance;
+
+    public RongIMUtils(Context context) {
+        initRongIM(context);
+        initListener();
+    }
+
+    /**
+     * 初始化 RongCloud.
+     *
+     * @param context 上下文。
+     */
+    public static void init(Context context) {
+
+        if (mRongCloudInstance == null) {
+            synchronized (RongIMUtils.class) {
+                if (mRongCloudInstance == null) {
+                    mRongCloudInstance = new RongIMUtils(context);
+                }
+            }
+        }
+
+    }
+
+    private void initRongIM(Context context) {
         /**
          *
          * OnCreate 会被多个进程重入，这段保护代码，确保只有您需要使用 RongIM 的进程和 Push 进程执行了 init。
@@ -34,6 +68,22 @@ public class RongIMUtils {
              */
             RongIM.init(context);
         }
+
+    }
+
+
+    /**
+     * init 后就能设置的监听
+     */
+    public void initListener() {
+        RongIM.setConversationBehaviorListener(this);//设置会话界面操作的监听器。
+        RongIM.setConversationListBehaviorListener(this);
+        RongIM.setConnectionStatusListener(this);
+        RongIM.setUserInfoProvider(this, true);
+        RongIM.setGroupInfoProvider(this, true);
+        RongIM.getInstance().enableNewComingMessageIcon(true);
+        RongIM.getInstance().enableUnreadMessageIcon(true);
+        RongIM.getInstance().setGroupMembersProvider(this);
     }
 
     /*保存融云用户信息*/
@@ -47,10 +97,26 @@ public class RongIMUtils {
         }, true);
     }
 
-    public static UserInfo getRongIMUserInfo(String userId){
+    public static UserInfo getRongIMUserInfo(String userId) {
         UserInfo mine = RongUserInfoManager.getInstance().getUserInfo(userId);
 
-        return  mine;
+        return mine;
+    }
+
+    /**
+     * 刷新用户缓存数据。
+     *
+     * @param userInfo 需要更新的用户缓存数据。
+     */
+    public static void refreshUserInfoCache(UserInfo userInfo) {
+    }
+
+    /**
+     * 刷新群组缓存数据。
+     *
+     * @param group 需要更新的群组缓存数据。
+     */
+    public static void refreshGroupInfoCache(Group group) {
     }
 
 
@@ -85,6 +151,7 @@ public class RongIMUtils {
 
     /*二人会话*/
     public static void startPrivateChat(Context context, String userId, String userName) {
+        init(userId, userName, "");
         RongIM.getInstance().startPrivateChat(context, userId, userName);
     }
 
@@ -133,5 +200,75 @@ public class RongIMUtils {
                         //发送进度
                     }
                 });
+    }
+
+    @Override
+    public boolean onConversationPortraitClick(Context context, Conversation.ConversationType conversationType, String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onConversationPortraitLongClick(Context context, Conversation.ConversationType conversationType, String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onConversationLongClick(Context context, View view, UIConversation uiConversation) {
+        return false;
+    }
+
+    @Override
+    public boolean onConversationClick(Context context, View view, UIConversation uiConversation) {
+        return false;
+    }
+
+    @Override
+    public Group getGroupInfo(String s) {
+        return null;
+    }
+
+    @Override
+    public GroupUserInfo getGroupUserInfo(String s, String s1) {
+        return null;
+    }
+
+    @Override
+    public void getGroupMembers(String s, RongIM.IGroupMemberCallback iGroupMemberCallback) {
+
+    }
+
+    @Override
+    public UserInfo getUserInfo(String s) {
+        return null;
+    }
+
+    @Override
+    public void onChanged(ConnectionStatus connectionStatus) {
+
+    }
+
+    @Override
+    public boolean onUserPortraitClick(Context context, Conversation.ConversationType conversationType, UserInfo userInfo) {
+        return false;
+    }
+
+    @Override
+    public boolean onUserPortraitLongClick(Context context, Conversation.ConversationType conversationType, UserInfo userInfo) {
+        return false;
+    }
+
+    @Override
+    public boolean onMessageClick(Context context, View view, Message message) {
+        return false;
+    }
+
+    @Override
+    public boolean onMessageLinkClick(Context context, String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onMessageLongClick(Context context, View view, Message message) {
+        return false;
     }
 }

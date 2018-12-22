@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
@@ -25,13 +26,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 
 /*通讯录单聊*/
 public class SelectPersonalWhoActivity extends BaseActivity {
 
-    Unbinder unbinder;
+    @BindView(R.id.rl_search)
+    RelativeLayout rl_search;
     @BindView(R.id.listView)
     ListView mListView;
     @BindView(R.id.side_bar)
@@ -55,6 +56,7 @@ public class SelectPersonalWhoActivity extends BaseActivity {
     }
 
     private void initUI() {
+        rl_search.setVisibility(View.GONE);
         sideBar.setOnStrSelectCallBack(new SideBar.ISideBarSelectCallBack() {
             @Override
             public void onSelectStr(int index, String selectStr) {
@@ -72,7 +74,7 @@ public class SelectPersonalWhoActivity extends BaseActivity {
 
     private void addDatasInRecycler(List<OrganlistBean> listData) {
         for (OrganlistBean bean : listData) {
-            ContactsBean contactsBean = new ContactsBean(bean.getName(),false);
+            ContactsBean contactsBean = new ContactsBean(bean.getName(), false);
             contactsBean.setUserId(bean.getId());
             contactsBean.setPid(bean.getPid());
             contactsBean.setIcon(bean.getIcon());

@@ -10,9 +10,11 @@
         layout="@layout/title_bar_mvp"/>
 
     <RelativeLayout
+        android:id="@+id/rl_search"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_45"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/tv_group"

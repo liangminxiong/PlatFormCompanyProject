@@ -546,6 +546,9 @@ public interface ApiService {
     /*通过用户id获取用户所有群组*/
     String GROUPQUERYWITHUSER = "groupQueryWithUser.action";
 
+    /*通过id获取群组消息*/
+    String GROUPQUERY = "groupQuery.action";
+
 
     /*获取token*/
 
@@ -572,6 +575,13 @@ public interface ApiService {
     @POST(MIA_HAO + GROUPQUERYWITHUSER)
     Observable<GroupQueryWithUserBean> groupQueryWithUser(
             @Field("userid") String userid);
+
+    /*通过id获取群组消息*/
+    @Headers({"urlname:hao"})
+    @FormUrlEncoded()
+    @POST(MIA_HAO + GROUPQUERY)
+    Observable<GroupQueryWithUserBean> groupQuery(
+            @Field("groupid") String groupid);
 
     /*监察是否在线*/
     @Headers({"urlname:hao"})
@@ -631,7 +641,8 @@ public interface ApiService {
             @Field("page") Integer page,//页码，从1开始，不传则取全部
             @Field("count") Integer count,//每页的条数，不传则取全部
             @Field("name") String name,//模糊搜索过滤名称
-            @Field("type") Integer type);//0所有用户 1已注册融云用户 ,默认不传为0
+            @Field("type") Integer type,//0所有用户 1已注册融云用户 ,默认不传为0
+            @Field("userid") String userid);//
 
     // 获取所有融云注册用户
     @Headers({"urlname:hao"})

@@ -13,7 +13,7 @@ public interface FindAllUserContract {
 //                @Field("count") Integer count,//每页的条数，不传则取全部
 //                @Field("name") String name,//模糊搜索过滤名称
 //                @Field("type") );//0所有用户 1已注册融云用户 ,默认不传为0
-        void findAllUser(Integer page, Integer count, String name, Integer type);
+        void findAllUser(Integer page, Integer count, String name, Integer type,String userid);
 
         //创建
         void groupCreate(String userids, String createuserid, String groupName);

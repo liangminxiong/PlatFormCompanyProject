@@ -161,7 +161,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
+            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
 
         <service
             android:name="com.baidu.location.f"
@@ -293,7 +293,8 @@
         <!--web详情-->
         <activity
             android:name="com.yuefeng.home.ui.activity.WebDetailInfosActivtiy"
-            android:hardwareAccelerated="false"/>
+            android:hardwareAccelerated="false"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
         <!--消息详情-->
         <activity
             android:name="com.yuefeng.home.ui.activity.MsgListInfosActivtiy"
@@ -400,7 +401,7 @@
         <activity
             android:name="com.yuefeng.home.ui.imActivity.SubConversationListActivtiy"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden">
+            android:windowSoftInputMode="stateHidden|adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -418,7 +419,7 @@
         <activity
             android:name="com.yuefeng.home.ui.imActivity.ConversationActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden">
+            android:windowSoftInputMode="stateHidden|adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -437,7 +438,7 @@
         <activity
             android:name="com.yuefeng.home.ui.imActivity.ConversationListActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+            android:windowSoftInputMode="stateHidden|adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

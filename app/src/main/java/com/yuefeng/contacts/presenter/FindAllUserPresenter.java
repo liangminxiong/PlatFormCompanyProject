@@ -26,9 +26,9 @@ public class FindAllUserPresenter extends BasePresenterImpl<FindAllUserContract.
     }
 
     @Override
-    public void findAllUser(Integer page, Integer count, String name, Integer type) {
+    public void findAllUser(Integer page, Integer count, String name, Integer type,String userid) {
 
-        HttpObservable.getObservable(apiRetrofit.findAllUser(page, count, name, type))
+        HttpObservable.getObservable(apiRetrofit.findAllUser(page, count, name, type,userid))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<AllUserContactsBean>() {
                     @Override

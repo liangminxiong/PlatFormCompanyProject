@@ -8,7 +8,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -76,7 +75,6 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.rong.imlib.model.UserInfo;
 
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 
@@ -480,32 +478,7 @@ public class MainActivity extends BaseActivity implements
         startActivity(intent);
     }
 
-    /*入群*/
-    private void groupJoin() {
-        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
-        if (!networkConnected) {
-            return;
-        }
-        if (presenter != null) {
-            UserInfo info = getUserToken();
-            String userIds = info.getUserId();
-            mGroupID = "c0f22509ffffffc9559812847281a2ad";
-            presenter.groupJoin(userIds, mGroupID);
-        }
-    }
 
-    /*删除群组*/
-    private void groupDisimis() {
-        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
-        if (!networkConnected) {
-            return;
-        }
-        if (presenter != null) {
-            UserInfo info = getUserToken();
-            String userIds = info.getUserId();
-            presenter.groupDismiss(userIds, mGroupID);
-        }
-    }
 
     /*获取token*/
     private void getTokenByNet() {
@@ -513,10 +486,11 @@ public class MainActivity extends BaseActivity implements
         if (!networkConnected) {
             return;
         }
-        UserInfo info = getUserToken();
+        userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
+        String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
+        String portraitUrl = "";
         if (presenter != null) {
-            LogUtils.d("====userid==" + info.getUserId() + "+++ " + info.getName());
-            presenter.getToken(info.getUserId(), info.getName(), info.getPortraitUri().toString());
+            presenter.getToken(userId, name, portraitUrl);
         }
     }
 
@@ -649,55 +623,13 @@ public class MainActivity extends BaseActivity implements
 
     /*融云连接token*/
     private void initRongIMToken(String token) {
-
-
-        UserInfo info = getUserToken();
-        RongIMUtils.init(info.getUserId(), info.getName(), info.getPortraitUri().toString());
+        userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
+        String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
+        String portraitUrl = "";
+        RongIMUtils.init(userId, name, portraitUrl);
         RongIMUtils.connectToken(token);
     }
 
-    private UserInfo getUserToken() {
-
-        userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
-        String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
-        String portraitUrl = "http://vocsystem.cn/webfiles/rongyun/image/d_icon.png";
-        UserInfo info = new UserInfo(userId, name, Uri.parse(portraitUrl));
-        return info;
-    }
-
-
-    private void showAdapterDatasList(List<NewMsgListDataBean> list) {
-        AnnTime = PreferencesUtils.getString(MainActivity.this, Constans.ANNTIME, "");
-        ProjectTime = PreferencesUtils.getString(MainActivity.this, Constans.PROJECTTIME, "");
-        VersionTime = PreferencesUtils.getString(MainActivity.this, Constans.VERSIONTIME, "");
-
-        for (int i = 0; i < list.size(); i++) {
-            String title = list.get(i).getSubject();
-            String content = list.get(i).getContent();
-            String time = list.get(i).getIssuedate();
-            if (!TextUtils.isEmpty(title) && !TextUtils.isEmpty(time) && !TextUtils.isEmpty(content)) {
-                if (i == 0) {
-                    boolean startEndTime = TimeUtils.startSmortEndTime(AnnTime, time);
-                    if (startEndTime) {
-                        PreferencesUtils.putString(MainActivity.this, Constans.ANNTIME, time);
-                        initNotification("[公告]" + list.get(i).getSubject(), list.get(i).getContent(), i);
-                    }
-                } else if (i == 1) {
-                    boolean startEndTime = TimeUtils.startSmortEndTime(ProjectTime, time);
-                    if (startEndTime) {
-                        PreferencesUtils.putString(MainActivity.this, Constans.PROJECTTIME, time);
-                        initNotification("[项目]" + list.get(i).getSubject(), list.get(i).getContent(), i);
-                    }
-                } else {
-                    boolean startEndTime = TimeUtils.startSmortEndTime(VersionTime, time);
-                    if (startEndTime) {
-                        PreferencesUtils.putString(MainActivity.this, Constans.VERSIONTIME, time);
-                        initNotification("[版本]" + list.get(i).getSubject(), list.get(i).getContent(), i);
-                    }
-                }
-            }
-        }
-    }
 
     //    private void initNotification(String annoum, String project, String centent) {
     private void initNotification(String title, String content, int position) {
@@ -719,18 +651,7 @@ public class MainActivity extends BaseActivity implements
         //设置点击后取消Notification
         //比较手机sdk版本与Android 5.0 Lollipop的sdk
 
-//        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-//        String[] events = {annoum, project, centent};
-//        inboxStyle.setBigContentTitle("侨银环保");
-//        inboxStyle.setSummaryText("");
-//        for (String event : events) {
-//            inboxStyle.addLine(event);
-//        }
-//        builder.setStyle(inboxStyle);
-
-
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-
             builder.setVisibility(Notification.VISIBILITY_PUBLIC);
             builder.setPriority(Notification.PRIORITY_DEFAULT);//设置该通知优先级
             builder.setCategory(Notification.CATEGORY_MESSAGE);//设置通知类别

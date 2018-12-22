@@ -72,7 +72,7 @@ public class MyApplication extends Application {
         /*内存泄露*/
 //        refWatcher= setupLeakCanary();
         /*融云初始化*/
-        RongIMUtils.initRongIM(this);
+        RongIMUtils.init(this);
     }
 
     public static MyApplication getInstance() {

@@ -1,5 +1,6 @@
 package com.yuefeng.contacts.ui.activity;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -33,6 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.rong.imlib.model.Group;
 
 
 /*创建群组*/
@@ -111,7 +113,8 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
     @Override
     protected void initData() {
         if (mPresenter != null) {
-            mPresenter.findAllUser(1, 10000, "", 0);
+            String userid = PreferencesUtils.getString(GreateGroupChatActivity.this, Constans.ID, "");
+            mPresenter.findAllUser(1, 10000, "", 0,userid);
         }
     }
 
@@ -185,6 +188,8 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
                 String title = groupCreateBean.getText();
                 LogUtils.d("=====创群成功" + mGroupID);
                 RongIMUtils.startGroupChat(GreateGroupChatActivity.this, mGroupID, title);
+                Group group = new Group(mGroupID, mGroupName, Uri.parse(""));
+                RongIMUtils.refreshGroupInfoCache(group);
                 break;
             case Constans.GROUPCREATE_ERROR:
                 showSureGetAgainDataDialog("创群失败，是否请重试?");
