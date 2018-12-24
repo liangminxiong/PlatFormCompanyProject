@@ -188,7 +188,7 @@ public class ReplyMsgDetailInfosActivtiy extends BaseActivity implements ReplyCo
                     }
                 }
 //            }
-            }, Constans.BDLOCATION_TIME);
+            }, Constans.BDLOCATION_TIME, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -287,7 +287,8 @@ public class ReplyMsgDetailInfosActivtiy extends BaseActivity implements ReplyCo
                     });
                     new Thread(new Runnable() {
                         @Override
-                        public void run() {String string = PreferencesUtils.getString(AppUtils.getContext(), Constans.ADDRESS, "");
+                        public void run() {
+                            String string = PreferencesUtils.getString(AppUtils.getContext(), Constans.ADDRESS, "");
                             mImagesArrays = PictureSelectorUtils.compressionPhotos(ReplyMsgDetailInfosActivtiy.this, mSelectList, string);
                         }
                     }).start();

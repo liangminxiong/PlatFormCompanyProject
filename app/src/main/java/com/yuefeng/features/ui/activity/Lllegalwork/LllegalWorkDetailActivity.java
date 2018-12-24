@@ -250,7 +250,7 @@ public class LllegalWorkDetailActivity extends BaseActivity {
                 }
 
             }
-        }, Constans.BDLOCATION_TIME);
+        }, Constans.BDLOCATION_TIME,true);
         initLocation();
     }
 

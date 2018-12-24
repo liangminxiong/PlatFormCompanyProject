@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.common.utils.LogUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.TimeUtils;
 import com.yuefeng.commondemo.R;
@@ -42,6 +43,7 @@ public class HomeMsgInfosAdapter extends BaseItemDraggableAdapter<NewMsgListData
             if (isread.equals("0")) {
                 helper.setVisible(R.id.iv_item_unread, true);
             }
+            LogUtils.d("==genre== " + genre);
             // genre：1就是公告，2就是超哥的信息，3是更新的
             count = item.getNotread();
             count = StringUtils.isEntryStrZero(count);
@@ -51,6 +53,9 @@ public class HomeMsgInfosAdapter extends BaseItemDraggableAdapter<NewMsgListData
             } else if (genre.equals("2")) { //项目信息
                 icon = R.drawable.xiangmutongzhi;
                 title = "[项目]" + title;
+            } else if (genre.equals("4")) { //项目信息
+                icon = R.drawable.news_warning;
+                title = "[报警]" + title;
             } else {//更新
                 title = "[升级]" + title;
                 icon = R.drawable.upgrade;

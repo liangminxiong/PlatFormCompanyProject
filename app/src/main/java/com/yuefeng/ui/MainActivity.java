@@ -45,6 +45,7 @@ import com.yuefeng.contacts.ui.activity.FartherGroupNameActivity;
 import com.yuefeng.contacts.ui.activity.GreateGroupChatActivity;
 import com.yuefeng.features.ui.fragment.FeaturesFragment;
 import com.yuefeng.home.modle.NewMsgListDataBean;
+import com.yuefeng.home.ui.activity.NewRemindNorActivity;
 import com.yuefeng.home.ui.fragment.ConversationListHomeFragment;
 import com.yuefeng.login_splash.contract.SignInContract;
 import com.yuefeng.login_splash.event.SignInEvent;
@@ -82,6 +83,10 @@ public class MainActivity extends BaseActivity implements
         SignInContract.View, LocationUtils.OnResultMapListener {
     @BindView(R.id.iv_back)
     RelativeLayout iv_back;
+    @BindView(R.id.rl_new)
+    RelativeLayout rl_new;
+    @BindView(R.id.tv_back)
+    TextView tv_back;
     @BindView(R.id.tv_title_setting)
     TextView tv_title_setting;
     @BindView(R.id.ll_parent)
@@ -161,6 +166,7 @@ public class MainActivity extends BaseActivity implements
                 }
             });
             iv_back.setVisibility(View.INVISIBLE);
+            rl_new.setVisibility(View.VISIBLE);
             tv_title.setText(msg_name);
             PreferencesUtils.putString(MyApplication.getContext(), "Fengrun", "无");
             mString = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
@@ -228,12 +234,19 @@ public class MainActivity extends BaseActivity implements
                         return;
                     }
                     address = location.getAddrStr();
-                    if (isFirstLocation) {
-                        if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
-                            int length = address.length();
-                            address = address.substring(2, length);
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
+                        int length = address.length();
+                        address = address.substring(2, length);
+                        if (latitude > 0 && longitude > 0) {
+                            MyApplication.latitude = latitude;
+                            MyApplication.longitude = longitude;
+                            MyApplication.address = address;
+
+                        }
+                        LogUtils.d("MainActivity==" + address + "\n" + latitude + " ++ " + longitude);
+                        if (isFirstLocation) {
                             isFirstLocation = false;
                             PreferencesUtils.putString(MainActivity.this, Constans.ADDRESS, address);
                             try {
@@ -244,12 +257,10 @@ public class MainActivity extends BaseActivity implements
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-
                         }
                     }
                 }
-//            }
-            }, BDLOCATION_TIME);
+            }, BDLOCATION_TIME, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -401,9 +412,28 @@ public class MainActivity extends BaseActivity implements
 
     /*后来者有时间在抽基类
      * */
-    @OnClick(R.id.tv_title_setting)
+    @OnClick({R.id.tv_title_setting, R.id.rl_new})
     public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tv_title_setting:
+                showPopuwindow();
+                break;
+            case R.id.rl_new:
+                toNewRemindNorActivity();
+                break;
+        }
 
+    }
+
+    /*跳转信息界面*/
+    private void toNewRemindNorActivity() {
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, NewRemindNorActivity.class);
+        startActivity(intent);
+
+    }
+
+    private void showPopuwindow() {
         // 获取自定义的菜单布局文件
         View popupWindow_view = getLayoutInflater().inflate(R.layout.chat_menu, null, false);
         // 创建PopupWindow实例,设置菜单宽度和高度为包裹其自身内容
@@ -457,8 +487,6 @@ public class MainActivity extends BaseActivity implements
                 return false;
             }
         });
-
-
     }
 
     private void toCreateGroup() {
@@ -477,7 +505,6 @@ public class MainActivity extends BaseActivity implements
         intent.putExtra(Constans.GROUPID, "dg1168");
         startActivity(intent);
     }
-
 
 
     /*获取token*/

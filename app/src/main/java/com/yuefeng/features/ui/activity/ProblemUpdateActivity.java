@@ -223,7 +223,7 @@ public class ProblemUpdateActivity extends BaseActivity implements
                 }
 //                }
             }
-        }, BDLOCATION_TIME);
+        }, BDLOCATION_TIME,true);
     }
 
     private void useGpsLocation() {

@@ -33,6 +33,39 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/rl_new"
+        android:layout_width="@dimen/dp_70"
+        android:layout_height="@dimen/dp_40"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/view"
+        android:background="@color/transition"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/dp_20"
+            android:src="@drawable/news_remind_nor"
+            tools:ignore="ContentDescription"/>
+
+        <TextView
+            android:id="@+id/tv_new_count"
+            android:layout_width="@dimen/dp_12"
+            android:layout_height="@dimen/dp_12"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_32"
+            android:background="@drawable/shape_red_dot8"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@color/white"
+            android:textSize="9sp"
+            android:visibility="visible"
+            tools:ignore="ContentDescription,HardcodedText,SmallSp"/>
+
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"

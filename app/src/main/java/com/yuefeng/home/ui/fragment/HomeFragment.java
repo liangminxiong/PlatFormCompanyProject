@@ -124,7 +124,7 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
     private void getNetDatas() {
         if (mPresenter != null) {
             String pid = PreferencesUtils.getString(getContext(), Constans.ORGID, "");
-            mPresenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, mStartTime, mEndTime);
+            mPresenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, mStartTime, mEndTime,false);
         }
     }
 

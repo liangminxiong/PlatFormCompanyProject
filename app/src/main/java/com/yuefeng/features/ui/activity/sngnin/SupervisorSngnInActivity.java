@@ -290,7 +290,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
                     }
                 }
             }
-        }, Constans.BDLOCATION_TIME);
+        }, Constans.BDLOCATION_TIME,true);
     }
 
 

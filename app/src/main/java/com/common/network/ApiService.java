@@ -8,6 +8,7 @@ import com.yuefeng.contacts.modle.contacts.OrganPersonalBean;
 import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserBean;
 import com.yuefeng.contacts.modle.groupchat.AllUserContactsBean;
 import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
+import com.yuefeng.features.modle.AlarmListBean;
 import com.yuefeng.features.modle.EventQuestionBean;
 import com.yuefeng.features.modle.GetAllPersonalBean;
 import com.yuefeng.features.modle.GetEventdetailBean;
@@ -32,6 +33,7 @@ import com.yuefeng.home.modle.HistoryAppVersionBean;
 import com.yuefeng.home.modle.MsgDataBean;
 import com.yuefeng.home.modle.MsgDataDetailBean;
 import com.yuefeng.home.modle.NewMsgDataBean;
+import com.yuefeng.home.modle.NewRemindNorDetailBean;
 import com.yuefeng.home.modle.ReplyContentBean;
 import com.yuefeng.login_splash.model.LoginBean;
 import com.yuefeng.personaltree.model.PersoanlTreeListBean;
@@ -63,6 +65,8 @@ public interface ApiService {
     String MIA_CHAT = "zgbd_voc/rongyun/";
     /*京东*/
     String MIA_HAO = "zgbd_voc_test/rongyun/";
+    /*报警*/
+    String MIA_ALARM = "zgbd_hw/alarm/";
 
     String MIA_HW_RELEASE = "zgbd_hw/release/";
     String MIA_HW_BUSINESS = "zgbd_hw/web/business/";
@@ -130,6 +134,10 @@ public interface ApiService {
     String GETEVEQUESTIONBYUSERID = "getEveQuestionByuserid";
     /*获取消息列表公告*/
     String GETDATAACTION = "getData.action";
+    /*报警信息列表*/
+    String GETALARMPAGE = "getalarmpage.action";
+    /*报警详情*/
+    String GETALARMEDIT = "getalarmedit.action";
     /*消息详情*/
     String GETMSGDETAIL = "getDetail.action";
     /*消息回复*/
@@ -465,7 +473,7 @@ public interface ApiService {
             @Field("imageurls") String imageurls);
 
     /*最新消息列表*/
-    @Headers({"urlname:ali"})
+    @Headers({"urlname:qiu"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<NewMsgDataBean> getAnnouncementByuserid(
@@ -473,6 +481,26 @@ public interface ApiService {
             @Field("pid") String pid,
             @Field("timestart") String timestart,
             @Field("timeend") String timeend);
+
+    /*报警消息列表*/
+    @Headers({"urlname:qiu"})
+    @FormUrlEncoded()
+    @POST(MIA_ALARM + GETALARMPAGE)
+    Observable<AlarmListBean> getalarmpage(
+            @Field("pid") String pid,
+            @Field("datetimestart") String timestart,
+            @Field("datetimeend") String timeend,
+            @Field("page") String page,
+            @Field("limit") String limit);
+
+    /*报警消息详情*/
+    @Headers({"urlname:qiu"})
+    @FormUrlEncoded()
+    @POST(MIA_ALARM + GETALARMEDIT)
+    Observable<NewRemindNorDetailBean> getAlarmedit(
+            @Field("id") String id,
+            @Field("datetimestart") String timestart,
+            @Field("datetimeend") String timeend);
 
     /*公告*/
     @Headers({"urlname:ali"})

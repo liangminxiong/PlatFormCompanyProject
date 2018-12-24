@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseFragment;
 import com.common.utils.Constans;
@@ -46,7 +45,7 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
     private GetJobMonitotingMsgBean bean = null;
 
     private int count = 0;
-    private GeoCoder mGeocoder;
+//    private GeoCoder mGeocoder;
     private LocationUtils mLocationUtils;
     private int mLastItemPosition;
     private int mFirstItemPosition;
@@ -242,9 +241,9 @@ public class PersonalFragment extends BaseFragment implements LocationUtils.OnRe
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-        if (mGeocoder != null) {
-            mGeocoder.destroy();
-        }
+//        if (mGeocoder != null) {
+//            mGeocoder.destroy();
+//        }
     }
 
 

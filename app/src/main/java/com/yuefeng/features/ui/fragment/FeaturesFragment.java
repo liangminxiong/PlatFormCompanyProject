@@ -26,6 +26,7 @@ import com.yuefeng.features.ui.activity.Lllegalwork.LllegalWorkActivity;
 import com.yuefeng.features.ui.activity.QualityInspectionActivity;
 import com.yuefeng.features.ui.activity.monitoring.MonitoringofJobActivity;
 import com.yuefeng.features.ui.activity.position.PositionAcquisitionActivity;
+import com.yuefeng.features.ui.activity.sngnin.ExecutiveAttendanceActivity;
 import com.yuefeng.features.ui.activity.sngnin.JobAttendanceActivity;
 import com.yuefeng.features.ui.activity.track.HistoryTrackActivity;
 import com.yuefeng.features.ui.activity.video.VideoCameraActivity;
@@ -229,7 +230,7 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @OnClick({R.id.rl_kaoqin, R.id.rl_operationbianji, R.id.rl_historytrack, R.id.rl_videojian, R.id.rl_historytrack1,
+    @OnClick({R.id.rl_kaoqin, R.id.rl_operationbianji, R.id.rl_historytrack, R.id.rl_videojian, R.id.rl_historytrack1, R.id.rl_msgcollection1,
             R.id.rl_problemupload, R.id.rl_qualityxuncha, R.id.rl_operationweigui, R.id.rl_msgcollection, R.id.rl_money_manage})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -263,7 +264,17 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
             case R.id.rl_historytrack1:
                 moneyManage(2);//我的申请
                 break;
+            case R.id.rl_msgcollection1:
+                toExecutiveAttendanceActivity();//主管考勤
+                break;
         }
+    }
+
+    /*主管考勤*/
+    private void toExecutiveAttendanceActivity() {
+        Intent intent = new Intent();
+        intent.setClass(getContext(), ExecutiveAttendanceActivity.class);
+        startActivity(intent);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -273,7 +284,7 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
         if (type == 1) {
             mUrl = ApiService.H5URL_BUSINESSEDIT + userid;
             title = "新增申请";
-        }else {
+        } else {
             mUrl = ApiService.H5URL_APPLYEDIT + userid;
             title = "我的申请";
         }

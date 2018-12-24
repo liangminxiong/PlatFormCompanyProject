@@ -447,7 +447,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 //                    requestPermissions();
 //                }
                 }
-            }, Constans.BDLOCATION_TIME);
+            }, Constans.BDLOCATION_TIME,true);
         } catch (Exception e) {
             e.printStackTrace();
         }

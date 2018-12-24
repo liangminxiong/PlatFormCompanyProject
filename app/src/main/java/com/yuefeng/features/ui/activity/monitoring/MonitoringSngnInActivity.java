@@ -182,7 +182,7 @@ public class MonitoringSngnInActivity extends BaseActivity implements Monitoring
                     }
                 }
             }
-        }, Constans.BDLOCATION_TIME);
+        }, Constans.BDLOCATION_TIME,true);
     }
 
 

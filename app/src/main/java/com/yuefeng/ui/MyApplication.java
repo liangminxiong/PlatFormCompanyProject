@@ -39,6 +39,9 @@ public class MyApplication extends Application {
     private static boolean isDebug = true;//true 玩Android flase 百度
     protected static Handler handler;
     protected static int mainThreadId;
+    public static double latitude = 0;
+    public static double longitude = 0;
+    public static String address = "";
     private DBManager dbHelper;
 
     private RefWatcher refWatcher;

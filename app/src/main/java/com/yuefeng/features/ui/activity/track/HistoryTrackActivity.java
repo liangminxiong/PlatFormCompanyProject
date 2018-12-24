@@ -425,7 +425,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 //                    }
 
                 }
-            }, Constans.BDLOCATION_TIME);
+            }, Constans.BDLOCATION_TIME,true);
             initLocation();
         } catch (Exception e) {
             e.printStackTrace();

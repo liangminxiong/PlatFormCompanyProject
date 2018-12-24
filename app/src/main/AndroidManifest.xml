@@ -359,6 +359,30 @@
             android:name="com.yuefeng.usercenter.ui.activity.ChangePassWordActivity"
             android:hardwareAccelerated="false"/>
 
+        <!--消息，报警界面-->
+        <activity
+            android:name="com.yuefeng.home.ui.activity.NewRemindNorActivity"
+            android:hardwareAccelerated="false"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <!--报警列表-->
+        <activity
+            android:name="com.yuefeng.home.ui.activity.NewRemindNorListInfosActivtiy"
+            android:hardwareAccelerated="false"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <!--报警详情-->
+        <activity
+            android:name="com.yuefeng.home.ui.activity.NewRemindDetailNorActivity"
+            android:hardwareAccelerated="false"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+
+        <!--主管考勤-->
+        <activity
+            android:name="com.yuefeng.features.ui.activity.sngnin.ExecutiveAttendanceActivity"
+            android:hardwareAccelerated="false"/>
+
+        <!--定位服务-->
+        <service android:name="com.yuefeng.features.service.LocationService"/>
+
         <!-- 监听网络变化的广播 -->
         <receiver
             android:name="com.common.base.HttpErrorReceiver"
@@ -401,7 +425,7 @@
         <activity
             android:name="com.yuefeng.home.ui.imActivity.SubConversationListActivtiy"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="adjustPan|stateHidden">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -419,7 +443,7 @@
         <activity
             android:name="com.yuefeng.home.ui.imActivity.ConversationActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="adjustPan|stateHidden">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -438,7 +462,7 @@
         <activity
             android:name="com.yuefeng.home.ui.imActivity.ConversationListActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="adjustPan|stateHidden">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

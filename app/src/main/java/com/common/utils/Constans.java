@@ -221,12 +221,17 @@ public class Constans {
     public static final int ANMENT_LIST_ERROR_NULL = 1281;
     public static final int NEW_MSG_SUCCESS = 129;//最新消息
     public static final int NEW_MSG_ERROR = 130;
-
     public static final int APP_VERSION_SUCCESS = 131;//最新消息
     public static final int APP_VERSION_ERROR = 132;
-
     public static final int DETAIL_MSG_SUCCESS = 131;//已读详情
     public static final int DETAIL_MSG_ERROR = 132;
+
+    public static final int REMINDLIST_SUCCESS = 133;//报警消息成功
+    public static final int REMINDLIST_ERROR = 134;
+
+    public static final int REMINDDETAIL_SUCCESS = 135;//报警消息详情成功
+    public static final int REMINDDETAIL_ERROR = 136;
+
 
     public static final String THIRTYTWOID = "thirtyTwoId";
     public static final String ANNTIME = "AnnTime";

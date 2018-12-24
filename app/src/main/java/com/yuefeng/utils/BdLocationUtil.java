@@ -13,8 +13,11 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
@@ -67,7 +70,7 @@ public class BdLocationUtil {
     /**
      * 获取当前位置
      */
-    public void requestLocation(final MyLocationListener listener, int time) {
+    public void requestLocation(final MyLocationListener listener, int time, final boolean isLocaOne) {
         //声明LocationClient类
         locationClient = new LocationClient(MyApplication.getContext());
         // 设置定位条件
@@ -85,7 +88,9 @@ public class BdLocationUtil {
             public void onReceiveLocation(BDLocation location) {
                 if (location != null) {
                     listener.myLocation(location);
-                    locationClient.stop();
+                    if (isLocaOne) {
+                        locationClient.stop();
+                    }
                 }
             }
         });
@@ -136,6 +141,17 @@ public class BdLocationUtil {
     public static void MoveMapToCenter(BaiduMap bm, LatLng ll, int zoom) {
         MapStatus.Builder builder = new MapStatus.Builder();
         builder.target(ll).zoom(zoom);
+        bm.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+    }
+
+    public static void MoveMapToCenterWithBitmap(BaiduMap bm, LatLng ll
+            , int zoom, BitmapDescriptor icon, MarkerOptions ooA, Marker mMarker) {
+        MapStatus.Builder builder = new MapStatus.Builder();
+        builder.target(ll).zoom(zoom);
+        ooA = new MarkerOptions().icon(icon).zIndex(13);
+        ooA.position(ll);
+        mMarker = null;
+        mMarker = (Marker) (bm.addOverlay(ooA));
         bm.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
     }
 

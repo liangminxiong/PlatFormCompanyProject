@@ -16,17 +16,16 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
-import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.TimeUtils;
 import com.common.view.timeview.TimePickerView;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.home.contract.AnnouncementListInfosContract;
-import com.yuefeng.home.modle.AnnouncementDataBean;
-import com.yuefeng.home.modle.AnnouncementDataMsgBean;
-import com.yuefeng.home.presenter.AnnouncementListInfosPresenter;
-import com.yuefeng.home.ui.adapter.AnnouncementListsInfosAdapter;
+import com.yuefeng.features.modle.AlarmDataBean;
+import com.yuefeng.features.modle.AlarmListBean;
+import com.yuefeng.home.contract.NewRemindNorListInfosContract;
+import com.yuefeng.home.presenter.NewRemindNorListInfosPresenter;
+import com.yuefeng.home.ui.adapter.NewRemindListsInfosAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,10 +40,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-/*公告List*/
+/*报警List*/
 @SuppressLint("Registered")
-public class AnnouncementListInfosActivtiy extends BaseActivity implements
-        AnnouncementListInfosContract.View, BaseQuickAdapter.RequestLoadMoreListener {
+public class NewRemindNorListInfosActivtiy extends BaseActivity implements
+        NewRemindNorListInfosContract.View, BaseQuickAdapter.RequestLoadMoreListener {
 
     @BindView(R.id.tv_title)
     TextView tv_title;
@@ -65,9 +64,9 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
     @BindView(R.id.iv_showtime)
     ImageView ivShowtime;
 
-    private List<AnnouncementDataMsgBean> listData = new ArrayList<>();
-    private AnnouncementListsInfosAdapter adapter;
-    private AnnouncementListInfosPresenter mPresenter;
+    private List<AlarmDataBean> listData = new ArrayList<>();
+    private NewRemindListsInfosAdapter adapter;
+    private NewRemindNorListInfosPresenter mPresenter;
 
     private static int CURPAGE = 1;
     private boolean isRefresh = false;
@@ -76,6 +75,7 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
     private String mEndTime = "";
     private int mCount;
     private TimePickerView timePickerView;
+    private boolean isFirstGetData = true;
 
     @Override
     protected int getContentViewResId() {
@@ -89,16 +89,17 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
         }
         ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        mPresenter = new AnnouncementListInfosPresenter(this, this);
+        mPresenter = new NewRemindNorListInfosPresenter(this, this);
         initUI();
+        isFirstGetData = true;
+
     }
 
     private void initUI() {
-        tv_title.setText("公告消息");
+        tv_title.setText("报警消息");
         tv_back.setText(R.string.back);
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
         initRecycleView();
-//        getDataByNet();
     }
 
     @OnClick(R.id.tv_back)
@@ -109,18 +110,17 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        isRefresh = false;
-        CURPAGE = 1;
-        getDataByNet();
+        getDataByNet(isFirstGetData);
     }
 
 
-
     /*获取数据源*/
-    private void getDataByNet() {
+    private void getDataByNet(boolean isFirstGetData) {
+        isRefresh = false;
+        CURPAGE = 1;
         if (mPresenter != null) {
             mPid = PreferencesUtils.getString(this, Constans.ORGID, "");
-            mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TWENTY, true);
+            mPresenter.getalarmpage(mPid, mStartTime, mEndTime, String.valueOf(CURPAGE), String.valueOf(Constans.TWENTY), isFirstGetData);
         }
     }
 
@@ -135,7 +135,7 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
     public void disposeCommonEvent(CommonEvent event) {
         switch (event.getWhat()) {
             case Constans.ANMENT_LIST_SSUCESS:
-                AnnouncementDataBean bean = (AnnouncementDataBean) event.getData();
+                AlarmListBean bean = (AlarmListBean) event.getData();
                 assert bean != null;
                 listData = bean.getData();
                 if (listData.size() <= 0) {
@@ -156,18 +156,22 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
                 }
                 mCount = bean.getCount();
                 break;
-            case Constans.ANMENT_LIST_ERROR:
-                showSuccessToast("加载失败");
-                break;
             case Constans.ANMENT_LIST_ERROR_NULL:
-                showSuccessToast("暂无信息");
+                showSureGetAgainDataDialog("获取数据失败，是否重新加载?");
                 break;
         }
         swipeRefreshLayout.setRefreshing(false);
     }
 
+
+    @Override
+    public void getDatasAgain() {
+        getDataByNet(true);
+        super.getDatasAgain();
+    }
+
     private void initRecycleView() {
-        adapter = new AnnouncementListsInfosAdapter(R.layout.recyclerview_item_msgdetail, listData, AnnouncementListInfosActivtiy.this);
+        adapter = new NewRemindListsInfosAdapter(R.layout.recyclerview_item_msgdetail, listData, NewRemindNorListInfosActivtiy.this);
         adapter.setOnLoadMoreListener(this, recyclerview);
         adapter.disableLoadMoreIfNotFullPage();
         recyclerview.setAdapter(adapter);
@@ -176,8 +180,9 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (listData.size() > 0) {
-                    AnnouncementDataMsgBean msgBean = listData.get(position);
+                    AlarmDataBean msgBean = listData.get(position);
                     toOnlyDetailActivity(msgBean);
+                    isFirstGetData = false;
                 }
             }
         });
@@ -188,19 +193,19 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                    isRefresh = false;
-                    CURPAGE = 1;
-                    mEndTime = TimeUtils.getCurrentTime2();
-                    adapter.setEnableLoadMore(false);
-                    mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TWENTY, false);
-                }
+                isRefresh = false;
+                CURPAGE = 1;
+                mEndTime = TimeUtils.getCurrentTime2();
+                adapter.setEnableLoadMore(false);
+                mPresenter.getalarmpage(mPid, mStartTime, mEndTime, String.valueOf(CURPAGE), String.valueOf(Constans.TWENTY), false);
+            }
         });
     }
 
-    private void toOnlyDetailActivity(AnnouncementDataMsgBean msgBean) {
+    private void toOnlyDetailActivity(AlarmDataBean msgBean) {
         if (msgBean != null) {
             Intent intent = new Intent();
-            intent.setClass(AnnouncementListInfosActivtiy.this, AnnouncementDetailInfosActivtiy.class);
+            intent.setClass(NewRemindNorListInfosActivtiy.this, NewRemindDetailNorActivity.class);
             intent.putExtra("msgData", msgBean);
             startActivity(intent);
         }
@@ -213,7 +218,7 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
             public void run() {
                 if (mCount > Constans.TWENTY) {
                     ++CURPAGE;
-                    mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TWENTY, false);
+                    mPresenter.getalarmpage(mPid, mStartTime, mEndTime, String.valueOf(CURPAGE), String.valueOf(Constans.TWENTY), false);
                     adapter.loadMoreComplete();
                 } else {
                     adapter.loadMoreEnd(true);
@@ -250,9 +255,8 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
             ivShowtime.setVisibility(View.VISIBLE);
             isRefresh = false;
             CURPAGE = 1;
-//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
-            mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, tvStartTime.getText().toString().trim()
-                    , tvEndTime.getText().toString().trim(), CURPAGE, Constans.TWENTY, true);
+            mPresenter.getalarmpage(mPid, tvStartTime.getText().toString().trim()
+                    , tvEndTime.getText().toString().trim(), String.valueOf(CURPAGE), String.valueOf(Constans.TWENTY), true);
 
         }
     }

@@ -25,7 +25,7 @@ public class HomePresenter extends BasePresenterImpl<HomeContract.View,
     }
 
     @Override
-    public void getAnnouncementByuserid(String function, String pid, String timestart, String timeend) {
+    public void getAnnouncementByuserid(String function, String pid, String timestart, String timeend,boolean isFirstGetData) {
 
         HttpObservable.getObservable(apiRetrofit.getAnnouncementByuserid(function, pid, timestart, timeend))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {

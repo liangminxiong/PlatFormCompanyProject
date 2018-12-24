@@ -145,18 +145,18 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
                 requestPermissions();
             } else {
                 initBaiduMap();
-                showDataImageIntoMap(lnglat,typeName);
+                showDataImageIntoMap(lnglat, typeName);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void showDataImageIntoMap(String lnglat,String typeName) {
+    private void showDataImageIntoMap(String lnglat, String typeName) {
         List<LatLng> points = com.yuefeng.utils.StringUtils.getLnglat(lnglat);
         int size = points.size();
         if (size > 1) {
-            drawLineIntoBaiduMap(points,typeName);
+            drawLineIntoBaiduMap(points, typeName);
         } else {
             LatLng latLng = points.get(0);
             if (baiduMap != null) {
@@ -171,7 +171,7 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
         }
     }
 
-    private void drawLineIntoBaiduMap(List<LatLng> points,String typeName) {
+    private void drawLineIntoBaiduMap(List<LatLng> points, String typeName) {
         try {
             //起始点图层也会被清除，重新绘画
             if (points.size() > 1) {
@@ -273,7 +273,7 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
                     }
                     firstLocation(latitude, longitude, address);
                 }
-            }, Constans.BDLOCATION_TIME);
+            }, Constans.BDLOCATION_TIME, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -287,7 +287,8 @@ public class PositionAcquisitionDetailActivity extends BaseActivity {
             }
             latLng = new LatLng(latitude, longitude);
             if (isFirstLoc) {
-                isFirstLoc = false; PreferencesUtils.putString(PositionAcquisitionDetailActivity.this, Constans.ADDRESS, address);
+                isFirstLoc = false;
+                PreferencesUtils.putString(PositionAcquisitionDetailActivity.this, Constans.ADDRESS, address);
                 MapStatus ms = new MapStatus.Builder().target(latLng)
                         .overlook(-20).zoom(Constans.BAIDU_ZOOM_EIGHTEEN).build();
                 ooA = new MarkerOptions().icon(personalImage).zIndex(10);

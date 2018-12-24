@@ -261,7 +261,7 @@ public class MonitoringHistoryOfJobActivity extends BaseActivity implements Moni
                     }
 //                }
                 }
-            }, Constans.BDLOCATION_TIME);
+            }, Constans.BDLOCATION_TIME,true);
         } catch (Exception e) {
             e.printStackTrace();
         }

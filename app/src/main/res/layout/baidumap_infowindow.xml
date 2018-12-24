@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/xx_baojing_bg"
+    android:orientation="vertical"
+    android:paddingBottom="30dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingTop="15dp">
+
+    <TextView
+        android:id="@+id/tv_car"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_5"
+        android:gravity="center"
+        android:padding="@dimen/dp_5"
+        android:text="车牌号:"
+        android:textColor="#2B8DD6"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText"/>
+
+    <TextView
+        android:id="@+id/tv_car_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/tv_car"
+        android:gravity="center_vertical"
+        android:padding="@dimen/dp_5"
+        android:text="检查部门：安监局"
+        android:textColor="#1f1f1f"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText"/>
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_car"
+        android:layout_marginStart="@dimen/dp_5"
+        android:gravity="center"
+        android:padding="@dimen/dp_5"
+        android:text="时间:"
+        android:textColor="#2B8DD6"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText"/>
+
+    <TextView
+        android:id="@+id/tv_times"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_car"
+        android:layout_toEndOf="@id/tv_time"
+        android:gravity="center_vertical"
+        android:padding="@dimen/dp_5"
+        android:text="检查部门：安监局"
+        android:textColor="#1f1f1f"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText"/>
+
+    <TextView
+        android:id="@+id/tv_comt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_time"
+        android:layout_marginStart="@dimen/dp_5"
+        android:gravity="center"
+        android:padding="@dimen/dp_5"
+        android:text="内容:"
+        android:textColor="#2B8DD6"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText"/>
+
+    <TextView
+        android:id="@+id/tv_comtent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_time"
+        android:layout_toEndOf="@id/tv_comt"
+        android:gravity="center_vertical"
+        android:padding="@dimen/dp_5"
+        android:text="检查部门：安监局检查部门：安监局检查部门：安监局"
+        android:textColor="#1f1f1f"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText"/>
+
+    <TextView
+        android:id="@+id/tv_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_comtent"
+        android:layout_marginStart="@dimen/dp_5"
+        android:gravity="center"
+        android:padding="@dimen/dp_5"
+        android:text="位置:"
+        android:textColor="#2B8DD6"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText"/>
+
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_comtent"
+        android:layout_toEndOf="@id/tv_add"
+        android:gravity="center_vertical"
+        android:padding="@dimen/dp_5"
+        android:text="检查部门：安监局检查部门：安监局检查部门：安监局"
+        android:textColor="#1f1f1f"
+        android:textSize="@dimen/sp_14"
+        tools:ignore="HardcodedText"/>
+
+
+</RelativeLayout>

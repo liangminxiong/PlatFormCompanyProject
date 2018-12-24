@@ -113,6 +113,23 @@ public class LocationUtils implements MyLocationListener.OnLocationResultListene
     }
 
     /**
+     * 进行反地理编码	 *
+     * * @param latitude* 纬度信息
+     * * @param lontitude* 经度信息
+     */
+    public void getAddressLatlng(LatLng latLng) {
+        // 反地理编码请求参数对象
+        ReverseGeoCodeOption mReverseGeoCodeOption = new ReverseGeoCodeOption();
+        // 设置请求参数
+        mReverseGeoCodeOption.location(latLng);
+//        mReverseGeoCodeOption.newVersion(1);
+        // 发起反地理编码请求(经纬度->地址信息)
+        mGeoCoder.reverseGeoCode(mReverseGeoCodeOption);
+        // 设置查询结果监听者
+        mGeoCoder.setOnGetGeoCodeResultListener(mOnGetGeoCoderResultListener);
+    }
+
+    /**
      * 根据城市,地址信息进行地理编码	 *
      * * @param city* 城市,不能为null
      * * @param address	 * 详细地址,不为null

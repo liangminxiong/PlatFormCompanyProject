@@ -123,6 +123,9 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
                 });
     }
 
+
+
+
     private void getLocation() {
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
@@ -155,7 +158,7 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
 //                    tvAddress.setText("点击重新定位");
 //                }
             }
-        }, Constans.BDLOCATION_TIME);
+        }, Constans.BDLOCATION_TIME,true);
     }
 
 
