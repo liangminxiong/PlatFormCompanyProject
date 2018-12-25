@@ -66,7 +66,7 @@ public class MonitoringSngnInDetailActivity extends BaseActivity {
     TextView greateTime;
     @BindView(R.id.gridview)
     MyGridView2 gridview;
-    @BindView(R.id.tv_time)
+    @BindView(R.id.tv_phone)
     TextView tvTime;
 
     private boolean isFirstLoc = true;

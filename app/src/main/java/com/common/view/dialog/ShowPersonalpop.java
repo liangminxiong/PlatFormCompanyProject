@@ -2,7 +2,6 @@ package com.common.view.dialog;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.common.utils.StringUtils;
 import com.yuefeng.commondemo.R;
 
 
@@ -111,10 +111,7 @@ public class ShowPersonalpop extends PopupWindow {
         }
 
         tv_item_name.setText(name);
-        phone = TextUtils.isEmpty(phone) ? "" : phone;
-        if (phone.equals("null")) {
-            phone = "无";
-        }
+        phone = StringUtils.isEntryStrWu(phone);
         String type = "";
 //        0  离线  1 停止 2 行驶 3 等待
         switch (stateType) {

@@ -51,7 +51,7 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
     TextView tvNosignin;
     @BindView(R.id.tv_nosignoff)
     TextView tvNosignoff;
-    @BindView(R.id.tv_time)
+    @BindView(R.id.tv_phone)
     TextView tvTime;
     @BindView(R.id.tv_sngnin_count)
     TextView tvSngninCount;

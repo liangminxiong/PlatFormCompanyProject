@@ -26,6 +26,8 @@ import com.yuefeng.features.modle.carlist.CarListInfosBean;
 import com.yuefeng.features.modle.carlist.OldCarListInfosBean;
 import com.yuefeng.features.modle.video.GetCaijiTypeBean;
 import com.yuefeng.features.modle.video.VideoEquipmentBean;
+import com.yuefeng.features.modle.zhuguanSign.ZhuGuanSignBean;
+import com.yuefeng.features.presenter.zhuguansign.ExecutiveAtteanTrackBean;
 import com.yuefeng.home.modle.AnnouncementDataBean;
 import com.yuefeng.home.modle.AnnouncementDeBean;
 import com.yuefeng.home.modle.AppVersionDetailBean;
@@ -159,7 +161,7 @@ public interface ApiService {
     String UPLOADFILE = NetworkUrl.ANDROID_TEST_SERVICE + "zgbd_hw/business/FileUpload.action";
 
     /*登录用户*/
-    @Headers({"urlname:ali"})
+    @Headers({"urlname:gu"})
     @FormUrlEncoded
     @POST(MIA)
     Observable<LoginBean> login(
@@ -220,7 +222,7 @@ public interface ApiService {
             @Query("function") String function,
             @Query("problemid") String problemid);
 
-    /*作业监控*/
+    /*作业监控*///无速度时间
     @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetJobMonitotingBean> getmonitorinfo(
@@ -228,6 +230,18 @@ public interface ApiService {
             @Query("userid") String userid,
             @Query("pid") String pid,
             @Query("isreg") String isreg);
+
+
+    //有速度时间
+    /*作业监控*/
+    @Headers({"urlname:gu"})
+    @POST(MIA_HW)
+    Observable<GetJobMonitotingBean> getmonitorinfo(
+            @Query("function") String function,
+            @Query("userid") String userid,
+            @Query("pid") String pid,
+            @Query("isreg") String isreg,
+            @Query("isnew") String isnew);
 
     /*获取主管*/
     @Headers({"urlname:ali"})
@@ -558,6 +572,21 @@ public interface ApiService {
             @Field("lat") String lat,
             @Field("id") String id);
 
+
+    /*主管及以上实时上传经纬度*/
+    @Headers({"urlname:gu"})
+    @FormUrlEncoded()
+    @POST(MIA_HW)
+    Observable<SubmitBean> uploadLnglat(
+            @Query("function") String function,
+            @Query("type") String type,
+            @Field("lng") String lng,
+            @Field("lat") String lat,
+            @Field("id") String id,
+            @Field("phone") String phone,
+            @Field("address") String address);
+
+
     /*获取token*/
     String GETTOKEN = "login.action";
     /*修改用户信息*/
@@ -678,4 +707,38 @@ public interface ApiService {
     @POST(MIA_HAO + FINDUSERWITHID)
     Observable<UserDeatailInfosBean> findUserWithID(
             @Field("id") String id);
+
+
+    /*获取主管树人员列表*/
+    String GETSIGNTREE = "getsigntree";
+    /*主管考勤最新定位*/
+    String GETPERSONALMONITOR = "getPersonalMonitor";
+    /*查看轨迹*/
+    String GETPERSONIDTRACK = "getPersonidTrack";
+
+    /*获取主管考勤人员树*/
+    @Headers({"urlname:gu"})
+    @FormUrlEncoded()
+    @POST(MIA_HW)
+    Observable<PersoanlTreeListBean> getSignTree(
+            @Field("function") String function,
+            @Field("pid") String pid);
+
+    /*主管实时定位*/
+    @Headers({"urlname:gu"})
+    @FormUrlEncoded()
+    @POST(MIA_HW)
+    Observable<ZhuGuanSignBean> getPersonalMonitor(
+            @Field("function") String function,
+            @Field("idflags") String idflags);
+
+    /*主管查看轨迹*/
+    @Headers({"urlname:gu"})
+    @FormUrlEncoded()
+    @POST(MIA_HW)
+    Observable<ExecutiveAtteanTrackBean> getPersonidTrack(
+            @Field("function") String function,
+            @Field("userid") String userid,
+            @Field("timestart") String timestart,
+            @Field("timeend") String timeend);
 }

@@ -215,6 +215,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 PreferencesUtils.putString(LoginActivity.this, Constans.ID, loginInfo.getId());
 //                LogUtils.d("=============" + loginInfo.getId());
                 PreferencesUtils.putString(LoginActivity.this, Constans.EMAIL, loginInfo.getEmail());
+                PreferencesUtils.putInt(LoginActivity.this, Constans.ISADMIN, loginInfo.getIsadmin());
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.ISREG, loginInfo.isIsreg());
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
                 String alias = MD5Utils.toString(string);

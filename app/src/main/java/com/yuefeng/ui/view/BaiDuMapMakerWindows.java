@@ -23,9 +23,9 @@ public class BaiDuMapMakerWindows {
 
     public BaiDuMapMakerWindows() {
         popoverView = ResourcesUtils.inflate(R.layout.baidumap_infowindow);
-        mTvCarNumber = (TextView) popoverView.findViewById(R.id.tv_car_number);
-        mTvTimes = (TextView) popoverView.findViewById(R.id.tv_times);
-        mTvComtent = (TextView) popoverView.findViewById(R.id.tv_comtent);
+        mTvCarNumber = (TextView) popoverView.findViewById(R.id.tv_send_msg);
+        mTvTimes = (TextView) popoverView.findViewById(R.id.tv_phone_number);
+        mTvComtent = (TextView) popoverView.findViewById(R.id.tv_times);
         mTvAddress = (TextView) popoverView.findViewById(R.id.tv_address);
     }
 

@@ -111,8 +111,8 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
 
     private void initCountDown() {
         try {
-//            initUI();
-            boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
+            initUI();
+           /* boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
             if (isHaveDatas) {
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
                 if (!TextUtils.isEmpty(string)) {//主界面
@@ -124,7 +124,7 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
             } else {
                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
             }
-            finish();
+            finish();*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,7 +135,7 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
     public void disposeLoginEvent(LoginEvent loginEvent) {
         dismissLoadingDialog();
         switch (loginEvent.getWhat()) {
-            case Constans.LOGIN:
+            case Constans.REGISTER_SUCCESS:
                 if (loginEvent.getData() != null) {
                     mLoginInfo = (LoginDataBean) loginEvent.getData();
                 }
@@ -155,7 +155,7 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
 
                 toMainActivity();
                 break;
-            case Constans.USERERROR:
+            case Constans.REGISTER_ERROR:
                 toLoginActivity();
                 break;
         }

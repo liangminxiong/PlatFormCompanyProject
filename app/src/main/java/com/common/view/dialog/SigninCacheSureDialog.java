@@ -42,7 +42,7 @@ public class SigninCacheSureDialog extends Dialog {
     }
 
     private void initView() {
-        tv_time = findViewById(R.id.tv_time);
+        tv_time = findViewById(R.id.tv_phone);
         tv_address = findViewById(R.id.tv_address);
         tv_time_down = findViewById(R.id.tv_time_down);
         cancle = findViewById(R.id.tv_cancel);

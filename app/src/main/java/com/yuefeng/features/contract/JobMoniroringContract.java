@@ -11,5 +11,6 @@ public interface JobMoniroringContract {
     interface Presenter {
         /*作业监控*/
         void getmonitorinfo(String function, String userid, String pid, String isreg);
+        void getmonitorinfo(String function, String userid, String pid, String isreg,String isnew);
     }
 }

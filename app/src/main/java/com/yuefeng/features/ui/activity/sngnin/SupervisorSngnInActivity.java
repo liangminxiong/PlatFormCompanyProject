@@ -69,7 +69,7 @@ public class SupervisorSngnInActivity extends BaseActivity implements Supervisor
     TextView tvTitle;
     @BindView(R.id.tv_title_setting)
     TextView tvTitleSetting;
-    @BindView(R.id.tv_time)
+    @BindView(R.id.tv_phone)
     TextView tvTime;
     @BindView(R.id.tv_address)
     TextView tvAddress;

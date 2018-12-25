@@ -1,5 +1,7 @@
 package com.yuefeng.utils;
 
+import android.text.TextUtils;
+
 import com.baidu.mapapi.model.LatLng;
 import com.common.utils.Constans;
 import com.common.utils.LogUtils;
@@ -140,6 +142,9 @@ public class PersonalDatasUtils {
                 firstVRegistrationNO = firstVehicle.getName();
                 firstVehicleStateType = firstVehicle.getStateType();
                 firstVehicleTerminalNO = firstVehicle.getTerminalNO();
+                if (TextUtils.isEmpty(firstVehicleTerminalNO)) {
+                    firstVehicleTerminalNO = "1";
+                }
                 mDatas.add(new Node(firstVehicleId + "", fatherId + "", firstVRegistrationNO,
                         Constans.COUNT_ZERO, firstVehicleStateType, firstVehicleTerminalNO, sGt, sSpeed, sObd, address, false));
             }
@@ -171,6 +176,9 @@ public class PersonalDatasUtils {
                         secondVehicleRegistrationNO = secondVehicle.getName();
                         secondVehicleStateType = secondVehicle.getStateType();
                         secondVehicleTerminalNO = secondVehicle.getTerminalNO();
+                        if (TextUtils.isEmpty(secondVehicleTerminalNO)) {
+                            secondVehicleTerminalNO = "1";
+                        }
                         mDatas.add(new Node(secondVehicleId + "", secondId + "", secondVehicleRegistrationNO,
                                 Constans.COUNT_ZERO, secondVehicleStateType, secondVehicleTerminalNO, sGt, sSpeed, sObd, address, false));
                     }
@@ -200,6 +208,9 @@ public class PersonalDatasUtils {
                                 thirdVehicleRegistrationNO = thirdVehicle.getName();
                                 thirdVehicleStateType = thirdVehicle.getStateType();
                                 thirdVehicleTerminalNO = thirdVehicle.getTerminalNO();
+                                if (TextUtils.isEmpty(thirdVehicleTerminalNO)) {
+                                    thirdVehicleTerminalNO = "1";
+                                }
                                 mDatas.add(new Node(thirdVehicleId + "", thirdOrgansId + "", thirdVehicleRegistrationNO,
                                         Constans.COUNT_ZERO, thirdVehicleStateType, thirdVehicleTerminalNO, sGt, sSpeed, sObd, address, false));
                             }
@@ -228,6 +239,9 @@ public class PersonalDatasUtils {
                                         fourthvehicleRegistrationNO = fourthvehicle.getName();
                                         fourthvehicleStateType = fourthvehicle.getStateType();
                                         fourthvehicleTerminalNO = fourthvehicle.getTerminalNO();
+                                        if (TextUtils.isEmpty(fourthvehicleTerminalNO)) {
+                                            fourthvehicleTerminalNO = "1";
+                                        }
                                         mDatas.add(new Node(fourthvehicleId + "", thirdOrganId + "", fourthvehicleRegistrationNO,
                                                 Constans.COUNT_ZERO, fourthvehicleStateType, fourthvehicleTerminalNO, sGt, sSpeed, sObd, address, false));
                                     }
@@ -258,6 +272,9 @@ public class PersonalDatasUtils {
                                                 fifthVehicleRegistrationNO = fifthVehicle.getName();
                                                 fifthVehicleStateType = fifthVehicle.getStateType();
                                                 fifthVehicleTerminalNO = fifthVehicle.getTerminalNO();
+                                                if (TextUtils.isEmpty(fifthVehicleTerminalNO)) {
+                                                    fifthVehicleTerminalNO = "1";
+                                                }
                                                 mDatas.add(new Node(fifthVehicleId + "", fourthOrganId + "", fifthVehicleRegistrationNO,
                                                         Constans.COUNT_ZERO, fifthVehicleStateType, fifthVehicleTerminalNO, sGt, sSpeed, sObd, address, false));
                                             }
@@ -285,6 +302,9 @@ public class PersonalDatasUtils {
                                                         sixthVehicleRegistrationNO = sixthVehicle.getName();
                                                         sixthVehicleStateType = sixthVehicle.getStateType();
                                                         sixthVehicleTerminalNO = sixthVehicle.getTerminalNO();
+                                                        if (TextUtils.isEmpty(sixthVehicleTerminalNO)) {
+                                                            sixthVehicleTerminalNO = "1";
+                                                        }
                                                         mDatas.add(new Node(sixthVehicleId + "", fifthOrganId + "",
                                                                 sixthVehicleRegistrationNO, Constans.COUNT_ZERO, sixthVehicleStateType,
                                                                 sixthVehicleTerminalNO, sGt, sSpeed, sObd, address, false));

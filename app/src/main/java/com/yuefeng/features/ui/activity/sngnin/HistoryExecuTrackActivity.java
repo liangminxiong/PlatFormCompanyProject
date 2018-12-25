@@ -1,4 +1,4 @@
-package com.yuefeng.features.ui.activity.track;
+package com.yuefeng.features.ui.activity.sngnin;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,8 +23,6 @@ import com.baidu.location.BDLocation;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapStatus;
-import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
@@ -35,29 +32,20 @@ import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.common.base.codereview.BaseActivity;
+import com.common.event.CommonEvent;
 import com.common.location.LocationHelper;
 import com.common.location.MyLocationListener;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
-import com.common.utils.PreferencesUtils;
-import com.common.utils.ResourcesUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.TimeUtils;
-import com.common.view.popuwindow.TreesListsPopupWindow;
 import com.common.view.timeview.TimePickerView;
 import com.luck.picture.lib.permissions.RxPermissions;
-import com.yuefeng.cartreeList.adapter.SimpleTreeRecyclerAdapter;
-import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.contract.CarListContract;
-import com.yuefeng.features.event.CarListEvent;
-import com.yuefeng.features.modle.WheelPathDatasBean;
-import com.yuefeng.features.modle.carlist.CarListInfosMsgBean;
-import com.yuefeng.features.presenter.CarListPresenter;
+import com.yuefeng.features.contract.ExecutiveAttendanceTrackContract;
+import com.yuefeng.features.presenter.zhuguansign.ExecutiveAtteanTrackMsgBean;
+import com.yuefeng.features.presenter.zhuguansign.ExecutiveAttendanceTrackPresenter;
 import com.yuefeng.utils.BdLocationUtil;
-import com.yuefeng.utils.CarStateIconUtils;
-import com.yuefeng.utils.DatasUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -75,10 +63,10 @@ import io.reactivex.functions.Consumer;
 
 /**
  * Created by Administrator on 2018/5/30.
- * 历史轨迹
+ * 实时历史轨迹
  */
 
-public class HistoryTrackActivity extends BaseActivity implements CarListContract.View {
+public class HistoryExecuTrackActivity extends BaseActivity implements ExecutiveAttendanceTrackContract.View {
 
     @BindView(R.id.tv_title)
     TextView tvTitle;
@@ -122,7 +110,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private static final int ENDPOINT = 1;
     private Handler mHandler;
 
-    private List<WheelPathDatasBean> mTrackDatas = new ArrayList<>();
+    private List<ExecutiveAtteanTrackMsgBean> mTrackDatas = new ArrayList<>();
     private Polyline mPolyline;
     private TimePickerView timePickerView;
 
@@ -138,7 +126,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private boolean startEndTime;
     private boolean endstartTime;
 
-    private CarListPresenter presenter;
+    private ExecutiveAttendanceTrackPresenter presenter;
     private String type = "";
     private int imageInt;
     private LatLng latLngTemp = null;
@@ -148,16 +136,11 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private LocationHelper mLocationHelper;
     private LatLng latLng;
     private double distance;
-    private TreesListsPopupWindow popupWindow;
-    private List<CarListInfosMsgBean> beanMsg = new ArrayList<>();
-    private SimpleTreeRecyclerAdapter adapter;
-    private List<Node> datas = new ArrayList<>();
     private String carNumber;
     private MarkerOptions ooA;
     private String trackDataTn;
-    /*选中的车集合*/
-    private List<String> selectList = new ArrayList<>();
-
+    BitmapDescriptor beginImage = BitmapDescriptorFactory.fromResource(R.drawable.start);
+    BitmapDescriptor endImage = BitmapDescriptorFactory.fromResource(R.drawable.destination);
 
     @Override
     protected int getContentViewResId() {
@@ -170,7 +153,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        presenter = new CarListPresenter(this, this);
+        presenter = new ExecutiveAttendanceTrackPresenter(this, this);
         initTitle();
         initUI();
 
@@ -183,41 +166,15 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     private void initUI() {
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
-        terminal = (String) bundle.get("terminalNO");
-        type = (String) bundle.get("TYPE");
-        String carNum = (String) bundle.get("carNum");
-        assert type != null;
-//        assert terminal != null;
-        LogUtils.d(terminal + "+++ terminal111 ++ " + type);
-        if (type.equals("worker")) {
-            if (!TextUtils.isEmpty(carNum)) {
-                tvTitle.setText(carNum);
-            }
-            imageInt = R.drawable.worker;
-            getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
-        } else if (type.equals("vehicle")) {
-            if (!TextUtils.isEmpty(carNum)) {
-                tvTitle.setText(carNum);
-            }
-            imageInt = R.drawable.guiji_ljc_01;
-            getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
-        } else {
-            getCarList();
-            imageInt = R.drawable.worker;
-            tvTitle.setText("历史轨迹");
-            tvTitleSetting.setBackground(list_tree);
-        }
+        terminal = (String) bundle.get(Constans.ID);
+        assert terminal != null;
+        getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
+        imageInt = R.drawable.worker;
+        setTitle("轨迹");
+
         requestPermissions(imageInt);
     }
 
-    /*车辆列表*/
-    private void getCarList() {
-        if (presenter != null) {
-            String pid = PreferencesUtils.getString(this, "orgId", "");
-            String userid = PreferencesUtils.getString(this, "id", "");
-            presenter.getCarListInfos(ApiService.GETVEHICLETREE, pid, userid, "0");
-        }
-    }
 
     private void getTeNum() {
         mSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener());
@@ -236,72 +193,70 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     /*获取轨迹*/
     private void getTrackData(String terminal, String startTime, String endTime) {
 
-//        boolean twoDayOffset2 = TimeUtils.isTimeLessThan(startTime, endTime);
-//        if (!twoDayOffset2) {
-//            showSuccessToast("结束时间不能小于开始时间");
+//        boolean mouthDaySpan = TimeUtils.getMouthDaySpan(startTime, endTime);
+//        if (mouthDaySpan) {
+//            showSuccessToast("时间间隔超过一周");
 //            return;
 //        }
-        boolean mouthDaySpan = TimeUtils.getMouthDaySpan(startTime, endTime);
-        if (mouthDaySpan) {
-            showSuccessToast("时间间隔超过一周");
-            return;
-        }
         rlTime.setVisibility(View.INVISIBLE);
         ivShowtime.setVisibility(View.VISIBLE);
         if (mBaiduMap != null) {
             mBaiduMap.clear();
         }
         if (presenter != null) {
-            presenter.getGpsDatasByTer(ApiService.getGpsDatasByTer, terminal, startTime, endTime);
+            presenter.getPersonidTrack(ApiService.GETPERSONIDTRACK, terminal, startTime, endTime);
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void disposeCarListEvent(CarListEvent event) {
+    public void disposeCommonEvent(CommonEvent event) {
         switch (event.getWhat()) {
-            case Constans.TRACK_SSUCESS://展示
-                mTrackDatas = (List<WheelPathDatasBean>) event.getData();
+            case Constans.ATTENDANCETRACK_SUCCESS://展示
+                mTrackDatas = (List<ExecutiveAtteanTrackMsgBean>) event.getData();
                 if (mTrackDatas.size() != 0) {
                     if (mBaiduMap != null) {
                         mBaiduMap.clear();
                     }
-                    filterTrackDatas(mTrackDatas);
+                    if (mTrackDatas.size() > 0) {
+                        filterTrackDatas(mTrackDatas);
+                    } else {
+                        showSuccessToast("暂无轨迹");
+                    }
                 }
                 break;
 
-            case Constans.CARLIST_SSUCESS:
-                beanMsg = (List<CarListInfosMsgBean>) event.getData();
-                if (beanMsg.size() > 0) {
-                    showCarlistDatas(beanMsg);
-                } else {
-                    showSuccessToast("旗下无车辆");
-                }
+            case Constans.ATTENDANCETRACK_ERROR:
+                showSureGetAgainDataDialog("加载失败，是否重新加载?");
                 break;
-            case Constans.TRACK_ERROR:
-                showSuccessToast("访问失败!");
-                break;
-            default:
-//                showSuccessToast("获取数据失败，请重试");
-                break;
-
         }
-
     }
 
-    private void filterTrackDatas(List<WheelPathDatasBean> trackDatas) {
+    @Override
+    public void getDatasAgain() {
+        super.getDatasAgain();
+        getTrackData(terminal, tvStartTime.getText().toString().trim(), tvEndTime.getText().toString().trim());
+    }
+
+    private void filterTrackDatas(List<ExecutiveAtteanTrackMsgBean> trackDatas) {
         double lat = 0.0;
         double lng = 0.0;
         if (mSeekBar != null) {
             mSeekBar.setMax(trackDatas.size());
         }
-        List<WheelPathDatasBean> list = new ArrayList<>();
-        for (WheelPathDatasBean mTrackData : trackDatas) {
-            if ((lng != mTrackData.getLo()) && (lat != mTrackData.getLa())) {
-                list.add(mTrackData);
+        List<ExecutiveAtteanTrackMsgBean> list = new ArrayList<>();
+        for (ExecutiveAtteanTrackMsgBean mTrackData : trackDatas) {
+            String dataLat = mTrackData.getLat();
+            String dataLng = mTrackData.getLng();
+            if (!TextUtils.isEmpty(dataLat) && !TextUtils.isEmpty(dataLng)) {
+                Double aDouble = Double.valueOf(dataLat);
+                Double valueOf = Double.valueOf(dataLng);
+                if ((lng != aDouble) && (lat != valueOf)) {
+                    list.add(mTrackData);
+                }
+                lat = aDouble;
+                lng = valueOf;
             }
-            lat = mTrackData.getLa();
-            lng = mTrackData.getLo();
         }
         mTrackDatas.clear();
         mTrackDatas.addAll(list);
@@ -310,15 +265,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     }
 
 
-    /*展示数据*/
-    private void showCarlistDatas(List<CarListInfosMsgBean> organs) {
-        datas.clear();
-        datas = DatasUtils.ReturnTreesDatas(organs);
-    }
-
-
     /*show轨迹  划线*/
-    private void showCarDetailInfos(List<WheelPathDatasBean> msg) {
+    private void showCarDetailInfos(List<ExecutiveAtteanTrackMsgBean> msg) {
 
         try {
             if (mPolyline != null) {
@@ -327,19 +275,35 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             List<LatLng> lls = new ArrayList<LatLng>();
             lls.clear();
 
+            double cLat = 0;
+            double cLon = 0;
             for (int i = 0; i < msg.size(); i++) {
-                double cLat = msg.get(i).getLa();
-                double cLon = msg.get(i).getLo();
-                String sp = msg.get(i).getSp();
-//                if (sp.equals("0")) {
-//                    continue;
-//                }
+                String dataLat = msg.get(i).getLat();
+                String dataLng = msg.get(i).getLng();
+                if (!TextUtils.isEmpty(dataLat) && !TextUtils.isEmpty(dataLng)) {
+                    cLat = Double.valueOf(dataLat);
+                    cLon = Double.valueOf(dataLng);
+                }
+
                 if ((cLon > 140.0) || (cLon < 65.0) || (cLat > 56.0) || (cLat < 12.0)) {
                     continue;
                 }
                 LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(cLat, cLon));// 转经纬度;
                 lls.add(p1);
             }
+            if (lls.size() > 1) {
+                MarkerOptions oStart = new MarkerOptions();
+                oStart.position(lls.get(0));
+                oStart.icon(beginImage);
+                mBaiduMap.addOverlay(oStart);
+
+                MarkerOptions oEnd = new MarkerOptions();
+                oEnd.position(lls.get(lls.size() - 1));
+                oEnd.icon(endImage);
+                mBaiduMap.addOverlay(oEnd);
+            }
+
+
             if (lls.size() > 1) {
                 OverlayOptions ooPolyline = new PolylineOptions().width(15).color(Color.BLUE).points(lls);
                 mPolyline = (Polyline) mBaiduMap.addOverlay(ooPolyline);
@@ -408,25 +372,25 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                     }
                     latLngTemp = new LatLng(latitude, longitude);
                     if (isFirstLoc) {
-                        isFirstLoc = false;
-                        MapStatus ms = new MapStatus.Builder().target(latLngTemp)
-                                .overlook(-20).zoom(Constans.BAIDU_ZOOM_TWENTY_ONE).build();
-
-                        ooA = new MarkerOptions().flat(true).anchor(0.5f, 0.5f);
-                        ooA.icon(BitmapDescriptorFactory.fromResource(imageInt));
-                        ooA.zIndex(10);
-                        ooA.position(latLngTemp);
-//                        ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
-                        mMarker = null;
-                        mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
-                        mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
+//                        isFirstLoc = false;
+//                        MapStatus ms = new MapStatus.Builder().target(latLngTemp)
+//                                .overlook(-20).zoom(Constans.BAIDU_ZOOM_TWENTY_ONE).build();
+//
+//                        ooA = new MarkerOptions().flat(true).anchor(0.5f, 0.5f);
+//                        ooA.icon(BitmapDescriptorFactory.fromResource(imageInt));
+//                        ooA.zIndex(10);
+//                        ooA.position(latLngTemp);
+////                        ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
+//                        mMarker = null;
+//                        mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
+//                        mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
                     }
 //                    } else {
 //                        requestPermissions();
 //                    }
 
                 }
-            }, Constans.BDLOCATION_TIME,true);
+            }, Constans.BDLOCATION_TIME, true);
             initLocation();
         } catch (Exception e) {
             e.printStackTrace();
@@ -487,63 +451,6 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
     protected void widgetClick(View v) {
     }
 
-    /*弹框选车*/
-    private void chooseCar() {
-        initPopupView();
-    }
-
-    /*车辆列表*/
-    private void initPopupView() {
-        try {
-            selectList.clear();
-            popupWindow = new TreesListsPopupWindow(this, datas, true, true);
-            popupWindow.setTitleText("车辆列表");
-            popupWindow.setSettingText(ResourcesUtils.getString(R.string.sure));
-
-            popupWindow.setOnItemClickListener(new TreesListsPopupWindow.OnItemClickListener() {
-                @Override
-                public void onGoBack(String name, String terminala, String id, boolean isGetDatas) {
-                    carNumber = name;
-                    terminal = terminala;
-                    if (isGetDatas) {
-                        getSelectCarInfos(name, terminal);
-                    }
-                }
-
-                @Override
-                public void onSure(String name, String terminala, String id, boolean isGetDatas) {
-                    carNumber = name;
-                    terminal = terminala;
-                    if (isGetDatas) {
-                        getSelectCarInfos(name, terminal);
-                    }
-                }
-
-                @Override
-                public void onSelectCar(String carNumber, String terminal, String id, boolean isGetDatas) {
-//                    getSelectCarInfos(carNumber, terminal);
-                }
-            });
-
-            popupWindow.showAtLocation(llll, Gravity.BOTTOM | Gravity.CENTER, 0, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /*获取轨迹*/
-    private void getSelectCarInfos(String carNumber, String terminal) {
-        if (!TextUtils.isEmpty(terminal)) {
-            tvTitle.setText(carNumber);
-            String startTime = tvStartTime.getText().toString().trim();
-            String endTime = tvEndTime.getText().toString().trim();
-            getTrackData(terminal, startTime, endTime);
-        } else {
-            tvTitle.setText("历史轨迹");
-        }
-    }
-
 
     /*查询*/
     private void rl_search() {
@@ -571,20 +478,17 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             if (index >= mTrackDatas.size()) {
                 return;
             }
-            WheelPathDatasBean trackData = mTrackDatas.get(index);
-            double Latitude = trackData.getLa();
-            double Longitude = trackData.getLo();
-            LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(Latitude, Longitude));// 转经纬度;
-            double ang = mTrackDatas.get(index).getAng();
-//            if (mBaiduMap != null) {
-//                mBaiduMap.clear();
-//            }
-            if (type.equals("worker")) {
-//                imageInt = R.drawable.worker;
-            } else {
-                imageInt = CarStateIconUtils.getImageInt("2", ang);
+            ExecutiveAtteanTrackMsgBean trackData = mTrackDatas.get(index);
+            double Latitude = 0;
+            double Longitude = 0;
+            String dataLat = trackData.getLat();
+            String dataLng = trackData.getLng();
+            if (!TextUtils.isEmpty(dataLat) && !TextUtils.isEmpty(dataLng)) {
+                Latitude = Double.valueOf(dataLat);
+                Longitude = Double.valueOf(dataLng);
             }
-//        p1 = new LatLng(23.2313123, 113.43214);
+            LatLng p1 = BdLocationUtil.ConverGpsToBaidu(new LatLng(Latitude, Longitude));// 转经纬度;
+            imageInt = R.drawable.worker;
             if (mMarker != null) {
                 mMarker.remove();
             }
@@ -597,12 +501,11 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 //                ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
 //                BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);
 //            }
-            trackDataTn = trackData.getTn();
             trackDataTn = TextUtils.isEmpty(trackDataTn) ? String.valueOf(index) : trackDataTn;
             mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
             mMarker.setTitle(trackDataTn);
             mSeekBar.setProgress(index);
-            tvSpeed.setText(trackData.getSp() + "km/h" + "   " + StringUtils.returnStrTime(trackData.getGt()));
+            tvSpeed.setText(StringUtils.returnStrTime(trackData.getTime()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -702,7 +605,7 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
 
 
     @OnClick({R.id.tv_start_time, R.id.tv_end_time, R.id.tv_search, R.id.mSeekBar, R.id.iv_showtime,
-            R.id.tv_speed, R.id.btn_SlowPlay, R.id.btn_Play, R.id.btn_FastPlay, R.id.tv_title_setting})
+            R.id.tv_speed, R.id.btn_SlowPlay, R.id.btn_Play, R.id.btn_FastPlay})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_start_time:
@@ -724,9 +627,6 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
                 break;
             case R.id.btn_FastPlay:
                 fastPlay();
-                break;
-            case R.id.tv_title_setting:
-                chooseCar();
                 break;
             case R.id.iv_showtime:
                 ivShowtime.setVisibility(View.INVISIBLE);
@@ -841,6 +741,8 @@ public class HistoryTrackActivity extends BaseActivity implements CarListContrac
             mapview.onDestroy();
             mapview = null;
         }
+        beginImage.recycle();
+        endImage.recycle();
         PlayIndex = 0;
     }
 }

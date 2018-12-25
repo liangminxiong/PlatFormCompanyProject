@@ -41,7 +41,7 @@ import java.util.List;
  * <p>
  */
 
-public class PersonalListPopupWindow extends PopupWindow {
+public class PersonalZhuListPopupWindow extends PopupWindow {
     private Context mContext;
     private boolean isSingle;
     private OnItemClickListener mOnItemClickListener;
@@ -72,7 +72,7 @@ public class PersonalListPopupWindow extends PopupWindow {
     private String terminal;
     private int positionTemp;
 
-    public PersonalListPopupWindow(Context context, List<Node> carDatas, boolean isSingle) {
+    public PersonalZhuListPopupWindow(Context context, List<Node> carDatas, boolean isSingle) {
         super(null, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mContext = context;
         this.carDatas = carDatas;
@@ -88,7 +88,6 @@ public class PersonalListPopupWindow extends PopupWindow {
         Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(context.getResources().getColor(R.color.transition));//填充颜色
         setBackgroundDrawable(new BitmapDrawable(context.getResources(), bitmap));
-
         initView();
     }
 
@@ -96,6 +95,7 @@ public class PersonalListPopupWindow extends PopupWindow {
         rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_popupwindow_treeslist, null);
         setContentView(rootView);
         name = "";
+        personalName = "";
         llPopupRoot = (LinearLayoutCompat) rootView.findViewById(R.id.ll_popup_root);
         recyclerview = (RecyclerView) rootView.findViewById(R.id.recyclerview);
         recyclerview_after = (RecyclerView) rootView.findViewById(R.id.recyclerview_after);
@@ -168,7 +168,7 @@ public class PersonalListPopupWindow extends PopupWindow {
 
     private void initRecycleView() {
         treeListAdapter = new ChangePersonalTreeRecyclerAdapter(recyclerview, mContext,
-                carDatas, 1, R.drawable.list_fold, R.drawable.list_fold, isSingle,false);
+                carDatas, 1, R.drawable.list_fold, R.drawable.list_fold, isSingle, false);
 //
         recyclerview.setAdapter(treeListAdapter);
         treeListAdapter.setOnTreeNodeClickListener(new OnTreeNodeClickListener() {
@@ -216,8 +216,13 @@ public class PersonalListPopupWindow extends PopupWindow {
                         stringBufferFlag.append(userId);
                         stringBufferTerflag.append(terminal);
                     } else {
+                        if (stringBufferFlag.length() <= 0) {
+                            stringBufferFlag.append(userId);
+                        } else {
+                            stringBufferFlag.append(",").append(userId);
+                        }
                         stringBuffer.append(personalName).append(",");
-                        stringBufferFlag.append(userId).append(",");
+
                         stringBufferTerflag.append(terminal).append(",");
                     }
                 }
@@ -255,7 +260,7 @@ public class PersonalListPopupWindow extends PopupWindow {
 
 
     private void initSelectRecycleView() {
-        adapterSelect = new CarListSelectAdapter(R.layout.list_item, listData,1);
+        adapterSelect = new CarListSelectAdapter(R.layout.list_item, listData, 1);
         recyclerview_after.setAdapter(adapterSelect);
         adapterSelect.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -404,7 +409,7 @@ public class PersonalListPopupWindow extends PopupWindow {
 
                 if (!flag) {
                     isHideAniming = false;
-                    PersonalListPopupWindow.super.dismiss();
+                    PersonalZhuListPopupWindow.super.dismiss();
                 } else {
                     isShowAniming = false;
                 }

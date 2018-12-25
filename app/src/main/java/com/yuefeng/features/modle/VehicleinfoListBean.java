@@ -27,6 +27,25 @@ public class VehicleinfoListBean implements Serializable {
     private String longitude;
     private String latitude;
     private String address;
+    private String time;
+    private String speed;
+
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(String speed) {
+        this.speed = speed;
+    }
 
     public String getId() {
         return id;

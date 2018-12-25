@@ -245,7 +245,6 @@ public class MainActivity extends BaseActivity implements
                             MyApplication.address = address;
 
                         }
-                        LogUtils.d("MainActivity==" + address + "\n" + latitude + " ++ " + longitude);
                         if (isFirstLocation) {
                             isFirstLocation = false;
                             PreferencesUtils.putString(MainActivity.this, Constans.ADDRESS, address);
@@ -281,6 +280,9 @@ public class MainActivity extends BaseActivity implements
                             if (mCount > 0) {
                                 getTokenByNet();
                             }
+                            if (!TextUtils.isEmpty(address)) {
+                                uploadLatlng();
+                            }
                         }
 
                         @Override
@@ -293,6 +295,22 @@ public class MainActivity extends BaseActivity implements
                     });
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /*主管及以上上传经纬度*/
+    private void uploadLatlng() {
+        if (null != presenter && latitude > 0 && longitude > 0) {
+            int isAdmin = PreferencesUtils.getInt(MainActivity.this, Constans.ISADMIN, 0);
+            if (isAdmin == 0) {
+//                LogUtils.d("不是主管级别");
+                return;
+            }
+            userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
+            String phone = PreferencesUtils.getString(MainActivity.this, Constans.TELNUM, "");
+            LogUtils.d("===上传==" + longitude + " ++ " + latitude + " ++ " + address + "++ " + phone + " isadmin = " + isAdmin);
+            presenter.uploadLnglat(ApiService.UPLOADLNGLAT, Constans.TYPE_LATLNG_QD
+                    , String.valueOf(longitude), String.valueOf(latitude), userId, phone, address);
         }
     }
 
@@ -642,8 +660,11 @@ public class MainActivity extends BaseActivity implements
                 LogUtils.d("=====创群成功" + mGroupID);
                 RongIMUtils.startGroupChat(MainActivity.this, mGroupID, title);
                 break;
+            case Constans.UPLOADLNGLAT_SSUCESS:
+                LogUtils.d("上传经纬度成功");
+                break;
             case Constans.GROUPCREATE_ERROR:
-                LogUtils.d("创群失败");
+//                LogUtils.d("创群失败");
                 break;
         }
     }

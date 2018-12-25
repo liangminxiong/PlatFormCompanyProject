@@ -150,7 +150,7 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     private void initRecycleView() {
         adapter = new HomeMsgInfosAdapter(R.layout.recyclerview_item_msginfos, listData);
         recyclerview.setAdapter(adapter);
-        addNativeDatas();
+//        addNativeDatas();
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
@@ -203,12 +203,12 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     public void disposeCommonEvent(SignInEvent event) {
         switch (event.getWhat()) {
             case Constans.NEW_MSG_SUCCESS://展示最新消息
-                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
-                if (list.size() > 0) {
-                    showAdapterDatasList(list);
-                } else {
-                    showSuccessToast("无最新消息");
-                }
+//                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
+//                if (list.size() > 0) {
+//                    showAdapterDatasList(list);
+//                } else {
+//                    showSuccessToast("无最新消息");
+//                }
                 break;
 
             case Constans.NEW_MSG_ERROR:

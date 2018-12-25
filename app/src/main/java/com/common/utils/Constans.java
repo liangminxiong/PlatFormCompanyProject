@@ -30,7 +30,8 @@ public class Constans {
      * 登录注册用户相关10-20
      * */
 
-    public static final int REGISTER = 10;//注册成功
+    public static final int REGISTER_SUCCESS = 9;//注册成功
+    public static final int REGISTER_ERROR = 10;//注册成功
     public static final int LOGIN = 11;//登录成功
     public static final int RELOGIN = 13;//重新登录
     public static final int USERERROR = 12;//用户相关错误
@@ -46,6 +47,7 @@ public class Constans {
     public static final String ORGNAME = "orgName";
     public static final String ID = "id";
     public static final String EMAIL = "Email";
+    public static final String ISADMIN = "isAdmin";
     public static final String ISREG = "Isreg";
     public static final String TELNUM = "Telnum";
     public static final int COLLECTSIZE = 41;//获取收藏size
@@ -80,6 +82,7 @@ public class Constans {
     public static final String TYPE_LATLNG_JC = "jc";//监察
     public static final String TYPE_LATLNG_LINE = "line";//线路
     public static final String TYPE_LATLNG_MR = "mr";//网格
+    public static final String TYPE_LATLNG_QD = "qd";//签到
     public static final int THIRTYTWO = 32;
 
     /*
@@ -259,4 +262,13 @@ public class Constans {
     public static final int ALLUSER_ERROR = 1012;
     public static final int USERDETAIL_SUCCESS = 1013;//获取通讯录个人信息成功
     public static final int USERDETAIL_ERROR = 1014;
+
+    /*主管考勤  140 -150 */
+
+    public static final int ATTENDANCETRESS_SUCCESS = 140;//获取主管树成功
+    public static final int ATTENDANCETRESS_ERROR = 141;
+    public static final int ATTENDANCELNGLAT_SUCCESS = 142;//获取主管位置成功
+    public static final int ATTENDANCELNGLAT_ERROR = 143;
+    public static final int ATTENDANCETRACK_SUCCESS = 144;//获取主管轨迹成功
+    public static final int ATTENDANCETRACK_ERROR = 145;
 }

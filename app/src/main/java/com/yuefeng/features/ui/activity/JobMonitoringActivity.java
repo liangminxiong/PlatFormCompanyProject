@@ -447,7 +447,7 @@ public class JobMonitoringActivity extends BaseActivity implements
 //                    requestPermissions();
 //                }
                 }
-            }, Constans.BDLOCATION_TIME,true);
+            }, Constans.BDLOCATION_TIME, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -766,7 +766,8 @@ public class JobMonitoringActivity extends BaseActivity implements
                 mIsreg = "0";
             }
             /*String function, String userid, String pid, String isreg*/
-            presenter.getmonitorinfo(ApiService.GETMONITORINFO, userid, pid, mIsreg);
+//            presenter.getmonitorinfo(ApiService.GETMONITORINFO, userid, pid, mIsreg);//无时间速度
+            presenter.getmonitorinfo(ApiService.GETMONITORINFO, userid, pid, mIsreg, "1");//有时间速度
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -889,7 +890,9 @@ public class JobMonitoringActivity extends BaseActivity implements
             if (myMarkerClickListener == null) {
                 myMarkerClickListener = new myMarkerClickListener(mks);
             }
-            baiduMap.setOnMarkerClickListener(myMarkerClickListener);
+            if (baiduMap != null) {
+                baiduMap.setOnMarkerClickListener(myMarkerClickListener);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -989,7 +992,6 @@ public class JobMonitoringActivity extends BaseActivity implements
             name = vehicleList.getRegistrationNO();
             position = vehicleList.getStateType();
 
-            tel = "无";
             className = vehicleList.getPid();
             latitude = vehicleList.getLatitude();
             longitude = vehicleList.getLongitude();

@@ -298,7 +298,7 @@ public class SignInPresenter extends BasePresenterImpl<SignInContract.View, Main
     /*通讯录*/
     @Override
     public void findOrganWithID(String id, String name, Integer type) {
-        HttpObservable.getObservable(apiRetrofit.findOrganWithID(id,  name, type))
+        HttpObservable.getObservable(apiRetrofit.findOrganWithID(id, name, type))
                 .subscribe(new HttpResultObserver<OrganPersonalBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
@@ -339,6 +339,52 @@ public class SignInPresenter extends BasePresenterImpl<SignInContract.View, Main
                         dismissLoadingDialog();
                         EventBus.getDefault().postSticky(new SignInEvent(Constans.CONTACTS_ERROR, error.getMsg()));
                         super._onError(error);
+                    }
+                });
+    }
+
+
+    /*实时上传经纬度*/
+    @Override
+    public void uploadLnglat(String function, String type, String lng, String lat, String id, String phone, String address) {
+        HttpObservable.getObservable(apiRetrofit.uploadLnglat(function, type, lng, lat, id, phone, address))
+                .subscribe(new HttpResultObserver<SubmitBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(SubmitBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.UPLOADLNGLAT_SSUCESS, o.getMsg()));
+                            } else {
+                                EventBus.getDefault().postSticky(new SignInEvent(Constans.UPLOADLNGLAT_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.UPLOADLNGLAT_ERROR, e.getMsg()));
+                    }
+
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        super._onError(error);
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.UPLOADLNGLAT_ERROR, ""));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.UPLOADLNGLAT_ERROR, ""));
                     }
                 });
     }

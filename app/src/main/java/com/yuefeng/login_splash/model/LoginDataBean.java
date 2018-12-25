@@ -10,6 +10,7 @@ public class LoginDataBean implements Serializable {
      * loginid : ceshi3
      * password : 123456
      * isadmin : 1
+     * 0：代表不需要，1代表需要上传轨迹
      * status : 1
      * telNum : 1
      * email : 1

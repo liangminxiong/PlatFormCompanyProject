@@ -379,6 +379,10 @@
         <activity
             android:name="com.yuefeng.features.ui.activity.sngnin.ExecutiveAttendanceActivity"
             android:hardwareAccelerated="false"/>
+        <!--查看轨迹-->
+        <activity
+            android:name="com.yuefeng.features.ui.activity.sngnin.HistoryExecuTrackActivity"
+            android:hardwareAccelerated="false"/>
 
         <!--定位服务-->
         <service android:name="com.yuefeng.features.service.LocationService"/>

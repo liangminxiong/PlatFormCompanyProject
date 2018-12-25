@@ -625,6 +625,7 @@
             <TextView
                 style="@style/Height_40_bg_gray_hand_txtcolor_hand_gray"
                 android:text="@string/msg_tixing"
+                android:visibility="invisible"
                 tools:ignore="RtlSymmetry"/>
 
             <android.support.v7.widget.RecyclerView

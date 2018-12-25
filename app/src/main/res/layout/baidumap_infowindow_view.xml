@@ -2,37 +2,68 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="350dp"
     android:layout_height="wrap_content"
     android:background="@drawable/xx_baojing_bg"
+    android:clickable="false"
     android:orientation="vertical"
+    android:id="@+id/rl_parent"
     android:paddingBottom="30dp"
     android:paddingLeft="15dp"
     android:paddingRight="15dp"
-    android:paddingTop="15dp">
+    android:paddingTop="15dp"
+    android:focusable="true">
 
     <TextView
         android:id="@+id/tv_name"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/dp_180d"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dp_5"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:padding="@dimen/dp_5"
-        android:text="车牌号:"
-        android:textColor="#2B8DD6"
-        android:textSize="@dimen/sp_14"
-        tools:ignore="HardcodedText"/>
+        android:paddingStart="@dimen/dp_10"
+        android:singleLine="true"
+        android:text="罗杰"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_15"
+        tools:ignore="HardcodedText,RtlSymmetry"/>
+
 
     <TextView
         android:id="@+id/tv_send_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/tv_name"
+        android:background="@color/white"
+        android:clickable="true"
         android:gravity="center_vertical"
         android:padding="@dimen/dp_5"
-        android:textColor="#1f1f1f"
-        android:textSize="@dimen/sp_14"
+        android:text="发消息"
+        android:textColor="#30867b"
+        android:textSize="@dimen/sp_15"
+        tools:ignore="HardcodedText,KeyboardInaccessibleWidget"/>
+
+    <TextView
+        android:id="@+id/tv_car_track"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_toEndOf="@id/tv_send_msg"
+        android:background="@color/white"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:padding="@dimen/dp_5"
+        android:text="查看轨迹"
+        android:textColor="#30867b"
+        android:textSize="@dimen/sp_15"
         tools:ignore="HardcodedText"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/tv_name"
+        android:background="#2B8DD6"/>
+
 
     <TextView
         android:id="@+id/tv_phone"
@@ -40,9 +71,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_name"
         android:layout_marginStart="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_5"
         android:gravity="center"
         android:padding="@dimen/dp_5"
-        android:text="时间:"
+        android:text="电话号码:"
         android:textColor="#2B8DD6"
         android:textSize="@dimen/sp_14"
         tools:ignore="HardcodedText"/>
@@ -52,9 +84,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_name"
+        android:layout_marginTop="@dimen/dp_5"
         android:layout_toEndOf="@id/tv_phone"
         android:gravity="center_vertical"
         android:padding="@dimen/dp_5"
+        android:text="13838383338"
         android:textColor="#1f1f1f"
         android:textSize="@dimen/sp_14"
         tools:ignore="HardcodedText"/>
@@ -65,9 +99,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_phone"
         android:layout_marginStart="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_5"
         android:gravity="center"
         android:padding="@dimen/dp_5"
-        android:text="内容:"
+        android:text="更新时间:"
         android:textColor="#2B8DD6"
         android:textSize="@dimen/sp_14"
         tools:ignore="HardcodedText"/>
@@ -77,9 +112,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_phone"
+        android:layout_marginTop="@dimen/dp_5"
         android:layout_toEndOf="@id/tv_time"
         android:gravity="center_vertical"
         android:padding="@dimen/dp_5"
+        android:text="2018-12-25 21:22:11"
         android:textColor="#1f1f1f"
         android:textSize="@dimen/sp_14"
         tools:ignore="HardcodedText"/>
@@ -90,21 +127,24 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_times"
         android:layout_marginStart="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_5"
         android:gravity="center"
         android:padding="@dimen/dp_5"
-        android:text="位置:"
+        android:text="签到地址:"
         android:textColor="#2B8DD6"
         android:textSize="@dimen/sp_14"
         tools:ignore="HardcodedText"/>
 
     <TextView
         android:id="@+id/tv_address"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/dp_260"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_times"
+        android:layout_marginTop="@dimen/dp_5"
         android:layout_toEndOf="@id/tv_add"
         android:gravity="center_vertical"
         android:padding="@dimen/dp_5"
+        android:text="广东省广州市天河区新塘大街28号祺和商贸园B栋"
         android:textColor="#1f1f1f"
         android:textSize="@dimen/sp_14"
         tools:ignore="HardcodedText"/>

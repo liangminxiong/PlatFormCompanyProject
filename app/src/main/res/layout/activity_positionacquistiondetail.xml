@@ -106,7 +106,7 @@
             tools:ignore="HardcodedText"/>
 
         <TextView
-            android:id="@+id/tv_time"
+            android:id="@+id/tv_phone"
             style="@style/position_detail_name"
             android:layout_below="@id/gridview"
             android:layout_marginTop="@dimen/dp_15"

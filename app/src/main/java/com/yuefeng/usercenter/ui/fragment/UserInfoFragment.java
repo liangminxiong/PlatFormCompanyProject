@@ -24,6 +24,7 @@ import com.common.utils.DataCleanManager;
 import com.common.utils.ImageUtils;
 import com.common.utils.PermissionUtil;
 import com.common.utils.PreferencesUtils;
+import com.common.utils.StringUtils;
 import com.common.view.dialog.SucessCacheSureDialog;
 import com.common.view.dialog.TakePhototpop;
 import com.yuefeng.commondemo.R;
@@ -102,9 +103,7 @@ public class UserInfoFragment extends BaseMvpFragment {
 
     private void initUI() {
         String telNum = PreferencesUtils.getString(getContext(), Constans.TELNUM);
-        if (!TextUtils.isEmpty(telNum)) {
-            tvUserPhone.setText(telNum);
-        }
+        tvUserPhone.setText(StringUtils.isEntryStrWu(telNum));
     }
 
     @Override

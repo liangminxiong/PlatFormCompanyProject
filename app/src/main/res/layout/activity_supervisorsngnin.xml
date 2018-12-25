@@ -28,7 +28,7 @@
             tools:ignore="HardcodedText"/>
 
         <TextView
-            android:id="@+id/tv_time"
+            android:id="@+id/tv_phone"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/dp_2"
