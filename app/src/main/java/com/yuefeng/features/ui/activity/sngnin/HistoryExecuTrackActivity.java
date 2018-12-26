@@ -45,6 +45,7 @@ import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.ExecutiveAttendanceTrackContract;
 import com.yuefeng.features.presenter.zhuguansign.ExecutiveAtteanTrackMsgBean;
 import com.yuefeng.features.presenter.zhuguansign.ExecutiveAttendanceTrackPresenter;
+import com.yuefeng.ui.MyApplication;
 import com.yuefeng.utils.BdLocationUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -193,11 +194,11 @@ public class HistoryExecuTrackActivity extends BaseActivity implements Executive
     /*获取轨迹*/
     private void getTrackData(String terminal, String startTime, String endTime) {
 
-//        boolean mouthDaySpan = TimeUtils.getMouthDaySpan(startTime, endTime);
-//        if (mouthDaySpan) {
-//            showSuccessToast("时间间隔超过一周");
-//            return;
-//        }
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         rlTime.setVisibility(View.INVISIBLE);
         ivShowtime.setVisibility(View.VISIBLE);
         if (mBaiduMap != null) {
@@ -307,7 +308,7 @@ public class HistoryExecuTrackActivity extends BaseActivity implements Executive
             if (lls.size() > 1) {
                 OverlayOptions ooPolyline = new PolylineOptions().width(15).color(Color.BLUE).points(lls);
                 mPolyline = (Polyline) mBaiduMap.addOverlay(ooPolyline);
-                BdLocationUtil.MoveMapToCenter(mBaiduMap, lls.get(lls.size() - 1), Constans.BAIDU_ZOOM_TWENTY_ONE);
+                BdLocationUtil.MoveMapToCenter(mBaiduMap, lls.get(lls.size() - 1), Constans.BAIDU_ZOOM_EIGHTEEN);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -496,7 +497,7 @@ public class HistoryExecuTrackActivity extends BaseActivity implements Executive
 
 //            if (index == 0) {
             ooA = new MarkerOptions().flat(true).anchor(0.5f, 0.5f).position(p1).zIndex(9).draggable(true).icon(map_location);
-            BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, Constans.BAIDU_ZOOM_TWENTY_ONE);
+            BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, Constans.BAIDU_ZOOM_EIGHTEEN);
 //            } else {
 //                ooA = new MarkerOptions().position(p1).zIndex(9).draggable(true).icon(map_location);
 //                BdLocationUtil.MoveMapToCenter(mBaiduMap, p1, 14);

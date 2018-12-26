@@ -39,10 +39,9 @@ import com.common.view.dialog.SigninCacheSureDialog;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.contacts.fragment.ContactsFragment;
-import com.yuefeng.contacts.modle.TokenBean;
 import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
-import com.yuefeng.contacts.ui.activity.FartherGroupNameActivity;
 import com.yuefeng.contacts.ui.activity.GreateGroupChatActivity;
+import com.yuefeng.contacts.ui.activity.GreateSingleChatActivity;
 import com.yuefeng.features.ui.fragment.FeaturesFragment;
 import com.yuefeng.home.modle.NewMsgListDataBean;
 import com.yuefeng.home.ui.activity.NewRemindNorActivity;
@@ -207,7 +206,6 @@ public class MainActivity extends BaseActivity implements
 //                            }
                             getLocation();
                             getdata();
-                            getTokenByNet();
 
                         }
                     });
@@ -236,6 +234,9 @@ public class MainActivity extends BaseActivity implements
                     address = location.getAddrStr();
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
+//                    LatLng mLatLng = BdLocationUtil.ConverCommonToBaidu(new LatLng(latitude, longitude));
+//                    latitude = mLatLng.latitude;
+//                    longitude = mLatLng.longitude;
                     if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                         int length = address.length();
                         address = address.substring(2, length);
@@ -278,7 +279,6 @@ public class MainActivity extends BaseActivity implements
                         public void onNext(Long value) {
                             getNetDatas();
                             if (mCount > 0) {
-                                getTokenByNet();
                             }
                             if (!TextUtils.isEmpty(address)) {
                                 uploadLatlng();
@@ -300,6 +300,11 @@ public class MainActivity extends BaseActivity implements
 
     /*主管及以上上传经纬度*/
     private void uploadLatlng() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         if (null != presenter && latitude > 0 && longitude > 0) {
             int isAdmin = PreferencesUtils.getInt(MainActivity.this, Constans.ISADMIN, 0);
             if (isAdmin == 0) {
@@ -517,27 +522,28 @@ public class MainActivity extends BaseActivity implements
     private void toChat() {
         Intent intent = new Intent();
 
-        intent.setClass(MainActivity.this, FartherGroupNameActivity.class);
+        intent.setClass(MainActivity.this, GreateSingleChatActivity.class);
 
-        intent.putExtra(Constans.GROUPNAME, "通讯录");
-        intent.putExtra(Constans.GROUPID, "dg1168");
+//        intent.putExtra(Constans.GROUPNAME, "通讯录");
+//        intent.putExtra(Constans.GROUPID, "dg1168");
         startActivity(intent);
     }
 
 
-    /*获取token*/
-    private void getTokenByNet() {
-        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
-        if (!networkConnected) {
-            return;
-        }
-        userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
-        String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
-        String portraitUrl = "";
-        if (presenter != null) {
-            presenter.getToken(userId, name, portraitUrl);
-        }
-    }
+//    /*获取token*/
+//    private void getTokenByNet() {
+//        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+//        if (!networkConnected) {
+//            showSuccessToast("请检查网络配置");
+//            return;
+//        }
+//        userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
+//        String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
+//        String portraitUrl = "";
+//        if (presenter != null) {
+//            presenter.getToken(userId, name, portraitUrl);
+//        }
+//    }
 
     private void initViewPager() {
         try {
@@ -546,6 +552,8 @@ public class MainActivity extends BaseActivity implements
 
             final String string = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
             if (string.equals("true")) {//个人
+//                Fragment conversationList = initConversationList();
+//                tabItemInfos.add(new TabItemInfo(conversationList, R.drawable.home_button_selector, R.string.tab_main_name));
                 tabItemInfos.add(new TabItemInfo(new ConversationListHomeFragment(), R.drawable.home_button_selector, R.string.tab_main_name));
 //            tabItemInfos.add(new TabItemInfo(new HomeFragment(), R.drawable.home_button_selector, R.string.tab_main_name));
                 tabItemInfos.add(new TabItemInfo(new ContactsFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
@@ -640,18 +648,9 @@ public class MainActivity extends BaseActivity implements
             case Constans.NEW_MSG_SUCCESS:
                 List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
                 if (list.size() > 0) {
-//                    showAdapterDatasList(list);
+                    showBaojinCount(list);
+//                    initNotification(list);
                 }
-                break;
-            case Constans.RONGIM_SUCCESS:
-                TokenBean tokenBean = (TokenBean) event.getData();
-                String token = tokenBean.getData();
-                LogUtils.d("=====token=00==" + token);
-                initRongIMToken(token);
-                break;
-            case Constans.RONGIM_ERROR:
-                LogUtils.d("=====token=11==");
-                mCount = 1;
                 break;
             case Constans.GROUPCREATE_SUCCESS:
                 GroupCreateBean groupCreateBean = (GroupCreateBean) event.getData();
@@ -669,18 +668,15 @@ public class MainActivity extends BaseActivity implements
         }
     }
 
-    /*融云连接token*/
-    private void initRongIMToken(String token) {
-        userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
-        String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
-        String portraitUrl = "";
-        RongIMUtils.init(userId, name, portraitUrl);
-        RongIMUtils.connectToken(token);
+    /*报警数量*/
+    private void showBaojinCount(List<NewMsgListDataBean> list) {
+        for (NewMsgListDataBean bean : list) {
+            String notread = bean.getNotread();
+        }
     }
 
 
-    //    private void initNotification(String annoum, String project, String centent) {
-    private void initNotification(String title, String content, int position) {
+    private void initNotification(List<NewMsgListDataBean> list, int position) {
 
 //        Notification.Builder builder = new Notification.Builder(AppUtils.getContext());
 
@@ -689,8 +685,8 @@ public class MainActivity extends BaseActivity implements
         NotificationManager mNotifyMgr = (NotificationManager) AppUtils.getContext().getSystemService(NOTIFICATION_SERVICE);
         Intent push = new Intent(AppUtils.getContext(), MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(AppUtils.getContext(), 0, push, FLAG_CANCEL_CURRENT);
-        builder.setContentTitle(title);
-        builder.setContentText("内容:" + content);   //内容
+        builder.setContentTitle("");
+        builder.setContentText("内容:" + "");   //内容
         builder.setWhen(System.currentTimeMillis());       //设置通知时间
         builder.setSmallIcon(R.mipmap.icon_app);            //设置小图标
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icon_app));
@@ -773,5 +769,53 @@ public class MainActivity extends BaseActivity implements
     public void onGeoCodeResult(Map<String, Object> map) {
 
     }
+
+
+ /*   private Fragment initConversationList() {
+        if (mConversationListFragment == null) {
+            ConversationListFragment listFragment = new ConversationListFragment();
+            listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
+            Uri uri;
+            if (isDebug) {
+                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "true") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM,
+                        Conversation.ConversationType.DISCUSSION
+                };
+
+            } else {
+                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM
+                };
+            }
+            listFragment.setUri(uri);
+            mConversationListFragment = listFragment;
+            return listFragment;
+        } else {
+            return mConversationListFragment;
+        }
+    }*/
 
 }

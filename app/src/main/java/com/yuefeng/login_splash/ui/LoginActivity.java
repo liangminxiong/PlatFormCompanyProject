@@ -19,15 +19,18 @@ import com.common.network.ApiService;
 import com.common.updateapputils.UpdateManager;
 import com.common.utils.Constans;
 import com.common.utils.LocationGpsUtils;
+import com.common.utils.LogUtils;
 import com.common.utils.MD5Utils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ToastUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.contacts.modle.TokenBean;
 import com.yuefeng.login_splash.contract.LoginContract;
 import com.yuefeng.login_splash.event.LoginEvent;
 import com.yuefeng.login_splash.model.LoginDataBean;
 import com.yuefeng.login_splash.presenter.LoginPresenter;
+import com.yuefeng.rongIm.RongIMUtils;
 import com.yuefeng.ui.MainActivity;
 import com.yuefeng.ui.MyApplication;
 
@@ -213,21 +216,51 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 PreferencesUtils.putString(LoginActivity.this, Constans.ORGNAME, loginInfo.getRoleName());
                 PreferencesUtils.putString(LoginActivity.this, Constans.TELNUM, loginInfo.getTelNum());
                 PreferencesUtils.putString(LoginActivity.this, Constans.ID, loginInfo.getId());
-//                LogUtils.d("=============" + loginInfo.getId());
-                PreferencesUtils.putString(LoginActivity.this, Constans.EMAIL, loginInfo.getEmail());
+                LogUtils.d("=============" + loginInfo.getId());
+                String email = loginInfo.getEmail();
+                PreferencesUtils.putString(LoginActivity.this, Constans.EMAIL, email);
                 PreferencesUtils.putInt(LoginActivity.this, Constans.ISADMIN, loginInfo.getIsadmin());
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.ISREG, loginInfo.isIsreg());
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
                 String alias = MD5Utils.toString(string);
                 JPushManager.getInstance().setAliasAndTags(alias, "");
 
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish();
+                if (string.equals("true")) {//个人
+                    if (loginPresenter != null) {
+                        loginPresenter.getToken(loginInfo.getId(), loginInfo.getUsername(),
+                                "http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg");
+                    }
+                }else {
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
+                }
                 break;
             case Constans.USERERROR:
                 showSuccessToast("请检查账号密码,网络状态!");
                 break;
+
+            case Constans.RONGIM_SUCCESS:
+                TokenBean tokenBean = (TokenBean) loginEvent.getData();
+                String token = tokenBean.getData();
+                PreferencesUtils.putString(LoginActivity.this, Constans.TOKEN, token);
+                initRongIMToken(token);
+                break;
+            case Constans.RONGIM_ERROR:
+                break;
         }
+    }
+
+
+    /*融云连接token*/
+    private void initRongIMToken(String token) {
+        String userId = PreferencesUtils.getString(LoginActivity.this, Constans.ID, "");
+        String name = PreferencesUtils.getString(LoginActivity.this, Constans.USERNAME_N, "");
+        String portraitUrl = "";
+        RongIMUtils.init(userId, name, portraitUrl);
+        RongIMUtils.connectToken(token);
+
+        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        finish();
     }
 
 

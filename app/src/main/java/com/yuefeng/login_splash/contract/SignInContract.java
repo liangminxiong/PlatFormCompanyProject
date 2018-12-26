@@ -20,8 +20,6 @@ public interface SignInContract {
 
         void getAnnouncementByuserid(String function, String pid, String timestart, String timeend);
 
-        //获取token
-        void getToken(String userid, String username, String usericon);
 
         //创建
         void groupCreate(String userids, String createuserid, String groupName);

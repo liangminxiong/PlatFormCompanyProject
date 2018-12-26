@@ -27,6 +27,7 @@ import com.yuefeng.home.modle.MsgDataBean;
 import com.yuefeng.home.modle.MsgListDataBean;
 import com.yuefeng.home.presenter.MsgListInfosPresenter;
 import com.yuefeng.home.ui.adapter.MsgListsInfosAdapter;
+import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -115,6 +116,11 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
 
     /*获取数据源*/
     private void getDataByNet() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         if (mPresenter != null) {
             mPid = PreferencesUtils.getString(this, Constans.ORGID, "");
 //            mPid = "dg1168";
@@ -189,6 +195,11 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
             public void onRefresh() {
                 CURPAGE = 1;
                 isRefresh = false;
+                boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                if (!networkConnected) {
+                    showSuccessToast("请检查网络配置");
+                    return;
+                }
                 mPresenter.getAnMentDataList(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, false);
                 adapter.setEnableLoadMore(false);
             }
@@ -202,6 +213,11 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
             public void run() {
                 if (mCount > 10) {
                     ++CURPAGE;
+                    boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                    if (!networkConnected) {
+                        showSuccessToast("请检查网络配置");
+                        return;
+                    }
                     mPresenter.getAnMentDataList(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TEN, false);
                     adapter.loadMoreComplete();
                 } else {
@@ -249,6 +265,11 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
             ivShowtime.setVisibility(View.VISIBLE);
             isRefresh = false;
             CURPAGE = 1;
+            boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+            if (!networkConnected) {
+                showSuccessToast("请检查网络配置");
+                return;
+            }
             mPresenter.getAnMentDataList(ApiService.GETDATA, mPid, tvStartTime.getText().toString().trim()
                     , tvEndTime.getText().toString().trim(), CURPAGE, Constans.FOUR, true);
         }

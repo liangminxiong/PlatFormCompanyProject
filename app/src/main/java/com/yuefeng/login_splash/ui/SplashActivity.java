@@ -16,11 +16,14 @@ import com.common.utils.MD5Utils;
 import com.common.utils.PreferencesUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.contacts.modle.TokenBean;
 import com.yuefeng.login_splash.contract.LoginContract;
 import com.yuefeng.login_splash.event.LoginEvent;
 import com.yuefeng.login_splash.model.LoginDataBean;
 import com.yuefeng.login_splash.presenter.SplashPresenter;
+import com.yuefeng.rongIm.RongIMUtils;
 import com.yuefeng.ui.MainActivity;
+import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -62,6 +65,12 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
             EventBus.getDefault().register(this);
         }
         ButterKnife.bind(this);
+
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            toLoginActivity();
+        }
+
         if (!isTaskRoot()) {
             finish();
             return;
@@ -111,7 +120,12 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
 
     private void initCountDown() {
         try {
-            initUI();
+            boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+            if (!networkConnected) {
+                toLoginActivity();
+            } else {
+                initUI();
+            }
            /* boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
             if (isHaveDatas) {
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
@@ -152,13 +166,40 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
                 String alias = MD5Utils.toString(string);
                 JPushManager.getInstance().setAliasAndTags(alias, "");
-
-                toMainActivity();
+                if (mLoginInfo.getEmail().equals("true")) {//个人
+                    if (loginPresenter != null) {
+                        loginPresenter.getToken(mLoginInfo.getId(), mLoginInfo.getUsername(),
+                                "http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg");
+                    }
+                } else {
+                    toMainActivity();
+                }
                 break;
             case Constans.REGISTER_ERROR:
                 toLoginActivity();
                 break;
+
+            case Constans.RONGIM_SUCCESS:
+                TokenBean tokenBean = (TokenBean) loginEvent.getData();
+                String token = tokenBean.getData();
+                PreferencesUtils.putString(SplashActivity.this, Constans.TOKEN, token);
+                initRongIMToken(token);
+                break;
+            case Constans.RONGIM_ERROR:
+                toLoginActivity();
+                break;
         }
+    }
+
+    /*融云连接token*/
+    private void initRongIMToken(String token) {
+        String userId = PreferencesUtils.getString(SplashActivity.this, Constans.ID, "");
+        String name = PreferencesUtils.getString(SplashActivity.this, Constans.USERNAME_N, "");
+        String portraitUrl = "";
+        RongIMUtils.init(userId, name, portraitUrl);
+        RongIMUtils.connectToken(token);
+
+        toMainActivity();
     }
 
     private void toMainActivity() {

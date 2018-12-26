@@ -42,10 +42,12 @@ public class NewRemindListsInfosAdapter extends BaseQuickAdapter<AlarmDataBean, 
          * content : 11
          */
         if (item != null && helper != null) {
-            name = item.getRegistrationNO();
-            title = item.getOp();
-            time = item.getGpsTime();
-            content = item.getDealType();
+
+
+            name = item.getOrganname();
+            title = item.getContent();
+            time = item.getIssuedate();
+            content = item.getSubject();
             title = StringUtils.isEntryStrWu(title);
             time = TimeUtils.isTodayTime(time);
             mIsread = item.getIsread();

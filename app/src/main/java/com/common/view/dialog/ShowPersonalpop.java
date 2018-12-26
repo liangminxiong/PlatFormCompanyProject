@@ -1,5 +1,6 @@
 package com.common.view.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -24,6 +25,7 @@ public class ShowPersonalpop extends PopupWindow {
     private TextView tv_item_phone, tv_item_phonename;
     private TextView tv_item_class, tv_item_classname, tv_item_video;
     private TextView tv_item_address, tv_item_addressname, tv_item_native;
+    private TextView tv_item_type, tv_item_speed, tv_item_times, tv_item_detail;
     private Context context;
     private int colorInt;
 
@@ -57,6 +59,11 @@ public class ShowPersonalpop extends PopupWindow {
 
         tv_item_address = view.findViewById(R.id.tv_item_address);
         tv_item_addressname = view.findViewById(R.id.tv_item_addressname);
+
+        tv_item_type = view.findViewById(R.id.tv_item_type);//状态或速度
+        tv_item_speed = view.findViewById(R.id.tv_item_speed);
+        tv_item_times = view.findViewById(R.id.tv_item_times);
+        tv_item_detail = view.findViewById(R.id.tv_item_detail);//查看详情
 
         item_view = view.findViewById(R.id.item_view);
         tv_item_video = view.findViewById(R.id.tv_item_video);
@@ -101,14 +108,32 @@ public class ShowPersonalpop extends PopupWindow {
                 }
             }
         });
+        tv_item_detail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                dismiss();
+                if (takePhotoTouch != null) {
+                    takePhotoTouch.onDetail();
+                }
+            }
+        });
 
     }
 
-    public void setTextContent(String name, String position, String phone, String classname, String address, boolean isVisible,String stateType) {
-        if (isVisible) {
+    @SuppressLint("SetTextI18n")
+    public void setTextContent(String name, String position, String phone, String classname,
+                               String address, boolean isVisible, String stateType, String speed, String time) {
+        if (isVisible) {//车
             item_view.setVisibility(View.VISIBLE);
             tv_item_video.setVisibility(View.VISIBLE);
+            speed = StringUtils.isEntryStrZero(speed) + "km/h";
+            tv_item_type.setText("速度");
+        } else {//人
+            speed = StringUtils.isEntryStrXieg(speed);
+            tv_item_type.setText("状态");
         }
+
+        tv_item_speed.setText(speed);
 
         tv_item_name.setText(name);
         phone = StringUtils.isEntryStrWu(phone);
@@ -136,6 +161,10 @@ public class ShowPersonalpop extends PopupWindow {
         tv_item_phonename.setText(phone);
         tv_item_classname.setText(classname);
         tv_item_addressname.setText(address);
+
+        time = StringUtils.isEntryStrXieg(time);
+
+        tv_item_times.setText(time);
     }
 
     public void showTakePop(View parent) {
@@ -156,5 +185,7 @@ public class ShowPersonalpop extends PopupWindow {
         void takeNativ();//导航
 
         void takePhone();//打电话
+
+        void onDetail();//查看详情
     }
 }

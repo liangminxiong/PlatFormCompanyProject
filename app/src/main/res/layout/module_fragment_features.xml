@@ -354,7 +354,7 @@
                         android:id="@+id/iv_msgcollection1"
                         style="@style/iv_pading_10"
                         android:layout_centerHorizontal="true"
-                        android:src="@drawable/zuoyekaoqin"
+                        android:src="@drawable/zhuguankaoqin"
                         tools:ignore="ContentDescription"/>
 
                     <TextView

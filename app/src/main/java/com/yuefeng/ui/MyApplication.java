@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.support.multidex.MultiDex;
 
 import com.JPush.JPushManager;
-import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.common.network.ApiRetrofit;
 import com.common.utils.RxTool;
@@ -105,7 +104,7 @@ public class MyApplication extends Application {
     private void initThirdParty() {
         /*百度地图*/
         SDKInitializer.initialize(this);
-        SDKInitializer.setCoordType(CoordType.BD09LL);//返回坐标类型
+//        SDKInitializer.setCoordType(CoordType.BD09LL);//返回坐标类型
 //        SDKInitializer.setCoordType(CoordType.GCJ02);
         /*短信*/
 //        MobSDK.init(this);

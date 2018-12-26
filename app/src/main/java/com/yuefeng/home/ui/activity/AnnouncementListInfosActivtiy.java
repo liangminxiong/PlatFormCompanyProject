@@ -27,6 +27,7 @@ import com.yuefeng.home.modle.AnnouncementDataBean;
 import com.yuefeng.home.modle.AnnouncementDataMsgBean;
 import com.yuefeng.home.presenter.AnnouncementListInfosPresenter;
 import com.yuefeng.home.ui.adapter.AnnouncementListsInfosAdapter;
+import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -118,6 +119,11 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
 
     /*获取数据源*/
     private void getDataByNet() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         if (mPresenter != null) {
             mPid = PreferencesUtils.getString(this, Constans.ORGID, "");
             mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TWENTY, true);
@@ -192,6 +198,11 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
                     CURPAGE = 1;
                     mEndTime = TimeUtils.getCurrentTime2();
                     adapter.setEnableLoadMore(false);
+                boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                if (!networkConnected) {
+                    showSuccessToast("请检查网络配置");
+                    return;
+                }
                     mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TWENTY, false);
                 }
         });
@@ -213,6 +224,11 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
             public void run() {
                 if (mCount > Constans.TWENTY) {
                     ++CURPAGE;
+                    boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                    if (!networkConnected) {
+                        showSuccessToast("请检查网络配置");
+                        return;
+                    }
                     mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, mStartTime, mEndTime, CURPAGE, Constans.TWENTY, false);
                     adapter.loadMoreComplete();
                 } else {
@@ -250,7 +266,11 @@ public class AnnouncementListInfosActivtiy extends BaseActivity implements
             ivShowtime.setVisibility(View.VISIBLE);
             isRefresh = false;
             CURPAGE = 1;
-//            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
+            boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+            if (!networkConnected) {
+                showSuccessToast("请检查网络配置");
+                return;
+            }
             mPresenter.getAnnouncementByuserid(ApiService.GETDATA, mPid, tvStartTime.getText().toString().trim()
                     , tvEndTime.getText().toString().trim(), CURPAGE, Constans.TWENTY, true);
 

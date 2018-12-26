@@ -4,28 +4,17 @@ package com.yuefeng.features.modle;
 import java.io.Serializable;
 
 public class AlarmDataBean implements Serializable {
-    /**
-     * longitude : 116.866616
-     * id : df240f8cffffffc90a40c62571834da8
-     * speed : 0
-     * terminalNO : 601:10198829423
-     * dealType :
-     * op : 围栏分析，离开区域：淮北市相山区电子围栏
-     * latitude : 33.986788
-     * gpsTime : 2018-12-24 15:35:18.0
-     * registrationNO : 皖F37849（1号除雪车）
-     */
 
-    private String longitude;
     private String id;
+    private String organname;
+    private String issuedate;
+    private String subject;
+    private String content;
+    private String genre;
     private String isread = "1";
-    private String speed;
-    private String terminalNO;
-    private String dealType;
-    private String op;
+    private String notread;
     private String latitude;
-    private String gpsTime;
-    private String registrationNO;
+    private String longitude;
 
     public String getLongitude() {
         return longitude;
@@ -43,36 +32,36 @@ public class AlarmDataBean implements Serializable {
         this.id = id;
     }
 
-    public String getSpeed() {
-        return speed;
+    public String getGenre() {
+        return genre;
     }
 
-    public void setSpeed(String speed) {
-        this.speed = speed;
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
-    public String getTerminalNO() {
-        return terminalNO;
+    public String getNotread() {
+        return notread;
     }
 
-    public void setTerminalNO(String terminalNO) {
-        this.terminalNO = terminalNO;
+    public void setNotread(String notread) {
+        this.notread = notread;
     }
 
-    public String getDealType() {
-        return dealType;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setDealType(String dealType) {
-        this.dealType = dealType;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
-    public String getOp() {
-        return op;
+    public String getContent() {
+        return content;
     }
 
-    public void setOp(String op) {
-        this.op = op;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getLatitude() {
@@ -83,20 +72,20 @@ public class AlarmDataBean implements Serializable {
         this.latitude = latitude;
     }
 
-    public String getGpsTime() {
-        return gpsTime;
+    public String getIssuedate() {
+        return issuedate;
     }
 
-    public void setGpsTime(String gpsTime) {
-        this.gpsTime = gpsTime;
+    public void setIssuedate(String issuedate) {
+        this.issuedate = issuedate;
     }
 
-    public String getRegistrationNO() {
-        return registrationNO;
+    public String getOrganname() {
+        return organname;
     }
 
-    public void setRegistrationNO(String registrationNO) {
-        this.registrationNO = registrationNO;
+    public void setOrganname(String organname) {
+        this.organname = organname;
     }
 
     public String getIsread() {

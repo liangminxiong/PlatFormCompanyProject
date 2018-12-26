@@ -25,6 +25,7 @@ import com.yuefeng.home.modle.HistoryAppListVersionBean;
 import com.yuefeng.home.modle.HistoryAppVersionBean;
 import com.yuefeng.home.presenter.AppVersionPresenter;
 import com.yuefeng.home.ui.adapter.AppHistoryVersionAdapter;
+import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -121,6 +122,11 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
 
     /*获取数据源*/
     private void getDataByNet() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         if (mPresenter != null) {
 //            ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
             mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, mStartTime, mEndTime, true);
@@ -189,7 +195,11 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
                 CURPAGE = 1;
                 mEndTime = TimeUtils.getCurrentTime2();
                 adapter.setEnableLoadMore(false);
-//                ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
+                boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                if (!networkConnected) {
+                    showSuccessToast("请检查网络配置");
+                    return;
+                }
                 mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, mStartTime, mEndTime, false);
             }
         });
@@ -211,7 +221,11 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
             public void run() {
                 if (mCount > 10) {
                     ++CURPAGE;
-//                    ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
+                    boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                    if (!networkConnected) {
+                        showSuccessToast("请检查网络配置");
+                        return;
+                    }
                     mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, mStartTime, mEndTime, false);
                     adapter.loadMoreComplete();
                 } else {
@@ -249,7 +263,11 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
         ivShowtime.setVisibility(View.VISIBLE);
         isRefresh = false;
         CURPAGE = 1;
-//        ApiRetrofit.changeApiBaseUrl(NetworkUrl.ANDROID_TEST_SERVICE_DI);
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         mPresenter.getAppHistoryVersion(CURPAGE, Constans.TEN, tvStartTime.getText().toString().trim()
                 , tvEndTime.getText().toString().trim(), true);
 

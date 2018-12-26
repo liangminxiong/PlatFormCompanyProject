@@ -26,6 +26,7 @@ import com.yuefeng.features.modle.carlist.CarListInfosBean;
 import com.yuefeng.features.modle.carlist.OldCarListInfosBean;
 import com.yuefeng.features.modle.video.GetCaijiTypeBean;
 import com.yuefeng.features.modle.video.VideoEquipmentBean;
+import com.yuefeng.features.modle.zhuguanSign.GetSignJsonBean;
 import com.yuefeng.features.modle.zhuguanSign.ZhuGuanSignBean;
 import com.yuefeng.features.presenter.zhuguansign.ExecutiveAtteanTrackBean;
 import com.yuefeng.home.modle.AnnouncementDataBean;
@@ -161,7 +162,7 @@ public interface ApiService {
     String UPLOADFILE = NetworkUrl.ANDROID_TEST_SERVICE + "zgbd_hw/business/FileUpload.action";
 
     /*登录用户*/
-    @Headers({"urlname:gu"})
+    @Headers({"urlname:ali"})
     @FormUrlEncoded
     @POST(MIA)
     Observable<LoginBean> login(
@@ -487,7 +488,7 @@ public interface ApiService {
             @Field("imageurls") String imageurls);
 
     /*最新消息列表*/
-    @Headers({"urlname:qiu"})
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<NewMsgDataBean> getAnnouncementByuserid(
@@ -497,7 +498,7 @@ public interface ApiService {
             @Field("timeend") String timeend);
 
     /*报警消息列表*/
-    @Headers({"urlname:qiu"})
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_ALARM + GETALARMPAGE)
     Observable<AlarmListBean> getalarmpage(
@@ -508,7 +509,7 @@ public interface ApiService {
             @Field("limit") String limit);
 
     /*报警消息详情*/
-    @Headers({"urlname:qiu"})
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_ALARM + GETALARMEDIT)
     Observable<NewRemindNorDetailBean> getAlarmedit(
@@ -574,7 +575,7 @@ public interface ApiService {
 
 
     /*主管及以上实时上传经纬度*/
-    @Headers({"urlname:gu"})
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<SubmitBean> uploadLnglat(
@@ -715,17 +716,27 @@ public interface ApiService {
     String GETPERSONALMONITOR = "getPersonalMonitor";
     /*查看轨迹*/
     String GETPERSONIDTRACK = "getPersonidTrack";
+    /*获取主管id列表*/
+    String GETSIGNJSON = "getsignjson";
 
     /*获取主管考勤人员树*/
-    @Headers({"urlname:gu"})
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<PersoanlTreeListBean> getSignTree(
             @Field("function") String function,
             @Field("pid") String pid);
 
+    /*获取主管考勤人员id列表*/
+    @Headers({"urlname:ali"})
+    @FormUrlEncoded()
+    @POST(MIA_HW)
+    Observable<GetSignJsonBean> getSignJson(
+            @Field("function") String function,
+            @Field("pid") String pid);
+
     /*主管实时定位*/
-    @Headers({"urlname:gu"})
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<ZhuGuanSignBean> getPersonalMonitor(
@@ -733,7 +744,7 @@ public interface ApiService {
             @Field("idflags") String idflags);
 
     /*主管查看轨迹*/
-    @Headers({"urlname:gu"})
+    @Headers({"urlname:ali"})
     @FormUrlEncoded()
     @POST(MIA_HW)
     Observable<ExecutiveAtteanTrackBean> getPersonidTrack(

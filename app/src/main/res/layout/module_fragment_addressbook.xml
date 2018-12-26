@@ -9,6 +9,10 @@
     <include
         layout="@layout/title_bar_mvp"/>
 
+    <include layout="@layout/ll_search_left"/>
+
+    <View style="@style/horizontal_line"/>
+
     <RelativeLayout
         android:id="@+id/rl_search"
         android:layout_width="match_parent"

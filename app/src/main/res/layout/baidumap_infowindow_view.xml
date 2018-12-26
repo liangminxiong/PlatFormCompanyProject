@@ -2,17 +2,17 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_parent"
     android:layout_width="350dp"
     android:layout_height="wrap_content"
     android:background="@drawable/xx_baojing_bg"
     android:clickable="false"
+    android:focusable="true"
     android:orientation="vertical"
-    android:id="@+id/rl_parent"
     android:paddingBottom="30dp"
     android:paddingLeft="15dp"
     android:paddingRight="15dp"
-    android:paddingTop="15dp"
-    android:focusable="true">
+    android:paddingTop="15dp">
 
     <TextView
         android:id="@+id/tv_name"
@@ -59,6 +59,7 @@
         tools:ignore="HardcodedText"/>
 
     <View
+        android:id="@+id/view11"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_below="@id/tv_name"
@@ -69,7 +70,7 @@
         android:id="@+id/tv_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_name"
+        android:layout_below="@id/view11"
         android:layout_marginStart="@dimen/dp_5"
         android:layout_marginTop="@dimen/dp_5"
         android:gravity="center"
@@ -83,7 +84,7 @@
         android:id="@+id/tv_phone_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_name"
+        android:layout_below="@id/view11"
         android:layout_marginTop="@dimen/dp_5"
         android:layout_toEndOf="@id/tv_phone"
         android:gravity="center_vertical"

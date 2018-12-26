@@ -30,6 +30,7 @@ public class BaiDuMapMakerView {
     private InfoWindow mInfoWindow;
     private LatLng mLatLng;
     private Context mContext;
+    private BaiduMap mBaiduMap;
 
     public BaiDuMapMakerView(Context context) {
         this.mContext = context;
@@ -50,20 +51,28 @@ public class BaiDuMapMakerView {
     @SuppressLint("SetTextI18n")
     public void showViewData(final BaiduMap mBaiduMap, final ZhuGuanSignListBean markerBean) {
         try {
+            this.mBaiduMap = mBaiduMap;
+            final String phone = StringUtils.isEntryStrWu(markerBean.getTel());
 
             mTvName.setText(StringUtils.isEntryStrWu(markerBean.getName()));
-            mTvPhone.setText(StringUtils.isEntryStrWu(markerBean.getTel()));
+            mTvPhone.setText(phone);
             mTvTimes.setText(StringUtils.isEntryStrWu(markerBean.getTime()));
             mTvAddress.setText(StringUtils.isEntryStrWu(markerBean.getAddress()));
 
             String lat = markerBean.getLat();
             String lng = markerBean.getLng();
             if (!TextUtils.isEmpty(lat) && !TextUtils.isEmpty(lng)) {
-
                 mLatLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
             }
 
-
+            if (!phone.equals("无")) {
+                mTvPhone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        StringUtils.callPhone(mContext,phone);
+                    }
+                });
+            }
             mTvSendMsg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -93,10 +102,7 @@ public class BaiDuMapMakerView {
             rl_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mInfoWindow != null) {
-                        mBaiduMap.hideInfoWindow();
-                        mInfoWindow = null;
-                    }
+                    hideMarkerView();
                 }
             });
 
@@ -104,6 +110,13 @@ public class BaiDuMapMakerView {
             mBaiduMap.showInfoWindow(mInfoWindow);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void hideMarkerView() {
+        if (mInfoWindow != null) {
+            mBaiduMap.hideInfoWindow();
+            mInfoWindow = null;
         }
     }
 

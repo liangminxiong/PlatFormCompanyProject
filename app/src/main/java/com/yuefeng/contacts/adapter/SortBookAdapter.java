@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.Filter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,20 +15,46 @@ import com.yuefeng.commondemo.R;
 import com.yuefeng.contacts.modle.contacts.ContactsBean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /*通讯录*/
 public class SortBookAdapter extends BaseAdapter {
 
-    private List<ContactsBean> list = null;
+    private List<ContactsBean> list,copyList;
     private List<String> listSelect = new ArrayList<>();
     private Context mContext;
 
+    private NameFilter mNameFilter;
+    private List<ContactsBean> mFilteredArrayList;
+    public static String searchContent;
+
     // 用来控制CheckBox的选中状况
+    // 用来控制CheckBox的选中状况
+    private static HashMap<Integer, Boolean> isSelected;
 
     public SortBookAdapter(Context mContext, List<ContactsBean> list) {
         this.mContext = mContext;
         this.list = list;
+
+
+        isSelected = new HashMap<Integer, Boolean>();
+        // 初始化数据
+        initDate();
+
+        mFilteredArrayList = new ArrayList<>();
+        //copyList是暂存原来所用的数据，当筛选内容为空时，显示所有数据，并且必须new 一个对象，
+        //而不能copyList=arrayList,这样的话当arrayList改变时copyList也就改变了
+        copyList = new ArrayList<>();
+        copyList.addAll(list);
+    }
+
+    // 初始化isSelected的数据
+    private void initDate() {
+        for (int i = 0; i < list.size(); i++) {
+            getIsSelected().put(i, false);
+        }
     }
 
     public int getCount() {
@@ -72,49 +99,27 @@ public class SortBookAdapter extends BaseAdapter {
         }
 
         viewHolder.name.setText(name);
-        // 监听checkBox并根据原来的状态来设置新的状态
-        viewHolder.relat.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                if (list.get(position).isChecked()) {
-                    viewHolder.cb_tiem.setBackgroundResource(R.drawable.list_select_nor);
-                    list.get(position).setChecked(false);
-                } else {
-                    viewHolder.cb_tiem.setBackgroundResource(R.drawable.list_select_sel);
-                    list.get(position).setChecked(true);
-                }
-                notifyDataSetChanged();
-            }
-        });
 
         // 根据isSelected来设置checkbox的选中状况
-        viewHolder.cb_tiem.setChecked(list.get(position).isChecked());
+        viewHolder.cb_tiem.setChecked(getIsSelected().get(position));
 
         return view;
     }
 
-    public  List<String> getIsSelected() {
-        listSelect.clear();
-        int size = list.size();
-        if (size > 0) {
-            for (ContactsBean bean : list) {
-                if (bean.isChecked()) {
-                    listSelect.add(bean.getUserId());
-                }
-            }
-        }
-
-
-        return listSelect;
+    public static HashMap<Integer, Boolean> getIsSelected() {
+        return isSelected;
     }
 
+    public static void setIsSelected(HashMap<Integer, Boolean> isSelected) {
+        SortBookAdapter.isSelected = isSelected;
+    }
 
-    class ViewHolder {
+    public class ViewHolder {
         RelativeLayout relat;
         TextView catalog;
         TextView name;
         TextView logo;
-        CheckBox cb_tiem;
+        public CheckBox cb_tiem;
     }
 
     /**
@@ -128,6 +133,50 @@ public class SortBookAdapter extends BaseAdapter {
             }
         }
         return -1;
+    }
+
+    public Filter getFilter() {
+        if (mNameFilter == null) {
+            mNameFilter = new SortBookAdapter.NameFilter();
+        }
+        return mNameFilter;
+    }
+
+    // 异步过滤数据，避免数据多耗时长堵塞主线程
+    class NameFilter extends Filter {
+        // 执行筛选
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            searchContent = charSequence.toString();
+            FilterResults filterResults = new FilterResults();
+            if (charSequence == null|| charSequence.length() == 0) {
+                mFilteredArrayList = copyList;
+            } else {
+                mFilteredArrayList.clear();
+                for (Iterator<ContactsBean> iterator = copyList.iterator(); iterator
+                        .hasNext();) {
+                    String name = iterator.next().getName();
+
+                    if (name.contains(charSequence)) {
+                        mFilteredArrayList.add(iterator.next());
+                    }
+                }
+            }
+            filterResults.values = mFilteredArrayList;
+            return filterResults;
+        }
+
+        // 筛选结果
+        @Override
+        protected void publishResults(CharSequence arg0, FilterResults results) {
+            list = (List<ContactsBean>) results.values;
+            if (list.size() > 0) {
+                notifyDataSetChanged();
+            } else {
+                notifyDataSetInvalidated();
+            }
+
+        }
     }
 
 }

@@ -499,6 +499,11 @@
             android:name="com.yuefeng.contacts.ui.activity.GreateGroupChatActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <!--创建单聊-->
+        <activity
+            android:name="com.yuefeng.contacts.ui.activity.GreateSingleChatActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <activity
             android:name="com.yuefeng.contacts.ui.activity.FartherGroupNameActivity"

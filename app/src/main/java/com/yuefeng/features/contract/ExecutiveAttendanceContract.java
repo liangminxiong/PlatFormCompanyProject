@@ -11,6 +11,9 @@ public interface ExecutiveAttendanceContract {
     interface Presenter {
 
         void getSignTree(String function, String pid);
-        void getPersonalMonitor(String function, String idflags);
+
+        void getSignJson(String function, String pid);
+
+        void getPersonalMonitor(String function, String idflags, boolean isFirstGetData);
     }
 }

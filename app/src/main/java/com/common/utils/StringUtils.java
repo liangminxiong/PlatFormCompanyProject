@@ -1,5 +1,8 @@
 package com.common.utils;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 
 import java.util.Random;
@@ -110,6 +113,11 @@ public class StringUtils {
         return TextUtils.isEmpty(string) ? "无" : string;
     }
 
+    /*空字符串返回斜杠*/
+    public static String isEntryStrXieg(String string) {
+        return TextUtils.isEmpty(string) ? "-" : string;
+    }
+
     /*空字符串返回空*/
     public static String isEntryStrNull(String string) {
         return TextUtils.isEmpty(string) ? "" : string;
@@ -128,4 +136,17 @@ public class StringUtils {
         String[] strings = string.split("\\.");
         return strings[0];
     }
+
+    public static void callPhone(Context context, String phone) {
+        if (PhonePwdCheckUtils.isMobileNumber(phone)) {
+            if (!TextUtils.isEmpty(phone)) {
+                Uri uri = Uri.parse("tel:" + phone);
+                Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+                context.startActivity(intent);
+            }
+        } else {
+            ToastUtils.showToast("该手机号异常");
+        }
+    }
+
 }

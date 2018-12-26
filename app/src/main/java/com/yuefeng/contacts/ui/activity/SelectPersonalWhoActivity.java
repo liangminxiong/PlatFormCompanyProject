@@ -2,8 +2,11 @@ package com.yuefeng.contacts.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -35,11 +38,14 @@ public class SelectPersonalWhoActivity extends BaseActivity {
     RelativeLayout rl_search;
     @BindView(R.id.listView)
     ListView mListView;
+    @BindView(R.id.edt_search)
+    EditText mEdtSearch;
     @BindView(R.id.side_bar)
     SideBar sideBar;
 
     private List<ContactsBean> mListData = new ArrayList<>();
     private String mTitltName;
+    private SelectSortBookAdapter mAdapter;
 
     @Override
     protected int getContentViewResId() {
@@ -68,7 +74,38 @@ public class SelectPersonalWhoActivity extends BaseActivity {
                 }
             }
         });
+        initEdit();
+    }
 
+    private void initEdit() {
+        mEdtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                if (null != mAdapter) {
+                    mAdapter.getFilter().filter(charSequence);
+                }
+//               也可以在这里筛选数据,但这不是异步的，有隐患，最好用系统提供的Filter类
+//				 for (Iterator<String> iterator = mArrayList.iterator(); iterator
+//							.hasNext();) {
+//						String name = iterator.next();
+//
+//						if (name.contains(arg0)) {
+//							mFilteredArrayList.add(name);
+//						}
+//				 mListViewAdapter.changeList(mFilteredArrayList);
+//				 mListViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
 
@@ -86,8 +123,8 @@ public class SelectPersonalWhoActivity extends BaseActivity {
         Collections.sort(mListData); // 对list进行排序，需要让User实现Comparable接口重写compareTo方法
         mListView.setDividerHeight(0);
         mListView.setDivider(null);
-        SelectSortBookAdapter adapter = new SelectSortBookAdapter(SelectPersonalWhoActivity.this, mListData);
-        mListView.setAdapter(adapter);
+        mAdapter = new SelectSortBookAdapter(SelectPersonalWhoActivity.this, mListData);
+        mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

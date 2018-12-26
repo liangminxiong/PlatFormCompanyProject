@@ -431,6 +431,7 @@ public class TimeUtils {
         }
         return false;
     }
+
     public static boolean startSmortEndTime(String start, String end) {
         if (TimeUtils.isEmpty(start) || TimeUtils.isEmpty(end)) {
             return true;
@@ -747,6 +748,19 @@ public class TimeUtils {
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date hourDate = new Date(System.currentTimeMillis() - 3600000);
+        String hDate = formatter.format(hourDate);
+        return hDate;
+    }
+
+    /**
+     * 获取一10分钟之前的时间
+     *
+     * @return
+     */
+    public static String getTenBeforeMinTime() {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date hourDate = new Date(System.currentTimeMillis() - 600000);
         String hDate = formatter.format(hourDate);
         return hDate;
     }

@@ -20,6 +20,7 @@ import com.yuefeng.home.contract.HomeContract;
 import com.yuefeng.home.modle.NewMsgListDataBean;
 import com.yuefeng.home.presenter.NewRemindNorPresenter;
 import com.yuefeng.home.ui.adapter.HomeMsgInfosAdapter;
+import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -79,6 +80,11 @@ public class NewRemindNorActivity extends BaseActivity implements HomeContract.V
     }
 
     private void getNetDatas(boolean isFirstGetData) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         if (mPresenter != null) {
             String pid = PreferencesUtils.getString(NewRemindNorActivity.this, Constans.ORGID, "");
             mPresenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, mStartTime, mEndTime,isFirstGetData);

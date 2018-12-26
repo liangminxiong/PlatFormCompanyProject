@@ -39,6 +39,7 @@ public class Constans {
     public static final int BAIDU_ZOOM_FOUTTEEN = 14;
     public static final int BAIDU_ZOOM_EIGHTEEN = 18;
     public static final int BAIDU_ZOOM_TWENTY_ONE = 15;
+    public static final String TOKEN = "userToken";//存储用户名
     public static final String USERNAME = "user_name";//存储用户名
     public static final String USERNAME_N = "userName";//存储用户名
     public static final String USERPASSWORD = "user_pwd";//存储用户名密码
@@ -271,4 +272,6 @@ public class Constans {
     public static final int ATTENDANCELNGLAT_ERROR = 143;
     public static final int ATTENDANCETRACK_SUCCESS = 144;//获取主管轨迹成功
     public static final int ATTENDANCETRACK_ERROR = 145;
+    public static final int ATTENDANCELIST_SUCCESS = 146;//获取主管id列表成功
+    public static final int ATTENDANCELIST_ERROR = 147;
 }

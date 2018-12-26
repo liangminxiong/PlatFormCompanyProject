@@ -24,6 +24,7 @@ import com.yuefeng.features.modle.AlarmDataBean;
 import com.yuefeng.home.contract.NewRemindNorDetailContract;
 import com.yuefeng.home.modle.NewRemindDetailDataBean;
 import com.yuefeng.home.presenter.NewRemindNorDetailPresenter;
+import com.yuefeng.ui.MyApplication;
 import com.yuefeng.ui.view.BaiDuMapMakerWindows;
 import com.yuefeng.utils.BdLocationUtil;
 import com.yuefeng.utils.LocationUtils;
@@ -118,6 +119,11 @@ public class NewRemindDetailNorActivity extends BaseActivity implements NewRemin
     }
 
     private void getNetDatas(String id) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         if (mPresenter != null) {
             mPresenter.getAlarmedit(id, mStartTime, mEndTime);
         }

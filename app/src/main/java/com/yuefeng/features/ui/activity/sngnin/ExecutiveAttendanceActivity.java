@@ -14,6 +14,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.Marker;
@@ -26,15 +27,16 @@ import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.RxHelper;
 import com.common.utils.StringUtils;
+import com.common.utils.TimeUtils;
 import com.common.view.popuwindow.PersonalZhuListPopupWindow;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.cartreeList.common.Node;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.contract.ExecutiveAttendanceContract;
+import com.yuefeng.features.modle.zhuguanSign.GetSignJsonMsgBean;
 import com.yuefeng.features.modle.zhuguanSign.ZhuGuanSignListBean;
 import com.yuefeng.features.presenter.zhuguansign.ExecutiveAttendancePresenter;
 import com.yuefeng.personaltree.model.PersonalParentBean;
@@ -74,7 +76,8 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
 
     private boolean isFirstLocation = true;
     private LatLng mLatLng;
-    BitmapDescriptor map_location = BitmapDescriptorFactory.fromResource(R.drawable.worker);
+    BitmapDescriptor map_location = BitmapDescriptorFactory.fromResource(R.drawable.worker_yidong);
+    BitmapDescriptor map_location_no = BitmapDescriptorFactory.fromResource(R.drawable.worker_lixian);
     public MarkerOptions ooA;
     private Marker mMarker;
     private BaiduMap mBaiduMap;
@@ -95,7 +98,7 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
     private String mPid;
     private List<PersonalParentBean> treeListData = new ArrayList<>();
     private String mIdFlags;
-
+    private boolean isFirstGetData = true;
 
     @Override
     protected int getContentViewResId() {
@@ -128,10 +131,25 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
         longitude = MyApplication.longitude;
         address = MyApplication.address;
         if (latitude > 0 && longitude > 0 && !TextUtils.isEmpty(address)) {
-            mLatLng = BdLocationUtil.ConverCommonToBaidu(new LatLng(latitude, longitude));
+            mLatLng = new LatLng(latitude, longitude);
+            BdLocationUtil.MoveMapToCenter(mBaiduMap, mLatLng, Constans.BAIDU_ZOOM_FOUTTEEN);
         } else {
             requestPermissions();
         }
+        mBaiMakerView = new BaiDuMapMakerView(ExecutiveAttendanceActivity.this);
+        mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if (null != mBaiMakerView) {
+                    mBaiMakerView.hideMarkerView();
+                }
+            }
+
+            @Override
+            public boolean onMapPoiClick(MapPoi mapPoi) {
+                return false;
+            }
+        });
     }
 
 
@@ -207,10 +225,28 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
     }
 
     private void getNetDatas() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         if (mPresenter != null) {
             mPid = PreferencesUtils.getString(ExecutiveAttendanceActivity.this, Constans.ORGID, "");
 //            mPid = "ea9b4033ffffee0101ed1860a1febcfb";//张三pid
             mPresenter.getSignTree(ApiService.GETSIGNTREE, mPid);
+        }
+    }
+
+    /*获取主管id列表*/
+    private void getNetIdDatas() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
+        if (mPresenter != null) {
+            mPid = PreferencesUtils.getString(ExecutiveAttendanceActivity.this, Constans.ORGID, "");
+            mPresenter.getSignJson(ApiService.GETSIGNJSON, mPid);
         }
     }
 
@@ -231,7 +267,6 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
             case R.id.tv_title_setting:
                 initTreeListPopupView();
                 break;
-
         }
     }
 
@@ -253,6 +288,9 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                 showSureGetAgainDataDialog("加载数据失败,是否重新加载?");
                 break;
             case Constans.ATTENDANCELNGLAT_SUCCESS://主管实时位置
+                if (mBaiduMap != null) {
+                    mBaiduMap.clear();
+                }
                 List<ZhuGuanSignListBean> latListData = (List<ZhuGuanSignListBean>) event.getData();
                 if (latListData.size() > 0) {
                     showPersonnel(latListData);
@@ -260,9 +298,41 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                 break;
             case Constans.ATTENDANCELNGLAT_ERROR:
 //                addNativeDatas();
+
+                break;
+            case Constans.ATTENDANCELIST_SUCCESS:
+                List<GetSignJsonMsgBean> listData = (List<GetSignJsonMsgBean>) event.getData();
+                if (listData.size() > 0) {
+                    showPersonnelListId(listData);
+                }
+                break;
+            case Constans.ATTENDANCELIST_ERROR:
+//                addNativeDatas();
                 break;
 
         }
+    }
+
+    /*id*/
+    private void showPersonnelListId(List<GetSignJsonMsgBean> listData) {
+        mIdFlags = "";
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.setLength(0);
+        for (GetSignJsonMsgBean listDatum : listData) {
+            if (TextUtils.isEmpty(mIdFlags)) {
+                stringBuffer.append(listDatum.getId());
+            } else {
+                stringBuffer.append(",").append(listDatum.getId());
+            }
+        }
+
+        getLatLng(mIdFlags, true);
+    }
+
+    @Override
+    public void getOtherDatas() {
+        super.getOtherDatas();
+        getNetIdDatas();
     }
 
     @Override
@@ -301,12 +371,12 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
         }
         mIdFlags = stringBuffer.toString().trim();
 
-        initCountDown(mIdFlags);
+        initCountDown();
     }
 
-    private void initCountDown(final String idFlags) {
+    private void initCountDown() {
         try {
-            Observable.interval(0, 60, TimeUnit.SECONDS)
+            Observable.interval(0, 120, TimeUnit.SECONDS)
                     .compose(RxHelper.<Long>rxSchedulerHelper())
                     .subscribe(new Observer<Long>() {
                         @Override
@@ -315,7 +385,8 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
 
                         @Override
                         public void onNext(Long value) {
-                            getLatLng(idFlags);
+                            isFirstGetData = false;
+                            getLatLng(mIdFlags, isFirstGetData);
                         }
 
                         @Override
@@ -341,24 +412,25 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
             mPopupWindowTree.setOnItemClickListener(new PersonalZhuListPopupWindow.OnItemClickListener() {
                 @Override
                 public void onGoBack(String listName, String userId, String terminal) {
-                    LogUtils.d(listName + " +主+ " + userId);
                     if (!TextUtils.isEmpty(userId)) {
-                        getLatLng(userId);
+                        mIdFlags = userId;
+                        getLatLng(userId, true);
                     }
                 }
 
 
                 @Override
                 public void onSure(String listName, String userId, String terminal) {
-                    LogUtils.d(listName + " +主+ " + userId);
                     if (!TextUtils.isEmpty(userId)) {
-                        getLatLng(userId);
+                        mIdFlags = userId;
+                        getLatLng(userId, true);
                     }
                 }
 
                 @Override
                 public void onSelectCar(String carNumber, String userId, String terminal) {
-                    if (!TextUtils.isEmpty(carNumber)) {
+                    if (!TextUtils.isEmpty(userId)) {
+                        mIdFlags = userId;
                     }
                 }
             });
@@ -370,9 +442,14 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
     }
 
     /*获取实时数据*/
-    private void getLatLng(String userId) {
+    private void getLatLng(String userId, boolean isFirstGetData) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         if (null != mPresenter) {
-            mPresenter.getPersonalMonitor(ApiService.GETPERSONALMONITOR, userId);
+            mPresenter.getPersonalMonitor(ApiService.GETPERSONALMONITOR, userId, isFirstGetData);
         }
     }
 
@@ -410,7 +487,17 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                     if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
                         LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
                         // 构建MarkerOption，用于在地图上添加Marker
-                        ooA = new MarkerOptions().icon(map_location);
+
+                        String time = StringUtils.returnStrTime(personalinfoListBean.getTime());
+
+                        String minTime = TimeUtils.getTenBeforeMinTime();
+                        boolean timeLessThan = TimeUtils.isTimeLessThan(minTime, time);
+                        if (timeLessThan) {
+                            ooA = new MarkerOptions().icon(map_location);
+                        } else {
+                            ooA = new MarkerOptions().icon(map_location_no);
+                        }
+
                         ooA.position(latLng);
                         mMarker = null;
                         Bundle bundle = new Bundle();
@@ -487,6 +574,7 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
     public void onDestroy() {
         super.onDestroy();
         map_location.recycle();
+        map_location_no.recycle();
         EventBus.getDefault().unregister(this);
     }
 }

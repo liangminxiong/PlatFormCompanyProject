@@ -7,6 +7,7 @@ import com.common.network.HttpObservable;
 import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.yuefeng.features.contract.ExecutiveAttendanceContract;
+import com.yuefeng.features.modle.zhuguanSign.GetSignJsonBean;
 import com.yuefeng.features.modle.zhuguanSign.ZhuGuanSignBean;
 import com.yuefeng.features.ui.activity.sngnin.ExecutiveAttendanceActivity;
 import com.yuefeng.personaltree.model.PersoanlTreeListBean;
@@ -26,7 +27,7 @@ public class ExecutiveAttendancePresenter extends BasePresenterImpl<ExecutiveAtt
     }
 
     @Override
-    public void getSignTree(String function, String pid) {
+    public void getSignTree(String function, String pid ){
 
         HttpObservable.getObservable(apiRetrofit.getSignTree(function, pid))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
@@ -71,14 +72,61 @@ public class ExecutiveAttendancePresenter extends BasePresenterImpl<ExecutiveAtt
 
     }
 
+    /*获取主管id列表*/
     @Override
-    public void getPersonalMonitor(String function, String idflags) {
+    public void getSignJson(String function, String pid) {
+        HttpObservable.getObservable(apiRetrofit.getSignJson(function, pid))
+//                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
+                .subscribe(new HttpResultObserver<GetSignJsonBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(GetSignJsonBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                EventBus.getDefault().post(new CommonEvent(Constans.ATTENDANCELIST_SUCCESS, o.getMsg()));
+                            } else {
+                                EventBus.getDefault().post(new CommonEvent(Constans.ATTENDANCELIST_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new CommonEvent(Constans.ATTENDANCELIST_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new CommonEvent(Constans.ATTENDANCELIST_ERROR, ""));
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        super._onError(error);
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new CommonEvent(Constans.ATTENDANCELIST_ERROR, ""));
+                    }
+                });
+    }
+
+    @Override
+    public void getPersonalMonitor(String function, String idflags, final boolean isFirstGetData) {
         HttpObservable.getObservable(apiRetrofit.getPersonalMonitor(function, idflags))
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<ZhuGuanSignBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
-                        showLoadingDialog("加载中...");
+                        if (isFirstGetData) {
+                            showLoadingDialog("加载中...");
+                        }
                     }
 
                     @Override

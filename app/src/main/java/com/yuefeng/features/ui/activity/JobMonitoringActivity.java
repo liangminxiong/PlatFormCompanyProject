@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -195,6 +194,8 @@ public class JobMonitoringActivity extends BaseActivity implements
     private String mQuestionCount;
     private GetJobMonitotingMsgBean mBean;
     private boolean mIsFirstOnclick = true;
+    private String mSpeed;
+    private String mTime;
 
     @Override
     protected int getContentViewResId() {
@@ -1012,7 +1013,7 @@ public class JobMonitoringActivity extends BaseActivity implements
                 address = "暂无地址!";
             }
 //        if (TextUtils.isEmpty(address)) {
-//            address = "检索当前地址失败!";
+//            address = "检索当前地址失败!";aa
 //        }
             mStateType = vehicleList.getStateType();
             endAddress = address;
@@ -1021,8 +1022,11 @@ public class JobMonitoringActivity extends BaseActivity implements
             final String registrationNO = vehicleList.getRegistrationNO();
             terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
             phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
+            mSpeed = vehicleList.getSpeed();
+            mTime = vehicleList.getTime();
             isVisible = true;
-            phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible, mStateType);
+            tel = "";
+            phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible, mStateType, mSpeed, mTime);
             phototpop.setTakePhotoTouch(new ShowPersonalpop.TakePhotoTouch() {
                 @Override
                 public void onVideo() {//视频
@@ -1041,7 +1045,12 @@ public class JobMonitoringActivity extends BaseActivity implements
 
                 @Override
                 public void takePhone() {
+                    com.common.utils.StringUtils.callPhone(JobMonitoringActivity.this,tel);
+                }
 
+                @Override
+                public void onDetail() {
+                    showSuccessToast("查看详情");
                 }
             });
             phototpop.showTakePop(ll_root);
@@ -1100,8 +1109,11 @@ public class JobMonitoringActivity extends BaseActivity implements
             terminalNO = personalList.getTerminalNO();
             terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
             isVisible = false;
+            mSpeed = personalList.getSpeed();
+            mTime = personalList.getTime();
+
             phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
-            phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible, mStateType);
+            phototpop.setTextContent(name, position, tel, className, "暂无地址!", isVisible, mStateType, mSpeed, mTime);
             phototpop.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
@@ -1126,12 +1138,14 @@ public class JobMonitoringActivity extends BaseActivity implements
 
                 @Override
                 public void takePhone() {//打电话
-                    if (!TextUtils.isEmpty(tel)) {
-                        Uri uri = Uri.parse("tel:" + tel);
-                        Intent intent = new Intent(Intent.ACTION_DIAL, uri);
-                        startActivity(intent);
-                    }
+                    com.common.utils.StringUtils.callPhone(JobMonitoringActivity.this,tel);
                 }
+
+                @Override
+                public void onDetail() {
+                    showSuccessToast("查看详情");
+                }
+
             });
             phototpop.showTakePop(ll_root);
 
@@ -1155,7 +1169,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         }
         endAddress = address;
         if (phototpop != null) {
-            phototpop.setTextContent(name, position, tel, className, address, isVisible, mStateType);
+            phototpop.setTextContent(name, position, tel, className, address, isVisible, mStateType, mSpeed, mTime);
         }
     }
 

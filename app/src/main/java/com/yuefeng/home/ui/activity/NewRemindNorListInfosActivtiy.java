@@ -26,6 +26,7 @@ import com.yuefeng.features.modle.AlarmListBean;
 import com.yuefeng.home.contract.NewRemindNorListInfosContract;
 import com.yuefeng.home.presenter.NewRemindNorListInfosPresenter;
 import com.yuefeng.home.ui.adapter.NewRemindListsInfosAdapter;
+import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -116,6 +117,11 @@ public class NewRemindNorListInfosActivtiy extends BaseActivity implements
 
     /*获取数据源*/
     private void getDataByNet(boolean isFirstGetData) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         isRefresh = false;
         CURPAGE = 1;
         if (mPresenter != null) {
@@ -197,6 +203,11 @@ public class NewRemindNorListInfosActivtiy extends BaseActivity implements
                 CURPAGE = 1;
                 mEndTime = TimeUtils.getCurrentTime2();
                 adapter.setEnableLoadMore(false);
+                boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                if (!networkConnected) {
+                    showSuccessToast("请检查网络配置");
+                    return;
+                }
                 mPresenter.getalarmpage(mPid, mStartTime, mEndTime, String.valueOf(CURPAGE), String.valueOf(Constans.TWENTY), false);
             }
         });
@@ -218,6 +229,11 @@ public class NewRemindNorListInfosActivtiy extends BaseActivity implements
             public void run() {
                 if (mCount > Constans.TWENTY) {
                     ++CURPAGE;
+                    boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                    if (!networkConnected) {
+                        showSuccessToast("请检查网络配置");
+                        return;
+                    }
                     mPresenter.getalarmpage(mPid, mStartTime, mEndTime, String.valueOf(CURPAGE), String.valueOf(Constans.TWENTY), false);
                     adapter.loadMoreComplete();
                 } else {
@@ -250,6 +266,11 @@ public class NewRemindNorListInfosActivtiy extends BaseActivity implements
 
     /*查询*/
     private void rl_search() {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
         if (!TextUtils.isEmpty(mPid)) {
             rlTime.setVisibility(View.INVISIBLE);
             ivShowtime.setVisibility(View.VISIBLE);

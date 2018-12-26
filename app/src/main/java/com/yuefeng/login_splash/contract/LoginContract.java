@@ -15,6 +15,10 @@ public interface LoginContract {
     }
 
     interface Presenter {
+
+        //获取token
+        void getToken(String userid, String username, String usericon);
+
         void login(String funciont, String username, String password, String client);
     }
 }

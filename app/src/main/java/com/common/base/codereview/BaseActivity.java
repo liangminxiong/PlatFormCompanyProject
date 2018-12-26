@@ -161,6 +161,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
                     if (!isFinishing()) {
                         sureDialog.dismiss();
                     }
+                    getOtherDatas();
                 }
             });
 
@@ -170,6 +171,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void getOtherDatas() {
     }
 
     public void getDatasAgain() {

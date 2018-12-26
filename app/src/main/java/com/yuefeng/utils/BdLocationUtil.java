@@ -77,7 +77,7 @@ public class BdLocationUtil {
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true);                // 是否打开GPS
         option.setPriority(LocationClientOption.GpsFirst);
-//        option.setCoorType("bd09ll");           // 设置返回值的坐标类型
+        option.setCoorType("bd09ll");           // 设置返回值的坐标类型
         option.setScanSpan(time);              // 设置定时定位的时间间隔。单位毫秒
         option.setIsNeedAddress(true);          //可选，设置是否需要地址信息，默认不需要
         option.setIgnoreKillProcess(false);     //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
