@@ -634,7 +634,7 @@ public interface ApiService {
     Observable<GroupQueryWithUserBean> groupQueryWithUser(
             @Field("userid") String userid);
 
-    /*通过id获取群组消息*/
+    /*通过groupid获取群组消息*/
     @Headers({"urlname:hao"})
     @FormUrlEncoded()
     @POST(MIA_HAO + GROUPQUERY)

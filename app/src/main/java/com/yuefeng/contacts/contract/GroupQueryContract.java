@@ -10,5 +10,6 @@ public interface GroupQueryContract {
 
     interface Presenter {
         void groupQueryWithUser(String userid);
+        void groupQuery(String groupid);
     }
 }

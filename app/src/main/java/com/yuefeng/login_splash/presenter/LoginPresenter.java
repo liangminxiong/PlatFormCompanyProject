@@ -68,7 +68,7 @@ public class LoginPresenter extends BasePresenterImpl<LoginContract.View, LoginA
                 .subscribe(new HttpResultObserver<TokenBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
-//                        showLoadingDialog("加载中...");
+                        showLoadingDialog("连接中...");
                     }
 
                     @Override

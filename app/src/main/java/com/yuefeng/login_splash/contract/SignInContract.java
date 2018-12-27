@@ -35,5 +35,7 @@ public interface SignInContract {
 
         /*实时上传经纬度*/
         void uploadLnglat(String function, String type, String lng, String lat, String id, String phone, String address);
+
+        void groupQueryWithUser(String userid);
     }
 }

@@ -82,7 +82,7 @@ public class SplashPresenter extends BasePresenterImpl<LoginContract.View, Splas
                 .subscribe(new HttpResultObserver<TokenBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
-//                        showLoadingDialog("加载中...");
+                        showLoadingDialog("连接中...");
                     }
 
                     @Override

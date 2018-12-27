@@ -7,11 +7,14 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -45,10 +48,12 @@ import com.yuefeng.contacts.ui.activity.GreateSingleChatActivity;
 import com.yuefeng.features.ui.fragment.FeaturesFragment;
 import com.yuefeng.home.modle.NewMsgListDataBean;
 import com.yuefeng.home.ui.activity.NewRemindNorActivity;
+import com.yuefeng.home.ui.adapter.ConversationListAdapterEx;
 import com.yuefeng.home.ui.fragment.ConversationListHomeFragment;
 import com.yuefeng.login_splash.contract.SignInContract;
 import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.login_splash.presenter.SignInPresenter;
+import com.yuefeng.login_splash.ui.LoginActivity;
 import com.yuefeng.rongIm.RongIMUtils;
 import com.yuefeng.ui.base.fragment.NoSlideViewPager;
 import com.yuefeng.ui.base.fragment.TabItemInfo;
@@ -75,11 +80,17 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.rong.imkit.RongContext;
+import io.rong.imkit.RongIM;
+import io.rong.imkit.fragment.ConversationListFragment;
+import io.rong.imkit.manager.IUnReadMessageObserver;
+import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.Conversation;
 
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 
 public class MainActivity extends BaseActivity implements
-        SignInContract.View, LocationUtils.OnResultMapListener {
+        SignInContract.View, LocationUtils.OnResultMapListener, IUnReadMessageObserver {
     @BindView(R.id.iv_back)
     RelativeLayout iv_back;
     @BindView(R.id.rl_new)
@@ -115,9 +126,6 @@ public class MainActivity extends BaseActivity implements
     @BindString(R.string.tab_mine_name)
     String my_name;
 
-//    @BindDrawable(R.drawable.windbg)
-//    Drawable wind;
-
     private int mTime = 10;
     private SigninCacheSureDialog sureDialog;
     private static final int BDLOCATION_TIME = 10000;
@@ -128,18 +136,13 @@ public class MainActivity extends BaseActivity implements
     private double latitude;
     private double longitude;
 
-    private String AnnTime;
-    private String ProjectTime;
-    private String VersionTime;
 
-    /*测试融云*/
-    public static String zhangsanName = "张三";
-    public static String zhangsanUserId = "eab2ffacffffffc976ce7286d4054823";
     private int mCount = 0;
     private int mPosition = 0;
     private String mString;
     private String mGroupID;
     private PopupWindow mPopupWindow;
+    private boolean mIsSign;
 
     @Override
     protected int getContentViewResId() {
@@ -177,6 +180,7 @@ public class MainActivity extends BaseActivity implements
             }
             mPosition = 0;
             mCount = 0;
+            mIsSign = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -186,6 +190,86 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void initData() {
         requestPermissions();
+        initRongData();
+    }
+
+    private void initRongData() {
+        final Conversation.ConversationType[] conversationTypes = {
+                Conversation.ConversationType.PRIVATE,
+                Conversation.ConversationType.GROUP, Conversation.ConversationType.SYSTEM,
+                Conversation.ConversationType.PUBLIC_SERVICE, Conversation.ConversationType.APP_PUBLIC_SERVICE
+        };
+
+        RongIM.getInstance().addUnReadMessageCountChangedObserver(this, conversationTypes);
+        getConversationPush();// 获取 push 的 id 和 target
+        getPushMessage();
+    }
+
+    private void getConversationPush() {
+        if (getIntent() != null && getIntent().hasExtra("PUSH_CONVERSATIONTYPE") && getIntent().hasExtra("PUSH_TARGETID")) {
+
+            final String conversationType = getIntent().getStringExtra("PUSH_CONVERSATIONTYPE");
+            final String targetId = getIntent().getStringExtra("PUSH_TARGETID");
+
+
+            RongIM.getInstance().getConversation(Conversation.ConversationType.valueOf(conversationType), targetId, new RongIMClient.ResultCallback<Conversation>() {
+                @Override
+                public void onSuccess(Conversation conversation) {
+
+//                    if (conversation != null) {
+//
+//                        if (conversation.getLatestMessage() instanceof ContactNotificationMessage) { //好友消息的push
+//                            startActivity(new Intent(MainActivity.this, NewFriendListActivity.class));
+//                        } else {
+//                            Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon().appendPath("conversation")
+//                                    .appendPath(conversationType).appendQueryParameter("targetId", targetId).build();
+//                            Intent intent = new Intent(Intent.ACTION_VIEW);
+//                            intent.setData(uri);
+//                            startActivity(intent);
+//                        }
+//                    }
+                }
+
+                @Override
+                public void onError(RongIMClient.ErrorCode e) {
+
+                }
+            });
+        }
+    }
+
+    /**
+     * 得到不落地 push 消息
+     */
+    private void getPushMessage() {
+        Intent intent = getIntent();
+        if (intent != null && intent.getData() != null && intent.getData().getScheme().equals("rong")) {
+            String path = intent.getData().getPath();
+            if (path.contains("push_message")) {
+                SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+                String cacheToken = sharedPreferences.getString("loginToken", "");
+                if (TextUtils.isEmpty(cacheToken)) {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                } else {
+                    if (!RongIM.getInstance().getCurrentConnectionStatus().equals(RongIMClient.ConnectionStatusListener.ConnectionStatus.CONNECTED)) {
+                        RongIM.connect(cacheToken, new RongIMClient.ConnectCallback() {
+                            @Override
+                            public void onTokenIncorrect() {
+                            }
+
+                            @Override
+                            public void onSuccess(String s) {
+
+                            }
+
+                            @Override
+                            public void onError(RongIMClient.ErrorCode e) {
+                            }
+                        });
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -244,7 +328,6 @@ public class MainActivity extends BaseActivity implements
                             MyApplication.latitude = latitude;
                             MyApplication.longitude = longitude;
                             MyApplication.address = address;
-
                         }
                         if (isFirstLocation) {
                             isFirstLocation = false;
@@ -281,7 +364,9 @@ public class MainActivity extends BaseActivity implements
                             if (mCount > 0) {
                             }
                             if (!TextUtils.isEmpty(address)) {
-                                uploadLatlng();
+                                if (mIsSign) {
+                                    uploadLatlng();
+                                }
                             }
                         }
 
@@ -529,26 +614,9 @@ public class MainActivity extends BaseActivity implements
         startActivity(intent);
     }
 
-
-//    /*获取token*/
-//    private void getTokenByNet() {
-//        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
-//        if (!networkConnected) {
-//            showSuccessToast("请检查网络配置");
-//            return;
-//        }
-//        userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
-//        String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
-//        String portraitUrl = "";
-//        if (presenter != null) {
-//            presenter.getToken(userId, name, portraitUrl);
-//        }
-//    }
-
     private void initViewPager() {
         try {
             tabItemInfos = new ArrayList<>();
-
 
             final String string = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
             if (string.equals("true")) {//个人
@@ -616,6 +684,61 @@ public class MainActivity extends BaseActivity implements
         }
     }
 
+
+    /**
+     * 会话列表的fragment
+     */
+    private ConversationListFragment mConversationListFragment = null;
+    private boolean isDebug = false;
+    private Conversation.ConversationType[] mConversationsTypes = null;
+
+    private Fragment initConversationList() {
+        if (mConversationListFragment == null) {
+            ConversationListFragment listFragment = new ConversationListFragment();
+            listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
+            Uri uri;
+            if (isDebug) {
+                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "true") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM,
+                        Conversation.ConversationType.DISCUSSION
+                };
+
+            } else {
+                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
+                        .appendPath("conversationlist")
+                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
+                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
+                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                        .build();
+                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                        Conversation.ConversationType.GROUP,
+                        Conversation.ConversationType.PUBLIC_SERVICE,
+                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                        Conversation.ConversationType.SYSTEM
+                };
+            }
+            listFragment.setUri(uri);
+            mConversationListFragment = listFragment;
+            return listFragment;
+        } else {
+            return mConversationListFragment;
+        }
+    }
+
     private void initTabView() {
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
@@ -643,7 +766,8 @@ public class MainActivity extends BaseActivity implements
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void disposeSignInEvent(SignInEvent event) {
         switch (event.getWhat()) {
-            case Constans.LOGIN:
+            case Constans.LOGIN://签到成功
+                mIsSign = true;
                 break;
             case Constans.NEW_MSG_SUCCESS:
                 List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
@@ -665,6 +789,7 @@ public class MainActivity extends BaseActivity implements
             case Constans.GROUPCREATE_ERROR:
 //                LogUtils.d("创群失败");
                 break;
+
         }
     }
 
@@ -745,6 +870,7 @@ public class MainActivity extends BaseActivity implements
         tabLayout = null;
         EventBus.getDefault().unregister(this);
         RongIMUtils.destroyRongIM();
+//        RongIM.getInstance().removeUnReadMessageCountChangedObserver(this);
     }
 
     @Override
@@ -770,52 +896,9 @@ public class MainActivity extends BaseActivity implements
 
     }
 
+    @Override
+    public void onCountChanged(int i) {
 
- /*   private Fragment initConversationList() {
-        if (mConversationListFragment == null) {
-            ConversationListFragment listFragment = new ConversationListFragment();
-            listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
-            Uri uri;
-            if (isDebug) {
-                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
-                        .appendPath("conversationlist")
-                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "true") //设置私聊会话是否聚合显示
-                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
-                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
-                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
-                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
-                        .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
-                        .build();
-                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
-                        Conversation.ConversationType.GROUP,
-                        Conversation.ConversationType.PUBLIC_SERVICE,
-                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
-                        Conversation.ConversationType.SYSTEM,
-                        Conversation.ConversationType.DISCUSSION
-                };
-
-            } else {
-                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
-                        .appendPath("conversationlist")
-                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
-                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
-                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
-                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
-                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
-                        .build();
-                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
-                        Conversation.ConversationType.GROUP,
-                        Conversation.ConversationType.PUBLIC_SERVICE,
-                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
-                        Conversation.ConversationType.SYSTEM
-                };
-            }
-            listFragment.setUri(uri);
-            mConversationListFragment = listFragment;
-            return listFragment;
-        } else {
-            return mConversationListFragment;
-        }
-    }*/
+    }
 
 }

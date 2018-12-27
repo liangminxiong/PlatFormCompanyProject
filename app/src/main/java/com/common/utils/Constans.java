@@ -236,6 +236,9 @@ public class Constans {
     public static final int REMINDDETAIL_SUCCESS = 135;//报警消息详情成功
     public static final int REMINDDETAIL_ERROR = 136;
 
+    public static final int GROUPINFOS_SUCCESS = 137;//报警消息详情成功
+    public static final int GROUPINFOS_ERROR = 138;
+
 
     public static final String THIRTYTWOID = "thirtyTwoId";
     public static final String ANNTIME = "AnnTime";
@@ -245,6 +248,7 @@ public class Constans {
 
     /*融云   1000 - 1100*/
     public static final int RONGIM_SUCCESS = 1000;//融云token成功
+    public static final int RONGIM_SUCCESS_NET = 1100;//连接融云成功
     public static final int RONGIM_ERROR = 1001;
     public static final int GROUPCREATE_SUCCESS = 1002;//创群成功
     public static final int GROUPCREATE_ERROR = 1003;
@@ -263,6 +267,9 @@ public class Constans {
     public static final int ALLUSER_ERROR = 1012;
     public static final int USERDETAIL_SUCCESS = 1013;//获取通讯录个人信息成功
     public static final int USERDETAIL_ERROR = 1014;
+
+    public static final int GROUNPINFOS_SUCCESS = 1015;//获取群信息成功
+    public static final int GROUNPINFOS_ERROR = 1016;
 
     /*主管考勤  140 -150 */
 

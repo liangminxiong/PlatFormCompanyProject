@@ -3,6 +3,7 @@ package com.yuefeng.login_splash.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
@@ -42,9 +43,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
+import io.rong.imkit.RongIM;
+import io.rong.imlib.model.UserInfo;
 
 
-public class LoginActivity extends BaseActivity implements LoginContract.View {
+public class LoginActivity extends BaseActivity implements LoginContract.View ,RongIM.UserInfoProvider{
 
 
     @BindView(R.id.et_account)
@@ -79,7 +82,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         }
         ButterKnife.bind(this);
         loginPresenter = new LoginPresenter(this, this);
-
+        RongIMUtils.initUserInfoListener(this);
         initUI();
     }
 
@@ -225,12 +228,17 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 String alias = MD5Utils.toString(string);
                 JPushManager.getInstance().setAliasAndTags(alias, "");
 
-                if (string.equals("true")) {//个人
+                if (email.equals("true")) {//个人
                     if (loginPresenter != null) {
+                        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                        if (!networkConnected) {
+                            showErrorToast("无网络，请检查网络设置");
+                            return;
+                        }
                         loginPresenter.getToken(loginInfo.getId(), loginInfo.getUsername(),
                                 "http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg");
                     }
-                }else {
+                } else {
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
                 }
@@ -246,8 +254,23 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
                 initRongIMToken(token);
                 break;
             case Constans.RONGIM_ERROR:
+                showSuccessToast("连接失败，请重试");
+                break;
+            case Constans.RONGIM_SUCCESS_NET:
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
                 break;
         }
+    }
+
+    @Override
+    public UserInfo getUserInfo(String s) {
+        String userid = PreferencesUtils.getString(LoginActivity.this, Constans.ID, "");
+        String name = PreferencesUtils.getString(LoginActivity.this, Constans.USERNAME_N, "");
+        Uri parse = Uri.parse("http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg");
+        UserInfo info = new UserInfo(userid, name, parse);
+        RongIMUtils.refreshUserInfoCache(info);
+        return info;
     }
 
 
@@ -258,9 +281,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
         String portraitUrl = "";
         RongIMUtils.init(userId, name, portraitUrl);
         RongIMUtils.connectToken(token);
-
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-        finish();
     }
 
 

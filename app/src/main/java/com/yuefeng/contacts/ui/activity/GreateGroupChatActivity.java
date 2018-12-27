@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -32,7 +33,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -47,6 +47,8 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
 
     @BindView(R.id.tv_title_setting)
     TextView tv_setting;
+    @BindView(R.id.ll_left_search)
+    LinearLayout ll_left_search;
     @BindView(R.id.edt_groupname)
     EditText edtGroupName;
     @BindView(R.id.listView)
@@ -60,11 +62,13 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
     private FindAllUserPresenter mPresenter;
     private SortBookAdapter mAdapter;
     private String mGroupID;
-    private String createuserid = "";
+    private String groupUserids = "";
     private String mUserId;
     private String mGroupName;
     private String mText;
-
+    private List<String> checkList = new ArrayList<>();
+    private StringBuffer mStringBuffer;
+    private SortBookAdapter.ViewHolder mViewHolder;
 
     @Override
     protected int getContentViewResId() {
@@ -84,6 +88,7 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
     private void initUI() {
         setTitle("发起群聊");
         tv_setting.setText("确定");
+        ll_left_search.setVisibility(View.GONE);
         sideBar.setOnStrSelectCallBack(new SideBar.ISideBarSelectCallBack() {
             @Override
             public void onSelectStr(int index, String selectStr) {
@@ -96,7 +101,7 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
             }
         });
 
-        initEdit();
+//        initEdit();
     }
 
     private void initEdit() {
@@ -108,6 +113,11 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                if (charSequence.length() > 0) {
+                    initDateFalse();
+                } else {
+                    initDateTure();
+                }
                 if (null != mAdapter) {
                     mAdapter.getFilter().filter(charSequence);
                 }
@@ -115,7 +125,6 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
 //				 for (Iterator<String> iterator = mArrayList.iterator(); iterator
 //							.hasNext();) {
 //						String name = iterator.next();
-//
 //						if (name.contains(arg0)) {
 //							mFilteredArrayList.add(name);
 //						}
@@ -128,6 +137,20 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
 
             }
         });
+    }
+
+    // 初始化isSelected的数据
+    private void initDateTure() {
+        for (String string : checkList) {
+            LogUtils.d("======id=" + string);
+            SortBookAdapter.getIsSelected().put(string, true);
+        }
+    }// 初始化isSelected的数据
+
+    private void initDateFalse() {
+        for (int i = 0; i < mListData.size(); i++) {
+            SortBookAdapter.getIsSelected().put(mListData.get(i).getUserId(), false);
+        }
     }
 
 
@@ -152,11 +175,36 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // 取得ViewHolder对象，这样就省去了通过层层的findViewById去实例化我们需要的cb实例的步骤
-                SortBookAdapter.ViewHolder viewHolder = (SortBookAdapter.ViewHolder) view.getTag();
-                viewHolder.cb_tiem.toggle();// 把CheckBox的选中状态改为当前状态的反,gridview确保是单一选中
-                SortBookAdapter.getIsSelected().put(position, viewHolder.cb_tiem.isChecked());//将CheckBox的选中状况记录下来
-            }
+                mViewHolder = (SortBookAdapter.ViewHolder) view.getTag();
+                mViewHolder.cb_tiem.toggle();// 把CheckBox的选中状态改为当前状态的反,gridview确保是单一选中
 
+                String userId = mListData.get(position).getUserId();
+
+                SortBookAdapter.getIsSelected().put(userId, mViewHolder.cb_tiem.isChecked());//将CheckBox的选中状况记录下来
+                if (mViewHolder.cb_tiem.isChecked()) {
+//                    int size = checkList.size();
+//                    if (size > 0) {
+//                        for (int i = 0; i < size; i++) {
+//                            String uid = checkList.get(i);
+//                            if (!uid.equals(userId)) {
+//                                checkList.add(userId);
+//                                LogUtils.d("====uid22=" + uid + " += " + userId + " ++ " + checkList.size());
+//                            }
+//                        }
+//                    } else {
+//                        LogUtils.d("====uid11=" +  " += " + userId);
+//
+//                    }
+                    checkList.add(userId);
+                } else {
+                    for (int i = checkList.size() - 1; i >= 0; i--) {
+                        String item = checkList.get(i);
+                        if (userId.equals(item)) {
+                            checkList.remove(item);
+                        }
+                    }
+                }
+            }
         });
     }
 
@@ -181,39 +229,39 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
 
     @OnClick(R.id.tv_title_setting)
     public void sure() {
-        HashMap<Integer, Boolean> isSelected = SortBookAdapter.getIsSelected();
-        int size = isSelected.size();
-        for (int i = 0; i < size; i++) {
-            boolean checked = mListData.get(i).isChecked();
-            LogUtils.d("========" + i + "====" + checked);
 
+        mUserId = PreferencesUtils.getString(GreateGroupChatActivity.this, Constans.ID, "");
+        if (null == mStringBuffer) {
+            mStringBuffer = new StringBuffer();
         }
-        mGroupName = edtGroupName.getText().toString().trim();
-        if (TextUtils.isEmpty(mGroupName)) {
-            showSuccessToast("请输入群组名称");
+        mStringBuffer.setLength(0);
+        int size = checkList.size();
+        if (size == 0) {
+            showSuccessToast("请先选择人");
             return;
         }
-        mUserId = PreferencesUtils.getString(GreateGroupChatActivity.this, Constans.ID, "");
+        if (size > 1) {
+            for (String userid : checkList) {
+                if (mStringBuffer.length() == 0) {
+                    mStringBuffer.append(mUserId);
+                } else {
+                    mStringBuffer.append(",").append(userid);
+                }
+            }
+        } else {
+            mStringBuffer.append(mUserId).append(",").append(checkList.get(0));
+        }
+
+        groupUserids = mStringBuffer.toString().trim();
+
+        mGroupName = edtGroupName.getText().toString().trim();
+        if (TextUtils.isEmpty(mGroupName)) {
+//            showSuccessToast("请输入群组名称");
+            return;
+        }
 
 
-//        if (mAdapter != null) {
-//            List<String> selectedList = mAdapter.getIsSelected();
-//            int size = selectedList.size();
-//            if (size > 1) {
-//                for (int i = 0; i < size; i++) {
-//                    if (i == 0) {
-//                        createuserid = mUserId + "," + selectedList.get(i);
-//                    } else {
-//                        createuserid = createuserid + "," + selectedList.get(i);
-//                    }
-//                }
-//            } else if (size > 0) {
-//                createuserid = mUserId + "," + selectedList.get(0);
-//            } else {
-//                createuserid = mUserId;
-//            }
-//        }
-        groupCreate(mUserId, createuserid, mGroupName);
+        groupCreate(groupUserids, mUserId, mGroupName);
     }
 
     /*创建组*/
@@ -259,9 +307,8 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
     @Override
     public void getDatasAgain() {
         super.getDatasAgain();
-        RongIMUtils.startGroupChat(GreateGroupChatActivity.this, mGroupID, mText);
         Group group = new Group(mGroupID, mGroupName, Uri.parse(""));
-
+        RongIMUtils.startGroupChat(GreateGroupChatActivity.this, mGroupID, mGroupName);
         RongIMUtils.refreshGroupInfoCache(group);
     }
 

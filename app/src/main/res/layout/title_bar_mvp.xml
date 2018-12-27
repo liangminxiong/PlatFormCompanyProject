@@ -52,13 +52,12 @@
 
         <TextView
             android:id="@+id/tv_new_count"
-            android:layout_width="@dimen/dp_12"
-            android:layout_height="@dimen/dp_12"
-            android:layout_marginTop="@dimen/dp_10"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
             android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_12"
             android:background="@drawable/shape_red_dot8"
             android:gravity="center"
-            android:text="0"
             android:textColor="@color/white"
             android:textSize="9sp"
             android:visibility="visible"

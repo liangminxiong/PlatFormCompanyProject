@@ -161,7 +161,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
+            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
 
         <service
             android:name="com.baidu.location.f"
@@ -447,7 +447,7 @@
         <activity
             android:name="com.yuefeng.home.ui.imActivity.ConversationActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden">
+            android:windowSoftInputMode="stateHidden|adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

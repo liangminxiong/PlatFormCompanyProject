@@ -272,6 +272,17 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
 
     /*主管考勤*/
     private void toExecutiveAttendanceActivity() {
+        int isAdmin = PreferencesUtils.getInt(getContext(), Constans.ISADMIN, 0);
+        if (isAdmin == 0) {
+            showSuccessToast("您无权限操作此功能");
+            return;
+        }
+
+        String string = PreferencesUtils.getString(getContext(), Constans.EMAIL, "");
+        if (!string.equals("true")) {
+            showSuccessToast("您无权限操作此功能");
+            return;
+        }
         Intent intent = new Intent();
         intent.setClass(getContext(), ExecutiveAttendanceActivity.class);
         startActivity(intent);

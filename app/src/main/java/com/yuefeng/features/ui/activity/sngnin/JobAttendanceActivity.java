@@ -124,8 +124,6 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
     }
 
 
-
-
     private void getLocation() {
         BdLocationUtil.getInstance().requestLocation(new BdLocationUtil.MyLocationListener() {
             @Override
@@ -158,7 +156,7 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
 //                    tvAddress.setText("点击重新定位");
 //                }
             }
-        }, Constans.BDLOCATION_TIME,true);
+        }, Constans.BDLOCATION_TIME, true);
     }
 
 
@@ -277,6 +275,11 @@ public class JobAttendanceActivity extends BaseActivity implements JobAttendance
                 signInOneself();
                 break;
             case R.id.iv_sp_sngnin:
+                int isAdmin = PreferencesUtils.getInt(JobAttendanceActivity.this, Constans.ISADMIN, 0);
+                if (isAdmin == 0) {
+                    showSuccessToast("您无权限操作此功能");
+                    return;
+                }
                 startActivity(new Intent(JobAttendanceActivity.this, SupervisorSngnInActivity.class));
                 break;
         }

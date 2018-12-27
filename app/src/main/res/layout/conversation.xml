@@ -6,7 +6,9 @@
     android:orientation="vertical">
 
     <include
-        layout="@layout/title_bar_mvp"/>
+        layout="@layout/title_bar_mvp"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"/>
 
     <fragment
         android:id="@+id/conversation"

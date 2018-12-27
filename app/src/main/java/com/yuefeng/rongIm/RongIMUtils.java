@@ -5,9 +5,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.View;
 
+import com.common.utils.Constans;
+import com.common.utils.LogUtils;
+import com.yuefeng.login_splash.event.LoginEvent;
 import com.yuefeng.ui.MyApplication;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.rong.imkit.RongIM;
@@ -62,7 +68,6 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
          */
         if (context.getApplicationInfo().packageName.equals(MyApplication.getCurProcessName(context)) ||
                 "io.rong.push".equals(MyApplication.getCurProcessName(context))) {
-
             /**
              * IMKit SDK调用第一步 初始化
              */
@@ -75,6 +80,7 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
     /**
      * init 后就能设置的监听
      */
+
     public void initListener() {
         RongIM.setConversationBehaviorListener(this);//设置会话界面操作的监听器。
         RongIM.setConversationListBehaviorListener(this);
@@ -97,10 +103,34 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
         }, true);
     }
 
+    /*保存融云用户信息*/
+    public static void initGroup(final Group croup) {
+        RongIM.setGroupInfoProvider(new RongIM.GroupInfoProvider() {
+            @Override
+            public Group getGroupInfo(String s) {
+                return croup;
+            }
+        }, true);
+    }
+
     public static UserInfo getRongIMUserInfo(String userId) {
         UserInfo mine = RongUserInfoManager.getInstance().getUserInfo(userId);
 
         return mine;
+    }
+
+    /**
+     * //初始化群组信息提供者
+     */
+    public static void initGroupListener(RongIM.GroupInfoProvider groupInfoProvider) {
+        RongIM.setGroupInfoProvider(groupInfoProvider, true);
+    }
+
+    /**
+     * //初始化单聊信息提供者
+     */
+    public static void initUserInfoListener(RongIM.UserInfoProvider userInfoProvider) {
+        RongIM.setUserInfoProvider(userInfoProvider, true);
     }
 
     /**
@@ -109,6 +139,7 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
      * @param userInfo 需要更新的用户缓存数据。
      */
     public static void refreshUserInfoCache(UserInfo userInfo) {
+        RongIM.getInstance().refreshUserInfoCache(userInfo);
     }
 
     /**
@@ -117,6 +148,7 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
      * @param group 需要更新的群组缓存数据。
      */
     public static void refreshGroupInfoCache(Group group) {
+        RongIM.getInstance().refreshGroupInfoCache(group);
     }
 
 
@@ -129,8 +161,27 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
             }
 
             @Override
-            public void onSuccess(String s) {
-//                EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_SUCCESS, ""));
+            public void onSuccess(String userid) {
+                LogUtils.d("======" + userid);
+                EventBus.getDefault().post(new LoginEvent(Constans.RONGIM_SUCCESS_NET, ""));
+            }
+
+            @Override
+            public void onError(RongIMClient.ErrorCode errorCode) {
+                EventBus.getDefault().post(new LoginEvent(Constans.RONGIM_ERROR, ""));
+            }
+        });
+    }
+
+    private void getConversationListInfos() {
+        RongIM.getInstance().getConversationList(new RongIMClient.ResultCallback<List<Conversation>>() {
+            @Override
+            public void onSuccess(List<Conversation> conversations) {
+                if (conversations != null && conversations.size() > 0) {
+                    for (Conversation c : conversations) {
+                        RongIM.getInstance().clearMessagesUnreadStatus(c.getConversationType(), c.getTargetId(), null);
+                    }
+                }
             }
 
             @Override
@@ -138,6 +189,7 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
 
             }
         });
+
     }
 
     /*会话聚合*/
@@ -151,13 +203,16 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
 
     /*二人会话*/
     public static void startPrivateChat(Context context, String userId, String userName) {
-        init(userId, userName, "");
+//        init(userId, userName, "http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg");
+//        UserInfo userInfo = new UserInfo(userId, name, Uri.parse(portraitUrl));
         RongIM.getInstance().startPrivateChat(context, userId, userName);
     }
 
     /*群聊*/
     public static void startGroupChat(Context context, String targetGroupId, String title) {
-        RongIM.getInstance().startGroupChat(context, targetGroupId, title);
+        //跳转到融云群聊天界面
+        RongIM.getInstance().startConversation(context, Conversation.ConversationType.GROUP, targetGroupId, title);
+//        RongIM.getInstance().startGroupChat(context, targetGroupId, title);
     }
 
     /*注销融云*/

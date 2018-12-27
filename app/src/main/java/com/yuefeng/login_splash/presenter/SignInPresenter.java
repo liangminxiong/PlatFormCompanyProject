@@ -6,6 +6,7 @@ import com.common.network.HttpObservable;
 import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.yuefeng.contacts.modle.contacts.OrganPersonalBean;
+import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserBean;
 import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.home.modle.NewMsgDataBean;
@@ -335,6 +336,54 @@ public class SignInPresenter extends BasePresenterImpl<SignInContract.View, Main
                         super.onError(e);
                         dismissLoadingDialog();
                         EventBus.getDefault().postSticky(new SignInEvent(Constans.UPLOADLNGLAT_ERROR, ""));
+                    }
+                });
+    }
+
+    /*所有群组*/
+    @Override
+    public void groupQueryWithUser(String userid) {
+        HttpObservable.getObservable(apiRetrofit.groupQueryWithUser(userid))
+                .subscribe(new HttpResultObserver<GroupQueryWithUserBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(GroupQueryWithUserBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                if (o.getCode() == 200) {
+                                    EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_SUCCESS, o.getData().getGrouplist()));
+                                } else {
+                                    EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_ERROR, o.getMsg()));
+                                }
+                            } else {
+                                EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_ERROR, ""));
+                        super.onError(e);
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_ERROR, error.getMsg()));
+                        super._onError(error);
                     }
                 });
     }

@@ -1,9 +1,7 @@
 package com.yuefeng.contacts.ui.activity;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,18 +13,14 @@ import android.widget.TextView;
 import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
 import com.common.utils.Constans;
-import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.view.other.SideBar;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.contacts.adapter.SelectSortBookAdapter;
-import com.yuefeng.contacts.adapter.SortBookAdapter;
 import com.yuefeng.contacts.contract.FindAllUserContract;
 import com.yuefeng.contacts.modle.contacts.ContactsBean;
-import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
 import com.yuefeng.contacts.presenter.GreateSingleChatPresenter;
 import com.yuefeng.rongIm.RongIMUtils;
-import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,13 +28,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import io.rong.imlib.model.Group;
 
 
 /*单聊*/
@@ -63,11 +54,6 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
     private List<ContactsBean> mListData = new ArrayList<>();
     private GreateSingleChatPresenter mPresenter;
     private SelectSortBookAdapter mAdapter;
-    private String mGroupID;
-    private String createuserid = "";
-    private String mUserId;
-    private String mGroupName;
-    private String mText;
 
 
     @Override
@@ -86,7 +72,7 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
     }
 
     private void initUI() {
-        setTitle("发起群聊");
+        setTitle("发起聊天");
 //        tv_setting.setText("确定");
         rl_search.setVisibility(View.GONE);
         sideBar.setOnStrSelectCallBack(new SideBar.ISideBarSelectCallBack() {
@@ -186,55 +172,6 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
 
     }
 
-    @OnClick(R.id.tv_title_setting)
-    public void sure() {
-        HashMap<Integer, Boolean> isSelected = SortBookAdapter.getIsSelected();
-        int size = isSelected.size();
-        for (int i = 0; i < size; i++) {
-            boolean checked = mListData.get(i).isChecked();
-            LogUtils.d("========" + i + "====" + checked);
-
-        }
-        mGroupName = edtGroupName.getText().toString().trim();
-        if (TextUtils.isEmpty(mGroupName)) {
-            showSuccessToast("请输入群组名称");
-            return;
-        }
-        mUserId = PreferencesUtils.getString(GreateSingleChatActivity.this, Constans.ID, "");
-
-
-//        if (mAdapter != null) {
-//            List<String> selectedList = mAdapter.getIsSelected();
-//            int size = selectedList.size();
-//            if (size > 1) {
-//                for (int i = 0; i < size; i++) {
-//                    if (i == 0) {
-//                        createuserid = mUserId + "," + selectedList.get(i);
-//                    } else {
-//                        createuserid = createuserid + "," + selectedList.get(i);
-//                    }
-//                }
-//            } else if (size > 0) {
-//                createuserid = mUserId + "," + selectedList.get(0);
-//            } else {
-//                createuserid = mUserId;
-//            }
-//        }
-        groupCreate(mUserId, createuserid, mGroupName);
-    }
-
-    /*创建组*/
-    private void groupCreate(String userIds, String createuserid, String grunpName) {
-        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
-        if (!networkConnected) {
-            return;
-        }
-        LogUtils.d("=======" + userIds + "===" + createuserid + "==" + grunpName);
-        if (mPresenter != null) {
-            mPresenter.groupCreate(userIds, createuserid, grunpName);
-        }
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposeCommonEvent(CommonEvent event) {
         switch (event.getWhat()) {
@@ -245,20 +182,7 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
                 }
                 break;
             case Constans.ALLUSER_ERROR:
-                break;
-
-            case Constans.GROUPCREATE_SUCCESS:
-                GroupCreateBean groupCreateBean = (GroupCreateBean) event.getData();
-                mGroupID = groupCreateBean.getData();
-                mText = groupCreateBean.getText();
-
-                showSureGetAgainDataDialog("创建群聊成功，是否开始聊天?");
-
-                LogUtils.d("=====创群成功" + mGroupID);
-
-                break;
-            case Constans.GROUPCREATE_ERROR:
-                showSuccessToast("创群失败，请重试");
+//                showSureGetAgainDataDialog("创建群聊成功，是否开始聊天?");
                 break;
         }
     }
@@ -266,10 +190,6 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
     @Override
     public void getDatasAgain() {
         super.getDatasAgain();
-        RongIMUtils.startGroupChat(GreateSingleChatActivity.this, mGroupID, mText);
-        Group group = new Group(mGroupID, mGroupName, Uri.parse(""));
-
-        RongIMUtils.refreshGroupInfoCache(group);
     }
 
     @Override

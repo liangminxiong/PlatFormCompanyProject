@@ -4,7 +4,7 @@
                 android:id="@+id/relat"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clickable="true">
+                android:descendantFocusability="blocksDescendants">
 
     <TextView
         android:id="@+id/catalog"

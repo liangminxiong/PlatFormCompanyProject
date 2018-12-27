@@ -3,6 +3,7 @@ package com.yuefeng.login_splash.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -32,12 +33,14 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.functions.Consumer;
+import io.rong.imkit.RongIM;
+import io.rong.imlib.model.UserInfo;
 
 /**
  * 引导界面
  */
 
-public class SplashActivity extends BaseActivity implements LoginContract.View {
+public class SplashActivity extends BaseActivity implements LoginContract.View ,RongIM.UserInfoProvider{
 
     @BindView(R.id.text)
     ImageView imageView;
@@ -87,7 +90,7 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
             e.printStackTrace();
         }
         loginPresenter = new SplashPresenter(this, this);
-
+        RongIMUtils.initUserInfoListener(this);
     }
 
     private void initUI() {
@@ -188,6 +191,9 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
             case Constans.RONGIM_ERROR:
                 toLoginActivity();
                 break;
+            case Constans.RONGIM_SUCCESS_NET:
+                toMainActivity();
+                break;
         }
     }
 
@@ -199,7 +205,7 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
         RongIMUtils.init(userId, name, portraitUrl);
         RongIMUtils.connectToken(token);
 
-        toMainActivity();
+
     }
 
     private void toMainActivity() {
@@ -240,6 +246,16 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public UserInfo getUserInfo(String s) {
+        String userid = PreferencesUtils.getString(SplashActivity.this, Constans.ID, "");
+        String name = PreferencesUtils.getString(SplashActivity.this, Constans.USERNAME_N, "");
+        Uri parse = Uri.parse("http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg");
+        UserInfo info = new UserInfo(userid, name, parse);
+        RongIMUtils.refreshUserInfoCache(info);
+        return info;
     }
 
 

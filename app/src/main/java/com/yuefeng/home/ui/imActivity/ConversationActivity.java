@@ -3,6 +3,7 @@ package com.yuefeng.home.ui.imActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,10 +12,11 @@ import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
 import com.common.utils.Constans;
 import com.common.utils.LogUtils;
-import com.common.utils.StringUtils;
+import com.common.utils.PreferencesUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.contacts.contract.GroupQueryContract;
 import com.yuefeng.contacts.modle.UserDeatailInfosBean;
+import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserDataBean;
 import com.yuefeng.contacts.presenter.GroupQueryPresenter;
 import com.yuefeng.ui.MyApplication;
 
@@ -82,15 +84,31 @@ public class ConversationActivity extends BaseActivity implements GroupQueryCont
                 showUIDatas(bean);
                 break;
             case Constans.USERDETAIL_ERROR:
-                setTitle("无");
+                setTitle("聊天");
+                break;
+            case Constans.GROUNPINFOS_SUCCESS:
+                GroupQueryWithUserDataBean gBean = (GroupQueryWithUserDataBean) event.getData();
+                String name = gBean.getName();
+                if (!TextUtils.isEmpty(name)) {
+                    setTitle(name);
+                } else {
+                    setTitle("聊天");
+                }
+                break;
+            case Constans.GROUNPINFOS_ERROR:
+                setTitle("聊天");
                 break;
         }
     }
 
     private void showUIDatas(UserDeatailInfosBean.DataBean bean) {
         if (bean != null) {
-            String name = StringUtils.isEntryStrWu(bean.getUsername());
-            setTitle(name);
+            String name = bean.getUsername();
+            if (!TextUtils.isEmpty(name)) {
+                setTitle(name);
+            } else {
+                setTitle("聊天");
+            }
         }
     }
 
@@ -99,16 +117,32 @@ public class ConversationActivity extends BaseActivity implements GroupQueryCont
      * 展示如何从 Intent 中得到 融云会话页面传递的 Uri
      */
     private void getIntentDate(Intent intent) {
-        mTargetId = intent.getData().getQueryParameter("targetId");
-        title = intent.getData().getQueryParameter("title");
-//        Toast.makeText(this, title+"<<<会话ID>>>>>>>>>" + mTargetId, Toast.LENGTH_SHORT).show();
+        mTargetId = intent.getData().getQueryParameter("targetId").toString().trim();
+        title = intent.getData().getQueryParameter("title").toString().trim();
+        mConversationType = Conversation.ConversationType.valueOf(intent.getData()
+                .getLastPathSegment().toUpperCase(Locale.US));
         //intent.getData().getLastPathSegment();//获得当前会话类型
         LogUtils.d(title + " == " + mTargetId);
-//        setTitle("无");
+
         mConversationType = Conversation.ConversationType.valueOf(intent.getData().getLastPathSegment().toUpperCase(Locale.getDefault()));
 
+        if (mConversationType == Conversation.ConversationType.GROUP) {
+            getWhatGroupByNet(mTargetId);
+        } else if (mConversationType == Conversation.ConversationType.PRIVATE) {
+            getWhatGroupDatasByNet(mTargetId);
+        }
 //        enterFragment(mConversationType, mTargetId);
-        getWhatGroupDatasByNet(mTargetId);
+
+    }
+
+    private void getWhatGroupByNet(String targetId) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
+        if (mPresenter != null) {
+            mPresenter.groupQuery(targetId);
+        }
     }
 
     private void getWhatGroupDatasByNet(String userId) {
@@ -172,7 +206,7 @@ public class ConversationActivity extends BaseActivity implements GroupQueryCont
      * 判断消息是否是 push 消息
      */
     private void isReconnect(Intent intent) {
-        String token = "";
+        String token = PreferencesUtils.getString(ConversationActivity.this, Constans.TOKEN);
 
         if (intent == null || intent.getData() == null)
             return;
