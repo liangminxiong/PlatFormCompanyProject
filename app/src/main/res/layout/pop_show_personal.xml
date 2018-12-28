@@ -170,7 +170,7 @@
                 android:layout_marginStart="@dimen/dp_20"
                 android:background="@color/transition"
                 android:gravity="center_vertical"
-                android:textColor="@color/black_32"
+                android:textColor="@color/yellow"
                 android:textSize="@dimen/sp_13"/>
 
 
@@ -195,33 +195,27 @@
 
             <TextView
                 android:id="@+id/tv_item_addressname"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/dp_20"
+                android:layout_weight="1"
                 android:background="@color/transition"
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:textColor="@color/black_32"
                 android:textSize="@dimen/sp_13"/>
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/transition"
-                android:visibility="visible"/>
 
             <TextView
                 android:id="@+id/tv_item_native"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/dp_5"
+                android:layout_marginStart="@dimen/dp_5"
                 android:background="@color/transition"
-                android:drawablePadding="@dimen/dp_5"
+                android:drawablePadding="@dimen/dp_10"
                 android:drawableStart="@drawable/navigation"
                 android:gravity="center"
-                android:padding="@dimen/dp_5"
-                android:text="导航"
+                android:padding="@dimen/dp_10"
                 android:textColor="@color/gray_05"
                 android:textSize="@dimen/sp_13"
                 android:visibility="visible"

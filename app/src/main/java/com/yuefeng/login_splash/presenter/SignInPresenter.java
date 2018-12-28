@@ -5,9 +5,11 @@ import com.common.network.ApiException;
 import com.common.network.HttpObservable;
 import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
+import com.yuefeng.contacts.modle.TokenBean;
 import com.yuefeng.contacts.modle.contacts.OrganPersonalBean;
 import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserBean;
 import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
+import com.yuefeng.features.modle.GetWorkTimeBean;
 import com.yuefeng.features.modle.SubmitBean;
 import com.yuefeng.home.modle.NewMsgDataBean;
 import com.yuefeng.login_splash.contract.SignInContract;
@@ -297,8 +299,8 @@ public class SignInPresenter extends BasePresenterImpl<SignInContract.View, Main
 
     /*实时上传经纬度*/
     @Override
-    public void uploadLnglat(String function, String type, String lng, String lat, String id, String phone, String address) {
-        HttpObservable.getObservable(apiRetrofit.uploadLnglat(function, type, lng, lat, id, phone, address))
+    public void uploadLnglat(String function, String type, String lng, String lat, String id, String phone, String address,String isupdate) {
+        HttpObservable.getObservable(apiRetrofit.uploadLnglat(function, type, lng, lat, id, phone, address,isupdate))
                 .subscribe(new HttpResultObserver<SubmitBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
@@ -356,7 +358,7 @@ public class SignInPresenter extends BasePresenterImpl<SignInContract.View, Main
                         if (getView() != null) {
                             if (o.isSuccess()) {
                                 if (o.getCode() == 200) {
-                                    EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_SUCCESS, o.getData().getGrouplist()));
+                                    EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_SUCCESS, o.getData()));
                                 } else {
                                     EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_ERROR, o.getMsg()));
                                 }
@@ -383,6 +385,101 @@ public class SignInPresenter extends BasePresenterImpl<SignInContract.View, Main
                     protected void _onError(ApiException error) {
                         dismissLoadingDialog();
                         EventBus.getDefault().post(new SignInEvent(Constans.GROUPINFOS_ERROR, error.getMsg()));
+                        super._onError(error);
+                    }
+                });
+    }
+
+
+    /*获取token*/
+    @Override
+    public void getToken(String userid, String username, String usericon) {
+
+        HttpObservable.getObservable(apiRetrofit.getToken(userid, username, usericon))
+                .subscribe(new HttpResultObserver<TokenBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+                        showLoadingDialog("连接中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(TokenBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                if (o.getCode() == 200) {
+                                    EventBus.getDefault().post(new SignInEvent(Constans.RONGIM_SUCCESS, o));
+                                } else {
+                                    EventBus.getDefault().post(new SignInEvent(Constans.RONGIM_ERROR, o.getData()));
+                                }
+                            } else {
+                                EventBus.getDefault().post(new SignInEvent(Constans.RONGIM_ERROR, o.getData()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new SignInEvent(Constans.RONGIM_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_ERROR, ""));
+                        super.onError(e);
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().postSticky(new SignInEvent(Constans.RONGIM_ERROR, error.getMsg()));
+                        super._onError(error);
+                    }
+                });
+    }
+
+
+    /*获取排班计划*/
+    @Override
+    public void getWorkTime(String function, String userid) {
+        HttpObservable.getObservable(apiRetrofit.getWorkTime(function,userid))
+                .subscribe(new HttpResultObserver<GetWorkTimeBean>() {
+                    @Override
+                    protected void onLoading(Disposable d) {
+//                        showLoadingDialog("加载中...");
+                    }
+
+                    @Override
+                    protected void onSuccess(GetWorkTimeBean o) {
+                        dismissLoadingDialog();
+                        if (getView() != null) {
+                            if (o.isSuccess()) {
+                                    EventBus.getDefault().post(new SignInEvent(Constans.GETWORKTIME_SUCCESS, o.getMsg()));
+                            } else {
+                                EventBus.getDefault().post(new SignInEvent(Constans.GETWORKTIME_ERROR, o.getMsg()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(ApiException e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new SignInEvent(Constans.GETWORKTIME_ERROR, e.getMsg()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new SignInEvent(Constans.GETWORKTIME_ERROR, ""));
+                        super.onError(e);
+                    }
+
+                    @Override
+                    protected void _onError(ApiException error) {
+                        dismissLoadingDialog();
+                        EventBus.getDefault().post(new SignInEvent(Constans.GETWORKTIME_ERROR, error.getMsg()));
                         super._onError(error);
                     }
                 });

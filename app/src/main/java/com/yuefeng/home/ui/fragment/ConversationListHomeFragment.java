@@ -12,6 +12,7 @@ import com.common.utils.Constans;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.yuefeng.commondemo.R;
+import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserDataBean;
 import com.yuefeng.contacts.modle.groupanduser.GrouplistBean;
 import com.yuefeng.login_splash.contract.SignInContract;
 import com.yuefeng.login_splash.event.SignInEvent;
@@ -37,7 +38,9 @@ public class ConversationListHomeFragment extends BaseFragment implements SignIn
 
     private SignInPresenter presenter;
     private List<GrouplistBean> mList = new ArrayList<>();
+
     private int mCount;
+    private GroupQueryWithUserDataBean mBean;
 
     @Override
     protected int getLayoutId() {
@@ -59,6 +62,7 @@ public class ConversationListHomeFragment extends BaseFragment implements SignIn
 
     private void initRongUI() {
         ConversationListFragment conversationListFragment = new ConversationListFragment();
+
         Uri uri = Uri.parse("rong://" + getActivity().getApplicationInfo().packageName).buildUpon()
                 .appendPath("conversationlist")
                 .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
@@ -66,14 +70,13 @@ public class ConversationListHomeFragment extends BaseFragment implements SignIn
                 .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
                 .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
                 .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
-                .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
                 .build();
-        conversationListFragment.setUri(uri);
 
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.rong_container, conversationListFragment);
+//        transaction.add(R.id.rong_container, conversationListFragment);
         transaction.commit();
+        conversationListFragment.setUri(uri);
     }
 
     @Override
@@ -111,8 +114,10 @@ public class ConversationListHomeFragment extends BaseFragment implements SignIn
             case Constans.LOGIN:
                 break;
             case Constans.GROUPINFOS_SUCCESS:
-                mList = (List<GrouplistBean>) event.getData();
-                LogUtils.d("======0=s==");
+                mBean = (GroupQueryWithUserDataBean) event.getData();
+                if (mBean != null) {
+                    mList = mBean.getGrouplist();
+                }
                 RongIMUtils.initGroupListener(this);
                 initRongUI();
                 break;
@@ -148,10 +153,15 @@ public class ConversationListHomeFragment extends BaseFragment implements SignIn
 
     @Override
     public UserInfo getUserInfo(String s) {
-        String userid = PreferencesUtils.getString(getContext(), Constans.ID, "");
-        String name = PreferencesUtils.getString(getContext(), Constans.USERNAME_N, "");
-        Uri parse = Uri.parse("http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg");
+        if (mBean == null) {
+            return null;
+        }
+        String userid = mBean.getId();
+        String name = mBean.getName();
+//        "http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg"
+        Uri parse = Uri.parse(mBean.getIcon());
         UserInfo info = new UserInfo(userid, name, parse);
+        RongIMUtils.init(userid, name, mBean.getIcon());
         RongIMUtils.refreshUserInfoCache(info);
         return info;
     }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/title_bar_mvp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_f6"
+            tools:ignore="ScrollViewSize,UselessLeaf">
+
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp_3"
+                android:paddingStart="@dimen/dp_20"
+                android:text="定位信息"
+                android:textColor="#323232"
+                android:textSize="@dimen/sp_11"
+                tools:ignore="HardcodedText,RtlSymmetry"/>
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</LinearLayout>

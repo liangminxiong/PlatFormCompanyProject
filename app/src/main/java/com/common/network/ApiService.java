@@ -18,6 +18,7 @@ import com.yuefeng.features.modle.GetKaoqinSumBean;
 import com.yuefeng.features.modle.GetMonitoringHistoryBean;
 import com.yuefeng.features.modle.GetMonitoringPlanCountBean;
 import com.yuefeng.features.modle.GetQuestionCountBean;
+import com.yuefeng.features.modle.GetWorkTimeBean;
 import com.yuefeng.features.modle.HistorySngnInDataBean;
 import com.yuefeng.features.modle.LllegalworkBean;
 import com.yuefeng.features.modle.SubmitBean;
@@ -157,7 +158,7 @@ public interface ApiService {
     String UPLOADLNGLAT = "uploadlnglat";
 
 
-    String H5URL_BUSINESSEDIT = NetworkUrl.ANDROID_TEST_SERVICE + MIA_HW_BUSINESS + "businessedit.html?userpid=";
+    String H5URL_BUSINESSEDIT = NetworkUrl.ANDROID_TEST_SERVICE + MIA_HW_BUSINESS + "businessedit.html?userid=";
     String H5URL_APPLYEDIT = NetworkUrl.ANDROID_TEST_SERVICE + MIA_HW_BUSINESS + "applyedit.html?pid=";
     String UPLOADFILE = NetworkUrl.ANDROID_TEST_SERVICE + "zgbd_hw/business/FileUpload.action";
 
@@ -235,7 +236,7 @@ public interface ApiService {
 
     //有速度时间
     /*作业监控*/
-    @Headers({"urlname:gu"})
+    @Headers({"urlname:ali"})
     @POST(MIA_HW)
     Observable<GetJobMonitotingBean> getmonitorinfo(
             @Query("function") String function,
@@ -585,7 +586,8 @@ public interface ApiService {
             @Field("lat") String lat,
             @Field("id") String id,
             @Field("phone") String phone,
-            @Field("address") String address);
+            @Field("address") String address,
+            @Field("isupdate") String isupdate);
 
 
     /*获取token*/
@@ -718,6 +720,8 @@ public interface ApiService {
     String GETPERSONIDTRACK = "getPersonidTrack";
     /*获取主管id列表*/
     String GETSIGNJSON = "getsignjson";
+    /*获取排班计划及实时插入数据*/
+    String GETWORKTIME = "Getworktime";
 
     /*获取主管考勤人员树*/
     @Headers({"urlname:ali"})
@@ -752,4 +756,12 @@ public interface ApiService {
             @Field("userid") String userid,
             @Field("timestart") String timestart,
             @Field("timeend") String timeend);
+
+    /*获取排班计划时间及判断是否存在实时数据*/
+    @Headers({"urlname:ali"})
+    @FormUrlEncoded()
+    @POST(MIA_HW)
+    Observable<GetWorkTimeBean> getWorkTime(
+            @Field("function") String function,
+            @Field("userid") String userid);
 }

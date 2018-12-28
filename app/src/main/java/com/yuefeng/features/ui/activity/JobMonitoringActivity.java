@@ -585,14 +585,11 @@ public class JobMonitoringActivity extends BaseActivity implements
                         worker = BitmapDescriptorFactory.fromResource(resource);
                     }
                     ooA = new MarkerOptions().icon(worker);
-//                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     ooA.position(latLng);
                     mMarker = null;
-//            mMarker = (Marker) (baiduMap.addOverlay(ooA));
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("personalList", (Serializable) (personalinfoListBean));
                     ooA.extraInfo(bundle);
-//                    ooA.animateType(MarkerOptions.MarkerAnimateType.drop);
                     if (null == baiduMap) {
                         return;
                     }
@@ -987,7 +984,7 @@ public class JobMonitoringActivity extends BaseActivity implements
     }
 
     /*弹底车辆部框*/
-    private void showVehicleDialog(VehicleinfoListBean vehicleList) {
+    private void showVehicleDialog(final VehicleinfoListBean vehicleList) {
         try {
             String address = "";
             name = vehicleList.getRegistrationNO();
@@ -1050,7 +1047,10 @@ public class JobMonitoringActivity extends BaseActivity implements
 
                 @Override
                 public void onDetail() {
-                    showSuccessToast("查看详情");
+                    Intent intent = new Intent();
+                    intent.setClass(JobMonitoringActivity.this, CarDetailInfosActivity.class);
+                    intent.putExtra(Constans.GROUPID, vehicleList);
+                    startActivity(intent);
                 }
             });
             phototpop.showTakePop(ll_root);
@@ -1074,6 +1074,7 @@ public class JobMonitoringActivity extends BaseActivity implements
         intent.putExtra("TYPE", "1");
         startActivity(intent);
     }
+
 
     /*弹底人员部框*/
     private void showDialogPersonal(final PersonalinfoListBean personalList) {

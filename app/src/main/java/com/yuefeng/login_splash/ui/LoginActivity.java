@@ -14,14 +14,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.JPush.JPushManager;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.updateapputils.UpdateManager;
 import com.common.utils.Constans;
 import com.common.utils.LocationGpsUtils;
 import com.common.utils.LogUtils;
-import com.common.utils.MD5Utils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ToastUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
@@ -225,8 +223,9 @@ public class LoginActivity extends BaseActivity implements LoginContract.View ,R
                 PreferencesUtils.putInt(LoginActivity.this, Constans.ISADMIN, loginInfo.getIsadmin());
                 PreferencesUtils.putBoolean(LoginActivity.this, Constans.ISREG, loginInfo.isIsreg());
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
-                String alias = MD5Utils.toString(string);
-                JPushManager.getInstance().setAliasAndTags(alias, "");
+                /*极光推送*/
+//                String alias = MD5Utils.toString(string);
+//                JPushManager.getInstance().setAliasAndTags(alias, "");
 
                 if (email.equals("true")) {//个人
                     if (loginPresenter != null) {
@@ -267,7 +266,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View ,R
     public UserInfo getUserInfo(String s) {
         String userid = PreferencesUtils.getString(LoginActivity.this, Constans.ID, "");
         String name = PreferencesUtils.getString(LoginActivity.this, Constans.USERNAME_N, "");
-        Uri parse = Uri.parse("http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg");
+        Uri parse = Uri.parse(Constans.USER_LOGO);
         UserInfo info = new UserInfo(userid, name, parse);
         RongIMUtils.refreshUserInfoCache(info);
         return info;
@@ -280,7 +279,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View ,R
         String name = PreferencesUtils.getString(LoginActivity.this, Constans.USERNAME_N, "");
         String portraitUrl = "";
         RongIMUtils.init(userId, name, portraitUrl);
-        RongIMUtils.connectToken(token);
+        RongIMUtils.connectToken(token,userId,name,portraitUrl);
     }
 
 

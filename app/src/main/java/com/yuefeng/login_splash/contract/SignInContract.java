@@ -34,8 +34,14 @@ public interface SignInContract {
         void findOrganWithID(String id, String name, Integer type);
 
         /*实时上传经纬度*/
-        void uploadLnglat(String function, String type, String lng, String lat, String id, String phone, String address);
-
+        void uploadLnglat(String function, String type, String lng, String lat, String id, String phone, String address,String isupdate);
         void groupQueryWithUser(String userid);
+
+        //获取token
+
+        void getToken(String userid, String username, String usericon);
+
+        /*获取排班计划时间*/
+        void getWorkTime(String function, String userid);
     }
 }

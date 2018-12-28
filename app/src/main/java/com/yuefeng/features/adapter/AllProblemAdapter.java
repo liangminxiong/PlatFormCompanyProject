@@ -41,9 +41,9 @@ public class AllProblemAdapter extends BaseItemDraggableAdapter<EventQuestionMsg
          * */
         iv_item_logo = helper.getView(R.id.iv_item_logo);
         if (item != null) {
-            state = item.getState();
+            state = com.common.utils.StringUtils.isEntryStrZero(item.getState());
             Log.d(TAG, "convert: " + item.getId() + " ++ " + state);
-            String uploadtime = item.getUploadtime();
+            String uploadtime = com.common.utils.StringUtils.isEntryStrZero(item.getUploadtime());
             if (!TextUtils.isEmpty(uploadtime)) {
                 time = StringUtils.returnStrTime(uploadtime);
             }
@@ -81,12 +81,13 @@ public class AllProblemAdapter extends BaseItemDraggableAdapter<EventQuestionMsg
                 colorInt = mContext.getResources().getColor(R.color.maingreen);
                 colorIntTime = mContext.getResources().getColor(R.color.gray);
             }
-            type = item.getType();
+            type = com.common.utils.StringUtils.isEntryStrZero(item.getType());
+
             if (type.equals("1")) {
                 helper.setImageResource(R.id.iv_item_type, R.drawable.ji);
             }
 
-            id = item.getId();
+            id = com.common.utils.StringUtils.isEntryStrZero(item.getId());
             uploadpeoplename = item.getUploadpeoplename();
             problem = item.getProblem();
             id = TextUtils.isEmpty(id) ? "" : id;

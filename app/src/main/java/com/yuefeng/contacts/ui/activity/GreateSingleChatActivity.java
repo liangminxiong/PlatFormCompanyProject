@@ -52,6 +52,8 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
     RelativeLayout rl_search;
 
     private List<ContactsBean> mListData = new ArrayList<>();
+    private List<ContactsBean> mSelectList = new ArrayList<>();
+
     private GreateSingleChatPresenter mPresenter;
     private SelectSortBookAdapter mAdapter;
 
@@ -99,9 +101,9 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                if (null != mAdapter) {
-                    mAdapter.getFilter().filter(charSequence);
-                }
+//                if (null != mAdapter) {
+//                    mAdapter.getFilter().filter(charSequence);
+//                }
 //               也可以在这里筛选数据,但这不是异步的，有隐患，最好用系统提供的Filter类
 //				 for (Iterator<String> iterator = mArrayList.iterator(); iterator
 //							.hasNext();) {
@@ -112,6 +114,14 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
 //						}
 //				 mListViewAdapter.changeList(mFilteredArrayList);
 //				 mListViewAdapter.notifyDataSetChanged();
+
+                String key = charSequence.toString().trim();
+                int length = key.length();
+                if (length > 0) {
+                    searchKeyList(key);
+                } else {
+                    initAdaterData();
+                }
             }
 
             @Override
@@ -119,6 +129,36 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
 
             }
         });
+    }
+
+    private void initAdaterData() {
+        mSelectList.clear();
+        mSelectList.addAll(mListData);
+        mAdapter = new SelectSortBookAdapter(GreateSingleChatActivity.this, mSelectList);
+        mListView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void searchKeyList(String key) {
+        List<ContactsBean> checkList = new ArrayList<>();
+        int size = mListData.size();
+        if (size > 0) {
+            for (ContactsBean bean : mListData) {
+                if (bean.getName().contains(key)) {
+                    checkList.add(bean);
+                }
+            }
+        }
+        if (checkList.size() > 0) {
+            mSelectList.clear();
+            mSelectList.addAll(checkList);
+        }
+
+        if (mAdapter != null) {
+            mAdapter = new SelectSortBookAdapter(GreateSingleChatActivity.this, mSelectList);
+            mListView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -136,14 +176,15 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
         Collections.sort(mListData); // 对list进行排序，需要让User实现Comparable接口重写compareTo方法
         mListView.setDividerHeight(0);
         mListView.setDivider(null);
-        mAdapter = new SelectSortBookAdapter(GreateSingleChatActivity.this, mListData);
+        mSelectList.addAll(mListData);
+        mAdapter = new SelectSortBookAdapter(GreateSingleChatActivity.this, mSelectList);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // 取得ViewHolder对象，这样就省去了通过层层的findViewById去实例化我们需要的cb实例的步骤
-                startChat(mListData.get(position).getUserId(), mListData.get(position).getName());
+                startChat(mSelectList.get(position).getUserId(), mSelectList.get(position).getName());
             }
 
         });

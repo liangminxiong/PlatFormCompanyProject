@@ -13,8 +13,10 @@ import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.model.LatLng;
 import com.common.utils.Constans;
+import com.common.utils.PreferencesUtils;
 import com.common.utils.ResourcesUtils;
 import com.common.utils.StringUtils;
+import com.common.utils.ToastUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.features.modle.zhuguanSign.ZhuGuanSignListBean;
 import com.yuefeng.features.ui.activity.sngnin.HistoryExecuTrackActivity;
@@ -69,13 +71,18 @@ public class BaiDuMapMakerView {
                 mTvPhone.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        StringUtils.callPhone(mContext,phone);
+                        StringUtils.callPhone(mContext, phone);
                     }
                 });
             }
             mTvSendMsg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String userid = PreferencesUtils.getString(mContext, Constans.ID, "");
+                    if (userid.equals(markerBean.getId())) {
+                        ToastUtils.showToast("亲，你要自己和自己聊天吗?");
+                        return;
+                    }
                     RongIMUtils.startPrivateChat(mContext, markerBean.getId(), markerBean.getName());
                 }
             });
@@ -106,7 +113,7 @@ public class BaiDuMapMakerView {
                 }
             });
 
-            mInfoWindow = new InfoWindow(popoverView, mLatLng, -40);
+            mInfoWindow = new InfoWindow(popoverView, mLatLng, 40);
             mBaiduMap.showInfoWindow(mInfoWindow);
         } catch (Exception e) {
             e.printStackTrace();

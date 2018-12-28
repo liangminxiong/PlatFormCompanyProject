@@ -333,7 +333,7 @@ public class PositionAcquisitionActivity extends BaseActivity implements Positio
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true); // 打开gps
         option.setCoorType("bd09ll"); // 设置坐标类型
-        option.setScanSpan(10000);
+        option.setScanSpan(20000);
         option.setIsNeedAddress(true);
         option.setAddrType("all");
         mLocClient.setLocOption(option);

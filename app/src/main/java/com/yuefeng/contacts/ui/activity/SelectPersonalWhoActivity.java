@@ -47,6 +47,9 @@ public class SelectPersonalWhoActivity extends BaseActivity {
     private String mTitltName;
     private SelectSortBookAdapter mAdapter;
 
+    private List<ContactsBean> mSelectList = new ArrayList<>();
+
+
     @Override
     protected int getContentViewResId() {
         return R.layout.module_fragment_addressbook;
@@ -86,9 +89,18 @@ public class SelectPersonalWhoActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                if (null != mAdapter) {
-                    mAdapter.getFilter().filter(charSequence);
+//                if (null != mAdapter) {
+//                    mAdapter.getFilter().filter(charSequence);
+//                }
+
+                String key = charSequence.toString().trim();
+                int length = key.length();
+                if (length > 0) {
+                    searchKeyList(key);
+                } else {
+                    initAdaterData();
                 }
+
 //               也可以在这里筛选数据,但这不是异步的，有隐患，最好用系统提供的Filter类
 //				 for (Iterator<String> iterator = mArrayList.iterator(); iterator
 //							.hasNext();) {
@@ -108,6 +120,36 @@ public class SelectPersonalWhoActivity extends BaseActivity {
         });
     }
 
+    private void initAdaterData() {
+        mSelectList.clear();
+        mSelectList.addAll(mListData);
+        mAdapter = new SelectSortBookAdapter(SelectPersonalWhoActivity.this, mSelectList);
+        mListView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void searchKeyList(String key) {
+        List<ContactsBean> checkList = new ArrayList<>();
+        int size = mListData.size();
+        if (size > 0) {
+            for (ContactsBean bean : mListData) {
+                if (bean.getName().contains(key)) {
+                    checkList.add(bean);
+                }
+            }
+        }
+        if (checkList.size() > 0) {
+            mSelectList.clear();
+            mSelectList.addAll(checkList);
+        }
+
+        if (mAdapter != null) {
+            mAdapter = new SelectSortBookAdapter(SelectPersonalWhoActivity.this, mSelectList);
+            mListView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
 
     private void addDatasInRecycler(List<OrganlistBean> listData) {
         for (OrganlistBean bean : listData) {
@@ -123,12 +165,13 @@ public class SelectPersonalWhoActivity extends BaseActivity {
         Collections.sort(mListData); // 对list进行排序，需要让User实现Comparable接口重写compareTo方法
         mListView.setDividerHeight(0);
         mListView.setDivider(null);
-        mAdapter = new SelectSortBookAdapter(SelectPersonalWhoActivity.this, mListData);
+        mSelectList.addAll(mListData);
+        mAdapter = new SelectSortBookAdapter(SelectPersonalWhoActivity.this, mSelectList);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                toUserDetailActivity(mListData.get(position).getUserId());
+                toUserDetailActivity(mSelectList.get(position).getUserId());
             }
         });
     }

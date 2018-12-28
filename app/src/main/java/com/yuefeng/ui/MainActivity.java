@@ -42,9 +42,11 @@ import com.common.view.dialog.SigninCacheSureDialog;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.contacts.fragment.ContactsFragment;
+import com.yuefeng.contacts.modle.TokenBean;
 import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
 import com.yuefeng.contacts.ui.activity.GreateGroupChatActivity;
 import com.yuefeng.contacts.ui.activity.GreateSingleChatActivity;
+import com.yuefeng.features.modle.GetWorkTimeMsgBean;
 import com.yuefeng.features.ui.fragment.FeaturesFragment;
 import com.yuefeng.home.modle.NewMsgListDataBean;
 import com.yuefeng.home.ui.activity.NewRemindNorActivity;
@@ -143,6 +145,7 @@ public class MainActivity extends BaseActivity implements
     private String mGroupID;
     private PopupWindow mPopupWindow;
     private boolean mIsSign;
+    private String mIsupdate = "0";
 
     @Override
     protected int getContentViewResId() {
@@ -160,7 +163,7 @@ public class MainActivity extends BaseActivity implements
             }
             ll_parent.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             presenter = new SignInPresenter(this, this);
-            initViewPager();
+
             viewPager.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -175,14 +178,32 @@ public class MainActivity extends BaseActivity implements
             if (mString.equals("true")) {//个人
                 mPosition = 0;
                 tv_title_setting.setBackgroundResource(R.drawable.add);
+                getIsUpdata();
             } else {
                 rly_home_title.setVisibility(View.GONE);
             }
             mPosition = 0;
             mCount = 0;
             mIsSign = false;
+            initViewPager();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /*是否上传经纬度*/
+    private void getIsUpdata() {
+        String string = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
+        if (string.equals("true")) {//个人
+            if (presenter != null) {
+                boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+                if (!networkConnected) {
+                    showErrorToast("无网络，请检查网络设置");
+                    return;
+                }
+                userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
+                presenter.getWorkTime(ApiService.GETWORKTIME, userId);
+            }
         }
     }
 
@@ -363,8 +384,10 @@ public class MainActivity extends BaseActivity implements
                             getNetDatas();
                             if (mCount > 0) {
                             }
-                            if (!TextUtils.isEmpty(address)) {
-                                if (mIsSign) {
+                            if (mIsSign && !TextUtils.isEmpty(address)) {
+                                if (mIsupdate.equals("0")) {
+                                    getIsUpdata();
+                                }else {
                                     uploadLatlng();
                                 }
                             }
@@ -398,9 +421,9 @@ public class MainActivity extends BaseActivity implements
             }
             userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
             String phone = PreferencesUtils.getString(MainActivity.this, Constans.TELNUM, "");
-            LogUtils.d("===上传==" + longitude + " ++ " + latitude + " ++ " + address + "++ " + phone + " isadmin = " + isAdmin);
+            LogUtils.d("====phone====" + phone + " ++ " + address + " ++ " + mIsupdate);
             presenter.uploadLnglat(ApiService.UPLOADLNGLAT, Constans.TYPE_LATLNG_QD
-                    , String.valueOf(longitude), String.valueOf(latitude), userId, phone, address);
+                    , String.valueOf(longitude), String.valueOf(latitude), userId, phone, address, mIsupdate);
         }
     }
 
@@ -525,6 +548,7 @@ public class MainActivity extends BaseActivity implements
         switch (view.getId()) {
             case R.id.tv_title_setting:
                 showPopuwindow();
+//                startActivity(new Intent(MainActivity.this,ConversationListActivity.class));
                 break;
             case R.id.rl_new:
                 toNewRemindNorActivity();
@@ -790,7 +814,43 @@ public class MainActivity extends BaseActivity implements
 //                LogUtils.d("创群失败");
                 break;
 
+            case Constans.RONGIM_SUCCESS:
+                TokenBean tokenBean = (TokenBean) event.getData();
+                String token = tokenBean.getData();
+                PreferencesUtils.putString(MainActivity.this, Constans.TOKEN, token);
+                if (!TextUtils.isEmpty(token)) {
+                    initRongIMToken(token);
+                }
+                break;
+            case Constans.RONGIM_ERROR:
+                initViewPager();
+                break;
+            case Constans.RONGIM_SUCCESS_NET:
+                initViewPager();
+                break;
+            case Constans.GETWORKTIME_SUCCESS://获取排班计划
+                GetWorkTimeMsgBean data = (GetWorkTimeMsgBean) event.getData();
+                if (data != null) {
+                    mIsupdate = data.getIsupdate();
+                    LogUtils.d("====phone=1===" + address + " ++ " + mIsupdate);
+                }
+                break;
+            case Constans.GETWORKTIME_ERROR:
+                initViewPager();
+                break;
+
         }
+    }
+
+    /*融云连接token*/
+    private void initRongIMToken(String token) {
+        String userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
+        String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
+        String portraitUrl = "";
+        RongIMUtils.init(userId, name, portraitUrl);
+        RongIMUtils.connectToken(token, userId, name, portraitUrl);
+
+        LogUtils.d("======开始1111==");
     }
 
     /*报警数量*/

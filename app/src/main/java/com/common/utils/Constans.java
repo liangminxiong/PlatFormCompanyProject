@@ -36,6 +36,8 @@ public class Constans {
     public static final int RELOGIN = 13;//重新登录
     public static final int USERERROR = 12;//用户相关错误
     public static final int UPDATAAPP_SUCCESS = 14;//获取更新信息成功
+    public static final int BAIDU_ZOOM_SEVEN = 7;
+    public static final int BAIDU_ZOOM_TEN = 10;
     public static final int BAIDU_ZOOM_FOUTTEEN = 14;
     public static final int BAIDU_ZOOM_EIGHTEEN = 18;
     public static final int BAIDU_ZOOM_TWENTY_ONE = 15;
@@ -133,6 +135,7 @@ public class Constans {
     public static final int ETIDEXT_SUCESS = 69;//100数字倒计时
 
     public static final int DETAIL_SSUCESS = 70;//问题详情成功
+    public static final String USER_LOGO = "http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg";//问题详情成功
 
 
     /*
@@ -238,6 +241,10 @@ public class Constans {
 
     public static final int GROUPINFOS_SUCCESS = 137;//报警消息详情成功
     public static final int GROUPINFOS_ERROR = 138;
+
+    /*排班计划*/
+    public static final int GETWORKTIME_SUCCESS = 139;
+    public static final int GETWORKTIME_ERROR = 140;
 
 
     public static final String THIRTYTWOID = "thirtyTwoId";

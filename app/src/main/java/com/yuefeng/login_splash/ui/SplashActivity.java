@@ -9,11 +9,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.JPush.JPushManager;
 import com.common.base.codereview.BaseActivity;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
-import com.common.utils.MD5Utils;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
@@ -40,7 +39,7 @@ import io.rong.imlib.model.UserInfo;
  * 引导界面
  */
 
-public class SplashActivity extends BaseActivity implements LoginContract.View ,RongIM.UserInfoProvider{
+public class SplashActivity extends BaseActivity implements LoginContract.View, RongIM.UserInfoProvider {
 
     @BindView(R.id.text)
     ImageView imageView;
@@ -68,11 +67,12 @@ public class SplashActivity extends BaseActivity implements LoginContract.View ,
             EventBus.getDefault().register(this);
         }
         ButterKnife.bind(this);
+        loginPresenter = new SplashPresenter(this, this);
 
-        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
-        if (!networkConnected) {
-            toLoginActivity();
-        }
+//        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+//        if (!networkConnected) {
+//            toLoginActivity();
+//        }
 
         if (!isTaskRoot()) {
             finish();
@@ -84,12 +84,11 @@ public class SplashActivity extends BaseActivity implements LoginContract.View ,
         }
         try {
             imageView.setBackgroundResource(R.drawable.bg_login);
-            sentBro();
+//            sentBro();
             requestPermissions();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        loginPresenter = new SplashPresenter(this, this);
         RongIMUtils.initUserInfoListener(this);
     }
 
@@ -127,25 +126,37 @@ public class SplashActivity extends BaseActivity implements LoginContract.View ,
             if (!networkConnected) {
                 toLoginActivity();
             } else {
-                initUI();
-            }
-           /* boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
-            if (isHaveDatas) {
-                String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
-                if (!TextUtils.isEmpty(string)) {//主界面
-//                    startActivity(new Intent(SplashActivity.this, DemoTestActivity.class));
-                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                } else {//登录界面
+//                initUI();
+
+                boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
+                if (isHaveDatas) {
+                    String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
+                    if (!TextUtils.isEmpty(string)) {//主界面
+                        toMainActivity();
+                    } else {//登录界面
+                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    }
+                } else {
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                 }
-            } else {
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                finish();
             }
-            finish();*/
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    /*startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                        String email = PreferencesUtils.getString(SplashActivity.this, Constans.EMAIL, "");
+                        if (email.equals("true")) {//个人aa
+                            LogUtils.d("======mai===");
+                            if (loginPresenter != null) {
+                                String name = PreferencesUtils.getString(SplashActivity.this, Constans.USERNAME_N, "");
+                                String userid = PreferencesUtils.getString(SplashActivity.this, Constans.ID, "");
+                                loginPresenter.getToken(userid, name,
+                                        "http://testresource.hangyunejia.com/resource/uploads/file/20181212/YM1mlVZxMnpBAhM2dBiK.jpeg");
+                            }
+                        } else {*/
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -167,8 +178,8 @@ public class SplashActivity extends BaseActivity implements LoginContract.View ,
                 PreferencesUtils.putString(SplashActivity.this, Constans.EMAIL, mLoginInfo.getEmail());
                 PreferencesUtils.putBoolean(SplashActivity.this, Constans.ISREG, mLoginInfo.isIsreg());
                 String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
-                String alias = MD5Utils.toString(string);
-                JPushManager.getInstance().setAliasAndTags(alias, "");
+//                String alias = MD5Utils.toString(string);
+//                JPushManager.getInstance().setAliasAndTags(alias, "");//极光推送
                 if (mLoginInfo.getEmail().equals("true")) {//个人
                     if (loginPresenter != null) {
                         loginPresenter.getToken(mLoginInfo.getId(), mLoginInfo.getUsername(),
@@ -186,13 +197,18 @@ public class SplashActivity extends BaseActivity implements LoginContract.View ,
                 TokenBean tokenBean = (TokenBean) loginEvent.getData();
                 String token = tokenBean.getData();
                 PreferencesUtils.putString(SplashActivity.this, Constans.TOKEN, token);
-                initRongIMToken(token);
+                if (!TextUtils.isEmpty(token)) {
+                    initRongIMToken(token);
+                } else {
+                    toMainActivity();
+                }
                 break;
             case Constans.RONGIM_ERROR:
                 toLoginActivity();
                 break;
             case Constans.RONGIM_SUCCESS_NET:
                 toMainActivity();
+                LogUtils.d("======开始==");
                 break;
         }
     }
@@ -203,9 +219,9 @@ public class SplashActivity extends BaseActivity implements LoginContract.View ,
         String name = PreferencesUtils.getString(SplashActivity.this, Constans.USERNAME_N, "");
         String portraitUrl = "";
         RongIMUtils.init(userId, name, portraitUrl);
-        RongIMUtils.connectToken(token);
+        RongIMUtils.connectToken(token,userId,name,portraitUrl);
 
-
+        LogUtils.d("======开始1111==");
     }
 
     private void toMainActivity() {

@@ -5,7 +5,7 @@
     android:id="@+id/rl_parent"
     android:layout_width="350dp"
     android:layout_height="wrap_content"
-    android:background="@drawable/xx_baojing_bg"
+    android:background="@drawable/zggj_bg"
     android:clickable="false"
     android:focusable="true"
     android:orientation="vertical"
@@ -58,21 +58,14 @@
         android:textSize="@dimen/sp_15"
         tools:ignore="HardcodedText"/>
 
-    <View
-        android:id="@+id/view11"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_below="@id/tv_name"
-        android:background="#2B8DD6"/>
-
 
     <TextView
         android:id="@+id/tv_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/view11"
+        android:layout_below="@id/tv_send_msg"
         android:layout_marginStart="@dimen/dp_5"
-        android:layout_marginTop="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_10"
         android:gravity="center"
         android:padding="@dimen/dp_5"
         android:text="电话号码:"
@@ -84,12 +77,11 @@
         android:id="@+id/tv_phone_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/view11"
-        android:layout_marginTop="@dimen/dp_5"
+        android:layout_below="@id/tv_send_msg"
+        android:layout_marginTop="@dimen/dp_10"
         android:layout_toEndOf="@id/tv_phone"
         android:gravity="center_vertical"
         android:padding="@dimen/dp_5"
-        android:text="13838383338"
         android:textColor="#1f1f1f"
         android:textSize="@dimen/sp_14"
         tools:ignore="HardcodedText"/>

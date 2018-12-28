@@ -81,7 +81,7 @@ public class JobMonitoringPresenter extends BasePresenterImpl<JobMoniroringContr
     @Override//有时间无速度
     public void getmonitorinfo(String function, String userid, String pid, String isreg, String isnew) {
 
-        HttpObservable.getObservable(apiRetrofit.getmonitorinfo(function, userid, pid, isreg))
+        HttpObservable.getObservable(apiRetrofit.getmonitorinfo(function, userid, pid, isreg, isnew))//
 //                .subscribe(new HttpResultObserver<ResponseCustom<String>>() {
                 .subscribe(new HttpResultObserver<GetJobMonitotingBean>() {
                     @Override
@@ -104,7 +104,7 @@ public class JobMonitoringPresenter extends BasePresenterImpl<JobMoniroringContr
                     @Override
                     protected void onFail(ApiException e) {
                         dismissLoadingDialog();
-                        EventBus.getDefault().postSticky(new JobMonitoringEvent(Constans.JOB_ERROR, e.getMsg()));
+//                        EventBus.getDefault().postSticky(new JobMonitoringEvent(Constans.JOB_ERROR, e.getMsg()));
                     }
 
                     @Override
@@ -118,7 +118,7 @@ public class JobMonitoringPresenter extends BasePresenterImpl<JobMoniroringContr
                     public void onError(Throwable e) {
                         super.onError(e);
                         dismissLoadingDialog();
-                        EventBus.getDefault().postSticky(new JobMonitoringEvent(Constans.JOB_ERROR, ""));
+//                        EventBus.getDefault().postSticky(new JobMonitoringEvent(Constans.JOB_ERROR, ""));
 
                     }
 

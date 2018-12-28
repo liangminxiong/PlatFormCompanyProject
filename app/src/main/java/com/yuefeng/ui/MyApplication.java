@@ -9,7 +9,6 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
 
-import com.JPush.JPushManager;
 import com.baidu.mapapi.SDKInitializer;
 import com.common.network.ApiRetrofit;
 import com.common.utils.RxTool;
@@ -127,7 +126,7 @@ public class MyApplication extends Application {
         ImageLoader.getInstance().init(config);
 
         /*极光推送*/
-        JPushManager.getInstance().initJPush(this);
+//        JPushManager.getInstance().initJPush(this);
     }
 
     public static Context getContext() {

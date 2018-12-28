@@ -2,7 +2,6 @@ package com.yuefeng.features.ui.activity.sngnin;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -19,7 +18,7 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.TextOptions;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
@@ -27,6 +26,7 @@ import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
 import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.RxHelper;
 import com.common.utils.StringUtils;
@@ -76,8 +76,8 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
 
     private boolean isFirstLocation = true;
     private LatLng mLatLng;
-    BitmapDescriptor map_location = BitmapDescriptorFactory.fromResource(R.drawable.worker_yidong);
-    BitmapDescriptor map_location_no = BitmapDescriptorFactory.fromResource(R.drawable.worker_lixian);
+    BitmapDescriptor map_location = BitmapDescriptorFactory.fromResource(R.drawable.zhuguan_yidong);
+    BitmapDescriptor map_location_no = BitmapDescriptorFactory.fromResource(R.drawable.zhuguan_lixian);
     public MarkerOptions ooA;
     private Marker mMarker;
     private BaiduMap mBaiduMap;
@@ -89,7 +89,6 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
     private myMarkerClickListener myMarkerClickListener = null;
     private List<Marker> mks = new ArrayList<Marker>();
     private BaiDuMapMakerView mBaiMakerView;
-    protected TextOptions ooText = null;
     private PersonalZhuListPopupWindow mPopupWindowTree;
 
     /*列表数据源*/
@@ -99,6 +98,7 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
     private List<PersonalParentBean> treeListData = new ArrayList<>();
     private String mIdFlags;
     private boolean isFirstGetData = true;
+    private OverlayOptions mOoText;
 
     @Override
     protected int getContentViewResId() {
@@ -122,20 +122,12 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
         mMapView.showZoomControls(false);// 缩放控件是否显示
         UiSettings settings = mBaiduMap.getUiSettings();
         settings.setCompassEnabled(true);
-        settings.setOverlookingGesturesEnabled(false);
-        settings.setZoomGesturesEnabled(false);//获取是否允许缩放手势返回:是否允许缩放手势
+        settings.setOverlookingGesturesEnabled(true);
+        settings.setZoomGesturesEnabled(true);//获取是否允许缩放手势返回:是否允许缩放手势
         settings.setAllGesturesEnabled(true);
         // 地图初始化
-
-        latitude = MyApplication.latitude;
-        longitude = MyApplication.longitude;
-        address = MyApplication.address;
-        if (latitude > 0 && longitude > 0 && !TextUtils.isEmpty(address)) {
-            mLatLng = new LatLng(latitude, longitude);
-            BdLocationUtil.MoveMapToCenter(mBaiduMap, mLatLng, Constans.BAIDU_ZOOM_FOUTTEEN);
-        } else {
-            requestPermissions();
-        }
+        getNetDatas();
+        requestPermissions();
         mBaiMakerView = new BaiDuMapMakerView(ExecutiveAttendanceActivity.this);
         mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
             @Override
@@ -150,6 +142,7 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                 return false;
             }
         });
+
     }
 
 
@@ -190,6 +183,7 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                     address = location.getAddrStr();
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
+                    mLatLng = new LatLng(latitude, longitude);
                     if (!TextUtils.isEmpty(address) && address.contains(getString(R.string.CHINA))) {
                         int length = address.length();
                         address = address.substring(2, length);
@@ -221,7 +215,6 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
 
     @Override
     protected void initData() {
-        getNetDatas();
     }
 
     private void getNetDatas() {
@@ -288,9 +281,9 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                 showSureGetAgainDataDialog("加载数据失败,是否重新加载?");
                 break;
             case Constans.ATTENDANCELNGLAT_SUCCESS://主管实时位置
-                if (mBaiduMap != null) {
-                    mBaiduMap.clear();
-                }
+//                if (mBaiduMap != null) {
+//                    mBaiduMap.clear();
+//                }
                 List<ZhuGuanSignListBean> latListData = (List<ZhuGuanSignListBean>) event.getData();
                 if (latListData.size() > 0) {
                     showPersonnel(latListData);
@@ -406,7 +399,7 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
     /*人员列表*/
     private void initTreeListPopupView() {
         try {
-            mPopupWindowTree = new PersonalZhuListPopupWindow(this, nodeList, false);
+            mPopupWindowTree = new PersonalZhuListPopupWindow(this, nodeList, true);
             mPopupWindowTree.setTitleText("选择人员");
             mPopupWindowTree.setSettingText("确定");
             mPopupWindowTree.setOnItemClickListener(new PersonalZhuListPopupWindow.OnItemClickListener() {
@@ -462,7 +455,6 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
             for (ZhuGuanSignListBean bean : latListData) {
                 showPersonal(bean);
             }
-            dismissLoadingDialog();
             if (null == myMarkerClickListener) {
                 myMarkerClickListener = new myMarkerClickListener(mks);
             }
@@ -482,41 +474,40 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     String latitude = personalinfoListBean.getLat();
                     String longitude = personalinfoListBean.getLng();
+                    LogUtils.d("=====lat ======" + latitude + " ++ " + longitude);
                     if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
                         LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
                         // 构建MarkerOption，用于在地图上添加Marker
+//                        //添加文字
+//                        mOoText = new TextOptions().bgColor(Color.TRANSPARENT)
+//                                .fontSize(30)
+//                                .fontColor(getResources().getColor(R.color.blue_07))
+//                                .text(StringUtils.isEntryStrWu(personalinfoListBean.getName()))
+//                                .position(latLng);
+//                        mBaiduMap.addOverlay(mOoText);
 
                         String time = StringUtils.returnStrTime(personalinfoListBean.getTime());
 
                         String minTime = TimeUtils.getTenBeforeMinTime();
                         boolean timeLessThan = TimeUtils.isTimeLessThan(minTime, time);
+                        LogUtils.d("=====lat ======" + latLng + " ++ " + timeLessThan);
                         if (timeLessThan) {
-                            ooA = new MarkerOptions().icon(map_location);
+                            ooA = new MarkerOptions().anchor(0.5f, 0.5f).icon(map_location).position(latLng);
                         } else {
-                            ooA = new MarkerOptions().icon(map_location_no);
+                            ooA = new MarkerOptions().anchor(0.5f, 0.5f).icon(map_location_no).position(latLng);
                         }
 
-                        ooA.position(latLng);
                         mMarker = null;
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("Personal", (Serializable) (personalinfoListBean));
                         ooA.extraInfo(bundle);
-                        if (null == mBaiduMap) {
-                            return;
-                        }
-
-                        //添加文字
-                        if (ooText == null) {
-                            ooText = new TextOptions().bgColor(Color.TRANSPARENT)
-                                    .fontSize(36)
-                                    .fontColor(getResources().getColor(R.color.blue_07))
-                                    .zIndex(15);
-                        }
-                        ooText.text(StringUtils.isEntryStrWu(personalinfoListBean.getName())).position(latLng);
-                        mBaiduMap.addOverlay(ooText);
-
                         mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
                         try {
                             if (mMarker != null) {
@@ -526,11 +517,12 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                             e.printStackTrace();
                         }
                         mks.add(mMarker);
+
                         if (isFirstMoveCenter) {
                             if ((Double.valueOf(longitude) < 140.0) || (Double.valueOf(longitude) > 65.0)
                                     || (Double.valueOf(latitude) < 56.0) || (Double.valueOf(latitude) > 12.0)) {
                                 isFirstMoveCenter = false;
-                                BdLocationUtil.MoveMapToCenter(mBaiduMap, latLng, Constans.BAIDU_ZOOM_FOUTTEEN);
+                                BdLocationUtil.MoveMapToCenter(mBaiduMap, latLng, Constans.BAIDU_ZOOM_SEVEN);
                             }
                         }
                     }

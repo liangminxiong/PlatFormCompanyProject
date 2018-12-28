@@ -291,12 +291,13 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void moneyManage(int type) {
         String title = "";
-        String userid = PreferencesUtils.getString(Objects.requireNonNull(getActivity()), Constans.ORGID, "");
+        String userid = PreferencesUtils.getString(Objects.requireNonNull(getActivity()), Constans.ID, "");
+        String pid = PreferencesUtils.getString(Objects.requireNonNull(getActivity()), Constans.ORGID, "");
         if (type == 1) {
-            mUrl = ApiService.H5URL_BUSINESSEDIT + userid;
+            mUrl = ApiService.H5URL_BUSINESSEDIT + userid + "&userpid" + pid;
             title = "新增申请";
         } else {
-            mUrl = ApiService.H5URL_APPLYEDIT + userid;
+            mUrl = ApiService.H5URL_APPLYEDIT + pid;
             title = "我的申请";
         }
 

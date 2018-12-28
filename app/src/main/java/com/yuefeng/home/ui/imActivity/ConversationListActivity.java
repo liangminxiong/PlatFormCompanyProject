@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.common.base.codereview.BaseActivity;
+import com.common.utils.Constans;
+import com.common.utils.LogUtils;
+import com.common.utils.PreferencesUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.ui.MyApplication;
 
@@ -26,7 +29,7 @@ public class ConversationListActivity extends BaseActivity {
 
     @Override
     protected void initView(Bundle savedInstanceState) {
-//        isReconnect();
+        isReconnect();
     }
 
     @Override
@@ -51,8 +54,8 @@ public class ConversationListActivity extends BaseActivity {
     private void isReconnect() {
 
         Intent intent = getIntent();
-        String token = "";
-
+        String token = PreferencesUtils.getString(ConversationListActivity.this, Constans.TOKEN, "");
+        LogUtils.d("====11=====" + token);
         //push，通知或新消息过来
         if (intent != null && intent.getData() != null && intent.getData().getScheme().equals("rong")) {
 
@@ -61,15 +64,18 @@ public class ConversationListActivity extends BaseActivity {
                     && intent.getData().getQueryParameter("push").equals("true")) {
 
                 reconnect(token);
+                LogUtils.d("====22=====" + token);
             } else {
                 //程序切到后台，收到消息后点击进入,会执行这里
                 if (RongIM.getInstance() == null || RongIM.getInstance().getRongIMClient() == null) {
-
+                    LogUtils.d("====33=====" + token);
                     reconnect(token);
                 } else {
                     enterFragment();
                 }
             }
+        }else {
+            reconnect(token);
         }
     }
 
@@ -92,6 +98,7 @@ public class ConversationListActivity extends BaseActivity {
                 public void onSuccess(String s) {
 
                     enterFragment();
+                    LogUtils.d("====44=====" + s);
                 }
 
                 @Override
@@ -111,10 +118,11 @@ public class ConversationListActivity extends BaseActivity {
 
         Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
                 .appendPath("conversationlist")
-                .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话非聚合显示
-                .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//设置群组会话聚合显示
-                .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "false")//设置讨论组会话非聚合显示
-                .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "false")//设置系统会话非聚合显示
+                .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
+                .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
+                .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
                 .build();
 
         fragment.setUri(uri);

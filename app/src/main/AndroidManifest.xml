@@ -161,7 +161,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
+            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
 
         <service
             android:name="com.baidu.location.f"
@@ -178,6 +178,7 @@
 
 
         <!--android:name="com.yuefeng.ui.DemoTestActivity" -->
+        <!--android:name="com.yuefeng.login_splash.ui.SplashActivity" -->
         <activity
             android:name="com.yuefeng.login_splash.ui.SplashActivity"
             android:hardwareAccelerated="false"
@@ -408,20 +409,20 @@
         </receiver>
 
         <!-- 极光推送自定义的广播接收器 ym start-->
-        <receiver
-            android:name="com.JPush.MyJPushReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="cn.jpush.android.intent.REGISTRATION"/> <!-- Required  用户注册SDK的intent -->
-                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/> <!-- Required  用户接收SDK消息的intent -->
-                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/> <!-- Required  用户接收SDK通知栏信息的intent -->
-                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/> <!-- Required  用户打开自定义通知栏的intent -->
-                <action android:name="cn.jpush.android.intent.NOTIFICATION_CLICK_ACTION"/>
-                <action android:name="cn.jpush.android.intent.CONNECTION"/> <!-- 接收网络变化 连接/断开 since 1.6.3 -->
-                <category android:name="com.yuefeng.paltform"/>
-            </intent-filter>
-        </receiver>
+        <!--<receiver-->
+            <!--android:name="com.JPush.MyJPushReceiver"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="cn.jpush.android.intent.REGISTRATION"/> &lt;!&ndash; Required  用户注册SDK的intent &ndash;&gt;-->
+                <!--<action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/> &lt;!&ndash; Required  用户接收SDK消息的intent &ndash;&gt;-->
+                <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/> &lt;!&ndash; Required  用户接收SDK通知栏信息的intent &ndash;&gt;-->
+                <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/> &lt;!&ndash; Required  用户打开自定义通知栏的intent &ndash;&gt;-->
+                <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_CLICK_ACTION"/>-->
+                <!--<action android:name="cn.jpush.android.intent.CONNECTION"/> &lt;!&ndash; 接收网络变化 连接/断开 since 1.6.3 &ndash;&gt;-->
+                <!--<category android:name="com.yuefeng.paltform"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
         <!-- 极光推送自定义的广播接收器 ym end-->
 
         <!--融云 begin===========================================-->
@@ -447,7 +448,7 @@
         <activity
             android:name="com.yuefeng.home.ui.imActivity.ConversationActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="adjustPan|stateHidden">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -537,6 +538,8 @@
             android:name="com.yuefeng.contacts.ui.activity.SelectPersonalWhoActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
+
+        <activity android:name="com.yuefeng.features.ui.activity.CarDetailInfosActivity"/>
 
     </application>
 

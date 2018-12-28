@@ -38,11 +38,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.rong.imkit.RongIM;
 import io.rong.imlib.model.Group;
 
 
 /*创建群组*/
-public class GreateGroupChatActivity extends BaseActivity implements FindAllUserContract.View {
+public class GreateGroupChatActivity extends BaseActivity implements FindAllUserContract.View, RongIM.GroupInfoProvider {
 
 
     @BindView(R.id.tv_title_setting)
@@ -293,15 +294,21 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
                 mGroupID = groupCreateBean.getData();
                 mText = groupCreateBean.getText();
 
+                RongIMUtils.initGroupListener(this);
                 showSureGetAgainDataDialog("创建群聊成功，是否开始聊天?");
-
-                LogUtils.d("=====创群成功" + mGroupID);
-
                 break;
             case Constans.GROUPCREATE_ERROR:
                 showSuccessToast("创群失败，请重试");
                 break;
         }
+    }
+
+    @Override
+    public Group getGroupInfo(String s) {
+        //首先对群组非空判断 然后增强for循环遍历数据
+        Group group = new Group(mGroupID, mGroupID, Uri.parse(""));
+        RongIMUtils.refreshGroupInfoCache(group);
+        return group;//从bean中获取参数返回给融云
     }
 
     @Override

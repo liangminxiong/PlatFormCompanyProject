@@ -65,6 +65,10 @@ public class HomeMsgInfosAdapter extends BaseItemDraggableAdapter<NewMsgListData
             } else {
                 helper.setVisible(R.id.tv_item_count, true);
             }
+            int length = count.length();
+            if (length > 2) {
+                count = "99+";
+            }
             TextView tv_item_title = helper.getView(R.id.tv_item_title);
             TextView tv_item_time = helper.getView(R.id.tv_item_time);
             TextView tv_item_detail = helper.getView(R.id.tv_item_detail);

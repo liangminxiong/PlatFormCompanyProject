@@ -1,23 +1,10 @@
 package com.JPush;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
 
-import com.baidu.navisdk.util.common.LogUtil;
-import com.common.utils.LogUtils;
-import com.yuefeng.ui.MainActivity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Iterator;
-import java.util.List;
-
-import cn.jpush.android.api.JPushInterface;
+//import cn.jpush.android.api.JPushInterface;
 
 /**
  * Created by ym on 2017/5/27.
@@ -28,6 +15,11 @@ public class MyJPushReceiver extends BroadcastReceiver {
     private static final String TAG = "JPush";
 
     @Override
+    public void onReceive(Context context, Intent intent) {
+
+    }
+
+    /*@Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
 //        + printBundle(bundle)
@@ -149,12 +141,12 @@ public class MyJPushReceiver extends BroadcastReceiver {
         return sb.toString();
     }
 
-    /**
+    *//**
      * 判断进程是否在后台
      *
      * @param context
      * @return
-     */
+     *//*
     public static boolean isBackground(Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
@@ -168,6 +160,6 @@ public class MyJPushReceiver extends BroadcastReceiver {
             }
         }
         return false;
-    }
+    }*/
 }
 

@@ -53,6 +53,7 @@ public class ContactsFragment extends BaseFragment implements SignInContract.Vie
     private int typeOnclick = 0;
     private String mName;
     private String mUserId;
+    private int mCount;
 
 
     @Override
@@ -148,6 +149,7 @@ public class ContactsFragment extends BaseFragment implements SignInContract.Vie
 
     @Override
     protected void fetchData() {
+        mCount = 0;
         mUserId = "dg1168";
         getWhatGroupDatasByNet(mUserId);
     }
@@ -175,7 +177,10 @@ public class ContactsFragment extends BaseFragment implements SignInContract.Vie
                 }
                 break;
             case Constans.CONTACTS_ERROR:
-                showSureGetAgainDataDialog("数据加载失败，是否重新加载?");
+                mCount++;
+                if (mCount > 4) {
+                    showSureGetAgainDataDialog("数据加载失败，是否重新加载?");
+                }
                 break;
         }
     }
