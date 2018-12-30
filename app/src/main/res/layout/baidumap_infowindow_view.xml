@@ -36,6 +36,7 @@
         android:background="@color/white"
         android:clickable="true"
         android:gravity="center_vertical"
+        android:visibility="visible"
         android:padding="@dimen/dp_5"
         android:text="发消息"
         android:textColor="#30867b"

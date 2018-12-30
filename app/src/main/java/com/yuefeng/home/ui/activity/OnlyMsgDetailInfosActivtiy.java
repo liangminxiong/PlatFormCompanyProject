@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
+import com.common.network.ApiService;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.StringUtils;
 import com.common.utils.ViewUtils;
 import com.yuefeng.commondemo.R;
@@ -22,6 +24,7 @@ import com.yuefeng.home.modle.MsgListDataBean;
 import com.yuefeng.home.presenter.MsgDetailInfosPresenter;
 import com.yuefeng.photo.utils.ImageHelper;
 import com.yuefeng.photo.view.MyGridView2;
+import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -109,17 +112,32 @@ public class OnlyMsgDetailInfosActivtiy extends BaseActivity implements MsgDetai
         mMsgData = (MsgListDataBean) bundle.get("msgData");
         if (mMsgData != null && mPresenter != null) {
             mReviewid = mMsgData.getReviewid();
+            String isread = mMsgData.getIsread();
+            LogUtils.d("=====+++++++====" + isread);
             mPersonal = mMsgData.getReviewpersonel();
             tvTheme.setText("项目: " + mMsgData.getReviewtitle());
             tvContent.setText("内容: " + mMsgData.getReviewcontent() + "\n时间: " + com.yuefeng.utils.StringUtils.returnStrTime(mMsgData.getReviewdate()));
+
+            if (isread.equals("1")) {
+                setViewInVisible(false);
+            } else {
+                setViewInVisible(true);
+            }
             getDataByNet(mReviewid);
         }
     }
 
     private void getDataByNet(String reviewid) {
+
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            showSuccessToast("请检查网络配置");
+            return;
+        }
+
         if (!TextUtils.isEmpty(reviewid)) {
-//            mPresenter.getMsgDetail(ApiService.GETDETAIL, reviewid);
-            mPresenter.getMsgDetail(reviewid);
+            mPresenter.getMsgDetail(ApiService.GETDETAIL, reviewid);
+//            mPresenter.getMsgDetail(reviewid);
         }
     }
 
@@ -145,32 +163,45 @@ public class OnlyMsgDetailInfosActivtiy extends BaseActivity implements MsgDetai
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
     @SuppressLint("SetTextI18n")
     private void showListData(List<MsgDataDetailListBean> list) {
+        int size1 = list.size();
+        LogUtils.d("=======++++lllll=" + size1);
+        int position = 0;
         int size = list.size();
         if (size < 1) {
             return;
         }
-        String name = StringUtils.isEntryStrWu(list.get(0).getReviewtitle());
-        String theme = StringUtils.isEntryStrWu(list.get(0).getReviewcontent());
+        if (size > 1) {
+            position = 1;
+        }else {
+            position = 0;
+        }
+        String name = StringUtils.isEntryStrWu(list.get(position).getReviewtitle());
+        String theme = StringUtils.isEntryStrWu(list.get(position).getReviewcontent());
 
         tvTheme.setText("项目: " + name);
         tvContent.setText("内容: " + theme + "\n时间: " + com.yuefeng.utils.StringUtils.returnStrTime(mMsgData.getReviewdate()));
-        if (size == 1) {
-            setViewInVisible(true);
+//        if (size == 1) {
+//            setViewInVisible(true);
+//        } else {
+        String content = StringUtils.isEntryStrWu(list.get(position).getReviewcontent());
+        String personal = StringUtils.isEntryStrWu(list.get(position).getReviewpersonel());
+        String imageUrl = StringUtils.isEntryStrNull(list.get(position).getImageurls());
+        setViewInVisible(false);
+        tvMine.setText(personal + ": 回复");
+        tvReplyContent.setText("内容: " + content);
+        if (!TextUtils.isEmpty(imageUrl)) {
+            ImageHelper.showImageBitmap(gridview, OnlyMsgDetailInfosActivtiy.this, imageUrl);
         } else {
-            String content = StringUtils.isEntryStrWu(list.get(1).getReviewcontent());
-            String personal = StringUtils.isEntryStrWu(list.get(1).getReviewpersonel());
-            String imageUrl = StringUtils.isEntryStrNull(list.get(1).getImageurls());
-            setViewInVisible(false);
-            tvMine.setText(personal + ": 回复");
-            tvReplyContent.setText("内容: " + content);
-            if (!TextUtils.isEmpty(imageUrl)) {
-                ImageHelper.showImageBitmap(gridview, OnlyMsgDetailInfosActivtiy.this, imageUrl);
-            } else {
-                tvPhoto.setText("上传图片: 无");
-            }
+            tvPhoto.setText("上传图片: 无");
         }
+//        }
     }
 
 

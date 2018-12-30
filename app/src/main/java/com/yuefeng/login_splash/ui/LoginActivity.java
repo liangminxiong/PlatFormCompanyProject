@@ -278,8 +278,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.View ,R
         String userId = PreferencesUtils.getString(LoginActivity.this, Constans.ID, "");
         String name = PreferencesUtils.getString(LoginActivity.this, Constans.USERNAME_N, "");
         String portraitUrl = "";
-        RongIMUtils.init(userId, name, portraitUrl);
-        RongIMUtils.connectToken(token,userId,name,portraitUrl);
+//        RongIMUtils.init(userId, name, portraitUrl);
+        RongIMUtils.connectToken(LoginActivity.this,token,userId,name,portraitUrl);
     }
 
 
@@ -310,5 +310,8 @@ public class LoginActivity extends BaseActivity implements LoginContract.View ,R
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+
+//        MyApplication.getInstance().setupLeakCanary();
+        MyApplication.getInstance().getRefWatcher(this);
     }
 }

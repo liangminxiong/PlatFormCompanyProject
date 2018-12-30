@@ -196,6 +196,7 @@ public class JobMonitoringActivity extends BaseActivity implements
     private boolean mIsFirstOnclick = true;
     private String mSpeed;
     private String mTime;
+    private String mVideoNo;
 
     @Override
     protected int getContentViewResId() {
@@ -1016,6 +1017,7 @@ public class JobMonitoringActivity extends BaseActivity implements
             endAddress = address;
 
             terminalNO = vehicleList.getTerminalNO();
+            mVideoNo = vehicleList.getVideoterminalNO();
             final String registrationNO = vehicleList.getRegistrationNO();
             terminalNO = TextUtils.isEmpty(terminalNO) ? "" : terminalNO;
             phototpop = new ShowPersonalpop(JobMonitoringActivity.this);
@@ -1027,7 +1029,7 @@ public class JobMonitoringActivity extends BaseActivity implements
             phototpop.setTakePhotoTouch(new ShowPersonalpop.TakePhotoTouch() {
                 @Override
                 public void onVideo() {//视频
-                    toVideoActivity(terminalNO);
+                    toVideoActivity(mVideoNo);
                 }
 
                 @Override
@@ -1144,7 +1146,10 @@ public class JobMonitoringActivity extends BaseActivity implements
 
                 @Override
                 public void onDetail() {
-                    showSuccessToast("查看详情");
+                    Intent intent = new Intent();
+                    intent.setClass(JobMonitoringActivity.this, PersonalDetailInfosActivity.class);
+                    intent.putExtra(Constans.GROUPID, personalList);
+                    startActivity(intent);
                 }
 
             });

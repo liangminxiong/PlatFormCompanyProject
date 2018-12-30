@@ -34,6 +34,7 @@ public class BaiDuMapMakerView {
     private Context mContext;
     private BaiduMap mBaiduMap;
 
+
     public BaiDuMapMakerView(Context context) {
         this.mContext = context;
         popoverView = ResourcesUtils.inflate(R.layout.baidumap_infowindow_view);
@@ -80,10 +81,12 @@ public class BaiDuMapMakerView {
                 public void onClick(View v) {
                     String userid = PreferencesUtils.getString(mContext, Constans.ID, "");
                     if (userid.equals(markerBean.getId())) {
-                        ToastUtils.showToast("亲，你要自己和自己聊天吗?");
-                        return;
+                        ToastUtils.showToast("亲，您要自己和自己聊天吗?");
+                        mTvSendMsg.setVisibility(View.VISIBLE);
+                    } else {
+//                        mTvSendMsg.setVisibility(View.INVISIBLE);
+                        RongIMUtils.startPrivateChat(mContext, markerBean.getId(), markerBean.getName());
                     }
-                    RongIMUtils.startPrivateChat(mContext, markerBean.getId(), markerBean.getName());
                 }
             });
             mTvCarTrack.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +116,7 @@ public class BaiDuMapMakerView {
                 }
             });
 
-            mInfoWindow = new InfoWindow(popoverView, mLatLng, 40);
+            mInfoWindow = new InfoWindow(popoverView, mLatLng, -120);
             mBaiduMap.showInfoWindow(mInfoWindow);
         } catch (Exception e) {
             e.printStackTrace();

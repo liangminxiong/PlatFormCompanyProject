@@ -46,13 +46,13 @@ public class NewRemindListsInfosAdapter extends BaseQuickAdapter<AlarmDataBean, 
 
             name = item.getOrganname();
             title = item.getContent();
-            time = item.getIssuedate();
+            time = StringUtils.returnStrTime(item.getIssuedate());
             content = item.getSubject();
             title = StringUtils.isEntryStrWu(title);
             time = TimeUtils.isTodayTime(time);
-            mIsread = item.getIsread();
+            mIsread = StringUtils.isEntryStrZero(item.getIsread());
             if (mIsread.equals("0")) {
-                helper.setVisible(R.id.iv_item_isread, true);
+                helper.setVisible(R.id.iv_item_isread, false);
             } else {
                 helper.setVisible(R.id.iv_item_isread, false);
             }

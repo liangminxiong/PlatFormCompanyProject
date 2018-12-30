@@ -110,7 +110,7 @@ public class HistoryAppVersionActivtiy extends BaseActivity implements
 
     @Override
     protected void onStop() {
-        listData.clear();
+//        listData.clear();
         super.onStop();
     }
 

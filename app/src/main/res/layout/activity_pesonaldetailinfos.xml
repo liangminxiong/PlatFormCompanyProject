@@ -143,7 +143,7 @@
                 android:layout_toEndOf="@id/ang"
                 tools:ignore="HardcodedText,RtlSymmetry"/>
 
-
+<!--
             <TextView
                 android:id="@+id/car"
                 android:layout_width="match_parent"
@@ -293,7 +293,6 @@
             <TextView
                 android:id="@+id/tv_seatcount"
                 style="@style/tv_end20_ts14"
-                android:text="-"
                 android:layout_below="@id/zaimax"
                 android:layout_toEndOf="@id/seat"
                 tools:ignore="HardcodedText,RtlSymmetry"/>
@@ -311,7 +310,7 @@
                 android:layout_below="@id/seat"
                 android:layout_toEndOf="@id/oilsguan"
                 android:text="油感"
-                tools:ignore="HardcodedText,RtlSymmetry"/>
+                tools:ignore="HardcodedText,RtlSymmetry"/>-->
 
         </RelativeLayout>
 

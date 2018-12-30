@@ -760,7 +760,7 @@ public class TimeUtils {
     public static String getTenBeforeMinTime() {
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date hourDate = new Date(System.currentTimeMillis() - 600000);
+        Date hourDate = new Date(System.currentTimeMillis() - 300000);
         String hDate = formatter.format(hourDate);
         return hDate;
     }

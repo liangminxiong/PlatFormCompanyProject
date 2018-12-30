@@ -37,12 +37,18 @@ import com.common.utils.LocationGpsUtils;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.RxHelper;
+import com.common.utils.StringUtils;
 import com.common.utils.TimeUtils;
 import com.common.view.dialog.SigninCacheSureDialog;
 import com.luck.picture.lib.permissions.RxPermissions;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.contacts.fragment.ContactsFragment;
 import com.yuefeng.contacts.modle.TokenBean;
+import com.yuefeng.contacts.modle.UserDeatailInfosBean;
+import com.yuefeng.contacts.modle.contacts.GroupListDataBean;
+import com.yuefeng.contacts.modle.contacts.GroupUserlistBean;
+import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserDataBean;
+import com.yuefeng.contacts.modle.groupanduser.GrouplistBean;
 import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
 import com.yuefeng.contacts.ui.activity.GreateGroupChatActivity;
 import com.yuefeng.contacts.ui.activity.GreateSingleChatActivity;
@@ -51,7 +57,6 @@ import com.yuefeng.features.ui.fragment.FeaturesFragment;
 import com.yuefeng.home.modle.NewMsgListDataBean;
 import com.yuefeng.home.ui.activity.NewRemindNorActivity;
 import com.yuefeng.home.ui.adapter.ConversationListAdapterEx;
-import com.yuefeng.home.ui.fragment.ConversationListHomeFragment;
 import com.yuefeng.login_splash.contract.SignInContract;
 import com.yuefeng.login_splash.event.SignInEvent;
 import com.yuefeng.login_splash.presenter.SignInPresenter;
@@ -88,11 +93,15 @@ import io.rong.imkit.fragment.ConversationListFragment;
 import io.rong.imkit.manager.IUnReadMessageObserver;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
+import io.rong.imlib.model.Group;
+import io.rong.imlib.model.Message;
+import io.rong.imlib.model.UserInfo;
 
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 
 public class MainActivity extends BaseActivity implements
-        SignInContract.View, LocationUtils.OnResultMapListener, IUnReadMessageObserver {
+        SignInContract.View, LocationUtils.OnResultMapListener,
+        IUnReadMessageObserver, RongIMClient.OnReceiveMessageListener, RongIM.GroupInfoProvider, RongIM.UserInfoProvider {
     @BindView(R.id.iv_back)
     RelativeLayout iv_back;
     @BindView(R.id.rl_new)
@@ -146,6 +155,8 @@ public class MainActivity extends BaseActivity implements
     private PopupWindow mPopupWindow;
     private boolean mIsSign;
     private String mIsupdate = "0";
+    private boolean mABoolean;
+    private boolean isGetBaojin;
 
     @Override
     protected int getContentViewResId() {
@@ -175,6 +186,7 @@ public class MainActivity extends BaseActivity implements
             tv_title.setText(msg_name);
             PreferencesUtils.putString(MyApplication.getContext(), "Fengrun", "无");
             mString = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
+            LogUtils.d("====5500===" + mString);
             if (mString.equals("true")) {//个人
                 mPosition = 0;
                 tv_title_setting.setBackgroundResource(R.drawable.add);
@@ -185,20 +197,63 @@ public class MainActivity extends BaseActivity implements
             mPosition = 0;
             mCount = 0;
             mIsSign = false;
+            isGetBaojin = true;
             initViewPager();
+            RongIM.setOnReceiveMessageListener(this);
+            RongIMUtils.initUserInfoListener(this);
+            RongIMUtils.initGroupListener(this);
+//            initUserData();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
+    protected void initUserData() {
+
+        final Conversation.ConversationType[] conversationTypes = {
+                Conversation.ConversationType.PRIVATE,
+                Conversation.ConversationType.GROUP, Conversation.ConversationType.SYSTEM,
+                Conversation.ConversationType.PUBLIC_SERVICE, Conversation.ConversationType.APP_PUBLIC_SERVICE
+        };
+
+        //未读消息
+        RongIM.getInstance().addUnReadMessageCountChangedObserver(this, conversationTypes);
+
+        //用户头像
+        RongIM.setUserInfoProvider(new RongIM.UserInfoProvider() {
+            @Override
+            public io.rong.imlib.model.UserInfo getUserInfo(String userId) {
+                if (userId.equals(userId)) {
+                    String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
+                    return new io.rong.imlib.model.UserInfo(userId, name, Uri.parse(Constans.USER_LOGO));
+                }
+                return null;
+            }
+        }, true);
+        //刷新用户
+//        RongIM.getInstance().refreshUserInfoCache(new UserInfo(connectResultId, nickName, Uri.parse(portraitUri)));
+    }
+
     /*是否上传经纬度*/
     private void getIsUpdata() {
         String string = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
-        if (string.equals("true")) {//个人
+        LogUtils.d("====55001===" + string);
+        if (string.equals("true")) {
+            String userid = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
+            getInfo(userid);
+            //个人
             if (presenter != null) {
                 boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
                 if (!networkConnected) {
                     showErrorToast("无网络，请检查网络设置");
+                    return;
+                }
+
+                int isAdmin = PreferencesUtils.getInt(MainActivity.this, Constans.ISADMIN, 0);
+                if (isAdmin == 0) {
+//                LogUtils.d("不是主管级别");
                     return;
                 }
                 userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
@@ -311,7 +366,7 @@ public class MainActivity extends BaseActivity implements
 //                            }
                             getLocation();
                             getdata();
-
+                            PreferencesUtils.putBoolean(MainActivity.this, Constans.ISUPDATE, true);
                         }
                     });
         } catch (Exception e) {
@@ -381,14 +436,19 @@ public class MainActivity extends BaseActivity implements
 
                         @Override
                         public void onNext(Long value) {
-                            getNetDatas();
+                            if (isGetBaojin) {
+                                getNetDatas();
+                            }
                             if (mCount > 0) {
                             }
                             if (mIsSign && !TextUtils.isEmpty(address)) {
+                                mABoolean = PreferencesUtils.getBoolean(MainActivity.this, Constans.ISUPDATE, true);
+                                if (mABoolean) {
+                                    uploadLatlng();
+                                }
                                 if (mIsupdate.equals("0")) {
                                     getIsUpdata();
-                                }else {
-                                    uploadLatlng();
+                                    PreferencesUtils.putBoolean(MainActivity.this, Constans.ISUPDATE, false);
                                 }
                             }
                         }
@@ -421,7 +481,6 @@ public class MainActivity extends BaseActivity implements
             }
             userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
             String phone = PreferencesUtils.getString(MainActivity.this, Constans.TELNUM, "");
-            LogUtils.d("====phone====" + phone + " ++ " + address + " ++ " + mIsupdate);
             presenter.uploadLnglat(ApiService.UPLOADLNGLAT, Constans.TYPE_LATLNG_QD
                     , String.valueOf(longitude), String.valueOf(latitude), userId, phone, address, mIsupdate);
         }
@@ -434,6 +493,7 @@ public class MainActivity extends BaseActivity implements
         }
         if (presenter != null) {
             String pid = PreferencesUtils.getString(MainActivity.this, Constans.ORGID, "");
+            LogUtils.d("=====++====" + pid);
             presenter.getAnnouncementByuserid(ApiService.GETANNOUNCEMENTBYUSERID, pid, "", "");
         }
     }
@@ -644,9 +704,9 @@ public class MainActivity extends BaseActivity implements
 
             final String string = PreferencesUtils.getString(MainActivity.this, Constans.EMAIL, "");
             if (string.equals("true")) {//个人
-//                Fragment conversationList = initConversationList();
-//                tabItemInfos.add(new TabItemInfo(conversationList, R.drawable.home_button_selector, R.string.tab_main_name));
-                tabItemInfos.add(new TabItemInfo(new ConversationListHomeFragment(), R.drawable.home_button_selector, R.string.tab_main_name));
+                Fragment conversationList = initConversationList();
+                tabItemInfos.add(new TabItemInfo(conversationList, R.drawable.home_button_selector, R.string.tab_main_name));
+//                tabItemInfos.add(new TabItemInfo(new ConversationListHomeFragment(), R.drawable.home_button_selector, R.string.tab_main_name));
 //            tabItemInfos.add(new TabItemInfo(new HomeFragment(), R.drawable.home_button_selector, R.string.tab_main_name));
                 tabItemInfos.add(new TabItemInfo(new ContactsFragment(), R.drawable.fuli_button_selector, R.string.tab_news_name));
                 /*应用*/
@@ -713,7 +773,6 @@ public class MainActivity extends BaseActivity implements
      * 会话列表的fragment
      */
     private ConversationListFragment mConversationListFragment = null;
-    private boolean isDebug = false;
     private Conversation.ConversationType[] mConversationsTypes = null;
 
     private Fragment initConversationList() {
@@ -721,40 +780,21 @@ public class MainActivity extends BaseActivity implements
             ConversationListFragment listFragment = new ConversationListFragment();
             listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
             Uri uri;
-            if (isDebug) {
-                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
-                        .appendPath("conversationlist")
-                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "true") //设置私聊会话是否聚合显示
-                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
-                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
-                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
-                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
-                        .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "true")
-                        .build();
-                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
-                        Conversation.ConversationType.GROUP,
-                        Conversation.ConversationType.PUBLIC_SERVICE,
-                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
-                        Conversation.ConversationType.SYSTEM,
-                        Conversation.ConversationType.DISCUSSION
-                };
 
-            } else {
-                uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
-                        .appendPath("conversationlist")
-                        .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
-                        .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
-                        .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
-                        .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
-                        .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
-                        .build();
-                mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
-                        Conversation.ConversationType.GROUP,
-                        Conversation.ConversationType.PUBLIC_SERVICE,
-                        Conversation.ConversationType.APP_PUBLIC_SERVICE,
-                        Conversation.ConversationType.SYSTEM
-                };
-            }
+            uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
+                    .appendPath("conversationlist")
+                    .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
+                    .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
+                    .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
+                    .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//订阅号
+                    .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "true")//系统
+                    .build();
+            mConversationsTypes = new Conversation.ConversationType[]{Conversation.ConversationType.PRIVATE,
+                    Conversation.ConversationType.GROUP,
+                    Conversation.ConversationType.PUBLIC_SERVICE,
+                    Conversation.ConversationType.APP_PUBLIC_SERVICE,
+                    Conversation.ConversationType.SYSTEM
+            };
             listFragment.setUri(uri);
             mConversationListFragment = listFragment;
             return listFragment;
@@ -762,6 +802,7 @@ public class MainActivity extends BaseActivity implements
             return mConversationListFragment;
         }
     }
+
 
     private void initTabView() {
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
@@ -804,11 +845,10 @@ public class MainActivity extends BaseActivity implements
                 GroupCreateBean groupCreateBean = (GroupCreateBean) event.getData();
                 mGroupID = groupCreateBean.getData();
                 String title = groupCreateBean.getText();
-                LogUtils.d("=====创群成功" + mGroupID);
                 RongIMUtils.startGroupChat(MainActivity.this, mGroupID, title);
                 break;
             case Constans.UPLOADLNGLAT_SSUCESS:
-                LogUtils.d("上传经纬度成功");
+                LogUtils.d("===上传经纬度成功");
                 break;
             case Constans.GROUPCREATE_ERROR:
 //                LogUtils.d("创群失败");
@@ -830,17 +870,81 @@ public class MainActivity extends BaseActivity implements
                 break;
             case Constans.GETWORKTIME_SUCCESS://获取排班计划
                 GetWorkTimeMsgBean data = (GetWorkTimeMsgBean) event.getData();
+                PreferencesUtils.putBoolean(MainActivity.this, Constans.ISUPDATE, true);
                 if (data != null) {
                     mIsupdate = data.getIsupdate();
-                    LogUtils.d("====phone=1===" + address + " ++ " + mIsupdate);
                 }
                 break;
             case Constans.GETWORKTIME_ERROR:
                 initViewPager();
                 break;
 
+            case Constans.GROUPINFOS_SUCCESS:
+                mBean = (GroupQueryWithUserDataBean) event.getData();
+                if (mBean != null) {
+                    mList = mBean.getGrouplist();
+                }
+                RongIMUtils.initGroupListener(this);
+                break;
+
+            case Constans.GROUPINFOS_ERROR:
+                if (mCount < 8) {
+                    String userId = PreferencesUtils.getString(MainActivity.this, Constans.ID, "");
+                    getInfo(userId);
+                }
+                mCount++;
+                break;
+
+            case Constans.GROUNPINFOS_SUCCESS://群组消息a
+                GroupListDataBean gBean = (GroupListDataBean) event.getData();
+                String name = gBean.getName();
+                String groupid = gBean.getId();
+                String icon = "";
+                if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(groupid)) {
+                    Group group = new Group(groupid, name, Uri.parse(icon));
+                    RongIMUtils.refreshGroupInfoCache(group);
+                }
+                List<GroupUserlistBean> userlist = gBean.getUserlist();
+                if (userlist.size() > 0) {
+                    getUserlistInfos(userlist);
+                }
+                break;
+
+            case Constans.GROUNPINFOS_ERROR:
+                break;
+            case Constans.SIGLNMANINFOS_SUCCESS://个人消息a
+                UserDeatailInfosBean.DataBean bean = (UserDeatailInfosBean.DataBean) event.getData();
+                String username = bean.getUsername();
+                String userid = bean.getId();
+                String usericon = bean.getIcon();
+                if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(userid)) {
+                    UserInfo userInfo = new UserInfo(userid, username, Uri.parse(usericon));
+                    RongIMUtils.refreshUserInfoCache(userInfo);
+                }
+                break;
+            case Constans.SIGLNMANINFOS_ERROR:
+                break;
         }
     }
+
+    private void getUserlistInfos(List<GroupUserlistBean> grouplist) {
+        for (GroupUserlistBean bean : grouplist) {
+            String userid = bean.getId();
+            String name = bean.getName();
+            String icon = bean.getIcon();
+            if (!TextUtils.isEmpty(userid) && !TextUtils.isEmpty(name)) {
+                UserInfo userInfo = new UserInfo(userId, name, Uri.parse(icon));
+                RongIMUtils.refreshUserInfoCache(userInfo);
+            }
+        }
+    }
+
+    private void getInfo(String userid) {
+        if (presenter != null) {
+            presenter.groupQueryWithUser(userid);
+        }
+    }
+
 
     /*融云连接token*/
     private void initRongIMToken(String token) {
@@ -848,20 +952,59 @@ public class MainActivity extends BaseActivity implements
         String name = PreferencesUtils.getString(MainActivity.this, Constans.USERNAME_N, "");
         String portraitUrl = "";
         RongIMUtils.init(userId, name, portraitUrl);
-        RongIMUtils.connectToken(token, userId, name, portraitUrl);
-
-        LogUtils.d("======开始1111==");
+        RongIMUtils.connectToken(MainActivity.this, token, userId, name, portraitUrl);
     }
 
     /*报警数量*/
     private void showBaojinCount(List<NewMsgListDataBean> list) {
-        for (NewMsgListDataBean bean : list) {
-            String notread = bean.getNotread();
+        for (int i = 0; i < list.size(); i++) {
+            String content = StringUtils.isEntryStrWu(list.get(i).getContent());
+            String genre = StringUtils.isEntryStrZero(list.get(i).getGenre());
+            String subject = StringUtils.isEntryStrWu(list.get(i).getSubject());
+
+            if (genre.equals("1")) {//公告
+                String centenTime = StringUtils.isEntryStrWu(list.get(i).getIssuedate());
+                subject = "[公告]" + subject;
+                String recordTime = PreferencesUtils.getString(MainActivity.this, Constans.GONGGU, "");
+                LogUtils.d("====time==1=" + recordTime + "+++" + centenTime);
+                if (!recordTime.equals(centenTime)) {
+                    PreferencesUtils.putString(MainActivity.this, Constans.GONGGU, centenTime);
+                    initNotification(subject, content, i);
+                }
+            } else if (genre.equals("2")) { //项目信息
+                String centenTime = StringUtils.isEntryStrWu(list.get(i).getIssuedate());
+                subject = "[项目]" + subject;
+                String recordTime = PreferencesUtils.getString(MainActivity.this, Constans.PROJECT, "");
+                LogUtils.d("====time==2=" + recordTime + "+++" + centenTime);
+                if (!recordTime.equals(centenTime)) {
+                    initNotification(subject, content, i);
+                    PreferencesUtils.putString(MainActivity.this, Constans.PROJECT, centenTime);
+                }
+            } else if (genre.equals("4")) { //报警信息
+                String centenTime = StringUtils.isEntryStrWu(list.get(i).getIssuedate());
+                subject = "[报警]" + subject;
+                String recordTime = PreferencesUtils.getString(MainActivity.this, Constans.MSGINFOS, "");
+                LogUtils.d("====time==3=" + recordTime + "+++" + centenTime);
+                if (!recordTime.equals(centenTime)) {
+                    PreferencesUtils.putString(MainActivity.this, Constans.MSGINFOS, centenTime);
+                    initNotification(subject, content, i);
+                }
+            } else {//更新
+                String centenTime = StringUtils.isEntryStrWu(list.get(i).getIssuedate());
+                subject = "[升级]" + subject;
+                String recordTime = PreferencesUtils.getString(MainActivity.this, Constans.APPUPLOAD, "");
+                LogUtils.d("====time==4=" + recordTime + "+++" + centenTime);
+                if (!recordTime.equals(centenTime)) {
+                    PreferencesUtils.putString(MainActivity.this, Constans.APPUPLOAD, centenTime);
+                    initNotification(subject, content, i);
+                }
+            }
         }
     }
 
 
-    private void initNotification(List<NewMsgListDataBean> list, int position) {
+    /*通知栏待优化，赶时间*/
+    private void initNotification(String subject, String content, int position) {
 
 //        Notification.Builder builder = new Notification.Builder(AppUtils.getContext());
 
@@ -870,8 +1013,8 @@ public class MainActivity extends BaseActivity implements
         NotificationManager mNotifyMgr = (NotificationManager) AppUtils.getContext().getSystemService(NOTIFICATION_SERVICE);
         Intent push = new Intent(AppUtils.getContext(), MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(AppUtils.getContext(), 0, push, FLAG_CANCEL_CURRENT);
-        builder.setContentTitle("");
-        builder.setContentText("内容:" + "");   //内容
+        builder.setContentTitle(subject);
+        builder.setContentText("内容:" + content);   //内容
         builder.setWhen(System.currentTimeMillis());       //设置通知时间
         builder.setSmallIcon(R.mipmap.icon_app);            //设置小图标
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icon_app));
@@ -926,6 +1069,7 @@ public class MainActivity extends BaseActivity implements
             pagerAdapter.destroy();
             pagerAdapter = null;
         }
+        isGetBaojin = false;
         tabItemInfos = null;
         tabLayout = null;
         EventBus.getDefault().unregister(this);
@@ -951,6 +1095,69 @@ public class MainActivity extends BaseActivity implements
 
     }
 
+
+    private List<GrouplistBean> mList = new ArrayList<>();
+
+    private GroupQueryWithUserDataBean mBean;
+
+    @Override
+    public Group getGroupInfo(String s) {
+        //首先对群组非空判断 然后增强for循环遍历数据
+//        if (mList != null) {
+//            for (GrouplistBean bean : mList) {
+//                LogUtils.d("======s2=s==" + bean.getId() + "== " + s + " ++ " + bean.getName());
+//                if (bean.getId().equals(s)) {
+//                    Group group = new Group(bean.getId(), bean.getName(), Uri.parse(""));
+//                    RongIMUtils.initGroup(group);
+//                    RongIMUtils.refreshGroupInfoCache(group);
+//                    return group;//从bean中获取参数返回给融云
+//                }
+//            }
+//        }
+        getGroupInfos(s);
+
+        return null;
+    }
+
+
+    private void getGroupInfos(String targetId) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
+        if (presenter != null) {
+            presenter.groupQuery(targetId);
+        }
+    }
+
+    @Override
+    public UserInfo getUserInfo(String s) {
+//        if (mBean == null) {
+//            return null;
+//        }
+//        String userid = mBean.getId();
+//        LogUtils.d("====55=s==" + userid + "== ++" + s);
+//        String name = mBean.getName();
+//        Uri parse = Uri.parse(mBean.getIcon());
+//        UserInfo userInfo = new UserInfo(userid, name, parse);
+//        RongIMUtils.refreshUserInfoCache(userInfo);
+//        return userInfo;
+        getUsesInfos(s);
+        return null;
+    }
+
+
+    private void getUsesInfos(String userId) {
+        boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
+        if (!networkConnected) {
+            return;
+        }
+        if (presenter != null) {
+            presenter.findUserWithID(userId);
+        }
+    }
+
+
     @Override
     public void onGeoCodeResult(Map<String, Object> map) {
 
@@ -961,4 +1168,18 @@ public class MainActivity extends BaseActivity implements
 
     }
 
+    @Override
+    public boolean onReceived(Message message, int i) {
+        String targetId = message.getTargetId();
+        Conversation.ConversationType conversationType = message.getConversationType();
+        String name = conversationType.getName();
+        int value = conversationType.getValue();
+        if (name.equals("group")) {//组
+            getGroupInfos(targetId);
+        } else if (name.equals("private")) {//人
+            getUsesInfos(targetId);
+        }
+        LogUtils.d("====55555555555targetId=" + targetId + "\n" + name + " ++ " + value);
+        return false;
+    }
 }

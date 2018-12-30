@@ -8,7 +8,7 @@ import com.common.network.HttpResultObserver;
 import com.common.utils.Constans;
 import com.yuefeng.contacts.contract.GroupQueryContract;
 import com.yuefeng.contacts.modle.UserDeatailInfosBean;
-import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserBean;
+import com.yuefeng.contacts.modle.contacts.GroupDataBean;
 import com.yuefeng.home.ui.imActivity.ConversationActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -76,14 +76,14 @@ public class GroupQueryPresenter extends BasePresenterImpl<GroupQueryContract.Vi
     @Override
     public void groupQuery(String groupid) {
         HttpObservable.getObservable(apiRetrofit.groupQuery(groupid))
-                .subscribe(new HttpResultObserver<GroupQueryWithUserBean>() {
+                .subscribe(new HttpResultObserver<GroupDataBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
 //                        showLoadingDialog("加载中...");
                     }
 
                     @Override
-                    protected void onSuccess(GroupQueryWithUserBean o) {
+                    protected void onSuccess(GroupDataBean o) {
                         dismissLoadingDialog();
                         if (getView() != null) {
                             if (o.isSuccess()) {

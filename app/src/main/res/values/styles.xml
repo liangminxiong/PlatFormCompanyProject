@@ -334,5 +334,36 @@
         <item name="android:textSize">@dimen/sp_16</item>
     </style>
 
+    <style name="tv_start20_ts14_tcbla">
+        <item name="android:layout_width">@dimen/dp_110</item>
+        <item name="android:layout_height">@dimen/dp_34</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/dp_20</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+    </style>
+
+    <style name="tv_end20_ts14">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp_34</item>
+        <item name="android:paddingEnd">@dimen/dp_20</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+    </style>
+
+    <style name="tv_end20_ts145">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp_34</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:paddingEnd">@dimen/dp_20</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">#04AAA9</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+    </style>
+
 
 </resources>

@@ -116,9 +116,9 @@ public class NewRemindNorActivity extends BaseActivity implements HomeContract.V
                 // genre：1就是公告，2就是超哥的信息，3是更新的
                 if (genre.equals("1")) {//公告
                     intent.setClass(NewRemindNorActivity.this, AnnouncementListInfosActivtiy.class);
-                } else if (genre.equals("2")) {
+                } else if (genre.equals("2")) {//项目
                     intent.setClass(NewRemindNorActivity.this, MsgListInfosActivtiy.class);
-                } else if (genre.equals("4")) {
+                } else if (genre.equals("4")) {//报警
                     intent.setClass(NewRemindNorActivity.this, NewRemindNorListInfosActivtiy.class);
                 } else {
                     intent.setClass(NewRemindNorActivity.this, HistoryAppVersionActivtiy.class);

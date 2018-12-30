@@ -29,6 +29,7 @@ public class VehicleinfoListBean implements Serializable {
     private String address;
     private String time;
     private String speed;
+    private String videoterminalNO;
 
 
     public String getTime() {
@@ -133,5 +134,13 @@ public class VehicleinfoListBean implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getVideoterminalNO() {
+        return videoterminalNO;
+    }
+
+    public void setVideoterminalNO(String videoterminalNO) {
+        this.videoterminalNO = videoterminalNO;
     }
 }

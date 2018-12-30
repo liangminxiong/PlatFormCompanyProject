@@ -43,5 +43,11 @@ public interface SignInContract {
 
         /*获取排班计划时间*/
         void getWorkTime(String function, String userid);
+
+        /*群组消息*/
+        void groupQuery(String groupid);
+
+        /*获取个人消息*/
+        void findUserWithID(String id);
     }
 }

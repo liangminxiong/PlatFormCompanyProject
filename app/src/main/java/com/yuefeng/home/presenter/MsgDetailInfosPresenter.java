@@ -78,38 +78,38 @@ public class MsgDetailInfosPresenter extends BasePresenterImpl<MsgDetailInfosCon
                 .subscribe(new HttpResultObserver<MsgDataDetailBean>() {
                     @Override
                     protected void onLoading(Disposable d) {
-//                        showLoadingDialog("加载中...");
+                        showLoadingDialog("加载中...");
                     }
 
                     @Override
                     protected void onSuccess(MsgDataDetailBean o) {
                         dismissLoadingDialog();
                         if (getView() != null) {
-//                            if (o.isSuccess()) {
-//                                EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_SSUCESS, o.getResult()));
-//                            } else {
-//                                EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_ERROR, o.getMsg()));
-//                            }
+                            if (o.isSuccess()) {
+                                EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_SSUCESS, o.getResult()));
+                            } else {
+                                EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_ERROR, o.getMsg()));
+                            }
                         }
                     }
 
                     @Override
                     protected void onFail(ApiException e) {
                         dismissLoadingDialog();
-//                        EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_ERROR, e.getMsg()));
+                        EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_ERROR, e.getMsg()));
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         dismissLoadingDialog();
-//                        EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_ERROR, ""));
+                        EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_ERROR, ""));
                         super.onError(e);
                     }
 
                     @Override
                     protected void _onError(ApiException error) {
                         dismissLoadingDialog();
-//                        EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_ERROR, error.getMsg()));
+                        EventBus.getDefault().post(new CommonEvent(Constans.MSG_DETAIL_ERROR, error.getMsg()));
                         super._onError(error);
                     }
                 });

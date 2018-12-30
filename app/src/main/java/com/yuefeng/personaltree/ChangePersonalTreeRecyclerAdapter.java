@@ -95,7 +95,7 @@ public class ChangePersonalTreeRecyclerAdapter extends ChangeTreeRecyclerAdapter
 
 
         } else {
-            viewHolder.cb.setVisibility(View.INVISIBLE);
+            viewHolder.cb.setVisibility(View.VISIBLE);
 
             viewHolder.label.setText(node.getName() + "(" + node.getCount() + ")");
             if (getpId.equals("first")) {
@@ -103,7 +103,7 @@ public class ChangePersonalTreeRecyclerAdapter extends ChangeTreeRecyclerAdapter
                 viewHolder.iv_next.setVisibility(View.INVISIBLE);
             } else {
                 icon_type = R.drawable.list_fold;
-                viewHolder.iv_next.setVisibility(View.VISIBLE);
+                viewHolder.iv_next.setVisibility(View.INVISIBLE);
             }
         }
         viewHolder.icon.setImageResource(icon_type);

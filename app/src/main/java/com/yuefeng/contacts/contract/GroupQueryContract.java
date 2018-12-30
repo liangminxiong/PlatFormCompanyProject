@@ -10,6 +10,8 @@ public interface GroupQueryContract {
 
     interface Presenter {
         void groupQueryWithUser(String userid);
+
+        /*群组消息*/
         void groupQuery(String groupid);
     }
 }

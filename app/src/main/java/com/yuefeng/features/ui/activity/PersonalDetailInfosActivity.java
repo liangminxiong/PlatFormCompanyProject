@@ -7,15 +7,11 @@ import android.widget.TextView;
 
 import com.common.base.codereview.BaseActivity;
 import com.common.event.CommonEvent;
-import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.LogUtils;
 import com.common.utils.StringUtils;
 import com.yuefeng.commondemo.R;
-import com.yuefeng.features.contract.CarDetailInfosContract;
-import com.yuefeng.features.modle.CarDetailInfosBean;
-import com.yuefeng.features.modle.VehicleinfoListBean;
-import com.yuefeng.features.presenter.CarDetailInfosPresenter;
+import com.yuefeng.features.modle.PersonalinfoListBean;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -25,8 +21,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/*车辆详情*/
-public class CarDetailInfosActivity extends BaseActivity implements CarDetailInfosContract.View {
+/*人员详情*/
+public class PersonalDetailInfosActivity extends BaseActivity {
 
 
     @BindView(R.id.tv_time)
@@ -45,7 +41,7 @@ public class CarDetailInfosActivity extends BaseActivity implements CarDetailInf
     TextView tvIslocation;
     @BindView(R.id.tv_ang)
     TextView tvAng;
-    @BindView(R.id.tv_ternumber)
+    /*@BindView(R.id.tv_ternumber)
     TextView tvTernumber;
     @BindView(R.id.tv_tertype)
     TextView tvTertype;
@@ -66,14 +62,12 @@ public class CarDetailInfosActivity extends BaseActivity implements CarDetailInf
     @BindView(R.id.tv_seatcount)
     TextView tvSeatcount;
     @BindView(R.id.tv_oilsguan)
-    TextView tvOilsguan;
-    private VehicleinfoListBean mBean;
-    private CarDetailInfosPresenter mPresenter;
-    private String mVid;
+    TextView tvOilsguan;*/
+    private PersonalinfoListBean mBean;
 
     @Override
     protected int getContentViewResId() {
-        return R.layout.activity_cardetailinfos;
+        return R.layout.activity_pesonaldetailinfos;
     }
 
     @Override
@@ -82,7 +76,7 @@ public class CarDetailInfosActivity extends BaseActivity implements CarDetailInf
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        mPresenter = new CarDetailInfosPresenter(this, this);
+
         setTitle("车辆详情");
     }
 
@@ -90,23 +84,29 @@ public class CarDetailInfosActivity extends BaseActivity implements CarDetailInf
     protected void initData() {
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
-        mBean = (VehicleinfoListBean) bundle.getSerializable(Constans.GROUPID);
+        mBean = (PersonalinfoListBean) bundle.getSerializable(Constans.GROUPID);
         if (mBean != null) {
             showUIData(mBean);
         }
     }
 
-    private void showUIData(VehicleinfoListBean bean) {
-        mVid = bean.getId();
-        LogUtils.d("===vid===" + mVid);
-        String registrationNO = StringUtils.isEntryStrWu(bean.getRegistrationNO());
+    private void showUIData(PersonalinfoListBean bean) {
+        String vid = bean.getId();
+        LogUtils.d("===vid===" + vid);
+        String registrationNO = StringUtils.isEntryStrWu(bean.getName());
         String time = StringUtils.isEntryStrXieg(bean.getTime());
-        String phone = StringUtils.isEntryStrXieg("");
+        String phone = StringUtils.isEntryStrXieg(bean.getTel());
         String banzu = StringUtils.isEntryStrXieg(bean.getPid());
         String zuguan = StringUtils.isEntryStrXieg("");
         String speed = StringUtils.isEntryStrXieg(bean.getSpeed());
         String address = StringUtils.isEntryStrXieg(bean.getAddress());
-        String location = StringUtils.isEntryStrXieg("定位");
+        String location = "";
+        if (TextUtils.isEmpty(address)) {
+            location = "-";
+        } else {
+            location = "定位";
+        }
+        location = StringUtils.isEntryStrXieg(location);
         String ang = StringUtils.isEntryStrXieg("");
         if (!speed.equals("-")) {
             speed = speed + "km/h";
@@ -121,25 +121,26 @@ public class CarDetailInfosActivity extends BaseActivity implements CarDetailInf
         tvAddress.setText(address);
         tvIslocation.setText(location);
         tvAng.setText(ang);
-
-        getDataByNet(mVid);
     }
 
-    private void getDataByNet(String mVid) {
-        if (mPresenter != null && !TextUtils.isEmpty(mVid)) {
-            mPresenter.getVehicleDetail(ApiService.GETVEHICLEDETAIL, mVid);
-        }
-    }
 
+    @OnClick(R.id.tv_phone)
+    public void onClick() {
+        String phone = tvPhone.getText().toString().trim();
+        StringUtils.callPhone(PersonalDetailInfosActivity.this, phone);
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposeCommonEvent(CommonEvent event) {
         switch (event.getWhat()) {
             case Constans.CARDETAIL_SUCCESS://树
-                CarDetailInfosBean.MsgBean bean = (CarDetailInfosBean.MsgBean) event.getData();
-                if (null != bean) {
-                    showUICarData(bean);
-                }
+//                treeListData.clear();
+//                treeListData = (List<PersonalParentBean>) event.getData();
+//                if (treeListData.size() > 0) {
+//                    showPersonallistDatas(treeListData);
+//                } else {
+//                    showSuccessToast("旗下无主管");
+//                }
                 break;
 
             case Constans.CARDETAIL_ERROR:
@@ -148,36 +149,6 @@ public class CarDetailInfosActivity extends BaseActivity implements CarDetailInf
         }
     }
 
-    private void showUICarData(CarDetailInfosBean.MsgBean bean) {
-        String terminalNO = StringUtils.isEntryStrXieg(bean.getTerminalNO());
-        String terminalTypeID = StringUtils.isEntryStrXieg(bean.getTerminalTypeID());
-        String vehicletype = StringUtils.isEntryStrXieg(bean.getVehicletype());
-        String carType = StringUtils.isEntryStrXieg(bean.getCarType());
-        String brandType = StringUtils.isEntryStrXieg(bean.getBrandType());
-        String modeltype = StringUtils.isEntryStrXieg(bean.getModeltype());
-        String oilMax = StringUtils.isEntryStrXieg(bean.getOilMax());
-        String oilSum = StringUtils.isEntryStrXieg(bean.getOilSum());
-        String weight = StringUtils.isEntryStrXieg(bean.getWeight());
-        String seatcount = StringUtils.isEntryStrXieg(bean.getSeatcount());
-
-        tvTernumber.setText(terminalNO);
-        tvTertype.setText(terminalTypeID);
-        tvHangtype.setText(vehicletype);
-        tvCheping.setText(carType);
-        tvCartype.setText(brandType);
-        tvChexingHao.setText(modeltype);
-
-        tvOilsmax.setText(oilMax);
-        tvOilschuan.setText(oilSum);
-        tvZaimax.setText(weight);
-        tvSeatcount.setText(seatcount);
-    }
-
-    @Override
-    public void getDatasAgain() {
-        super.getDatasAgain();
-        getDataByNet(mVid);
-    }
 
     @Override
     protected void setLisenter() {
@@ -187,13 +158,6 @@ public class CarDetailInfosActivity extends BaseActivity implements CarDetailInf
     @Override
     protected void widgetClick(View v) {
 
-    }
-
-    @OnClick(R.id.tv_phone)
-    public void onClick() {
-        String phone = tvPhone.getText().toString().trim();
-
-        StringUtils.callPhone(CarDetailInfosActivity.this, phone);
     }
 
     @Override

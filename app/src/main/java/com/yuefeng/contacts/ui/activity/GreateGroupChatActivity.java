@@ -68,7 +68,6 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
     private String mGroupName;
     private String mText;
     private List<String> checkList = new ArrayList<>();
-    private StringBuffer mStringBuffer;
     private SortBookAdapter.ViewHolder mViewHolder;
 
     @Override
@@ -213,7 +212,7 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
     protected void initData() {
         if (mPresenter != null) {
             String userid = PreferencesUtils.getString(GreateGroupChatActivity.this, Constans.ID, "");
-            mPresenter.findAllUser(1, 10000, "", 0, userid);
+            mPresenter.findAllUser(1, 10000, "", 1, userid);
         }
     }
 
@@ -232,36 +231,26 @@ public class GreateGroupChatActivity extends BaseActivity implements FindAllUser
     public void sure() {
 
         mUserId = PreferencesUtils.getString(GreateGroupChatActivity.this, Constans.ID, "");
-        if (null == mStringBuffer) {
-            mStringBuffer = new StringBuffer();
-        }
-        mStringBuffer.setLength(0);
+
         int size = checkList.size();
         if (size == 0) {
             showSuccessToast("请先选择人");
             return;
         }
+        groupUserids = mUserId;
         if (size > 1) {
-            for (String userid : checkList) {
-                if (mStringBuffer.length() == 0) {
-                    mStringBuffer.append(mUserId);
-                } else {
-                    mStringBuffer.append(",").append(userid);
-                }
+            for (int i = 0; i < checkList.size(); i++) {
+                groupUserids = groupUserids + "," + checkList.get(i);
             }
         } else {
-            mStringBuffer.append(mUserId).append(",").append(checkList.get(0));
+            groupUserids = groupUserids + "," + checkList.get(0);
         }
-
-        groupUserids = mStringBuffer.toString().trim();
 
         mGroupName = edtGroupName.getText().toString().trim();
         if (TextUtils.isEmpty(mGroupName)) {
-//            showSuccessToast("请输入群组名称");
+            showSuccessToast("请输入群组名称");
             return;
         }
-
-
         groupCreate(groupUserids, mUserId, mGroupName);
     }
 

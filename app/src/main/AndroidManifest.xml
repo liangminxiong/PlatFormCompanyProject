@@ -102,19 +102,19 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <!-- 如果是安卓 8.0，应用编译配置的 targetSdkVersion>=26，请务必添加以下权限 -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <!--<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>-->
     <!-- 华为 配置结束 < -->
 
     <!-- MeiZu 配置开始 < -->
     <!-- 兼容 flyme5.0 以下版本，魅族内部集成 pushSDK 必填，不然无法收到 消息 -->
-    <uses-permission
-        android:name="com.meizu.flyme.push.permission.RECEIVE"/>
-    <permission
-        android:name="cn.rongcloud.im.push.permission.MESSAGE"
-        android:protectionLevel="signature"/>
-    <uses-permission android:name="cn.rongcloud.im.push.permission.MESSAGE"/>
-    <!-- 兼容 flyme3.0 配置权限 -->
-    <uses-permission android:name="com.meizu.c2dm.permission.RECEIVE"/>
+    <!--<uses-permission-->
+        <!--android:name="com.meizu.flyme.push.permission.RECEIVE"/>-->
+    <!--<permission-->
+        <!--android:name="cn.rongcloud.im.push.permission.MESSAGE"-->
+        <!--android:protectionLevel="signature"/>-->
+    <!--<uses-permission android:name="cn.rongcloud.im.push.permission.MESSAGE"/>-->
+    <!--&lt;!&ndash; 兼容 flyme3.0 配置权限 &ndash;&gt;-->
+    <!--<uses-permission android:name="com.meizu.c2dm.permission.RECEIVE"/>-->
     <!-- MeiZu 配置结束 < -->
 
 
@@ -161,7 +161,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="3vEEp49TLUpNbc1hmmsWc9UEzVUCTm0c"/>
+            android:value="BIvUidCXbyoqMciDxLVzbRPE6I91hZaN"/>
 
         <service
             android:name="com.baidu.location.f"
@@ -192,7 +192,8 @@
 
         <activity
             android:name="com.yuefeng.ui.MainActivity"
-            android:hardwareAccelerated="false"/>
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"/>
 
         <activity
             android:name="com.yuefeng.login_splash.ui.LoginActivity"/>
@@ -410,18 +411,18 @@
 
         <!-- 极光推送自定义的广播接收器 ym start-->
         <!--<receiver-->
-            <!--android:name="com.JPush.MyJPushReceiver"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="false">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="cn.jpush.android.intent.REGISTRATION"/> &lt;!&ndash; Required  用户注册SDK的intent &ndash;&gt;-->
-                <!--<action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/> &lt;!&ndash; Required  用户接收SDK消息的intent &ndash;&gt;-->
-                <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/> &lt;!&ndash; Required  用户接收SDK通知栏信息的intent &ndash;&gt;-->
-                <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/> &lt;!&ndash; Required  用户打开自定义通知栏的intent &ndash;&gt;-->
-                <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_CLICK_ACTION"/>-->
-                <!--<action android:name="cn.jpush.android.intent.CONNECTION"/> &lt;!&ndash; 接收网络变化 连接/断开 since 1.6.3 &ndash;&gt;-->
-                <!--<category android:name="com.yuefeng.paltform"/>-->
-            <!--</intent-filter>-->
+        <!--android:name="com.JPush.MyJPushReceiver"-->
+        <!--android:enabled="true"-->
+        <!--android:exported="false">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="cn.jpush.android.intent.REGISTRATION"/> &lt;!&ndash; Required  用户注册SDK的intent &ndash;&gt;-->
+        <!--<action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/> &lt;!&ndash; Required  用户接收SDK消息的intent &ndash;&gt;-->
+        <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/> &lt;!&ndash; Required  用户接收SDK通知栏信息的intent &ndash;&gt;-->
+        <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/> &lt;!&ndash; Required  用户打开自定义通知栏的intent &ndash;&gt;-->
+        <!--<action android:name="cn.jpush.android.intent.NOTIFICATION_CLICK_ACTION"/>-->
+        <!--<action android:name="cn.jpush.android.intent.CONNECTION"/> &lt;!&ndash; 接收网络变化 连接/断开 since 1.6.3 &ndash;&gt;-->
+        <!--<category android:name="com.yuefeng.paltform"/>-->
+        <!--</intent-filter>-->
         <!--</receiver>-->
         <!-- 极光推送自定义的广播接收器 ym end-->
 
@@ -539,7 +540,9 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
 
+        <!--车辆，人员详情-->
         <activity android:name="com.yuefeng.features.ui.activity.CarDetailInfosActivity"/>
+        <activity android:name="com.yuefeng.features.ui.activity.PersonalDetailInfosActivity"/>
 
     </application>
 

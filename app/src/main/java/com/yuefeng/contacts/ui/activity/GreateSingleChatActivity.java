@@ -198,7 +198,7 @@ public class GreateSingleChatActivity extends BaseActivity implements FindAllUse
     protected void initData() {
         if (mPresenter != null) {
             String userid = PreferencesUtils.getString(GreateSingleChatActivity.this, Constans.ID, "");
-            mPresenter.findAllUser(1, 10000, "", 0, userid);
+            mPresenter.findAllUser(1, 10000, "", 1, userid);
         }
     }
 

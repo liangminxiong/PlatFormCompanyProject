@@ -36,12 +36,6 @@ import com.yuefeng.home.ui.activity.HistoryAppVersionActivtiy;
 import com.yuefeng.home.ui.activity.MsgListInfosActivtiy;
 import com.yuefeng.home.ui.activity.WebDetailInfosActivtiy;
 import com.yuefeng.home.ui.adapter.HomeMsgInfosAdapter;
-import com.yuefeng.login_splash.event.SignInEvent;
-import com.yuefeng.ui.MainActivity;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,11 +78,11 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
 
     @Override
     protected void initView() {
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
+//        if (!EventBus.getDefault().isRegistered(this)) {
+//            EventBus.getDefault().register(this);
+//        }
         unbinder = ButterKnife.bind(this, rootView);
-        mPresenter = new FeaturesPresenter(this, (MainActivity) getActivity());
+//        mPresenter = new FeaturesPresenter(this, (MainActivity) getActivity());
 
         recyclerview.setHasFixedSize(true);
         recyclerview.setNestedScrollingEnabled(false);
@@ -123,9 +117,9 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
 
     @Override
     public void onStart() {
-        if (isGetDataAgain) {
-            getNetDatas();
-        }
+//        if (isGetDataAgain) {
+//            getNetDatas();
+//        }
         super.onStart();
     }
 
@@ -199,24 +193,24 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void disposeCommonEvent(SignInEvent event) {
-        switch (event.getWhat()) {
-            case Constans.NEW_MSG_SUCCESS://展示最新消息
-//                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
-//                if (list.size() > 0) {
-//                    showAdapterDatasList(list);
-//                } else {
-//                    showSuccessToast("无最新消息");
-//                }
-                break;
-
-            case Constans.NEW_MSG_ERROR:
-//                addNativeDatas();
-                break;
-
-        }
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+//    public void disposeCommonEvent(SignInEvent event) {
+//        switch (event.getWhat()) {
+//            case Constans.NEW_MSG_SUCCESS://展示最新消息
+////                List<NewMsgListDataBean> list = (List<NewMsgListDataBean>) event.getData();
+////                if (list.size() > 0) {
+////                    showAdapterDatasList(list);
+////                } else {
+////                    showSuccessToast("无最新消息");
+////                }
+//                break;
+//
+//            case Constans.NEW_MSG_ERROR:
+////                addNativeDatas();
+//                break;
+//
+//        }
+//    }
 
 
     @Override
@@ -294,7 +288,7 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
         String userid = PreferencesUtils.getString(Objects.requireNonNull(getActivity()), Constans.ID, "");
         String pid = PreferencesUtils.getString(Objects.requireNonNull(getActivity()), Constans.ORGID, "");
         if (type == 1) {
-            mUrl = ApiService.H5URL_BUSINESSEDIT + userid + "&userpid" + pid;
+            mUrl = ApiService.H5URL_BUSINESSEDIT + userid + "&userpid=" + pid;
             title = "新增申请";
         } else {
             mUrl = ApiService.H5URL_APPLYEDIT + pid;
@@ -406,7 +400,7 @@ public class FeaturesFragment extends BaseFragment implements FeaturesContract.V
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
 

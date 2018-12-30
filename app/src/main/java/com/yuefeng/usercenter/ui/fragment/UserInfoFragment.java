@@ -209,6 +209,7 @@ public class UserInfoFragment extends BaseMvpFragment {
                 PreferencesUtils.putString(MyApplication.getContext(), Constans.COOKIE_PREF, "");
                 startActivity(new Intent(getContext(), LoginActivity.class));
                 AppManager.getAppManager().removedAlllActivity(getActivity());
+                getActivity().finish();
             }
 
             @Override

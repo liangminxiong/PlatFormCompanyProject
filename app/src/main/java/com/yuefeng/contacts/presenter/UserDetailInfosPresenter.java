@@ -24,7 +24,6 @@ public class UserDetailInfosPresenter extends BasePresenterImpl<UserDetailInfosC
         super(view, activity);
     }
 
-    /*通讯录*/
     @Override
     public void findUserWithID(String id) {
         HttpObservable.getObservable(apiRetrofit.findUserWithID(id))

@@ -160,7 +160,7 @@ public class ContactsFragment extends BaseFragment implements SignInContract.Vie
             return;
         }
         if (presenter != null) {
-            presenter.findOrganWithID(userId, "", 0);
+            presenter.findOrganWithID(userId, "", 1);
         }
     }
 

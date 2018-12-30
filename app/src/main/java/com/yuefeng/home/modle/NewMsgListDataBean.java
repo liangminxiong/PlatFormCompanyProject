@@ -23,6 +23,25 @@ public class NewMsgListDataBean implements Serializable {
     private String genre;
     private String isread;
     private String notread;
+    private String latitude;
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    private String longitude;
 
     public String getId() {
         return id;

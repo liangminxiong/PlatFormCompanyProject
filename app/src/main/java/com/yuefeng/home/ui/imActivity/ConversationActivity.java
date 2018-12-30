@@ -16,7 +16,7 @@ import com.common.utils.PreferencesUtils;
 import com.yuefeng.commondemo.R;
 import com.yuefeng.contacts.contract.GroupQueryContract;
 import com.yuefeng.contacts.modle.UserDeatailInfosBean;
-import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserDataBean;
+import com.yuefeng.contacts.modle.contacts.GroupListDataBean;
 import com.yuefeng.contacts.presenter.GroupQueryPresenter;
 import com.yuefeng.ui.MyApplication;
 
@@ -79,7 +79,7 @@ public class ConversationActivity extends BaseActivity implements GroupQueryCont
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposeSCommonEvent(CommonEvent event) {
         switch (event.getWhat()) {
-            case Constans.USERDETAIL_SUCCESS://获取通讯录成功
+            case Constans.USERDETAIL_SUCCESS:
                 UserDeatailInfosBean.DataBean bean = (UserDeatailInfosBean.DataBean) event.getData();
                 showUIDatas(bean);
                 break;
@@ -87,7 +87,7 @@ public class ConversationActivity extends BaseActivity implements GroupQueryCont
                 setTitle("聊天");
                 break;
             case Constans.GROUNPINFOS_SUCCESS:
-                GroupQueryWithUserDataBean gBean = (GroupQueryWithUserDataBean) event.getData();
+                GroupListDataBean gBean = (GroupListDataBean) event.getData();
                 String name = gBean.getName();
                 if (!TextUtils.isEmpty(name)) {
                     setTitle(name);

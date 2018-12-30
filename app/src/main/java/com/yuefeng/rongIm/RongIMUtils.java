@@ -1,7 +1,9 @@
 package com.yuefeng.rongIm;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -10,9 +12,11 @@ import android.view.ViewGroup;
 
 import com.common.utils.AppUtils;
 import com.common.utils.Constans;
+import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
 import com.common.utils.ToastUtils;
 import com.yuefeng.login_splash.event.LoginEvent;
+import com.yuefeng.ui.MainActivity;
 import com.yuefeng.ui.MyApplication;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,7 +43,7 @@ import io.rong.message.ImageMessage;
 
 /*融云工具类*/
 public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
-//        RongIMClient.OnReceiveMessageListener,
+        RongIMClient.OnReceiveMessageListener,
         RongIM.UserInfoProvider,
         RongIM.GroupInfoProvider,
         RongIM.GroupUserInfoProvider,
@@ -47,64 +51,47 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
         RongIM.ConversationBehaviorListener,
         RongIM.IGroupMembersProvider {
 
-    private static RongIMUtils mRongCloudInstance;
-
     public RongIMUtils(Context context) {
-        initRongIM(context);
-
+//        initListener();
     }
 
     /**
      * 初始化 RongCloud.
      *
-     * @param context 上下文。
      */
-    public static void init(Context context) {
-
-        if (mRongCloudInstance == null) {
-            synchronized (RongIMUtils.class) {
-                if (mRongCloudInstance == null) {
-                    mRongCloudInstance = new RongIMUtils(context);
-                }
-            }
-        }
+    public void init() {
+        initListener();
     }
-
-    private void initRongIM(Context context) {
-        /**
-         *
-         * OnCreate 会被多个进程重入，这段保护代码，确保只有您需要使用 RongIM 的进程和 Push 进程执行了 init。
-         * io.rong.push 为融云 push 进程名称，不可修改。
-         */
-        if (context.getApplicationInfo().packageName.equals(MyApplication.getCurProcessName(context)) ||
-                "io.rong.push".equals(MyApplication.getCurProcessName(context))) {
-            /**
-             * IMKit SDK调用第一步 初始化
-             */
-            RongIM.init(context);
-            initUserInfo();
-            initListener();
-        }
-
-    }
-
 
     /**
      * init 后就能设置的监听
      */
 
-    public void initListener() {
+    public  void initListener() {
         RongIM.setConversationBehaviorListener(this);//设置会话界面操作的监听器。
         RongIM.setConversationListBehaviorListener(this);
         RongIM.setConnectionStatusListener(this);
         RongIM.setUserInfoProvider(this, true);
         RongIM.setGroupInfoProvider(this, true);
+
+        setReadReceiptConversationType();
+
         RongIM.getInstance().enableNewComingMessageIcon(true);
         RongIM.getInstance().enableUnreadMessageIcon(true);
         RongIM.getInstance().setGroupMembersProvider(this);
-//        RongIM.getInstance().setOnReceiveMessageListener(this);
+        RongIM.setOnReceiveMessageListener(this);
 //        RongIM.getInstance().registerConversationTemplate(new MyPrivateConversationProvider());//自定义会话
 
+    }
+
+
+    private void setReadReceiptConversationType() {
+        Conversation.ConversationType[] types = new Conversation.ConversationType[]{
+                Conversation.ConversationType.PRIVATE,
+                Conversation.ConversationType.GROUP,
+                Conversation.ConversationType.DISCUSSION
+        };
+        RongIM.getInstance().setReadReceiptConversationTypeList(types);
     }
 
     /*保存融云用户信息*/
@@ -188,7 +175,7 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
 
 
     /*连接融云*/
-    public static void connectToken(String token, final String userId, final String name, final String portraitUrl) {
+    public static void connectToken(final Context context, String token, final String userId, final String name, final String portraitUrl) {
         boolean networkConnected = MyApplication.getInstance().isNetworkConnected();
         if (!networkConnected) {
             ToastUtils.showToast("无网络");
@@ -206,9 +193,13 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
             @Override
             public void onSuccess(String userid) {
                 UserInfo info = new UserInfo(userId, name, Uri.parse(portraitUrl));
-                RongIM.getInstance().setCurrentUserInfo(info);
+//                RongIM.getInstance().setCurrentUserInfo(info);
+//                initUserInfo();
                 refreshUserInfoCache(info);
-                EventBus.getDefault().post(new LoginEvent(Constans.RONGIM_SUCCESS_NET, ""));
+//                EventBus.getDefault().post(new LoginEvent(Constans.RONGIM_SUCCESS_NET, ""));
+                LogUtils.d("==================conect===");
+                context.startActivity(new Intent(context, MainActivity.class));
+                ((Activity) context).finish();
 
             }
 
@@ -323,9 +314,22 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
         return false;
     }
 
+
+    /**
+     * 获取融云所需用户信息
+     */
+    @Override
+    public UserInfo getUserInfo(String userId) {///
+        LogUtils.d("====Rong0==" + userId);
+        UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(userId);
+        return userInfo;
+    }
+
+
     @Override
     public Group getGroupInfo(String s) {
-        return null;
+        Group groupInfo = RongUserInfoManager.getInstance().getGroupInfo(s);
+        return groupInfo;
     }
 
     @Override
@@ -345,7 +349,11 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
 
     @Override
     public boolean onUserPortraitClick(Context context, Conversation.ConversationType conversationType, UserInfo userInfo) {
-        return false;
+        if (conversationType == Conversation.ConversationType.CUSTOMER_SERVICE || conversationType == Conversation.ConversationType.PUBLIC_SERVICE
+                || conversationType == Conversation.ConversationType.APP_PUBLIC_SERVICE) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -368,137 +376,6 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
         return false;
     }
 
-//    /*接收到消息*/
-//    @Override
-//    public boolean onReceived(Message message, int i) {
-//        MessageContent messageContent = message.getContent();
-//        if (messageContent instanceof ContactNotificationMessage) {
-//
-//            ContactNotificationMessage contactNotificationMessage = (ContactNotificationMessage) messageContent;
-//
-//            /* if (contactNotificationMessage.getOperation().equals("Request")) {
-//                //对方发来好友邀请
-//                BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_RED_DOT);
-//            } else if (contactNotificationMessage.getOperation().equals("AcceptResponse")) {
-//                //对方同意我的好友请求
-//                ContactNotificationMessageData contactNotificationMessageData;
-//                try {
-//                    contactNotificationMessageData = JsonMananger.jsonToBean(contactNotificationMessage.getExtra(), ContactNotificationMessageData.class);
-//                } catch (HttpException e) {
-//                    e.printStackTrace();
-//                    return false;
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                    return false;
-//                }
-//                if (contactNotificationMessageData != null) {
-//                    if (SealUserInfoManager.getInstance().isFriendsRelationship(contactNotificationMessage.getSourceUserId())) {
-//                        return false;
-//                    }
-//                    SealUserInfoManager.getInstance().addFriend(
-//                            new Friend(contactNotificationMessage.getSourceUserId(),
-//                                    contactNotificationMessageData.getSourceUserNickname(),
-//                                    null, null, null, null,
-//                                    null, null,
-//                                    CharacterParser.getInstance().getSpelling(contactNotificationMessageData.getSourceUserNickname()),
-//                                    null));
-//                }
-//                BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_FRIEND);
-//                BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_RED_DOT);
-//            }
-//            // 发广播通知更新好友列表
-//            BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_RED_DOT);
-//        }
-//    } else*/
-//            if (messageContent instanceof GroupNotificationMessage) {
-//                GroupNotificationMessage groupNotificationMessage = (GroupNotificationMessage) messageContent;
-//                String groupID = message.getTargetId();
-//                GroupNotificationMessageData data = null;
-//                try {
-//                    String currentID = RongIM.getInstance().getCurrentUserId();
-//                    try {
-//                        data = jsonToBean(groupNotificationMessage.getData());
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    if (groupNotificationMessage.getOperation().equals("Create")) {
-//                        //创建群组
-////                        SealUserInfoManager.getInstance().getGroups(groupID);
-////                        SealUserInfoManager.getInstance().getGroupMember(groupID);
-//                    } else if (groupNotificationMessage.getOperation().equals("Dismiss")) {
-//                        //解散群组
-////                        hangUpWhenQuitGroup();      //挂断电话
-////                        handleGroupDismiss(groupID);
-//                    } else if (groupNotificationMessage.getOperation().equals("Kicked")) {
-//                        //群组踢人
-//                        if (data != null) {
-//                            List<String> memberIdList = data.getTargetUserIds();
-//                            if (memberIdList != null) {
-//                                for (String userId : memberIdList) {
-//                                    if (currentID.equals(userId)) {
-////                                        hangUpWhenQuitGroup();
-//                                        RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, message.getTargetId(), new RongIMClient.ResultCallback<Boolean>() {
-//                                            @Override
-//                                            public void onSuccess(Boolean aBoolean) {
-//                                                Log.e("SealAppContext", "Conversation remove successfully.");
-//                                            }
-//
-//                                            @Override
-//                                            public void onError(RongIMClient.ErrorCode e) {
-//
-//                                            }
-//                                        });
-//                                    }
-//                                }
-//                            }
-//
-//                            List<String> kickedUserIDs = data.getTargetUserIds();
-////                            SealUserInfoManager.getInstance().deleteGroupMembers(groupID, kickedUserIDs);
-////                            BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_GROUP_MEMBER, groupID);
-//                        }
-//                    } else if (groupNotificationMessage.getOperation().equals("Add")) {
-//                        //群组添加人员
-////                        SealUserInfoManager.getInstance().getGroups(groupID);
-////                        SealUserInfoManager.getInstance().getGroupMember(groupID);
-////                        BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_GROUP_MEMBER, groupID);
-//                    } else if (groupNotificationMessage.getOperation().equals("Quit")) {
-//                        //退出群组
-////                        if (data != null) {
-////                            List<String> quitUserIDs = data.getTargetUserIds();
-////                            if (quitUserIDs.contains(currentID)) {
-////                                hangUpWhenQuitGroup();
-////                            }
-////                            SealUserInfoManager.getInstance().deleteGroupMembers(groupID, quitUserIDs);
-////                            BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_GROUP_MEMBER, groupID);
-////                        }
-//                    } else if (groupNotificationMessage.getOperation().equals("Rename")) {
-//                        //群组重命名
-////                        if (data != null) {
-////                            String targetGroupName = data.getTargetGroupName();
-////                            SealUserInfoManager.getInstance().updateGroupsName(groupID, targetGroupName);
-////                            List<String> groupNameList = new ArrayList<>();
-////                            groupNameList.add(groupID);
-////                            groupNameList.add(data.getTargetGroupName());
-////                            groupNameList.add(data.getOperatorNickname());
-////                            BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_GROUP_NAME, groupNameList);
-////                            Group oldGroup = SealUserInfoManager.getInstance().getGroupsByID(groupID);
-////                            if (oldGroup != null) {
-////                                Group group = new Group(groupID, data.getTargetGroupName(), Uri.parse(""));
-////                                RongIM.getInstance().refreshGroupInfoCache(group);
-////                            }
-////                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                return true;
-//            } else if (messageContent instanceof ImageMessage) {
-//                //ImageMessage imageMessage = (ImageMessage) messageContent;
-//            }
-//        }
-//
-//        return false;
-//    }
 
     private GroupNotificationMessageData jsonToBean(String data) {
         GroupNotificationMessageData dataEntity = new GroupNotificationMessageData();
@@ -544,6 +421,11 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
         return dataEntity;
     }
 
+    @Override
+    public boolean onReceived(Message message, int i) {
+        return false;
+    }
+
 
     /**
      * 融云消息监听
@@ -583,17 +465,6 @@ public class RongIMUtils implements RongIM.ConversationListBehaviorListener,
 
             return false;
         }
-    }
-
-    /**
-     * 获取融云所需用户信息
-     */
-    @Override
-    public UserInfo getUserInfo(String userId) {
-//        if (FriendInfoList.getInstance() == null) {
-        return null;
-//        }
-//        return FriendInfoList.getInstance().getUserInfoByUserId(userId);
     }
 
     /**

@@ -74,7 +74,7 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
     private TimePickerView timePickerView;
     private String mStartTime;
     private String mEndTime;
-    private int mCount=0;
+    private int mCount = 0;
 
     @Override
     protected int getContentViewResId() {
@@ -107,9 +107,7 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
 
     @Override
     protected void onStart() {
-        isRefresh = false;
-        CURPAGE = 1;
-        getDataByNet();
+
         super.onStart();
     }
 
@@ -167,7 +165,7 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
 
     @Override
     protected void onStop() {
-        listData.clear();
+//        listData.clear();
         super.onStop();
     }
 
@@ -331,7 +329,9 @@ public class MsgListInfosActivtiy extends BaseActivity implements MsgListInfosCo
 
     @Override
     protected void initData() {
-
+        isRefresh = false;
+        CURPAGE = 1;
+        getDataByNet();
     }
 
     @Override

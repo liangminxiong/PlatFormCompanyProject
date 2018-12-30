@@ -4,11 +4,13 @@ import com.yuefeng.contacts.modle.CheckOnlineBean;
 import com.yuefeng.contacts.modle.TokenBean;
 import com.yuefeng.contacts.modle.UpdateUserBean;
 import com.yuefeng.contacts.modle.UserDeatailInfosBean;
+import com.yuefeng.contacts.modle.contacts.GroupDataBean;
 import com.yuefeng.contacts.modle.contacts.OrganPersonalBean;
 import com.yuefeng.contacts.modle.groupanduser.GroupQueryWithUserBean;
 import com.yuefeng.contacts.modle.groupchat.AllUserContactsBean;
 import com.yuefeng.contacts.modle.groupchat.GroupCreateBean;
 import com.yuefeng.features.modle.AlarmListBean;
+import com.yuefeng.features.modle.CarDetailInfosBean;
 import com.yuefeng.features.modle.EventQuestionBean;
 import com.yuefeng.features.modle.GetAllPersonalBean;
 import com.yuefeng.features.modle.GetEventdetailBean;
@@ -277,7 +279,7 @@ public interface ApiService {
             @Query("lat") String lat,
             @Query("address") String address,
             @Query("type") String type,
-            @Query("memo") String memo,
+            @Query("meno") String memo,
             @Query("imageArrays") String imageArrays);
 
     /*轨迹*/
@@ -640,7 +642,7 @@ public interface ApiService {
     @Headers({"urlname:hao"})
     @FormUrlEncoded()
     @POST(MIA_HAO + GROUPQUERY)
-    Observable<GroupQueryWithUserBean> groupQuery(
+    Observable<GroupDataBean> groupQuery(
             @Field("groupid") String groupid);
 
     /*监察是否在线*/
@@ -764,4 +766,14 @@ public interface ApiService {
     Observable<GetWorkTimeBean> getWorkTime(
             @Field("function") String function,
             @Field("userid") String userid);
+
+    String GETVEHICLEDETAIL = "getVehicleDetail";
+
+    /*获取车辆详情*/
+    @Headers({"urlname:ali"})
+    @FormUrlEncoded()
+    @POST(MIA_HW)
+    Observable<CarDetailInfosBean> getVehicleDetail(
+            @Field("function") String function,
+            @Field("vid") String vid);
 }

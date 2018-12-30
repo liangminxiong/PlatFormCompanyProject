@@ -37,7 +37,7 @@ android {
     defaultConfig {
         applicationId "com.yuefeng.paltform"
         minSdkVersion 17
-        targetSdkVersion 24
+        targetSdkVersion 23
         versionCode 10
         versionName "1.1.0"
 
@@ -144,6 +144,7 @@ dependencies {
     compile files('libs/uk-co-senab-photoview.jar')
     //    科大讯飞语音
     compile files('libs/Msc.jar')
+//    compile files('libs/fastjson-1.2.5.jar')
     //导航
     implementation(name: 'NaviTts', ext: 'aar')
     implementation(name: 'onsdk_all', ext: 'aar')
@@ -170,7 +171,7 @@ configurations.all {
         if (requested.group == 'com.android.support') {
             if (!requested.name.startsWith("multidex")) {
                 //这里写你想统一的版本是多少，前提是你sdk里有
-                details.useVersion '27.0.0'
+                details.useVersion '26.0.0'
             }
         }
     }

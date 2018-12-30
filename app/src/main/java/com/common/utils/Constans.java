@@ -40,6 +40,8 @@ public class Constans {
     public static final int BAIDU_ZOOM_TEN = 10;
     public static final int BAIDU_ZOOM_FOUTTEEN = 14;
     public static final int BAIDU_ZOOM_EIGHTEEN = 18;
+    public static final float BAIDU_ZOOM_NIGHTH_F = (float) 18.5;
+    public static final int BAIDU_ZOOM_NIGHTH = 19;
     public static final int BAIDU_ZOOM_TWENTY_ONE = 15;
     public static final String TOKEN = "userToken";//存储用户名
     public static final String USERNAME = "user_name";//存储用户名
@@ -278,6 +280,9 @@ public class Constans {
     public static final int GROUNPINFOS_SUCCESS = 1015;//获取群信息成功
     public static final int GROUNPINFOS_ERROR = 1016;
 
+    public static final int SIGLNMANINFOS_SUCCESS = 1017;//获取个人 息成功
+    public static final int SIGLNMANINFOS_ERROR = 1018;
+
     /*主管考勤  140 -150 */
 
     public static final int ATTENDANCETRESS_SUCCESS = 140;//获取主管树成功
@@ -288,4 +293,15 @@ public class Constans {
     public static final int ATTENDANCETRACK_ERROR = 145;
     public static final int ATTENDANCELIST_SUCCESS = 146;//获取主管id列表成功
     public static final int ATTENDANCELIST_ERROR = 147;
+
+
+    /*车辆详情  150 -160 */
+
+    public static final int CARDETAIL_SUCCESS = 150;//获取车辆详情成功
+    public static final int CARDETAIL_ERROR = 151;
+    public static final String ISUPDATE = "isUpdate";
+    public static final String GONGGU = "gongGao";//公告
+    public static final String APPUPLOAD = "appUpload";//公告
+    public static final String MSGINFOS = "msgInfos";//公告
+    public static final String PROJECT = "project";//公告
 }

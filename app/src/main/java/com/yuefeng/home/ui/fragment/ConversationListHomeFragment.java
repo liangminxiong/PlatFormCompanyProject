@@ -56,8 +56,9 @@ public class ConversationListHomeFragment extends BaseFragment implements SignIn
         }
         presenter = new SignInPresenter(this, (MainActivity) getActivity());
         RongIMUtils.initUserInfoListener(this);
-//        RongIMUtils.initGroupListener(this);
+        RongIMUtils.initGroupListener(this);
         mCount = 0;
+        initRongUI();
     }
 
     private void initRongUI() {
@@ -74,7 +75,7 @@ public class ConversationListHomeFragment extends BaseFragment implements SignIn
 
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.add(R.id.rong_container, conversationListFragment);
+        transaction.add(R.id.rong_container, conversationListFragment);
         transaction.commit();
         conversationListFragment.setUri(uri);
     }
@@ -111,8 +112,6 @@ public class ConversationListHomeFragment extends BaseFragment implements SignIn
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void disposeSignInEvent(SignInEvent event) {
         switch (event.getWhat()) {
-            case Constans.LOGIN:
-                break;
             case Constans.GROUPINFOS_SUCCESS:
                 mBean = (GroupQueryWithUserDataBean) event.getData();
                 if (mBean != null) {

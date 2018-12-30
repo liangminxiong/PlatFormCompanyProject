@@ -22,6 +22,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 import com.yuefeng.citySelector.db.DBManager;
 import com.yuefeng.rongIm.RongIMUtils;
 
+import io.rong.imkit.RongIM;
+
 
 /**
  * Created  on 2018-01-04.
@@ -69,11 +71,22 @@ public class MyApplication extends Application {
         mainThreadId = android.os.Process.myTid();
 
         initThirdParty();
-
+        /**
+         *
+         * OnCreate 会被多个进程重入，这段保护代码，确保只有您需要使用 RongIM 的进程和 Push 进程执行了 init。
+         * io.rong.push 为融云 push 进程名称，不可修改。
+         */
+        if (context.getApplicationInfo().packageName.equals(MyApplication.getCurProcessName(context)) ||
+                "io.rong.push".equals(MyApplication.getCurProcessName(context))) {
+            /**
+             * IMKit SDK调用第一步 初始化
+             */
+            RongIM.init(context);
+            RongIMUtils rongIMUtils = new RongIMUtils(this);
+            rongIMUtils.init();
+        }
         /*内存泄露*/
 //        refWatcher= setupLeakCanary();
-        /*融云初始化*/
-        RongIMUtils.init(this);
     }
 
     public static MyApplication getInstance() {

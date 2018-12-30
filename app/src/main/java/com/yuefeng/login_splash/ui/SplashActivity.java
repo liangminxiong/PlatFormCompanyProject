@@ -126,20 +126,20 @@ public class SplashActivity extends BaseActivity implements LoginContract.View, 
             if (!networkConnected) {
                 toLoginActivity();
             } else {
-//                initUI();
+                initUI();
 
-                boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
-                if (isHaveDatas) {
-                    String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
-                    if (!TextUtils.isEmpty(string)) {//主界面
-                        toMainActivity();
-                    } else {//登录界面
-                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                    }
-                } else {
-                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                }
-                finish();
+//                boolean isHaveDatas = PreferencesUtils.getBoolean(this, Constans.HAVE_USER_DATAS);
+//                if (isHaveDatas) {
+//                    String string = PreferencesUtils.getString(this, Constans.COOKIE_PREF);
+//                    if (!TextUtils.isEmpty(string)) {//主界面
+//                        toMainActivity();
+//                    } else {//登录界面
+//                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+//                    }
+//                } else {
+//                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+//                }
+//                finish();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,8 +218,8 @@ public class SplashActivity extends BaseActivity implements LoginContract.View, 
         String userId = PreferencesUtils.getString(SplashActivity.this, Constans.ID, "");
         String name = PreferencesUtils.getString(SplashActivity.this, Constans.USERNAME_N, "");
         String portraitUrl = "";
-        RongIMUtils.init(userId, name, portraitUrl);
-        RongIMUtils.connectToken(token,userId,name,portraitUrl);
+        RongIMUtils.connectToken(SplashActivity.this,token, userId, name, portraitUrl);
+//        RongIMUtils.init(userId, name, portraitUrl);
 
         LogUtils.d("======开始1111==");
     }

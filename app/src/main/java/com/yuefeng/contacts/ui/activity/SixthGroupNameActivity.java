@@ -100,7 +100,7 @@ public class SixthGroupNameActivity extends BaseActivity implements FindOrganUse
             return;
         }
         if (mPresenter != null) {
-            mPresenter.findOrganWithID(userId, "", 0);
+            mPresenter.findOrganWithID(userId, "", 1);
         }
     }
 

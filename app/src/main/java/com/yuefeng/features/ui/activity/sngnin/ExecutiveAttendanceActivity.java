@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,7 +19,7 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
@@ -28,6 +29,7 @@ import com.common.network.ApiService;
 import com.common.utils.Constans;
 import com.common.utils.LogUtils;
 import com.common.utils.PreferencesUtils;
+import com.common.utils.ResourcesUtils;
 import com.common.utils.RxHelper;
 import com.common.utils.StringUtils;
 import com.common.utils.TimeUtils;
@@ -64,7 +66,7 @@ import io.reactivex.functions.Consumer;
 
 
 /*主管考勤*/
-public class ExecutiveAttendanceActivity extends BaseActivity implements ExecutiveAttendanceContract.View {
+public class ExecutiveAttendanceActivity extends BaseActivity implements ExecutiveAttendanceContract.View, BaiduMap.OnMapStatusChangeListener {
 
     @BindView(R.id.tv_title_setting)
     TextView mTvSetting;
@@ -98,7 +100,9 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
     private List<PersonalParentBean> treeListData = new ArrayList<>();
     private String mIdFlags;
     private boolean isFirstGetData = true;
-    private OverlayOptions mOoText;
+    private TextOptions mOoText;
+    private BitmapDescriptor mDescriptor;
+    private UiSettings mSettings;
 
     @Override
     protected int getContentViewResId() {
@@ -115,18 +119,21 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
         setTitle("主管考勤");
         mTvSetting.setBackgroundResource(R.drawable.list);
         initBaiduMap();
+        getNetDatas();
     }
 
     private void initBaiduMap() {
         mBaiduMap = mMapView.getMap();
         mMapView.showZoomControls(false);// 缩放控件是否显示
-        UiSettings settings = mBaiduMap.getUiSettings();
-        settings.setCompassEnabled(true);
-        settings.setOverlookingGesturesEnabled(true);
-        settings.setZoomGesturesEnabled(true);//获取是否允许缩放手势返回:是否允许缩放手势
-        settings.setAllGesturesEnabled(true);
+        mSettings = mBaiduMap.getUiSettings();
+        mSettings.setCompassEnabled(true);
+        mSettings.setOverlookingGesturesEnabled(false);
+        mSettings.setZoomGesturesEnabled(false);//获取是否允许缩放手势返回:是否允许缩放手势
+        mSettings.setAllGesturesEnabled(true);
+        mBaiduMap.setMaxAndMinZoomLevel(18, 3);
+        mBaiduMap.setOnMapStatusChangeListener(this);
         // 地图初始化
-        getNetDatas();
+
         requestPermissions();
         mBaiMakerView = new BaiDuMapMakerView(ExecutiveAttendanceActivity.this);
         mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
@@ -134,6 +141,15 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
             public void onMapClick(LatLng latLng) {
                 if (null != mBaiMakerView) {
                     mBaiMakerView.hideMarkerView();
+                }
+                //获取地图缩放级别
+                float zoom = mBaiduMap.getMapStatus().zoom;
+                LogUtils.d("=====zoom" + zoom);
+                if (zoom >= 18.0f && mSettings != null) {
+                    mSettings.setCompassEnabled(true);
+                    mSettings.setOverlookingGesturesEnabled(false);
+                    mSettings.setZoomGesturesEnabled(false);//获取是否允许缩放手势返回:是否允许缩放手势
+                    mSettings.setAllGesturesEnabled(true);
                 }
             }
 
@@ -191,19 +207,18 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                             MyApplication.latitude = latitude;
                             MyApplication.longitude = longitude;
                             MyApplication.address = address;
-
                         }
                         if (isFirstLocation) {
+//                            MapStatus ms = new MapStatus.Builder().target(mLatLng)
+//                                    .overlook(-20).zoom(17).build();
+//                            BdLocationUtil.MoveMapToCenter(mBaiduMap, mLatLng, Constans.BAIDU_ZOOM_TWENTY_ONE);
+//                            ooA = new MarkerOptions().icon(map_location).zIndex(13);
+//                            ooA.position(mLatLng);
+//                            mMarker = null;
+//                            mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
+//                            mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
                             isFirstLocation = false;
-                            MapStatus ms = new MapStatus.Builder().target(mLatLng)
-                                    .overlook(-20).zoom(17).build();
                             BdLocationUtil.MoveMapToCenter(mBaiduMap, mLatLng, Constans.BAIDU_ZOOM_FOUTTEEN);
-                            ooA = new MarkerOptions().icon(map_location).zIndex(13);
-                            ooA.position(mLatLng);
-                            mMarker = null;
-                            mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
-                            mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(ms));
-                            isFirstLocation = false;
                         }
                     }
                 }
@@ -291,7 +306,6 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                 break;
             case Constans.ATTENDANCELNGLAT_ERROR:
 //                addNativeDatas();
-
                 break;
             case Constans.ATTENDANCELIST_SUCCESS:
                 List<GetSignJsonMsgBean> listData = (List<GetSignJsonMsgBean>) event.getData();
@@ -452,8 +466,9 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
         try {
             mBaiduMap.clear();
             mks.clear();
-            for (ZhuGuanSignListBean bean : latListData) {
-                showPersonal(bean);
+            for (int i = 0; i < latListData.size(); i++) {
+                showPersonal(latListData.get(i));
+                Thread.sleep(200);
             }
             if (null == myMarkerClickListener) {
                 myMarkerClickListener = new myMarkerClickListener(mks);
@@ -475,61 +490,129 @@ public class ExecutiveAttendanceActivity extends BaseActivity implements Executi
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(300);
+                        Thread.sleep(500);
+
+                        String latitude = personalinfoListBean.getLat();
+                        String longitude = personalinfoListBean.getLng();
+                        LogUtils.d("=====lat 00======" + latitude + " ++ " + longitude);
+                        if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
+                            LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
+
+                            // 构建MarkerOption，用于在地图上添加Marker
+                            String time = StringUtils.returnStrTime(personalinfoListBean.getTime());
+                            String name = StringUtils.isEntryStrWu(personalinfoListBean.getName());
+                            String minTime = TimeUtils.getTenBeforeMinTime();
+                            boolean timeLessThan = TimeUtils.isTimeLessThan(minTime, time);
+                            mDescriptor = getBitmapDescriptor(name, timeLessThan);
+
+                            ooA = new MarkerOptions().icon(mDescriptor).position(latLng);
+//                            if (timeLessThan) {
+//                            ooA = new MarkerOptions().icon(map_location).position(latLng);
+//                            } else {
+//                                ooA = new MarkerOptions().icon(map_location_no).position(latLng);
+//                            }
+//
+                            mMarker = null;
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("Personal", (Serializable) (personalinfoListBean));
+                            ooA.extraInfo(bundle);
+                            mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
+                            try {
+                                if (mMarker != null) {
+                                    mMarker.setTitle("worker");
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            mks.add(mMarker);
+
+
+//                            //添加文字
+//                            if (mOoText == null) {
+//                                mOoText = new TextOptions().bgColor(Color.YELLOW)
+//                                        .fontSize(24)
+//                                        .fontColor(getResources().getColor(R.color.red));
+//                            }
+//
+//                            mOoText.position(latLng);
+//                            mOoText.text(name);
+//                            mBaiduMap.addOverlay(mOoText);
+                            if (isFirstMoveCenter) {
+                                if ((Double.valueOf(longitude) < 140.0) || (Double.valueOf(longitude) > 65.0)
+                                        || (Double.valueOf(latitude) < 56.0) || (Double.valueOf(latitude) > 12.0)) {
+                                    isFirstMoveCenter = false;
+                                    BdLocationUtil.MoveMapToCenter(mBaiduMap, latLng, Constans.BAIDU_ZOOM_TWENTY_ONE);
+                                }
+                            }
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    }
-                    String latitude = personalinfoListBean.getLat();
-                    String longitude = personalinfoListBean.getLng();
-                    LogUtils.d("=====lat ======" + latitude + " ++ " + longitude);
-                    if (!TextUtils.isEmpty(latitude) || !TextUtils.isEmpty(longitude)) {
-                        LatLng latLng = BdLocationUtil.ConverGpsToBaidu(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
-                        // 构建MarkerOption，用于在地图上添加Marker
-//                        //添加文字
-//                        mOoText = new TextOptions().bgColor(Color.TRANSPARENT)
-//                                .fontSize(30)
-//                                .fontColor(getResources().getColor(R.color.blue_07))
-//                                .text(StringUtils.isEntryStrWu(personalinfoListBean.getName()))
-//                                .position(latLng);
-//                        mBaiduMap.addOverlay(mOoText);
-
-                        String time = StringUtils.returnStrTime(personalinfoListBean.getTime());
-
-                        String minTime = TimeUtils.getTenBeforeMinTime();
-                        boolean timeLessThan = TimeUtils.isTimeLessThan(minTime, time);
-                        LogUtils.d("=====lat ======" + latLng + " ++ " + timeLessThan);
-                        if (timeLessThan) {
-                            ooA = new MarkerOptions().anchor(0.5f, 0.5f).icon(map_location).position(latLng);
-                        } else {
-                            ooA = new MarkerOptions().anchor(0.5f, 0.5f).icon(map_location_no).position(latLng);
-                        }
-
-                        mMarker = null;
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("Personal", (Serializable) (personalinfoListBean));
-                        ooA.extraInfo(bundle);
-                        mMarker = (Marker) (mBaiduMap.addOverlay(ooA));
-                        try {
-                            if (mMarker != null) {
-                                mMarker.setTitle("worker");
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        mks.add(mMarker);
-
-                        if (isFirstMoveCenter) {
-                            if ((Double.valueOf(longitude) < 140.0) || (Double.valueOf(longitude) > 65.0)
-                                    || (Double.valueOf(latitude) < 56.0) || (Double.valueOf(latitude) > 12.0)) {
-                                isFirstMoveCenter = false;
-                                BdLocationUtil.MoveMapToCenter(mBaiduMap, latLng, Constans.BAIDU_ZOOM_SEVEN);
-                            }
-                        }
                     }
                 }
             }).start();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public BitmapDescriptor getBitmapDescriptor(String name, boolean isLiXing) {
+        BitmapDescriptor bttmap = null;
+        View item_view = ResourcesUtils.inflate(R.layout.frag_near_marker);
+        TextView tv_storeName = (TextView) item_view.findViewById(R.id.tv_marker_name);
+        ImageView imageView = (ImageView) item_view.findViewById(R.id.iv_marker_type);
+
+// 设置布局中文字
+        tv_storeName.setText(name);
+
+// 设置图标
+        if (isLiXing) {
+            imageView.setImageResource(R.drawable.zhuguan_yidong);
+        } else {
+            imageView.setImageResource(R.drawable.zhuguan_lixian);
+        }
+        bttmap = BitmapDescriptorFactory.fromView(item_view);
+        return bttmap;
+
+    }
+
+    /*地图缩放级别*/
+    @Override
+    public void onMapStatusChangeStart(MapStatus mapStatus) {
+///获取地图缩放级别
+        float zoom = mBaiduMap.getMapStatus().zoom;
+        //根据获取到的地图中心点(图标地点)坐标获取地址
+        LogUtils.d("======zoom00=" + zoom);
+        if (zoom >= 15.0f) {
+
+        }
+    }
+
+    @Override
+    public void onMapStatusChangeStart(MapStatus mapStatus, int i) {
+///获取地图缩放级别
+        float zoom = mBaiduMap.getMapStatus().zoom;
+        //根据获取到的地图中心点(图标地点)坐标获取地址
+        LogUtils.d("======zoom11=" + zoom);
+//        if (zoom >= 18.0f && mSettings != null) {
+//        }
+    }
+
+    @Override
+    public void onMapStatusChange(MapStatus mapStatus) {
+//获取地图缩放级别
+        float zoom = mBaiduMap.getMapStatus().zoom;
+        //根据获取到的地图中心点(图标地点)坐标获取地址
+        LogUtils.d("======zoom22=" + zoom);
+
+    }
+
+    @Override
+    public void onMapStatusChangeFinish(MapStatus mapStatus) {
+//获取地图缩放级别
+        float zoom = mBaiduMap.getMapStatus().zoom;
+        //根据获取到的地图中心点(图标地点)坐标获取地址
+        if (zoom >= 20.0f && mSettings != null) {
+            mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(new MapStatus.Builder().zoom(Constans.BAIDU_ZOOM_NIGHTH_F).build()));
         }
     }
 

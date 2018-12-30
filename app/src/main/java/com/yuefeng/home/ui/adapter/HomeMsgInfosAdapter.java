@@ -32,7 +32,7 @@ public class HomeMsgInfosAdapter extends BaseItemDraggableAdapter<NewMsgListData
     @Override
     protected void convert(BaseViewHolder helper, NewMsgListDataBean item) {
         if (item != null && helper != null) {
-            genre = item.getGenre();
+            genre = StringUtils.isEntryStrZero(item.getGenre());
             name = item.getOrganname();
             title = item.getSubject();
             time = item.getIssuedate();
@@ -41,7 +41,7 @@ public class HomeMsgInfosAdapter extends BaseItemDraggableAdapter<NewMsgListData
             time = TimeUtils.formatHourMin(time);
             String isread = item.getIsread();
             if (isread.equals("0")) {
-                helper.setVisible(R.id.iv_item_unread, true);
+                helper.setVisible(R.id.iv_item_unread, false);
             }
             LogUtils.d("==genre== " + genre);
             // genre：1就是公告，2就是超哥的信息，3是更新的
